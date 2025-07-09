@@ -28,6 +28,9 @@
     <link rel="stylesheet" href="{{ asset('lte/plugins/daterangepicker/daterangepicker.css')}}">
     <!-- summernote -->
     <link rel="stylesheet" href="{{ asset('lte/plugins/summernote/summernote-bs4.min.css')}}">
+    {{-- Bootstrap 4 --}}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/css/bootstrap.min.css" rel="stylesheet">
+
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -368,7 +371,7 @@
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="./index2.html" class="nav-link">
+                                    <a href="{{ route('UserPage')}}" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>User</p>
                                     </a>
@@ -433,6 +436,8 @@
     <script src="{{ asset('lte/dist/js/demo.js')}}"></script>
     <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
     <script src="{{ asset('lte/dist/js/pages/dashboard.js')}}"></script>
+    {{-- Bootstrap --}}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

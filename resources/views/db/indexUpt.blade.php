@@ -27,7 +27,7 @@
                         <div class="card bg-light">
                             <div class="card-header font-weight-bold d-flex justify-content-center">PKS</div>
                             <div class="card-body">
-                                <a href="" class="btn btn-primary btn-sm btn-block">List Data PKS</a>
+                                <a href="{{ route('DbPks')}}" class="btn btn-primary btn-sm btn-block">List Data PKS</a>
                             </div>
                         </div>
                     </div>
