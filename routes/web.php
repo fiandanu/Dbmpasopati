@@ -65,6 +65,6 @@ Route::get('/TutorialMicrotik', [TutorialController::class, 'TutorialMicrotik'])
 Route::get('/UserPage', [UserController::class, 'UserPage'])->name('UserPage');
 Route::post('/UserPageStore', [UserController::class, 'UserPageStore'])->name('UserPageStore');
 Route::delete('/UserPageDestroy/{id}', [UserController::class, 'UserPageDestroy'])->name('UserPageDestroy');
-Route::put('/UserPageEdit/{id}', [UserController::class, 'UserPageEdit'])->name('UserPageEdit');
-
+Route::get('/UserPageEdit/{id}', [UserController::class, 'UserPageEdit'])->name('UserPageEdit');
+Route::put('/UserPageUpdate/{id}', [UserController::class, 'UserPageUpdate'])->name('UserPageUpdate');
 // User Page

@@ -61,6 +61,34 @@ class UserController extends Controller
     public function UserPageEdit(Request $request, $id)
     {
         $data = User::find($id);
-        return view('user.indexUser', compact('data'));
+
+        dd($data);
+
+        // return view('user.indexUser', compact('data'));
+    }
+
+    public function UserPageUpdate(Request $request, $id)
+    {
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'namaupt' => 'required|string|unique:users,namaupt,' . $id,
+                'kanwil' => 'required|string|unique:users,kanwil,' . $id,
+            ],
+            [
+                'namaupt.required' => 'Nama UPT harus diisi',
+                'kanwil.required' => 'Kanwil harus diisi',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return redirect()->back()->withInput()->withErrors($validator);
+        }
+
+        $data = User::find($id);
+        $data->namaupt = $request->namaupt;
+        $data->kanwil = $request->kanwil;
+        $data->save();
+        return redirect()->route('UserPage');
     }
 }

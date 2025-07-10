@@ -24,8 +24,7 @@
                 <!-- /.row -->
                 <div class="row">
                     <div class="col-12">
-                        <button class="btn btn-success mb-2" data-bs-toggle="modal" data-bs-target="#addModal"
-                            onclick="setDefaultDate()">
+                        <button class="btn btn-success mb-2" data-bs-toggle="modal" data-bs-target="#addModal">
                             <i class="fa fa-plus"></i> Tambah Data
                         </button>
                         <div class="card">
@@ -65,10 +64,12 @@
                                                 <td><span class="tag tag-success">{{$d->kanwil}}</span></td>
                                                 <td>{{$d->tanggal}}</td>
                                                 <td>
-                                                    <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal"
-                                                        data-bs-target="#editModal"
-                                                        onclick="editData(1, 'Jakarta Timur', 'kanwil Jawa Barat', '11-7-2014')"><i
+                                                    {{-- Edit Button --}}
+                                                    <a href="#editModal{{ $d->id }}" class="btn btn-sm btn-primary"
+                                                        data-bs-toggle="modal" data-bs-target="#editModal{{ $d->id}}"><i
                                                             class="fa fa-edit"></i></a>
+
+                                                    {{-- Delete Button --}}
                                                     <a data-toggle="modal" data-target="#modal-default{{ $d->id }}"
                                                         class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i></a>
                                                 </td>
@@ -99,17 +100,18 @@
                                                     </div>
                                                     <!-- /.modal-dialog -->
                                                 </div>
+                                            </div>
                                         @endforeach
                                     </tbody>
                                 </table>
                             </div>
                             {{-- Index Form Html --}}
 
-                        
+
                             {{-- User Create Modal --}}
                             <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel"
                                 aria-hidden="true">
-                                <form action="{{ route('UserPageStore')}}" method="POST">
+                                <form id="addForm" action="{{ route('UserPageStore')}}" method="POST">
                                     @csrf
                                     <div class="modal-dialog">
                                         <div class="modal-content">
@@ -118,40 +120,40 @@
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                     aria-label="Close"></button>
                                             </div>
-                                            <form id="addForm">
-                                                <div class="modal-body">
-                                                    {{-- Input Nama UPT --}}
-                                                    <div class="mb-3">
-                                                        <label for="namaupt" class="form-label">Nama UPT</label>
-                                                        <input type="text" class="form-control" id="namaupt" name="namaupt"
-                                                            required>
-                                                    </div>
-                                                    @error('namaupt')
-                                                        <small>{{ $message}}</small>
-                                                    @enderror
-                                                    {{-- Input Nama UPT --}}
 
-                                                    {{-- Input Nama Kanwil --}}
-                                                    <div class="mb-3">
-                                                        <label for="kanwil" class="form-label">Kanwil</label>
-                                                        <input type="text" class="form-control" id="kanwil" name="kanwil"
-                                                            required>
-                                                    </div>
-                                                    @error('kanwil')
-                                                        <small>{{ $message}}</small>
-                                                    @enderror
-                                                    {{-- Input Nama Kanwil --}}
+                                            <div class="modal-body">
+                                                {{-- Input Nama UPT --}}
+                                                <div class="mb-3">
+                                                    <label for="namaupt" class="form-label">Nama UPT</label>
+                                                    <input type="text" class="form-control" id="namaupt" name="namaupt"
+                                                        required>
+                                                </div>
+                                                @error('namaupt')
+                                                    <small>{{ $message}}</small>
+                                                @enderror
+                                                {{-- Input Nama UPT --}}
 
-                                                    {{-- Input Tanggal Hidden --}}
-                                                    <input type="hidden" id="addTanggal" name="tanggal">
-                                                    {{-- Input Tanggal Hidden --}}
+                                                {{-- Input Nama Kanwil --}}
+                                                <div class="mb-3">
+                                                    <label for="kanwil" class="form-label">Kanwil</label>
+                                                    <input type="text" class="form-control" id="kanwil" name="kanwil"
+                                                        required>
                                                 </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary"
-                                                        data-bs-dismiss="modal">Cancel</button>
-                                                    <button type="submit" class="btn btn-primary">Simpan</button>
-                                                </div>
-                                            </form>
+                                                @error('kanwil')
+                                                    <small>{{ $message}}</small>
+                                                @enderror
+                                                {{-- Input Nama Kanwil --}}
+
+                                                {{-- Input Tanggal Hidden --}}
+                                                <input type="hidden" id="addTanggal" name="tanggal">
+                                                {{-- Input Tanggal Hidden --}}
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Cancel</button>
+                                                <button type="submit" class="btn btn-primary">Simpan</button>
+                                            </div>
+
                                         </div>
                                     </div>
                                 </form>
@@ -159,10 +161,13 @@
                             {{-- User Create Modal --}}
 
 
+                            @foreach ($data as $d)
                             {{-- User Edit Modal --}}
-                            <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel"
+                            <div class="modal fade" id="editModal{{ $d->id }}" tabindex="-1" aria-labelledby="editModalLabel"
                                 aria-hidden="true">
-                                <form action="{{ route('UserPageEdit', ['id' => $d->id])}}" method="POST">
+                                <form id="editForm" action="{{ route('UserPageUpdate', ['id' => $d->id])}}" method="POST">
+                                    @csrf
+                                    @method('PUT')
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <div class="modal-header">
@@ -170,35 +175,35 @@
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                     aria-label="Close"></button>
                                             </div>
-                                            <form id="editForm">
-                                                <div class="modal-body">
-                                                    <input type="hidden" id="editId" name="id">
 
-                                                    <div class="mb-3">
-                                                        <label for="namaupt" class="form-label">Nama UPT</label>
-                                                        <input type="text" class="form-control" id="namaupt" name="namaupt"
-                                                            value="{{ $d->namaupt}}">
-                                                    </div>
+                                            <div class="modal-body">
+                                                <input type="hidden" id="editId" name="id">
 
-                                                    <div class="mb-3">
-                                                        <label for="kanwil" class="form-label">Kanwil</label>
-                                                        <input type="text" class="form-control" id="kanwil" name="kanwil"
-                                                            value="{{ $d->kanwil}}">
-                                                    </div>
-
+                                                <div class="mb-3">
+                                                    <label for="namaupt" class="form-label">Nama UPT</label>
+                                                    <input type="text" class="form-control" id="namaupt" name="namaupt"
+                                                        value="{{ $d->namaupt}}">
                                                 </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary"
-                                                        data-bs-dismiss="modal">Cancel</button>
-                                                    <button type="submit" class="btn btn-primary">Update</button>
+
+                                                <div class="mb-3">
+                                                    <label for="kanwil" class="form-label">Kanwil</label>
+                                                    <input type="text" class="form-control" id="kanwil" name="kanwil"
+                                                        value="{{ $d->kanwil}}">
                                                 </div>
-                                            </form>
+
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Cancel</button>
+                                                <button type="submit" class="btn btn-primary">Update</button>
+                                            </div>
+
                                         </div>
                                     </div>
                                 </form>
                             </div>
+                            @endforeach
                             {{-- User Edit Modal --}}
-
 
                             <!-- /.card-body -->
                         </div>
