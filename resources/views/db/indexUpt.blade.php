@@ -47,7 +47,7 @@
                         <div class="card bg-light">
                             <div class="card-header font-weight-bold d-flex justify-content-center">VPAS</div>
                             <div class="card-body">
-                                <a href="" class="btn btn-primary btn-sm btn-block">List Data Customer</a>
+                                <a href="{{ asset('DbVpas')}}" class="btn btn-primary btn-sm btn-block">List Data Customer</a>
                             </div>
                         </div>
                     </div>

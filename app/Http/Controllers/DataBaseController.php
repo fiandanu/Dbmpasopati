@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -44,5 +45,24 @@ class DataBaseController extends Controller
         if ($validator->fails()) {
             return redirect()->back()->withInput()->withErrors($validator);
         }
+    }
+
+
+
+    // ====================================== VPAS
+
+    public function DbVpas(Request $request)
+    {
+        $data = User::all();
+        return view('db.vpas.indexVpas', compact('data'));
+    }
+    // Untuk Memunculkan List Data Vpas Dari User
+
+    public function ListDataUpdate(Request $request, $id)
+    {
+        $data = User::findOrFail($id);
+        $data->update($request->all());
+
+        return redirect()->back();
     }
 }

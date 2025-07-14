@@ -20,12 +20,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [LoginController::class, 'login'])->name('login');
-
-
 Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
 
 
-// Database
+//==================================================== Database =====================================================
+
 Route::get('/DataBasePonpes', [DataBaseController::class, 'DataBasePonpes'])->name('DataBasePonpes');
 Route::get('/DataBaseUpt', [DataBaseController::class, 'DataBaseUpt'])->name('DataBaseUpt');
 
@@ -34,8 +33,18 @@ Route::get('/DbPks', [DataBaseController::class, 'DbPks'])->name('DbPks');
 Route::get('/DbCreatePks', [DataBaseController::class, 'DbCreatePks'])->name('DbCreatePks');
 Route::post('/PksStore', [DataBaseController::class, 'PksStore'])->name('PksStore');
 
+// Vpas
+Route::get('/DbVpas', [DatabaseController::class, 'DbVpas'])->name('DbVpas');
 
-// Database
+
+//--------------------- List Data Upt Di Munculkan Di DataBase/DataBaseUpt/Vpas
+Route::get('/ListDataUpt', [DatabaseController::class, 'ListDataUpt'])->name('ListDataUpt');
+Route::put('/ListDataUpdate/{id}', [DatabaseController::class, 'ListDataUpdate'])->name('ListDataUpdate');
+
+
+//==================================================== Database =====================================================
+
+
 
 
 // Monitoring Server
@@ -67,4 +76,8 @@ Route::post('/UserPageStore', [UserController::class, 'UserPageStore'])->name('U
 Route::delete('/UserPageDestroy/{id}', [UserController::class, 'UserPageDestroy'])->name('UserPageDestroy');
 Route::get('/UserPageEdit/{id}', [UserController::class, 'UserPageEdit'])->name('UserPageEdit');
 Route::put('/UserPageUpdate/{id}', [UserController::class, 'UserPageUpdate'])->name('UserPageUpdate');
+
+Route::get('DataPonpes', [UserController::class, 'DataPonpes'])->name('DataPonpes');
+
+
 // User Page

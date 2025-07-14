@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>AdminLTE 3 | Dashboard</title>
+    <title>Dbm | Pasopati</title>
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet"
@@ -373,7 +373,15 @@
                                 <li class="nav-item">
                                     <a href="{{ route('UserPage')}}" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
-                                        <p>User</p>
+                                        <p>Data UPT</p>
+                                    </a>
+                                </li>
+                            </ul>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ route('DataPonpes')}}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Data Ponpes</p>
                                     </a>
                                 </li>
                             </ul>

@@ -9,17 +9,19 @@ use App\Models\User;
 
 class UserController extends Controller
 {
+
+    // ============================================================= METHOD DATA UPT
     public function UserPageDestroy($id)
     {
-        $data = User::find($id);
-        $data->delete();
+        $dataupt = User::find($id);
+        $dataupt->delete();
         return redirect()->route('UserPage');
     }
 
     public function UserPage()
     {
-        $data = User::all();
-        return view('user.indexUser', compact('data'));
+        $dataupt = User::all();
+        return view('user.indexUser', compact('dataupt'));
     }
 
     public function UserCreate()
@@ -35,7 +37,7 @@ class UserController extends Controller
             $request->all(),
             [
                 'namaupt' => 'required|string|unique:users,namaupt',
-                'kanwil' => 'required|string|unique:users,kanwil',
+                'kanwil' => 'required|string',
             ],
             [
                 'namaupt.required' => 'Nama UPT harus diisi',
@@ -48,11 +50,11 @@ class UserController extends Controller
         }
 
         // $user = new user();
-        $data['namaupt'] = $request->namaupt;
-        $data['kanwil'] = $request->kanwil;
-        $data['tanggal'] = Carbon::now();
+        $dataupt['namaupt'] = $request->namaupt;
+        $dataupt['kanwil'] = $request->kanwil;
+        $dataupt['tanggal'] = Carbon::now();
 
-        User::create($data);
+        User::create($dataupt);
 
         return redirect()->route('UserPage');
     }
@@ -60,11 +62,11 @@ class UserController extends Controller
 
     public function UserPageEdit(Request $request, $id)
     {
-        $data = User::find($id);
+        $dataupt = User::find($id);
 
-        dd($data);
+        dd($dataupt);
 
-        // return view('user.indexUser', compact('data'));
+        // return view('user.indexUser', compact('dataupt'));
     }
 
     public function UserPageUpdate(Request $request, $id)
@@ -73,7 +75,8 @@ class UserController extends Controller
             $request->all(),
             [
                 'namaupt' => 'required|string|unique:users,namaupt,' . $id,
-                'kanwil' => 'required|string|unique:users,kanwil,' . $id,
+                'kanwil' => 'required|string' . $id,
+                // Dan data detail yang lain   
             ],
             [
                 'namaupt.required' => 'Nama UPT harus diisi',
@@ -85,10 +88,23 @@ class UserController extends Controller
             return redirect()->back()->withInput()->withErrors($validator);
         }
 
-        $data = User::find($id);
-        $data->namaupt = $request->namaupt;
-        $data->kanwil = $request->kanwil;
-        $data->save();
+        $dataupt = User::find($id);
+        $dataupt->namaupt = $request->namaupt;
+        $dataupt->kanwil = $request->kanwil;
+        $dataupt->save();
         return redirect()->route('UserPage');
     }
+    // ============================================================= METHOD DATA UPT
+
+
+
+
+    // ============================================================= METHOD DATA PONPES
+
+    public function DataPonpes()
+    {
+        $data = User::all();
+        return view('user.indexPonpes');
+    }
+
 }
