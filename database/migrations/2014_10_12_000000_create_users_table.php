@@ -21,7 +21,7 @@ return new class extends Migration
 
             // Data Opsional (Form VPAS)
             $table->string('pic_upt')->nullable();
-            $table->integer('no_telpon')->nullable(); // Changed to string for better phone handling
+            $table->integer('no_telpon', )->nullable();
             $table->text('alamat')->nullable();
             // kanwil sudah ada di atas
             $table->integer('jumlah_wbp')->nullable();
@@ -44,8 +44,8 @@ return new class extends Migration
 
             // Extension Reguler
             $table->integer('jumlah_extension')->nullable();
-            $table->string('no_extension_1')->nullable(); // dropdown value
-            $table->string('no_extension_2')->nullable(); // dropdown value
+            $table->string('no_extension')->nullable(); // dropdown value
+            $table->string('extension_password')->nullable(); // dropdown value
             $table->integer('pin_tes')->nullable();
 
             $table->timestamps();

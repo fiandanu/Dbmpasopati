@@ -7,6 +7,9 @@ use App\Http\Controllers\MonitoringServerController;
 use App\Http\Controllers\TutorialController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use Barryvdh\DomPDF\Facade\Pdf;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -35,11 +38,10 @@ Route::post('/PksStore', [DataBaseController::class, 'PksStore'])->name('PksStor
 
 // Vpas
 Route::get('/DbVpas', [DatabaseController::class, 'DbVpas'])->name('DbVpas');
-
-
-//--------------------- List Data Upt Di Munculkan Di DataBase/DataBaseUpt/Vpas
 Route::get('/ListDataUpt', [DatabaseController::class, 'ListDataUpt'])->name('ListDataUpt');
 Route::put('/ListDataUpdate/{id}', [DatabaseController::class, 'ListDataUpdate'])->name('ListDataUpdate');
+Route::get('/export-upt-csv/{id}', [DatabaseController::class, 'exportVerticalCsv'])->name('export.upt.csv');
+Route::get('/export-upt-pdf/{id}', [DatabaseController::class, 'exportUptPdf'])->name('export.upt.pdf');
 
 
 //==================================================== Database =====================================================

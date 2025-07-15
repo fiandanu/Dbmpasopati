@@ -39,8 +39,8 @@ class User extends Authenticatable
         'vpn_password',
         'jenis_vpn',
         'jumlah_extension',
-        'no_extension_1',
-        'no_extension_2',
+        'no_extension',
+        'extension_password',
         'pin_tes'
 
     ];
