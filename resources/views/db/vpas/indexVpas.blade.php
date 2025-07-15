@@ -214,7 +214,7 @@
 
                                                         <div class="mb-3">
                                                             <label for="no_telpon" class="form-label">Nomor Telefon</label>
-                                                            <input type="text" class="form-control" id="no_telpon"
+                                                            <input type="int" class="form-control" id="no_telpon"
                                                                 name="no_telpon" value="{{ $d->no_telpon}}">
                                                         </div>
 

@@ -21,7 +21,7 @@ return new class extends Migration
 
             // Data Opsional (Form VPAS)
             $table->string('pic_upt')->nullable();
-            $table->string('no_telpon')->nullable(); // Changed to string for better phone handling
+            $table->integer('no_telpon')->nullable(); // Changed to string for better phone handling
             $table->text('alamat')->nullable();
             // kanwil sudah ada di atas
             $table->integer('jumlah_wbp')->nullable();
