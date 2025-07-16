@@ -23,7 +23,7 @@ class DataBaseController extends Controller
 
     public function DbPks()
     {
-        return view('db.pks.index');
+        return view('db.pks.index'); 
     }
 
     public function DbCreatePks()
@@ -52,22 +52,32 @@ class DataBaseController extends Controller
 
 
 
-    // ====================================== VPAS
+    // ====================================== VPAS ================================================
 
     public function DbVpas(Request $request)
-    {
-        $data = User::all();
-        return view('db.vpas.indexVpas', compact('data'));
+{
+    $query = User::query();
+    
+    // Cek apakah ada parameter pencarian
+    if ($request->has('table_search') && !empty($request->table_search)) {
+        $searchTerm = $request->table_search;
+        
+        // Lakukan pencarian berdasarkan beberapa kolom
+        $query->where(function($q) use ($searchTerm) {
+            $q->where('namaupt', 'LIKE', '%' . $searchTerm . '%')
+              ->orWhere('kanwil', 'LIKE', '%' . $searchTerm . '%')
+              ->orWhere('tanggal', 'LIKE', '%' . $searchTerm . '%')
+              ->orWhere('pic_upt', 'LIKE', '%' . $searchTerm . '%')
+              ->orWhere('alamat', 'LIKE', '%' . $searchTerm . '%')
+              ->orWhere('provider_internet', 'LIKE', '%' . $searchTerm . '%')
+              ->orWhere('status_wartel', 'LIKE', '%' . $searchTerm . '%');
+        });
     }
-    // Untuk Memunculkan List Data Vpas Dari User
+    
+    $data = $query->get();
+    return view('db.vpas.indexVpas', compact('data'));
+}
 
-    // public function ListDataUpdate(Request $request, $id)
-    // {
-    //     $data = User::findOrFail($id);
-    //     $data->update($request->all());
-
-    //     return redirect()->back();
-    // }
 
 
     public function ListDataUpdate(Request $request, $id)
@@ -82,7 +92,7 @@ class DataBaseController extends Controller
 
             // Data Opsional (Form VPAS)
             'pic_upt' => 'nullable|string|max:255',
-            'no_telpon' => 'nullable|integer|max:20',
+            'no_telpon' => 'nullable|integer',
             'alamat' => 'nullable|string',
             'jumlah_wbp' => 'nullable|integer|min:0',
             'jumlah_line_reguler' => 'nullable|integer|min:0',
@@ -213,26 +223,58 @@ class DataBaseController extends Controller
         ['PIN Tes', $user->pin_tes],
     ];
 
-    $callback = function () use ($rows) {
-        $file = fopen('php://output', 'w');
-        foreach ($rows as $row) {
-            fputcsv($file, $row);
+        $callback = function () use ($rows) {
+            $file = fopen('php://output', 'w');
+            foreach ($rows as $row) {
+                fputcsv($file, $row);
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+        public function exportUptPdf($id)
+    {
+        $user = User::findOrFail($id);
+
+        $data = [
+            'title' => 'LAPAS PEREMPUAN KELAS IIA JAKARTA',
+            'user' => $user,
+        ];
+
+        $pdf = Pdf::loadView('export.upt_pdf', $data);
+        return $pdf->download('data_upt_'.$user->namaupt.'.pdf');
+    }
+        public function ListDataUpt(Request $request)
+    {
+        $query = User::query();
+        
+        // Cek apakah ada parameter pencarian
+        if ($request->has('table_search') && !empty($request->table_search)) {
+            $searchTerm = $request->table_search;
+            
+            // Lakukan pencarian berdasarkan beberapa kolom
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('namaupt', 'LIKE', '%' . $searchTerm . '%')
+                ->orWhere('kanwil', 'LIKE', '%' . $searchTerm . '%')
+                ->orWhere('tanggal', 'LIKE', '%' . $searchTerm . '%')
+                ->orWhere('pic_upt', 'LIKE', '%' . $searchTerm . '%')
+                ->orWhere('alamat', 'LIKE', '%' . $searchTerm . '%')
+                ->orWhere('provider_internet', 'LIKE', '%' . $searchTerm . '%')
+                ->orWhere('status_wartel', 'LIKE', '%' . $searchTerm . '%');
+            });
         }
-        fclose($file);
-    };
-
-    return response()->stream($callback, 200, $headers);
-}
-    public function exportUptPdf($id)
-{
-    $user = User::findOrFail($id);
-
-    $data = [
-        'title' => 'LAPAS PEREMPUAN KELAS IIA JAKARTA',
-        'user' => $user,
-    ];
-
-    $pdf = Pdf::loadView('export.upt_pdf', $data);
-    return $pdf->download('data_upt_'.$user->namaupt.'.pdf');
-}
-}
+        
+        // Ambil data dengan pagination (opsional)
+        $data = $query->get();
+        
+        // Kirim data ke view
+        return view('db.vpas.indexVpas', compact('data'));
+    }
+    public function DatabasePageDestroy($id)
+    {
+        $dataupt = User::find($id);
+        $dataupt->delete();
+        return redirect()->route('DbVpas');
+    }
+    }

@@ -24,27 +24,35 @@
                 <!-- /.row -->
                 <div class="row">
                     <div class="col-12">
-                        {{-- <button class="btn btn-success mb-2" data-bs-toggle="modal" data-bs-target="#addModal">
-                            <i class="fa fa-plus"></i> Tambah Data
-                        </button> --}}
+                        @if(request('table_search'))
+                                <div class="card-body">
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-info-circle"></i>
+                                        Hasil pencarian untuk: "<strong>{{ request('table_search') }}</strong>"
+                                        <a href="{{ route('ListDataUpt') }}" class="btn btn-sm btn-secondary ml-2">
+                                            <i class="fas fa-times"></i> Clear
+                                        </a>
+                                    </div>
+                                </div>
+                            @endif
                         <div class="card">
                             {{-- Index Form Html --}}
                             <div class="card-header">
-                                <h3 class="card-title">Data Upt</h3>
+                                <h3 class="card-title mt-2">Data Upt</h3>
                                 <div class="card-tools">
-                                    <form action="{{ route('ListDataUpt') }}" method="GET">
-                                        <div class="input-group input-group-sm" style="width: 150px;">
-                                            <input type="text" name="table_search" class="form-control float-right"
-                                                placeholder="Search">
-                                            <div class="input-group-append">
-                                                <button type="submit" class="btn btn-default">
-                                                    <i class="fas fa-search"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </form>
+                                <form action="{{ route('ListDataUpt') }}" method="GET">
+                                    <div class="input-group input-group-sm mt-2 mr-3" style="width: 200px;">
+                                    <input type="text" name="table_search" class="form-control" placeholder="Search" value="{{ request('table_search') }}">
+                                    <div class="input-group-append">
+                                        <button type="submit" class="btn btn-outline-secondary">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
                                 </div>
+                                </form>
                             </div>
+                            </div>
+             
                             <!-- /.card-header -->
                             <div class="card-body table-responsive p-0">
                                 <table class="table table-hover text-nowrap">
@@ -54,7 +62,8 @@
                                             <th>Nama UPT</th>
                                             <th>Kanwil</th>
                                             <th>Tanggal Dibuat</th>
-                                            <th>Status</th>
+                                            <th>Status Update</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -64,6 +73,39 @@
                                                 <td><strong>{{$d->namaupt}}</strong></td>
                                                 <td><span class="tag tag-success">{{$d->kanwil}}</span></td>
                                                 <td>{{$d->tanggal}}</td>
+                                                <td>
+                                                    @php
+                                                        // Cek apakah data opsional sudah diisi
+                                                        $optionalFields = [
+                                                            'pic_upt', 'no_telpon', 'alamat', 'jumlah_wbp', 
+                                                            'jumlah_line_reguler', 'provider_internet', 'kecepatan_internet',
+                                                            'tarif_wartel_reguler', 'status_wartel', 'akses_topup_pulsa',
+                                                            'password_topup', 'akses_download_rekaman', 'password_download',
+                                                            'internet_protocol', 'vpn_user', 'vpn_password', 'jenis_vpn',
+                                                            'jumlah_extension', 'no_extension', 'extension_password', 'pin_tes'
+                                                        ];
+                                                        
+                                                        $filledFields = 0;
+                                                        foreach($optionalFields as $field) {
+                                                            if(!empty($d->$field)) {
+                                                                $filledFields++;
+                                                            }
+                                                        }
+                                                        
+                                                        $totalFields = count($optionalFields);
+                                                        $percentage = ($filledFields / $totalFields) * 100;
+                                                    @endphp
+                                                    
+                                                    @if($filledFields == 0)
+                                                        <span class="badge badge-danger py-2">Belum di Update</span>
+                                                    @elseif($filledFields == $totalFields)
+                                                        <span class="badge badge-success py-2">Sudah di Update (100%)</span>
+                                                    @else
+                                                        <span class="badge badge-warning py-2">Sebagian ({{ round($percentage) }}%)</span>
+                                                    @endif
+
+
+                                                </td>
                                                 <td>
                                                     {{-- Edit Button --}}
                                                     <a href="#editModal{{ $d->id }}" class="btn btn-sm btn-primary"
@@ -97,7 +139,7 @@
                                                         <div class="modal-footer justify-content-between">
                                                             <button type="button" class="btn btn-default"
                                                                 data-dismiss="modal">Tutup</button>
-                                                            <form action="{{ route('UserPageDestroy', $d->id) }}" method="POST">
+                                                            <form action="{{ route('DataBasePageDestroy', $d->id) }}" method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="submit" class="btn btn-danger">Hapus</button>
@@ -262,7 +304,7 @@
 
                                                     <div class="mb-3">
                                                         <label for="status_wartel" class="form-label">Status Wartel</label>
-                                                        <input type="text" class="form-control" id="status_wartel" name="status_wartel" value="{{ $d->status_wartel }}" placeholder="Contoh: Aktif / Tidak Aktif">
+                                                        <input type= "text" class="form-control" id="status_wartel" name="status_wartel" value="{{ $d->status_wartel }}" placeholder="Contoh: Aktif / Tidak Aktif">
                                                     </div>
                                                 </div>
 

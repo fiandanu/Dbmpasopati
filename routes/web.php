@@ -37,6 +37,7 @@ Route::get('/DbCreatePks', [DataBaseController::class, 'DbCreatePks'])->name('Db
 Route::post('/PksStore', [DataBaseController::class, 'PksStore'])->name('PksStore');
 
 // Vpas
+Route::delete('/DataBasePageDestroy/{id}', [DataBaseController::class, 'DataBasePageDestroy'])->name('DataBasePageDestroy');
 Route::get('/DbVpas', [DatabaseController::class, 'DbVpas'])->name('DbVpas');
 Route::get('/ListDataUpt', [DatabaseController::class, 'ListDataUpt'])->name('ListDataUpt');
 Route::put('/ListDataUpdate/{id}', [DatabaseController::class, 'ListDataUpdate'])->name('ListDataUpdate');
@@ -78,7 +79,6 @@ Route::post('/UserPageStore', [UserController::class, 'UserPageStore'])->name('U
 Route::delete('/UserPageDestroy/{id}', [UserController::class, 'UserPageDestroy'])->name('UserPageDestroy');
 Route::get('/UserPageEdit/{id}', [UserController::class, 'UserPageEdit'])->name('UserPageEdit');
 Route::put('/UserPageUpdate/{id}', [UserController::class, 'UserPageUpdate'])->name('UserPageUpdate');
-
 Route::get('DataPonpes', [UserController::class, 'DataPonpes'])->name('DataPonpes');
 
 
