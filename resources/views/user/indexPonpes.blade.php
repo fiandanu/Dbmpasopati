@@ -18,6 +18,46 @@
             </div><!-- /.container-fluid -->
         </section>
 
+        {{-- Tampilkan pesan sukses --}}
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mx-4" role="alert">
+                <div class="d-flex">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-check-circle text-success"></i>
+                    </div>
+                    <div class="flex-grow-1 ml-3">
+                        <div class="alert-heading h5 mb-2">Berhasil!</div>
+                        <div class="small">{{ session('success') }}</div>
+                    </div>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
+        @endif
+
+        {{-- Tampilkan error validasi --}}
+        @if ($errors->any())
+            <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm mx-4" role="alert">
+                <div class="d-flex">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-exclamation-circle text-danger"></i>
+                    </div>
+                    <div class="flex-grow-1 ml-3">
+                        <div class="alert-heading h5 mb-2">Periksa kembali Data yang dimasukkan</div>
+                        <div class="small">
+                            @foreach ($errors->all() as $error)
+                                <div class="mb-1">• {{ $error }}</div>
+                            @endforeach
+                        </div>
+                    </div>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
+        @endif
+
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
@@ -51,16 +91,18 @@
                                         <tr>
                                             <th>No</th>
                                             <th>Nama Ponpes</th>
-                                            <th>Wilayah Ponpes</th>
+                                            <th>Nama Wilayah</th>
+                                            <th>Tanggal Dibuat</th>
                                             <th>Status</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach($data as $d)
+                                        @foreach($dataponpes as $d)
                                             <tr>
                                                 <td>{{ $loop->iteration}}</td>
                                                 <td><strong>{{$d->nama_ponpes}}</strong></td>
-                                                <td><span class="tag tag-success">{{$d->wilayah_ponpes}}</span></td>
+                                                <td><span class="tag tag-success">{{$d->nama_wilayah}}</span></td>
+                                                <td>{{$d->tanggal}}</td>
                                                 <td>
                                                     {{-- Edit Button --}}
                                                     <a href="#editModal{{ $d->id }}" class="btn btn-sm btn-primary"
@@ -83,12 +125,12 @@
                                                             </button>
                                                         </div>
                                                         <div class="modal-body">
-                                                            <p>Apakah <b>{{ $d->namaupt }}</b> ingin dihapus?</p>
+                                                            <p>Apakah <b>{{ $d->nama_ponpes }}</b> ingin dihapus?</p>
                                                         </div>
                                                         <div class="modal-footer justify-content-between">
                                                             <button type="button" class="btn btn-default"
                                                                 data-dismiss="modal">Tutup</button>
-                                                            <form action="{{ route('UserPageDestroy', $d->id) }}" method="POST">
+                                                            <form action="{{ route('PonpesPageDestroy', $d->id) }}" method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="submit" class="btn btn-danger">Hapus</button>
@@ -104,12 +146,11 @@
                                 </table>
                             </div>
                             {{-- Index Form Html --}}
-
-
-                            {{-- User Create Modal --}}
+                            
+                            {{-- Ponpes Create Modal --}}
                             <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel"
                                 aria-hidden="true">
-                                <form id="addForm" action="{{ route('UserPageStore')}}" method="POST">
+                                <form id="addForm" action="{{ route('PonpesPageStore')}}" method="POST">
                                     @csrf
                                     <div class="modal-dialog">
                                         <div class="modal-content">
@@ -120,27 +161,27 @@
                                             </div>
 
                                             <div class="modal-body">
-                                                {{-- Input Nama UPT --}}
+                                                {{-- Input Nama Ponpes --}}
                                                 <div class="mb-3">
-                                                    <label for="namaupt" class="form-label">Nama UPT</label>
-                                                    <input type="text" class="form-control" id="namaupt" name="namaupt"
+                                                    <label for="nama_ponpes" class="form-label">Nama Ponpes</label>
+                                                    <input type="text" class="form-control" id="nama_ponpes" name="nama_ponpes"
                                                         required>
                                                 </div>
-                                                @error('namaupt')
+                                                @error('nama_ponpes')
                                                     <small>{{ $message}}</small>
                                                 @enderror
-                                                {{-- Input Nama UPT --}}
+                                                {{-- Input Nama Ponpes --}}
 
-                                                {{-- Input Nama Kanwil --}}
+                                                {{-- Input Nama Wilayah --}}
                                                 <div class="mb-3">
-                                                    <label for="kanwil" class="form-label">Kanwil</label>
-                                                    <input type="text" class="form-control" id="kanwil" name="kanwil"
+                                                    <label for="nama_wilayah" class="form-label">Nama Wilayah</label>
+                                                    <input type="text" class="form-control" id="nama_wilayah" name="nama_wilayah"
                                                         required>
                                                 </div>
-                                                @error('kanwil')
+                                                @error('nama_wilayah')
                                                     <small>{{ $message}}</small>
                                                 @enderror
-                                                {{-- Input Nama Kanwil --}}
+                                                {{-- Input Nama Wilayah --}}
 
                                                 {{-- Input Tanggal Hidden --}}
                                                 <input type="hidden" id="addTanggal" name="tanggal">
@@ -156,14 +197,13 @@
                                     </div>
                                 </form>
                             </div>
-                            {{-- User Create Modal --}}
+                            {{-- Ponpes Create Modal --}}
 
-
-                            @foreach ($data as $d)
-                            {{-- User Edit Modal --}}
+                            @foreach ($dataponpes as $d)
+                            {{-- Ponpes Edit Modal --}}
                             <div class="modal fade" id="editModal{{ $d->id }}" tabindex="-1" aria-labelledby="editModalLabel"
                                 aria-hidden="true">
-                                <form id="editForm" action="{{ route('UserPageUpdate', ['id' => $d->id])}}" method="POST">
+                                <form id="editForm" action="{{ route('PonpesPageUpdate', ['id' => $d->id])}}" method="POST">
                                     @csrf
                                     @method('PUT')
                                     <div class="modal-dialog">
@@ -178,15 +218,15 @@
                                                 <input type="hidden" id="editId" name="id">
 
                                                 <div class="mb-3">
-                                                    <label for="namaupt" class="form-label">Nama UPT</label>
-                                                    <input type="text" class="form-control" id="namaupt" name="namaupt"
-                                                        value="{{ $d->namaupt}}">
+                                                    <label for="nama_ponpes" class="form-label">Nama Ponpes</label>
+                                                    <input type="text" class="form-control" id="nama_ponpes" name="nama_ponpes"
+                                                        value="{{ $d->nama_ponpes}}">
                                                 </div>
 
                                                 <div class="mb-3">
-                                                    <label for="kanwil" class="form-label">Kanwil</label>
-                                                    <input type="text" class="form-control" id="kanwil" name="kanwil"
-                                                        value="{{ $d->kanwil}}">
+                                                    <label for="nama_wilayah" class="form-label">Nama Wilayah</label>
+                                                    <input type="text" class="form-control" id="nama_wilayah" name="nama_wilayah"
+                                                        value="{{ $d->nama_wilayah}}">
                                                 </div>
 
                                             </div>
@@ -201,7 +241,7 @@
                                 </form>
                             </div>
                             @endforeach
-                            {{-- User Edit Modal --}}
+                            {{-- Ponpes Edit Modal --}}
 
                             <!-- /.card-body -->
                         </div>

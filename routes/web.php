@@ -90,3 +90,9 @@ Route::get('DataPonpes', [UserController::class, 'DataPonpes'])->name('DataPonpe
 
 
 // User Page
+
+// Tambahkan routes ini di bagian User Page
+Route::get('DataPonpes', [UserController::class, 'DataPonpes'])->name('DataPonpes');
+Route::post('/PonpesPageStore', [UserController::class, 'PonpesPageStore'])->name('PonpesPageStore');
+Route::delete('/PonpesPageDestroy/{id}', [UserController::class, 'PonpesPageDestroy'])->name('PonpesPageDestroy');
+Route::put('/PonpesPageUpdate/{id}', [UserController::class, 'PonpesPageUpdate'])->name('PonpesPageUpdate');

@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
+use App\Models\Ponpes; // Tambahkan import model Ponpes
 
 class UserController extends Controller
 {
@@ -49,24 +50,22 @@ class UserController extends Controller
             return redirect()->back()->withInput()->withErrors($validator);
         }
 
-        // $user = new user();
-        $dataupt['namaupt'] = $request->namaupt;
-        $dataupt['kanwil'] = $request->kanwil;
-        $dataupt['tanggal'] = Carbon::now();
+        // Perbaikan: gunakan array untuk data yang akan disimpan
+        $dataupt = [
+            'namaupt' => $request->namaupt,
+            'kanwil' => $request->kanwil,
+            'tanggal' => Carbon::now()->format('Y-m-d'), // Format tanggal yang konsisten
+        ];
 
         User::create($dataupt);
 
-        return redirect()->route('UserPage');
+        return redirect()->route('UserPage')->with('success', 'Data UPT berhasil ditambahkan!');
     }
-
 
     public function UserPageEdit(Request $request, $id)
     {
         $dataupt = User::find($id);
-
-        dd($dataupt);
-
-        // return view('user.indexUser', compact('dataupt'));
+        return view('user.editUser', compact('dataupt')); // Return view yang sesuai
     }
 
     public function UserPageUpdate(Request $request, $id)
@@ -75,8 +74,7 @@ class UserController extends Controller
             $request->all(),
             [
                 'namaupt' => 'required|string|unique:users,namaupt,' . $id,
-                'kanwil' => 'required|string' . $id,
-                // Dan data detail yang lain   
+                'kanwil' => 'required|string', // Perbaikan: hapus . $id yang tidak perlu
             ],
             [
                 'namaupt.required' => 'Nama UPT harus diisi',
@@ -88,23 +86,85 @@ class UserController extends Controller
             return redirect()->back()->withInput()->withErrors($validator);
         }
 
-        $dataupt = User::find($id);
+        $dataupt = User::findOrFail($id); // Gunakan findOrFail untuk error handling yang lebih baik
         $dataupt->namaupt = $request->namaupt;
         $dataupt->kanwil = $request->kanwil;
         $dataupt->save();
-        return redirect()->route('UserPage');
+        
+        return redirect()->route('UserPage')->with('success', 'Data UPT berhasil diupdate!');
     }
     // ============================================================= METHOD DATA UPT
 
-
-
-
     // ============================================================= METHOD DATA PONPES
-
+// ============================================================= METHOD DATA PONPES
     public function DataPonpes()
     {
-        $data = User::all();
-        return view('user.indexPonpes');
+        $dataponpes = Ponpes::all();
+        return view('user.indexPonpes', compact('dataponpes'));
     }
 
+    public function PonpesPageStore(Request $request)
+    {
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'nama_ponpes' => 'required|string|max:255',
+                'nama_wilayah' => 'required|string|max:255',
+            ],
+            [
+                'nama_ponpes.required' => 'Nama Ponpes harus diisi.',
+                'nama_wilayah.required' => 'Nama Wilayah harus diisi.',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return redirect()->back()->withInput()->withErrors($validator);
+        }
+
+        // Buat data array untuk disimpan
+        $dataponpes = [
+            'nama_ponpes' => $request->nama_ponpes,
+            'nama_wilayah' => $request->nama_wilayah,
+            'tanggal' => Carbon::now()->format('Y-m-d'),
+        ];
+
+        Ponpes::create($dataponpes);
+        return redirect()->back()->with('success', 'Data ponpes berhasil ditambahkan!');
+    }
+
+    public function PonpesPageDestroy($id)
+    {
+        $dataponpes = Ponpes::findOrFail($id);
+        $dataponpes->delete();
+        return redirect()->route('DataPonpes')->with('success', 'Data ponpes berhasil dihapus!');
+    }
+
+    public function PonpesPageUpdate(Request $request, $id)
+    {
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'nama_ponpes' => 'required|string|max:255',
+                'nama_wilayah' => 'required|string|max:255',
+            ],
+            [
+                'nama_ponpes.required' => 'Nama Ponpes harus diisi.',
+                'nama_wilayah.required' => 'Nama Wilayah harus diisi.',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return redirect()->back()->withInput()->withErrors($validator);
+        }
+
+        $dataponpes = Ponpes::findOrFail($id);
+        $dataponpes->update([
+            'nama_ponpes' => $request->nama_ponpes,
+            'nama_wilayah' => $request->nama_wilayah,
+        ]);
+        
+        return redirect()->back()->with('success', 'Data ponpes berhasil diupdate!');
+    }
+    // ============================================================= METHOD DATA PONPES
+    // ============================================================= METHOD DATA PONPES
 }
