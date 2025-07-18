@@ -6,12 +6,12 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>List Data Upt</h1>
+                        <h1>List Data Reguler</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">List Data Upt</li>
+                            <li class="breadcrumb-item active">List Data Reguler</li>
                         </ol>
                     </div>
                 </div>
@@ -112,7 +112,7 @@
                         <div class="card">
                             {{-- Index Form Html --}}
                             <div class="card-header">
-                                <h3 class="card-title mt-2">Data Upt</h3>
+                                <h3 class="card-title mt-2">Data Reguler</h3>
                                 <div class="card-tools">
                                 <form action="{{ route('ListDataUpt') }}" method="GET">
                                     <div class="input-group input-group-sm mt-2 mr-3" style="width: 200px;">

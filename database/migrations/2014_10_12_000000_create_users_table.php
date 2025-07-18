@@ -44,9 +44,10 @@ return new class extends Migration
 
             // Extension Reguler
             $table->integer('jumlah_extension')->nullable();
-            $table->string('no_extension')->nullable(); // dropdown value
-            $table->string('extension_password')->nullable(); // dropdown value
             $table->integer('pin_tes')->nullable();
+            $table->text('no_extension')->nullable();
+            $table->text('extension_password')->nullable();
+
 
             $table->timestamps();
         });

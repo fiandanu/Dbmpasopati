@@ -17,6 +17,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-bottom: 20px;
         }
         td, th {
             border: 1px solid #000;
@@ -35,6 +36,19 @@
         .nowrap {
             white-space: nowrap;
             width: 30%;
+        }
+        .extension-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .extension-table th {
+            background-color: #f0f0f0;
+            text-align: center;
+            font-weight: bold;
+        }
+        .extension-table td {
+            text-align: center;
+            word-wrap: break-word;
         }
     </style>
 </head>
@@ -67,9 +81,42 @@
 
         <tr><td colspan="2" class="section-header">Extension Reguler</td></tr>
         <tr><td>Jumlah Extension</td><td>{{ $user->jumlah_extension }}</td></tr>
-        <tr><td>No Extension</td><td>{{ $user->no_extension }}</td></tr>
-        <tr><td>Password Extension</td><td>{{ $user->extension_password }}</td></tr>
         <tr><td>PIN Tes</td><td>{{ $user->pin_tes }}</td></tr>
+    </table>
+
+    <!-- Tabel Extension Terpisah -->
+    <div class="section-header" style="text-align: center; font-weight: bold; background-color: #e4e4e4; padding: 8px; margin-bottom: 10px;">
+        Daftar Extension dan Password
+    </div>
+    <table class="extension-table">
+        <thead>
+            <tr>
+                <th style="width: 10%;">No</th>
+                <th style="width: 45%;">No Extension</th>
+                <th style="width: 45%;">Password Extension</th>
+            </tr>
+        </thead>
+        <tbody>
+            @php
+                $extensions = explode("\n", $user->no_extension ?? '');
+                $passwords = explode("\n", $user->extension_password ?? '');
+                $maxRows = max(count($extensions), count($passwords));
+            @endphp
+            
+            @for($i = 0; $i < $maxRows; $i++)
+                <tr>
+                    <td>{{ $i + 1 }}</td>
+                    <td>{{ $extensions[$i] ?? '' }}</td>
+                    <td>{{ $passwords[$i] ?? '' }}</td>
+                </tr>
+            @endfor
+            
+            @if($maxRows == 0)
+                <tr>
+                    <td colspan="3" style="text-align: center; font-style: italic;">Tidak ada data extension</td>
+                </tr>
+            @endif
+        </tbody>
     </table>
 </body>
 </html>

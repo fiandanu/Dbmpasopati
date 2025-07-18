@@ -44,6 +44,13 @@ Route::put('/ListDataUpdate/{id}', [DatabaseController::class, 'ListDataUpdate']
 Route::get('/export-upt-csv/{id}', [DatabaseController::class, 'exportVerticalCsv'])->name('export.upt.csv');
 Route::get('/export-upt-pdf/{id}', [DatabaseController::class, 'exportUptPdf'])->name('export.upt.pdf');
 
+// Reguler (sebelumnya Vpas)
+Route::delete('/DataBasePageDestroy/{id}', [DataBaseController::class, 'DataBasePageDestroy'])->name('DataBasePageDestroy');
+Route::get('/DbReguler', [DatabaseController::class, 'DbReguler'])->name('DbReguler');
+Route::get('/ListDataUpt', [DatabaseController::class, 'ListDataUpt'])->name('ListDataUpt');
+Route::put('/ListDataUpdate/{id}', [DatabaseController::class, 'ListDataUpdate'])->name('ListDataUpdate');
+Route::get('/export-upt-csv/{id}', [DatabaseController::class, 'exportVerticalCsv'])->name('export.upt.csv');
+Route::get('/export-upt-pdf/{id}', [DatabaseController::class, 'exportUptPdf'])->name('export.upt.pdf');
 
 //==================================================== Database =====================================================
 
