@@ -86,13 +86,17 @@ Route::post('/UserPageStore', [UserController::class, 'UserPageStore'])->name('U
 Route::delete('/UserPageDestroy/{id}', [UserController::class, 'UserPageDestroy'])->name('UserPageDestroy');
 Route::get('/UserPageEdit/{id}', [UserController::class, 'UserPageEdit'])->name('UserPageEdit');
 Route::put('/UserPageUpdate/{id}', [UserController::class, 'UserPageUpdate'])->name('UserPageUpdate');
-Route::get('DataPonpes', [UserController::class, 'DataPonpes'])->name('DataPonpes');
 
-
-// User Page
-
-// Tambahkan routes ini di bagian User Page
+// Ponpes Routes
 Route::get('DataPonpes', [UserController::class, 'DataPonpes'])->name('DataPonpes');
 Route::post('/PonpesPageStore', [UserController::class, 'PonpesPageStore'])->name('PonpesPageStore');
 Route::delete('/PonpesPageDestroy/{id}', [UserController::class, 'PonpesPageDestroy'])->name('PonpesPageDestroy');
 Route::put('/PonpesPageUpdate/{id}', [UserController::class, 'PonpesPageUpdate'])->name('PonpesPageUpdate');
+
+// Provider Routes
+Route::get('DataProvider', [UserController::class, 'DataProvider'])->name('DataProvider');
+Route::post('/ProviderPageStore', [UserController::class, 'ProviderPageStore'])->name('ProviderPageStore');
+Route::delete('/ProviderPageDestroy/{id}', [UserController::class, 'ProviderPageDestroy'])->name('ProviderPageDestroy');
+Route::put('/ProviderPageUpdate/{id}', [UserController::class, 'ProviderPageUpdate'])->name('ProviderPageUpdate');
+
+// User Page
