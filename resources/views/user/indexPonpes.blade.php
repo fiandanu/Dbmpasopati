@@ -18,46 +18,6 @@
             </div><!-- /.container-fluid -->
         </section>
 
-        {{-- Tampilkan pesan sukses --}}
-        @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mx-4" role="alert">
-                <div class="d-flex">
-                    <div class="flex-shrink-0">
-                        <i class="fas fa-check-circle text-success"></i>
-                    </div>
-                    <div class="flex-grow-1 ml-3">
-                        <div class="alert-heading h5 mb-2">Berhasil!</div>
-                        <div class="small">{{ session('success') }}</div>
-                    </div>
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            </div>
-        @endif
-
-        {{-- Tampilkan error validasi --}}
-        @if ($errors->any())
-            <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm mx-4" role="alert">
-                <div class="d-flex">
-                    <div class="flex-shrink-0">
-                        <i class="fas fa-exclamation-circle text-danger"></i>
-                    </div>
-                    <div class="flex-grow-1 ml-3">
-                        <div class="alert-heading h5 mb-2">Periksa kembali Data yang dimasukkan</div>
-                        <div class="small">
-                            @foreach ($errors->all() as $error)
-                                <div class="mb-1">• {{ $error }}</div>
-                            @endforeach
-                        </div>
-                    </div>
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            </div>
-        @endif
-
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
@@ -91,7 +51,7 @@
                                         <tr>
                                             <th>No</th>
                                             <th>Nama Ponpes</th>
-                                            <th>Nama Wilayah</th>
+                                            <th>Wilayah</th>
                                             <th>Tanggal Dibuat</th>
                                             <th>Status</th>
                                         </tr>
@@ -130,7 +90,7 @@
                                                         <div class="modal-footer justify-content-between">
                                                             <button type="button" class="btn btn-default"
                                                                 data-dismiss="modal">Tutup</button>
-                                                            <form action="{{ route('PonpesPageDestroy', $d->id) }}" method="POST">
+                                                            <form action="{{ route('ponpes.UserPageDestroy', $d->id) }}" method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="submit" class="btn btn-danger">Hapus</button>
@@ -147,10 +107,12 @@
                             </div>
                             {{-- Index Form Html --}}
                             
-                            {{-- Ponpes Create Modal --}}
+
+
+                            {{-- User Create Modal --}}
                             <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel"
                                 aria-hidden="true">
-                                <form id="addForm" action="{{ route('PonpesPageStore')}}" method="POST">
+                                <form id="addForm" action="{{ route('ponpes.UserPageStore')}}" method="POST">
                                     @csrf
                                     <div class="modal-dialog">
                                         <div class="modal-content">
@@ -174,7 +136,7 @@
 
                                                 {{-- Input Nama Wilayah --}}
                                                 <div class="mb-3">
-                                                    <label for="nama_wilayah" class="form-label">Nama Wilayah</label>
+                                                    <label for="nama_wilayah" class="form-label">Wilayah</label>
                                                     <input type="text" class="form-control" id="nama_wilayah" name="nama_wilayah"
                                                         required>
                                                 </div>
@@ -197,13 +159,14 @@
                                     </div>
                                 </form>
                             </div>
-                            {{-- Ponpes Create Modal --}}
+                            {{-- User Create Modal --}}
+
 
                             @foreach ($dataponpes as $d)
-                            {{-- Ponpes Edit Modal --}}
+                            {{-- User Edit Modal --}}
                             <div class="modal fade" id="editModal{{ $d->id }}" tabindex="-1" aria-labelledby="editModalLabel"
                                 aria-hidden="true">
-                                <form id="editForm" action="{{ route('PonpesPageUpdate', ['id' => $d->id])}}" method="POST">
+                                <form id="editForm" action="{{ route('ponpes.UserPageUpdate', ['id' => $d->id])}}" method="POST">
                                     @csrf
                                     @method('PUT')
                                     <div class="modal-dialog">
@@ -224,7 +187,7 @@
                                                 </div>
 
                                                 <div class="mb-3">
-                                                    <label for="nama_wilayah" class="form-label">Nama Wilayah</label>
+                                                    <label for="nama_wilayah" class="form-label">Wilayah</label>
                                                     <input type="text" class="form-control" id="nama_wilayah" name="nama_wilayah"
                                                         value="{{ $d->nama_wilayah}}">
                                                 </div>
@@ -241,7 +204,7 @@
                                 </form>
                             </div>
                             @endforeach
-                            {{-- Ponpes Edit Modal --}}
+                            {{-- User Edit Modal --}}
 
                             <!-- /.card-body -->
                         </div>

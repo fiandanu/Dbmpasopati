@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-
             // Field Wajib Form UPT
             $table->string('namaupt')->unique();
             $table->string('kanwil');
@@ -21,7 +20,7 @@ return new class extends Migration
 
             // Data Opsional (Form VPAS)
             $table->string('pic_upt')->nullable();
-            $table->integer('no_telpon', )->nullable();
+            $table->string('no_telpon', )->nullable();
             $table->text('alamat')->nullable();
             // kanwil sudah ada di atas
             $table->integer('jumlah_wbp')->nullable();

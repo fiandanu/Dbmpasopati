@@ -30,6 +30,154 @@
     <link rel="stylesheet" href="{{ asset('lte/plugins/summernote/summernote-bs4.min.css')}}">
     {{-- Bootstrap 4 --}}
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/css/bootstrap.min.css" rel="stylesheet">
+    {{-- Bootstrap Icons --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    {{-- Custom Css --}}
+    <style>
+        .modal-content {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background-color: #f8fafc;
+        }
+
+        .modal-header {
+            background-color: #e2e8f0;
+            border-bottom: 1px solid #cbd5e0;
+            padding: 1rem 1.5rem;
+        }
+
+        .modal-title {
+            color: #2d3748;
+            font-weight: 600;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+            background-color: #ffffff;
+            max-height: 500px;
+            /* Set maximum height for modal-body */
+            overflow-y: auto;
+            /* Enable vertical scrolling */
+        }
+
+        .section-title {
+            color: #2b6cb0;
+            font-weight: 600;
+            font-size: 1.25rem;
+        }
+
+        .form-label {
+            color: #2d3748;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            padding: 0.75rem;
+            background-color: #f8fafc;
+            color: #2d3748;
+        }
+
+        .form-control:focus {
+            border-color: #2b6cb0;
+            box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.2);
+            background-color: #ffffff;
+        }
+
+        .form-control[readonly] {
+            background-color: #edf2f7;
+            color: #718096;
+        }
+
+        .form-control::placeholder {
+            color: #a0aec0;
+        }
+
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%234b5e7a' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5H7z'/%3E%3C/svg%3E");
+            background-size: 12px;
+            background-position: right 0.75rem center;
+            background-repeat: no-repeat;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+        }
+
+        .text-muted {
+            color: #718096;
+        }
+
+        .modal-footer {
+            background-color: #e2e8f0;
+            border-top: 1px solid #cbd5e0;
+            padding: 1rem 1.5rem;
+        }
+
+        .btn-primary {
+            background-color: #2b6cb0;
+            border-color: #2b6cb0;
+            border-radius: 6px;
+        }
+
+        .btn-primary:hover {
+            background-color: #2c5282;
+            border-color: #2c5282;
+        }
+
+        .btn-secondary {
+            background-color: #718096;
+            border-color: #718096;
+            border-radius: 6px;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a667a;
+            border-color: #5a667a;
+        }
+
+        .border-bottom {
+            border-color: #cbd5e0;
+        }
+
+
+
+
+
+        .btn-close-custom {
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            color: #333;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            outline: none;
+        }
+
+        .btn-close-custom:hover {
+            background: #f1f3f5;
+            color: #000;
+            transform: scale(1.1);
+        }
+
+        .btn-close-custom:focus {
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+        }
+
+        .btn-close-custom .bi-x {
+            font-size: 1.8rem;
+            line-height: 1;
+        }
+    </style>
 
 </head>
 
@@ -161,7 +309,8 @@
                             <i class="fas fa-users mr-2"></i> 8 friend requests
                             <span class="float-right text-muted text-sm">12 hours</span>
                         </a>
-                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-divider">
+                        </div>
                         <a href="#" class="dropdown-item">
                             <i class="fas fa-file mr-2"></i> 3 new reports
                             <span class="float-right text-muted text-sm">2 days</span>
@@ -171,7 +320,7 @@
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-widget="fullscreen" href="#" role="button">
+                    <a class=" nav-link" data-widget="fullscreen" href="#" role="button">
                         <i class="fas fa-expand-arrows-alt"></i>
                     </a>
                 </li>
@@ -214,7 +363,7 @@
                         <input class="form-control form-control-sidebar" type="search" placeholder="Search"
                             aria-label="Search">
                         <div class="input-group-append">
-                            <button class="btn btn-sidebar">
+                            <button class=" btn btn-sidebar">
                                 <i class="fas fa-search fa-fw"></i>
                             </button>
                         </div>
@@ -237,13 +386,13 @@
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="{{ route('DataBaseUpt')}}" class="nav-link">
+                                    <a href="{{ route('database.DbUpt')}}" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Database UPT</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{{ route('DataBasePonpes')}}" class="nav-link">
+                                    <a href="{{ route('database.DataBasePonpes')}}" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Database Ponpes</p>
                                     </a>
@@ -371,7 +520,7 @@
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="{{ route('UserPage')}}" class="nav-link">
+                                    <a href="{{ route('upt.UserPage')}}" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Data UPT</p>
                                     </a>
@@ -379,7 +528,7 @@
                             </ul>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="{{ route('DataPonpes')}}" class="nav-link">
+                                    <a href="{{ route('ponpes.UserPage')}}" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Data Ponpes</p>
                                     </a>
@@ -387,7 +536,7 @@
                             </ul>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="{{ route('DataProvider')}}" class="nav-link">
+                                    <a href="{{ route('provider.DataProvider')}}" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Data Provider</p>
                                     </a>
@@ -411,8 +560,7 @@
             </div>
         </footer>
         <!-- Control Sidebar -->
-        <aside class="control-sidebar control-sidebar-dark">
-            <!-- Control sidebar content goes here -->
+        <aside class="control-sidebar control-sidebar-dark"> <!-- Control sidebar content goes here -->
         </aside>
         <!-- /.control-sidebar -->
     </div>

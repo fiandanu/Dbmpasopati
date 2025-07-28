@@ -90,7 +90,7 @@
                                                         <div class="modal-footer justify-content-between">
                                                             <button type="button" class="btn btn-default"
                                                                 data-dismiss="modal">Tutup</button>
-                                                            <form action="{{ route('UserPageDestroy', $d->id) }}" method="POST">
+                                                            <form action="{{ route('upt.UserPageDestroy', $d->id) }}" method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="submit" class="btn btn-danger">Hapus</button>
@@ -112,7 +112,7 @@
                             {{-- User Create Modal --}}
                             <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel"
                                 aria-hidden="true">
-                                <form id="addForm" action="{{ route('UserPageStore')}}" method="POST">
+                                <form id="addForm" action="{{ route('upt.UserPageStore')}}" method="POST">
                                     @csrf
                                     <div class="modal-dialog">
                                         <div class="modal-content">
@@ -166,7 +166,7 @@
                             {{-- User Edit Modal --}}
                             <div class="modal fade" id="editModal{{ $d->id }}" tabindex="-1" aria-labelledby="editModalLabel"
                                 aria-hidden="true">
-                                <form id="editForm" action="{{ route('UserPageUpdate', ['id' => $d->id])}}" method="POST">
+                                <form id="editForm" action="{{ route('upt.UserPageUpdate', ['id' => $d->id])}}" method="POST">
                                     @csrf
                                     @method('PUT')
                                     <div class="modal-dialog">

@@ -130,7 +130,8 @@
                                                         <div class="modal-footer justify-content-between">
                                                             <button type="button" class="btn btn-default"
                                                                 data-dismiss="modal">Tutup</button>
-                                                            <form action="{{ route('ProviderPageDestroy', $d->id) }}" method="POST">
+                                                            <form action="{{ route('provider.ProviderPageDestroy', $d->id) }}"
+                                                                method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="submit" class="btn btn-danger">Hapus</button>
@@ -146,11 +147,11 @@
                                 </table>
                             </div>
                             {{-- Index Form Html --}}
-                            
+
                             {{-- Provider Create Modal --}}
                             <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel"
                                 aria-hidden="true">
-                                <form id="addForm" action="{{ route('ProviderPageStore')}}" method="POST">
+                                <form id="addForm" action="{{ route('provider.ProviderPageStore')}}" method="POST">
                                     @csrf
                                     <div class="modal-dialog">
                                         <div class="modal-content">
@@ -164,8 +165,8 @@
                                                 {{-- Input Nama Provider --}}
                                                 <div class="mb-3">
                                                     <label for="nama_provider" class="form-label">Nama Provider</label>
-                                                    <input type="text" class="form-control" id="nama_provider" name="nama_provider"
-                                                        required>
+                                                    <input type="text" class="form-control" id="nama_provider"
+                                                        name="nama_provider" required>
                                                 </div>
                                                 @error('nama_provider')
                                                     <small class="text-danger">{{ $message}}</small>
@@ -175,15 +176,8 @@
                                                 {{-- Input Jenis VPN --}}
                                                 <div class="mb-3">
                                                     <label for="jenis_vpn" class="form-label">Jenis VPN</label>
-                                                    <select class="form-control" id="jenis_vpn" name="jenis_vpn" required>
-                                                        <option value="">Pilih Jenis VPN</option>
-                                                        <option value="PPTP">PPTP</option>
-                                                        <option value="L2TP">L2TP</option>
-                                                        <option value="OpenVPN">OpenVPN</option>
-                                                        <option value="IKEv2">IKEv2</option>
-                                                        <option value="WireGuard">WireGuard</option>
-                                                        <option value="SSTP">SSTP</option>
-                                                    </select>
+                                                    <input type="text" class="form-control" id="jenis_vpn" name="jenis_vpn"
+                                                        required>
                                                 </div>
                                                 @error('jenis_vpn')
                                                     <small class="text-danger">{{ $message}}</small>
@@ -206,54 +200,52 @@
                             </div>
                             {{-- Provider Create Modal --}}
 
-                            @foreach ($dataprovider as $d)
+
                             {{-- Provider Edit Modal --}}
-                            <div class="modal fade" id="editModal{{ $d->id }}" tabindex="-1" aria-labelledby="editModalLabel"
-                                aria-hidden="true">
-                                <form id="editForm" action="{{ route('ProviderPageUpdate', ['id' => $d->id])}}" method="POST">
-                                    @csrf
-                                    @method('PUT')
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="editModalLabel">Edit Data Provider</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-
-                                            <div class="modal-body">
-                                                <input type="hidden" id="editId" name="id">
-
-                                                <div class="mb-3">
-                                                    <label for="nama_provider" class="form-label">Nama Provider</label>
-                                                    <input type="text" class="form-control" id="nama_provider" name="nama_provider"
-                                                        value="{{ $d->nama_provider}}">
+                            @foreach ($dataprovider as $d)
+                                {{-- Provider Edit Modal --}}
+                                <div class="modal fade" id="editModal{{ $d->id }}" tabindex="-1"
+                                    aria-labelledby="editModalLabel" aria-hidden="true">
+                                    <form id="editForm" action="{{ route('provider.ProviderPageUpdate', ['id' => $d->id])}}"
+                                        method="POST">
+                                        @csrf
+                                        @method('PUT')
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="editModalLabel">Edit Data Provider</h5>
+                                                    <button type="button" class="btn-close-custom" data-bs-dismiss="modal"
+                                                        aria-label="Close">
+                                                        <i class="bi bi-x"></i>
+                                                    </button>
                                                 </div>
 
-                                                <div class="mb-3">
-                                                    <label for="jenis_vpn" class="form-label">Jenis VPN</label>
-                                                    <select class="form-control" id="jenis_vpn" name="jenis_vpn" required>
-                                                        <option value="">Pilih Jenis VPN</option>
-                                                        <option value="PPTP" {{ $d->jenis_vpn == 'PPTP' ? 'selected' : '' }}>PPTP</option>
-                                                        <option value="L2TP" {{ $d->jenis_vpn == 'L2TP' ? 'selected' : '' }}>L2TP</option>
-                                                        <option value="OpenVPN" {{ $d->jenis_vpn == 'OpenVPN' ? 'selected' : '' }}>OpenVPN</option>
-                                                        <option value="IKEv2" {{ $d->jenis_vpn == 'IKEv2' ? 'selected' : '' }}>IKEv2</option>
-                                                        <option value="WireGuard" {{ $d->jenis_vpn == 'WireGuard' ? 'selected' : '' }}>WireGuard</option>
-                                                        <option value="SSTP" {{ $d->jenis_vpn == 'SSTP' ? 'selected' : '' }}>SSTP</option>
-                                                    </select>
+                                                <div class="modal-body">
+                                                    <input type="hidden" id="editId" name="id">
+
+                                                    <div class="mb-3">
+                                                        <label for="nama_provider" class="form-label">Nama Provider</label>
+                                                        <input type="text" class="form-control" id="nama_provider"
+                                                            name="nama_provider" value="{{ $d->nama_provider}}">
+                                                    </div>
+
+                                                    <div class="mb-3">
+                                                        <label for="jenis_vpn" class="form-label">Jenis VPN</label>
+                                                        <input type="text" class="form-control" id="jenis_vpn" name="jenis_vpn"
+                                                            value="{{ $d->jenis_vpn}}">
+                                                    </div>
+
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Cancel</button>
+                                                    <button type="submit" class="btn btn-primary">Update</button>
                                                 </div>
 
                                             </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-bs-dismiss="modal">Cancel</button>
-                                                <button type="submit" class="btn btn-primary">Update</button>
-                                            </div>
-
                                         </div>
-                                    </div>
-                                </form>
-                            </div>
+                                    </form>
+                                </div>
                             @endforeach
                             {{-- Provider Edit Modal --}}
 
