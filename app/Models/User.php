@@ -21,6 +21,7 @@ class User extends Authenticatable
         'namaupt',
         'kanwil',
         'tanggal',
+        'uploaded_pdf',
         'pic_upt',
         'no_telpon',
         'alamat',

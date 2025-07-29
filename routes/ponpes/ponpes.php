@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\user\ponpes\PonpesController;
-use App\Http\Controllers\DatabasePonpesController;
 
 // ini di file ponpes.php
 

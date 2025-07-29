@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\Provider;
 
 class PonpesController extends Controller
 {
@@ -30,7 +31,8 @@ class PonpesController extends Controller
             });
         }
         $data = $query->get();
-        return view('db.reguler.indexPonpes', compact('data'));
+        $providers = Provider::all();
+        return view('db.ponpes.reguller.ponpes', compact('data', 'providers'));
     }
 
     public function UserPage()

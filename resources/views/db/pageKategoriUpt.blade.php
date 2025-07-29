@@ -1,6 +1,5 @@
 @extends('layout.sidebar')
 @section('content')
-
     <div class="content-wrapper">
         <div class="content-header">
             <div class="container-fluid">
@@ -27,7 +26,8 @@
                         <div class="card bg-light">
                             <div class="card-header font-weight-bold d-flex justify-content-center">PKS</div>
                             <div class="card-body">
-                                <a href="{{ route('DbPks')}}" class="btn btn-primary btn-sm btn-block">List Data PKS</a>
+                                <a href="{{ route('pks.ListDataPks') }}" class="btn btn-primary btn-sm btn-block">List Data
+                                    PKS</a>
                             </div>
                         </div>
                     </div>
@@ -57,7 +57,8 @@
                         <div class="card bg-light">
                             <div class="card-header font-weight-bold d-flex justify-content-center">REGULER</div>
                             <div class="card-body">
-                                <a href="{{ route('DbReguler') }}" class="btn btn-primary btn-sm btn-block">List Data Customer</a>
+                                <a href="{{ route('DbReguler') }}" class="btn btn-primary btn-sm btn-block">List Data
+                                    Customer</a>
                             </div>
                         </div>
                     </div>
