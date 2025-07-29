@@ -97,7 +97,7 @@
                                 <div class="alert alert-info">
                                     <i class="fas fa-info-circle"></i>
                                     Hasil pencarian untuk: "<strong>{{ request('table_search') }}</strong>"
-                                    <a href="{{ route('ListDataUpt') }}" class="btn btn-sm btn-secondary ml-2">
+                                    <a href="{{ route('pks.ListDataPks') }}" class="btn btn-sm btn-secondary ml-2">
                                         <i class="fas fa-times"></i> Clear
                                     </a>
                                 </div>
@@ -108,7 +108,7 @@
                             <div class="card-header">
                                 <h3 class="card-title mt-2">Data Reguler</h3>
                                 <div class="card-tools">
-                                    <form action="{{ route('ListDataUpt') }}" method="GET">
+                                    <form action="{{ route('pks.ListDataPks') }}" method="GET">
                                         <div class="input-group input-group-sm mt-2 mr-3" style="width: 200px;">
                                             <input type="text" name="table_search" class="form-control"
                                                 placeholder="Search" value="{{ request('table_search') }}">
@@ -121,7 +121,6 @@
                                     </form>
                                 </div>
                             </div>
-
 
                             <!-- /.card-header -->
                             <div class="card-body table-responsive p-0">
@@ -137,7 +136,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($data as $d)
+                                        @forelse ($data as $d)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td><strong>{{ $d->namaupt }}</strong></td>
@@ -191,42 +190,47 @@
                                                         </span>
                                                     @endif
                                                 </td>
-                                                <td class="d-flex">
-                                                    {{-- Edit Button --}}
-
-                                                    {{-- <a href="#editModal{{ $d->id }}" class="btn btn-sm btn-primary"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#editModal{{ $d->id }}">
-                                                        <i class="fa fa-edit"></i> edit</a> --}}
-
-                                                    <div class="d-flex justify-content-start">
+                                                <td>
+                                                    <div class="btn-group" role="group">
+                                                        {{-- Upload PDF Button --}}
                                                         <form action="{{ route('uploadFilePDF', $d->id) }}" method="POST"
                                                             enctype="multipart/form-data"
                                                             id="uploadForm{{ $d->id }}" class="d-none">
                                                             @csrf
                                                             <input type="file" name="uploaded_pdf"
-                                                                id="uploadInput{{ $d->id }}" class="d-none"
-                                                                required>
+                                                                id="uploadInput{{ $d->id }}" accept=".pdf"
+                                                                class="d-none" required>
                                                         </form>
-                                                        <button class="btn btn-sm btn-primary"
-                                                            onclick="triggerUpload({{ $d->id }})">Upload
-                                                            PDF</button>
+                                                        <button class="btn btn-sm btn-primary mr-1"
+                                                            onclick="triggerUpload({{ $d->id }})"
+                                                            title="Upload PDF">
+                                                            <i class="fas fa-upload"></i> Upload PDF
+                                                        </button>
+
+                                                        {{-- View PDF Button --}}
+                                                        @if (!empty($d->uploaded_pdf))
+                                                            <a href="{{ route('viewpdf', $d->id) }}" target="_blank"
+                                                                class="btn btn-sm btn-info mr-1" title="Lihat PDF">
+                                                                <i class="fas fa-eye"></i> View PDF
+                                                            </a>
+                                                        @else
+                                                            <button class="btn btn-sm btn-secondary mr-1" disabled
+                                                                title="Belum ada PDF yang diupload">
+                                                                <i class="fas fa-eye-slash"></i> No PDF
+                                                            </button>
+                                                        @endif
+
+                                                        {{-- Delete Button --}}
+                                                        <button class="btn btn-sm btn-danger" data-toggle="modal"
+                                                            data-target="#modal-default{{ $d->id }}"
+                                                            title="Hapus Data">
+                                                            <i class="fas fa-trash-alt"></i> Delete
+                                                        </button>
                                                     </div>
-
-                                                    <a href="{{ route('viewpdf', $d->id) }}" target="_blank"
-                                                        class="btn btn-sm btn-info">
-                                                        <i class="fa fa-eye"></i> View PDF
-                                                    </a>
-
-
-
-                                                    {{-- Delete Button --}}
-                                                    <a data-toggle="modal"
-                                                        data-target="#modal-default{{ $d->id }}"
-                                                        class="btn btn-sm btn-danger"><i class="fas fa-trash-alt">
-                                                            delete</i></a>
                                                 </td>
                                             </tr>
+
+                                            {{-- Delete Modal --}}
                                             <div class="modal fade" id="modal-default{{ $d->id }}">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
@@ -238,30 +242,41 @@
                                                             </button>
                                                         </div>
                                                         <div class="modal-body">
-                                                            <p>Apakah <b>{{ $d->namaupt }}</b> ingin dihapus?</p>
+                                                            <p>Apakah Anda yakin ingin menghapus data
+                                                                <b>{{ $d->namaupt }}</b>?</p>
+                                                            <p class="text-warning"><small><i
+                                                                        class="fas fa-exclamation-triangle"></i> File PDF
+                                                                    yang terupload juga akan dihapus.</small></p>
                                                         </div>
                                                         <div class="modal-footer justify-content-between">
                                                             <button type="button" class="btn btn-default"
-                                                                data-dismiss="modal">Tutup</button>
+                                                                data-dismiss="modal">Batal</button>
                                                             <form action="{{ route('pks.DataBasePageDestroy', $d->id) }}"
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
-                                                                <button type="submit"
-                                                                    class="btn btn-danger">Hapus</button>
+                                                                <button type="submit" class="btn btn-danger">
+                                                                    <i class="fas fa-trash-alt"></i> Hapus
+                                                                </button>
                                                             </form>
                                                         </div>
-                                                        <!-- /.modal-content -->
                                                     </div>
-                                                    <!-- /.modal-dialog -->
                                                 </div>
                                             </div>
-                                        @endforeach
+                                        @empty
+                                            <tr>
+                                                <td colspan="6" class="text-center">
+                                                    <div class="py-4">
+                                                        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                                                        <p class="text-muted">Tidak ada data yang ditemukan</p>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforelse
                                     </tbody>
                                 </table>
                             </div>
                             {{-- Index Form Html --}}
-
 
                             {{-- User Edit Modal --}}
                             @foreach ($data as $d)
@@ -285,7 +300,6 @@
                                                 <div class="modal-body">
                                                     <input type="hidden" id="editId" name="id">
                                                     <!-- Tampilkan pesan kesalahan jika ada -->
-
 
                                                     <!-- Data Wajib Section -->
                                                     <div class="mb-4">
@@ -331,13 +345,58 @@
 
     <script>
         function triggerUpload(id) {
-            document.getElementById('uploadInput' + id).click();
-            document.getElementById('uploadInput' + id).onchange = function() {
+            const input = document.getElementById('uploadInput' + id);
+            const form = document.getElementById('uploadForm' + id);
+
+            // Reset input
+            input.value = '';
+
+            // Trigger file selection
+            input.click();
+
+            // Handle file selection
+            input.onchange = function() {
                 if (this.files.length > 0) {
-                    document.getElementById('uploadForm' + id).submit();
+                    const file = this.files[0];
+
+                    // Validate file type
+                    if (file.type !== 'application/pdf') {
+                        alert('Hanya file PDF yang diperbolehkan!');
+                        this.value = '';
+                        return;
+                    }
+
+                    // Validate file size (5MB = 5 * 1024 * 1024 bytes)
+                    if (file.size > 5 * 1024 * 1024) {
+                        alert('Ukuran file tidak boleh lebih dari 5MB!');
+                        this.value = '';
+                        return;
+                    }
+
+                    // Show loading state
+                    const uploadBtn = document.querySelector(`button[onclick="triggerUpload(${id})"]`);
+                    const originalText = uploadBtn.innerHTML;
+                    uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+                    uploadBtn.disabled = true;
+
+                    // Submit form
+                    form.submit();
                 }
             };
         }
+
+        // Auto-hide alerts after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                const alerts = document.querySelectorAll('.alert');
+                alerts.forEach(function(alert) {
+                    if (alert.classList.contains('show')) {
+                        alert.classList.remove('show');
+                        setTimeout(() => alert.remove(), 150);
+                    }
+                });
+            }, 5000);
+        });
     </script>
 
 @endsection

@@ -117,16 +117,8 @@ class PksController extends Controller
 
     public function uploadFilePDF(Request $request, $id)
     {
-        // dd($request->all());
-        // Debug: Cek apakah file ada
 
-        // dd([
-        //     'hasFile uploaded_pdf' => $request->hasFile('uploaded_pdf'),
-        //     'hasFile upload_pdf' => $request->hasFile('upload_pdf'),
-        //     'all files' => $request->allFiles(),
-        //     'request all' => $request->all()
-        // ]);
-
+        // dd($request);
 
         if (!$request->hasFile('uploaded_pdf')) {
             return redirect()->back()->with('error', 'File tidak ditemukan dalam request!');

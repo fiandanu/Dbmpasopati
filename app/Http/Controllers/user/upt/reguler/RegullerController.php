@@ -46,6 +46,7 @@ class RegullerController extends Controller
                 // Field Wajib Form UPT
                 'namaupt' => 'required|string|max:255',
                 'kanwil' => 'required|string|max:255',
+                'tipe' => 'required|string|max:255',
                 'tanggal' => 'nullable|date',
 
                 // Data Opsional (Form VPAS)
@@ -136,22 +137,20 @@ class RegullerController extends Controller
 
             // Update field yang valid ke database
             try {
-                if (!empty($validatedData)) {
-                    $data = User::findOrFail($id);
-                    $data->update($validatedData);
+                if ($validator->fails()) {
+                    return redirect()->back()
+                        ->withErrors($validator)
+                        ->withInput()
+                        ->with('error', 'Gagal memperbarui data karena ada input yang tidak valid.');
                 }
             } catch (\Exception $e) {
                 // Jika ada error saat update, tetap tampilkan error validasi
             }
-
-
-
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput()
                 ->with('partial_success', 'Data valid telah disimpan. Silakan perbaiki field yang bermasalah.');
         }
-
         // Jika semua validasi berhasil
         try {
             $data = User::findOrFail($id);

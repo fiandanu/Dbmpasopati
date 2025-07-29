@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Barryvdh\DomPDF\Facade\Pdf;
 
-class VpasReguller extends Controller
+class vpr extends Controller
 {
     public function ListDataUpt(Request $request)
     {

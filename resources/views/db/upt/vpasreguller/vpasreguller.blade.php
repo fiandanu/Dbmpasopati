@@ -138,112 +138,116 @@
                                     </thead>
                                     <tbody>
                                         @foreach ($data as $d)
-                                            <tr>
-                                                <td>{{ $loop->iteration }}</td>
-                                                <td><strong>{{ $d->namaupt }}</strong></td>
-                                                <td><span class="tag tag-success">{{ $d->kanwil }}</span></td>
-                                                <td>{{ $d->tanggal }}</td>
-                                                <td>
-                                                    @php
-                                                        // Cek apakah data opsional sudah diisi
-                                                        $optionalFields = [
-                                                            'pic_upt',
-                                                            'no_telpon',
-                                                            'alamat',
-                                                            'jumlah_wbp',
-                                                            'jumlah_line_reguler',
-                                                            'provider_internet',
-                                                            'kecepatan_internet',
-                                                            'tarif_wartel_reguler',
-                                                            'status_wartel',
-                                                            'akses_topup_pulsa',
-                                                            'password_topup',
-                                                            'akses_download_rekaman',
-                                                            'password_download',
-                                                            'internet_protocol',
-                                                            'vpn_user',
-                                                            'vpn_password',
-                                                            'jenis_vpn',
-                                                            'jumlah_extension',
-                                                            'no_extension',
-                                                            'extension_password',
-                                                            'pin_tes',
-                                                        ];
+                                            @if ($d->tipe == 'reguler')
+                                                <tr>
+                                                    <td>{{ $loop->iteration }}</td>
+                                                    <td><strong>{{ $d->namaupt }}</strong></td>
+                                                    <td><span class="tag tag-success">{{ $d->kanwil }}</span></td>
+                                                    <td>{{ $d->tanggal }}</td>
+                                                    <td>
+                                                        @php
+                                                            // Cek apakah data opsional sudah diisi
+                                                            $optionalFields = [
+                                                                'pic_upt',
+                                                                'no_telpon',
+                                                                'alamat',
+                                                                'jumlah_wbp',
+                                                                'jumlah_line_reguler',
+                                                                'provider_internet',
+                                                                'kecepatan_internet',
+                                                                'tarif_wartel_reguler',
+                                                                'status_wartel',
+                                                                'akses_topup_pulsa',
+                                                                'password_topup',
+                                                                'akses_download_rekaman',
+                                                                'password_download',
+                                                                'internet_protocol',
+                                                                'vpn_user',
+                                                                'vpn_password',
+                                                                'jenis_vpn',
+                                                                'jumlah_extension',
+                                                                'no_extension',
+                                                                'extension_password',
+                                                                'pin_tes',
+                                                            ];
 
-                                                        $filledFields = 0;
-                                                        foreach ($optionalFields as $field) {
-                                                            if (!empty($d->$field)) {
-                                                                $filledFields++;
+                                                            $filledFields = 0;
+                                                            foreach ($optionalFields as $field) {
+                                                                if (!empty($d->$field)) {
+                                                                    $filledFields++;
+                                                                }
                                                             }
-                                                        }
 
-                                                        $totalFields = count($optionalFields);
-                                                        $percentage = ($filledFields / $totalFields) * 100;
-                                                    @endphp
+                                                            $totalFields = count($optionalFields);
+                                                            $percentage = ($filledFields / $totalFields) * 100;
+                                                        @endphp
 
-                                                    @if ($filledFields == 0)
-                                                        <span class="badge badge-danger py-2">Belum di Update</span>
-                                                    @elseif($filledFields == $totalFields)
-                                                        <span class="badge badge-success py-2">Sudah di Update (100%)</span>
-                                                    @else
-                                                        <span class="badge badge-warning py-2">Sebagian
-                                                            ({{ round($percentage) }}%)
-                                                        </span>
-                                                    @endif
+                                                        @if ($filledFields == 0)
+                                                            <span class="badge badge-danger py-2">Belum di Update</span>
+                                                        @elseif($filledFields == $totalFields)
+                                                            <span class="badge badge-success py-2">Sudah di Update
+                                                                (100%)
+                                                            </span>
+                                                        @else
+                                                            <span class="badge badge-warning py-2">Sebagian
+                                                                ({{ round($percentage) }}%)
+                                                            </span>
+                                                        @endif
 
 
-                                                </td>
-                                                <td>
-                                                    {{-- Edit Button --}}
-                                                    <a href="#editModal{{ $d->id }}" class="btn btn-sm btn-primary"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#editModal{{ $d->id }}">
-                                                        <i class="fa fa-edit"></i> edit</a>
+                                                    </td>
+                                                    <td>
+                                                        {{-- Edit Button --}}
+                                                        <a href="#editModal{{ $d->id }}"
+                                                            class="btn btn-sm btn-primary" data-bs-toggle="modal"
+                                                            data-bs-target="#editModal{{ $d->id }}">
+                                                            <i class="fa fa-edit"></i> edit</a>
 
-                                                    <a href="{{ route('export.upt.pdf', $d->id) }}"
-                                                        class="btn btn-sm btn-success">
-                                                        <i class="fa fa-file-pdf"></i> pdf</a>
+                                                        <a href="{{ route('export.upt.pdf', $d->id) }}"
+                                                            class="btn btn-sm btn-success">
+                                                            <i class="fa fa-file-pdf"></i> pdf</a>
 
-                                                    <a href="{{ route('export.upt.csv', $d->id) }}"
-                                                        class="btn btn-sm btn-success">
-                                                        <i class="fa fa-file-csv"></i> csv</a>
+                                                        <a href="{{ route('export.upt.csv', $d->id) }}"
+                                                            class="btn btn-sm btn-success">
+                                                            <i class="fa fa-file-csv"></i> csv</a>
 
-                                                    {{-- Delete Button --}}
-                                                    <a data-toggle="modal"
-                                                        data-target="#modal-default{{ $d->id }}"
-                                                        class="btn btn-sm btn-danger"><i class="fas fa-trash-alt">
-                                                            delete</i></a>
-                                                </td>
-                                            </tr>
-                                            <div class="modal fade" id="modal-default{{ $d->id }}">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h4 class="modal-title">Hapus Data</h4>
-                                                            <button type="button" class="close" data-dismiss="modal"
-                                                                aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
+                                                        {{-- Delete Button --}}
+                                                        <a data-toggle="modal"
+                                                            data-target="#modal-default{{ $d->id }}"
+                                                            class="btn btn-sm btn-danger"><i class="fas fa-trash-alt">
+                                                                delete</i></a>
+                                                    </td>
+                                                </tr>
+                                                <div class="modal fade" id="modal-default{{ $d->id }}">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h4 class="modal-title">Hapus Data</h4>
+                                                                <button type="button" class="close"
+                                                                    data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <p>Apakah <b>{{ $d->namaupt }}</b> ingin dihapus?</p>
+                                                            </div>
+                                                            <div class="modal-footer justify-content-between">
+                                                                <button type="button" class="btn btn-default"
+                                                                    data-dismiss="modal">Tutup</button>
+                                                                <form action="{{ route('DataBasePageDestroy', $d->id) }}"
+                                                                    method="POST">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                    <button type="submit"
+                                                                        class="btn btn-danger">Hapus</button>
+                                                                </form>
+                                                            </div>
+                                                            <!-- /.modal-content -->
                                                         </div>
-                                                        <div class="modal-body">
-                                                            <p>Apakah <b>{{ $d->namaupt }}</b> ingin dihapus?</p>
-                                                        </div>
-                                                        <div class="modal-footer justify-content-between">
-                                                            <button type="button" class="btn btn-default"
-                                                                data-dismiss="modal">Tutup</button>
-                                                            <form action="{{ route('DataBasePageDestroy', $d->id) }}"
-                                                                method="POST">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button type="submit"
-                                                                    class="btn btn-danger">Hapus</button>
-                                                            </form>
-                                                        </div>
-                                                        <!-- /.modal-content -->
+                                                        <!-- /.modal-dialog -->
                                                     </div>
-                                                    <!-- /.modal-dialog -->
                                                 </div>
-                                            </div>
+                                            @endif
                                         @endforeach
                                     </tbody>
                                 </table>
@@ -292,6 +296,13 @@
                                                             <input type="text" class="form-control" id="kanwil"
                                                                 name="kanwil" value="{{ $d->kanwil }}" readonly>
                                                         </div>
+
+                                                        <div class="mb-3">
+                                                                <label for="tipe" class="form-label">Tipe</label>
+                                                                <input type="text" class="form-control" id="tipe"
+                                                                    name="tipe" value="{{ ucfirst($d->tipe) }}"
+                                                                    readonly>
+                                                            </div>
                                                     </div>
 
                                                     <!-- Data Opsional Section -->
