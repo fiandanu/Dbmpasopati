@@ -32,6 +32,27 @@ Route::prefix('provider')->name('provider.')->group(function () {
     Route::put('/ProviderPageUpdate/{id}', [ProviderController::class, 'ProviderPageUpdate'])->name('ProviderPageUpdate');
 });
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Monitoring Server
 Route::get('/GrafikServer', [MonitoringServerController::class, 'GrafikServer'])->name('GrafikServer');
 Route::get('/MonitoringUpt', [MonitoringServerController::class, 'MonitoringUpt'])->name('MonitoringUpt');

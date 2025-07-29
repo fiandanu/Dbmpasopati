@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\user\upt\vpas;
+namespace App\Http\Controllers\user\upt\reguler;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -11,10 +11,9 @@ use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Barryvdh\DomPDF\Facade\Pdf;
 
-class VpasController extends Controller
+class Kontol extends Controller
 {
-
-    public function ListDataVpas(Request $request)
+    public function ListDataUpt(Request $request)
     {
         $query = User::query();
 
@@ -36,7 +35,7 @@ class VpasController extends Controller
 
         $data = $query->get();
         $providers = Provider::all();
-        return view('db.upt.vpas.indexVpas', compact('data', 'providers'));
+        return view('db.upt.reguler.indexUpt', compact('data', 'providers'));
     }
 
     public function ListDataUpdate(Request $request, $id)

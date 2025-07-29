@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\user\upt\pks\PksController;
 
+// PKS
 
 Route::prefix('pks')->name('pks.')->group(function () {
     Route::get('/ListDataPks', [PksController::class, 'ListDataPks'])->name('ListDataPks');

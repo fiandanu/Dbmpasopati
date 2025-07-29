@@ -1,19 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\user\upt;
+namespace App\Http\Controllers\user\upt\reguler;
 
 use App\Http\Controllers\Controller;
-use App\Models\Provider;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Provider;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Barryvdh\DomPDF\Facade\Pdf;
 
-class UptController extends Controller
+class VpasReguller extends Controller
 {
-
     public function ListDataUpt(Request $request)
     {
         $query = User::query();
@@ -180,10 +179,12 @@ class UptController extends Controller
             [
                 'namaupt' => 'required|string|unique:users,namaupt',
                 'kanwil' => 'required|string',
+                'tipe' => 'required|string',
             ],
             [
                 'namaupt.required' => 'Nama UPT harus diisi',
                 'kanwil.required' => 'Kanwil harus diisi',
+                'tipe.required' => 'Tipe harus diisi',
             ]
         );
 
@@ -195,6 +196,7 @@ class UptController extends Controller
         $dataupt = [
             'namaupt' => $request->namaupt,
             'kanwil' => $request->kanwil,
+            'tipe' => $request->tipe,
             'tanggal' => Carbon::now()->format('Y-m-d'), // Format tanggal yang konsisten
         ];
 
@@ -209,11 +211,14 @@ class UptController extends Controller
             $request->all(),
             [
                 'namaupt' => 'required|string|unique:users,namaupt,' . $id,
-                'kanwil' => 'required|string', // Perbaikan: hapus . $id yang tidak perlu
+                'kanwil' => 'required|string',
+                'tipe' => 'required|string',
             ],
             [
                 'namaupt.required' => 'Nama UPT harus diisi',
                 'kanwil.required' => 'Kanwil harus diisi',
+                'tipe.required' => 'Tipe harus diisi',
+
             ]
         );
 
@@ -224,6 +229,7 @@ class UptController extends Controller
         $dataupt = User::findOrFail($id); // Gunakan findOrFail untuk error handling yang lebih baik
         $dataupt->namaupt = $request->namaupt;
         $dataupt->kanwil = $request->kanwil;
+        $dataupt->tipe = $request->tipe;
         $dataupt->save();
 
         return redirect()->route('upt.UserPage')->with('success', 'Data UPT berhasil diupdate!');
@@ -299,5 +305,28 @@ class UptController extends Controller
         return redirect()->route('DbReguler');
     }
 
-    
+    public function DbReguler(Request $request)
+    {
+        $query = User::query();
+
+        // Cek apakah ada parameter pencarian
+        if ($request->has('table_search') && !empty($request->table_search)) {
+            $searchTerm = $request->table_search;
+
+            // Lakukan pencarian berdasarkan beberapa kolom
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('namaupt', 'LIKE', '%' . $searchTerm . '%')
+                    ->orWhere('kanwil', 'LIKE', '%' . $searchTerm . '%')
+                    ->orWhere('tanggal', 'LIKE', '%' . $searchTerm . '%')
+                    ->orWhere('pic_upt', 'LIKE', '%' . $searchTerm . '%')
+                    ->orWhere('alamat', 'LIKE', '%' . $searchTerm . '%')
+                    ->orWhere('provider_internet', 'LIKE', '%' . $searchTerm . '%')
+                    ->orWhere('status_wartel', 'LIKE', '%' . $searchTerm . '%');
+            });
+        }
+
+        $data = $query->get();
+        $providers = Provider::all();
+        return view('db.upt.reguler.indexUpt', compact('data', 'providers'));
+    }
 }

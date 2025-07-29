@@ -179,10 +179,12 @@ class RegullerController extends Controller
             [
                 'namaupt' => 'required|string|unique:users,namaupt',
                 'kanwil' => 'required|string',
+                'tipe' => 'required|string',
             ],
             [
                 'namaupt.required' => 'Nama UPT harus diisi',
                 'kanwil.required' => 'Kanwil harus diisi',
+                'tipe.required' => 'Tipe harus diisi',
             ]
         );
 
@@ -194,6 +196,7 @@ class RegullerController extends Controller
         $dataupt = [
             'namaupt' => $request->namaupt,
             'kanwil' => $request->kanwil,
+            'tipe' => $request->tipe,
             'tanggal' => Carbon::now()->format('Y-m-d'), // Format tanggal yang konsisten
         ];
 
@@ -208,11 +211,14 @@ class RegullerController extends Controller
             $request->all(),
             [
                 'namaupt' => 'required|string|unique:users,namaupt,' . $id,
-                'kanwil' => 'required|string', // Perbaikan: hapus . $id yang tidak perlu
+                'kanwil' => 'required|string',
+                'tipe' => 'required|string',
             ],
             [
                 'namaupt.required' => 'Nama UPT harus diisi',
                 'kanwil.required' => 'Kanwil harus diisi',
+                'tipe.required' => 'Tipe harus diisi',
+
             ]
         );
 
@@ -223,6 +229,7 @@ class RegullerController extends Controller
         $dataupt = User::findOrFail($id); // Gunakan findOrFail untuk error handling yang lebih baik
         $dataupt->namaupt = $request->namaupt;
         $dataupt->kanwil = $request->kanwil;
+        $dataupt->tipe = $request->tipe;
         $dataupt->save();
 
         return redirect()->route('upt.UserPage')->with('success', 'Data UPT berhasil diupdate!');

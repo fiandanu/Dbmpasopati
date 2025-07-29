@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\user\PageUser;
 
 
+// REULLER 
+
 // User Page BAGIAN UPT
 // AWAL DATA WAJIB NGISI NAMA UPT DAN KANWIL
 
@@ -20,6 +22,5 @@ Route::prefix('upt')->name('upt.')->group(function () {
     Route::get('/UserPage', [PageUser::class, 'UserPage'])->name('UserPage');
     Route::post('/UserPageStore', [RegullerController::class, 'UserPageStore'])->name('UserPageStore');
     Route::delete('/UserPageDestroy/{id}', [RegullerController::class, 'UserPageDestroy'])->name('UserPageDestroy');
-    Route::get('/UserPageEdit/{id}', [RegullerController::class, 'UserPageEdit'])->name('UserPageEdit');
     Route::put('/UserPageUpdate/{id}', [RegullerController::class, 'UserPageUpdate'])->name('UserPageUpdate');
 });

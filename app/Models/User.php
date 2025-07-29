@@ -20,6 +20,7 @@ class User extends Authenticatable
     protected $fillable = [
         'namaupt',
         'kanwil',
+        'tipe',
         'tanggal',
         'uploaded_pdf',
         'pic_upt',
