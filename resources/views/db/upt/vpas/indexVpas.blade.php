@@ -143,7 +143,7 @@
                                         @endphp
                                         @foreach ($data as $d)
                                             {{-- Filter hanya untuk tipe vpas atau vpas/reguler --}}
-                                            @if ($d->tipe == 'vpas')
+                                            {{-- @if ($d->tipe == 'vpas') --}}
                                                 <tr>
                                                     <td>{{ $no++ }}</td>
                                                     <td><strong>{{ $d->namaupt }}</strong></td>
@@ -252,11 +252,11 @@
                                                         <!-- /.modal-dialog -->
                                                     </div>
                                                 </div>
-                                            @endif
+                                            {{-- @endif --}}
                                         @endforeach
 
                                         {{-- Tampilkan pesan jika tidak ada data VPAS --}}
-                                        @php
+                                        {{-- @php
                                             $hasVpasData =
                                                 $data->where('tipe', 'vpas')->count() +
                                                 $data->where('tipe', 'vpas/reguler')->count();
@@ -270,7 +270,7 @@
                                                     </div>
                                                 </td>
                                             </tr>
-                                        @endif
+                                        @endif --}}
                                     </tbody>
                                 </table>
                             </div>
@@ -279,11 +279,11 @@
 
                             {{-- User Edit Modal --}}
                             @foreach ($data as $d)
-                                @if ($d->tipe == 'vpas' || $d->tipe == 'vpas/reguler')
+                                {{-- @if ($d->tipe == 'vpas' || $d->tipe == 'vpas/reguler') --}}
                                     {{-- User Edit Modal --}}
                                     <div class="modal fade" id="editModal{{ $d->id }}" tabindex="-1"
                                         aria-labelledby="editModalLabel" aria-hidden="true">
-                                        <form id="editForm" action="{{ route('ListDataUpdate', ['id' => $d->id]) }}"
+                                        <form id="editForm" action="{{ route('ListUpdateVpas', ['id' => $d->id]) }}"
                                             method="POST">
                                             @csrf
                                             @method('PUT')
@@ -581,7 +581,7 @@
                                             </div>
                                         </form>
                                     </div>
-                                @endif
+                                {{-- @endif --}}
                             @endforeach
                             {{-- User Edit Modal --}}
 

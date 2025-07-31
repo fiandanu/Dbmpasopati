@@ -18,6 +18,9 @@ class VpasController extends Controller
     {
         $query = User::query();
 
+        // Filter hanya data dengan tipe 'vpas'
+        $query->where('tipe', 'vpas');
+
         // Cek apakah ada parameter pencarian
         if ($request->has('table_search') && !empty($request->table_search)) {
             $searchTerm = $request->table_search;
@@ -39,14 +42,16 @@ class VpasController extends Controller
         return view('db.upt.vpas.indexVpas', compact('data', 'providers'));
     }
 
-    public function ListDataUpdate(Request $request, $id)
+    public function ListUpdateVpas(Request $request, $id)
     {
+        // dd($request->all());
         $validator = Validator::make(
             $request->all(),
             [
                 // Field Wajib Form UPT
                 'namaupt' => 'required|string|max:255',
                 'kanwil' => 'required|string|max:255',
+                'tipe' => 'required|string|max:255',
                 'tanggal' => 'nullable|date',
 
                 // Data Opsional (Form VPAS)
@@ -144,8 +149,6 @@ class VpasController extends Controller
             } catch (\Exception $e) {
                 // Jika ada error saat update, tetap tampilkan error validasi
             }
-
-
 
             return redirect()->back()
                 ->withErrors($validator)
@@ -303,31 +306,6 @@ class VpasController extends Controller
     {
         $dataupt = User::find($id);
         $dataupt->delete();
-        return redirect()->route('DbReguler');
-    }
-
-    public function DbReguler(Request $request)
-    {
-        $query = User::query();
-
-        // Cek apakah ada parameter pencarian
-        if ($request->has('table_search') && !empty($request->table_search)) {
-            $searchTerm = $request->table_search;
-
-            // Lakukan pencarian berdasarkan beberapa kolom
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('namaupt', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('kanwil', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('tanggal', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('pic_upt', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('alamat', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('provider_internet', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('status_wartel', 'LIKE', '%' . $searchTerm . '%');
-            });
-        }
-
-        $data = $query->get();
-        $providers = Provider::all();
-        return view('db.upt.reguler.indexUpt', compact('data', 'providers'));
+        return redirect()->route('ListDataVpas');
     }
 }

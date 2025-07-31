@@ -6,7 +6,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>List Data VPAS/REGULLER</h1>
+                        <h1>List Data VPR (Vpas Reguler) </h1>
                     </div>
                 </div>
             </div><!-- /.container-fluid -->
@@ -97,7 +97,7 @@
                                 <div class="alert alert-info">
                                     <i class="fas fa-info-circle"></i>
                                     Hasil pencarian untuk: "<strong>{{ request('table_search') }}</strong>"
-                                    <a href="{{ route('ListDataUpt') }}" class="btn btn-sm btn-secondary ml-2">
+                                    <a href="{{ route('ListDataVpr') }}" class="btn btn-sm btn-secondary ml-2">
                                         <i class="fas fa-times"></i> Clear
                                     </a>
                                 </div>
@@ -106,9 +106,9 @@
                         <div class="card">
                             {{-- Index Form Html --}}
                             <div class="card-header">
-                                <h3 class="card-title mt-2">Data Reguler</h3>
+                                <h3 class="card-title mt-2">Data VPAS</h3>
                                 <div class="card-tools">
-                                    <form action="{{ route('ListDataUpt') }}" method="GET">
+                                    <form action="{{ route('ListDataVpr') }}" method="GET">
                                         <div class="input-group input-group-sm mt-2 mr-3" style="width: 200px;">
                                             <input type="text" name="table_search" class="form-control"
                                                 placeholder="Search" value="{{ request('table_search') }}">
@@ -122,7 +122,6 @@
                                 </div>
                             </div>
 
-
                             <!-- /.card-header -->
                             <div class="card-body table-responsive p-0">
                                 <table class="table table-hover text-nowrap">
@@ -131,136 +130,150 @@
                                             <th>No</th>
                                             <th>Nama UPT</th>
                                             <th>Kanwil</th>
+                                            <th>Tipe</th>
                                             <th>Tanggal Dibuat</th>
                                             <th>Status Update</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @php
+                                            $no = 1;
+                                        @endphp
                                         @foreach ($data as $d)
-                                            @if ($d->tipe == 'reguler')
-                                                <tr>
-                                                    <td>{{ $loop->iteration }}</td>
-                                                    <td><strong>{{ $d->namaupt }}</strong></td>
-                                                    <td><span class="tag tag-success">{{ $d->kanwil }}</span></td>
-                                                    <td>{{ $d->tanggal }}</td>
-                                                    <td>
-                                                        @php
-                                                            // Cek apakah data opsional sudah diisi
-                                                            $optionalFields = [
-                                                                'pic_upt',
-                                                                'no_telpon',
-                                                                'alamat',
-                                                                'jumlah_wbp',
-                                                                'jumlah_line_reguler',
-                                                                'provider_internet',
-                                                                'kecepatan_internet',
-                                                                'tarif_wartel_reguler',
-                                                                'status_wartel',
-                                                                'akses_topup_pulsa',
-                                                                'password_topup',
-                                                                'akses_download_rekaman',
-                                                                'password_download',
-                                                                'internet_protocol',
-                                                                'vpn_user',
-                                                                'vpn_password',
-                                                                'jenis_vpn',
-                                                                'jumlah_extension',
-                                                                'no_extension',
-                                                                'extension_password',
-                                                                'pin_tes',
-                                                            ];
+                                            <tr>
+                                                <td>{{ $no++ }}</td>
+                                                <td><strong>{{ $d->namaupt }}</strong></td>
+                                                <td><span class="tag tag-success">{{ $d->kanwil }}</span></td>
+                                                <td>{{ ucfirst($d->tipe) }}</td>
+                                                <td>{{ $d->tanggal }}</td>
+                                                <td>
+                                                    @php
+                                                        // Cek apakah data opsional sudah diisi
+                                                        $optionalFields = [
+                                                            'pic_upt',
+                                                            'no_telpon',
+                                                            'alamat',
+                                                            'jumlah_wbp',
+                                                            'jumlah_line_reguler',
+                                                            'provider_internet',
+                                                            'kecepatan_internet',
+                                                            'tarif_wartel_reguler',
+                                                            'status_wartel',
+                                                            'akses_topup_pulsa',
+                                                            'password_topup',
+                                                            'akses_download_rekaman',
+                                                            'password_download',
+                                                            'internet_protocol',
+                                                            'vpn_user',
+                                                            'vpn_password',
+                                                            'jenis_vpn',
+                                                            'jumlah_extension',
+                                                            'no_extension',
+                                                            'extension_password',
+                                                            'pin_tes',
+                                                        ];
 
-                                                            $filledFields = 0;
-                                                            foreach ($optionalFields as $field) {
-                                                                if (!empty($d->$field)) {
-                                                                    $filledFields++;
-                                                                }
+                                                        $filledFields = 0;
+                                                        foreach ($optionalFields as $field) {
+                                                            if (!empty($d->$field)) {
+                                                                $filledFields++;
                                                             }
+                                                        }
 
-                                                            $totalFields = count($optionalFields);
-                                                            $percentage = ($filledFields / $totalFields) * 100;
-                                                        @endphp
+                                                        $totalFields = count($optionalFields);
+                                                        $percentage = ($filledFields / $totalFields) * 100;
+                                                    @endphp
 
-                                                        @if ($filledFields == 0)
-                                                            <span class="badge badge-danger py-2">Belum di Update</span>
-                                                        @elseif($filledFields == $totalFields)
-                                                            <span class="badge badge-success py-2">Sudah di Update
-                                                                (100%)
-                                                            </span>
-                                                        @else
-                                                            <span class="badge badge-warning py-2">Sebagian
-                                                                ({{ round($percentage) }}%)
-                                                            </span>
-                                                        @endif
+                                                    @if ($filledFields == 0)
+                                                        <span class="badge badge-danger py-2">Belum di Update</span>
+                                                    @elseif($filledFields == $totalFields)
+                                                        <span class="badge badge-success py-2">Sudah di Update
+                                                            (100%)
+                                                        </span>
+                                                    @else
+                                                        <span class="badge badge-warning py-2">Sebagian
+                                                            ({{ round($percentage) }}%)
+                                                        </span>
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    {{-- Edit Button --}}
+                                                    <a href="#editModal{{ $d->id }}" class="btn btn-sm btn-primary"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#editModal{{ $d->id }}">
+                                                        <i class="fa fa-edit"></i> edit</a>
 
+                                                    <a href="{{ route('export.upt.pdf', $d->id) }}"
+                                                        class="btn btn-sm btn-success">
+                                                        <i class="fa fa-file-pdf"></i> pdf</a>
 
-                                                    </td>
-                                                    <td>
-                                                        {{-- Edit Button --}}
-                                                        <a href="#editModal{{ $d->id }}"
-                                                            class="btn btn-sm btn-primary" data-bs-toggle="modal"
-                                                            data-bs-target="#editModal{{ $d->id }}">
-                                                            <i class="fa fa-edit"></i> edit</a>
+                                                    <a href="{{ route('export.upt.csv', $d->id) }}"
+                                                        class="btn btn-sm btn-success">
+                                                        <i class="fa fa-file-csv"></i> csv</a>
 
-                                                        <a href="{{ route('export.upt.pdf', $d->id) }}"
-                                                            class="btn btn-sm btn-success">
-                                                            <i class="fa fa-file-pdf"></i> pdf</a>
+                                                    {{-- Delete Button --}}
+                                                    <a data-toggle="modal"
+                                                        data-target="#modal-default{{ $d->id }}"
+                                                        class="btn btn-sm btn-danger"><i class="fas fa-trash-alt">
+                                                            delete</i></a>
+                                                </td>
+                                            </tr>
 
-                                                        <a href="{{ route('export.upt.csv', $d->id) }}"
-                                                            class="btn btn-sm btn-success">
-                                                            <i class="fa fa-file-csv"></i> csv</a>
-
-                                                        {{-- Delete Button --}}
-                                                        <a data-toggle="modal"
-                                                            data-target="#modal-default{{ $d->id }}"
-                                                            class="btn btn-sm btn-danger"><i class="fas fa-trash-alt">
-                                                                delete</i></a>
-                                                    </td>
-                                                </tr>
-                                                <div class="modal fade" id="modal-default{{ $d->id }}">
-                                                    <div class="modal-dialog">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h4 class="modal-title">Hapus Data</h4>
-                                                                <button type="button" class="close"
-                                                                    data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <p>Apakah <b>{{ $d->namaupt }}</b> ingin dihapus?</p>
-                                                            </div>
-                                                            <div class="modal-footer justify-content-between">
-                                                                <button type="button" class="btn btn-default"
-                                                                    data-dismiss="modal">Tutup</button>
-                                                                <form action="{{ route('DataBasePageDestroy', $d->id) }}"
-                                                                    method="POST">
-                                                                    @csrf
-                                                                    @method('DELETE')
-                                                                    <button type="submit"
-                                                                        class="btn btn-danger">Hapus</button>
-                                                                </form>
-                                                            </div>
-                                                            <!-- /.modal-content -->
+                                            {{-- Delete Modal --}}
+                                            <div class="modal fade" id="modal-default{{ $d->id }}">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h4 class="modal-title">Hapus Data</h4>
+                                                            <button type="button" class="close" data-dismiss="modal"
+                                                                aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
                                                         </div>
-                                                        <!-- /.modal-dialog -->
+                                                        <div class="modal-body">
+                                                            <p>Apakah <b>{{ $d->namaupt }}</b> ingin dihapus?</p>
+                                                        </div>
+                                                        <div class="modal-footer justify-content-between">
+                                                            <button type="button" class="btn btn-default"
+                                                                data-dismiss="modal">Tutup</button>
+                                                            <form action="{{ route('DataBasePageDestroy', $d->id) }}"
+                                                                method="POST">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit"
+                                                                    class="btn btn-danger">Hapus</button>
+                                                            </form>
+                                                        </div>
+                                                        <!-- /.modal-content -->
                                                     </div>
+                                                    <!-- /.modal-dialog -->
                                                 </div>
-                                            @endif
+                                            </div>
                                         @endforeach
+
+                                        {{-- Tampilkan pesan jika tidak ada data VPAS --}}
+                                        @if ($data->count() == 0)
+                                            <tr>
+                                                <td colspan="7" class="text-center py-4">
+                                                    <div class="text-muted">
+                                                        <i class="fas fa-info-circle fa-2x mb-2"></i>
+                                                        <p>Tidak ada data VPAS yang tersedia</p>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endif
                                     </tbody>
                                 </table>
                             </div>
                             {{-- Index Form Html --}}
-
 
                             {{-- User Edit Modal --}}
                             @foreach ($data as $d)
                                 {{-- User Edit Modal --}}
                                 <div class="modal fade" id="editModal{{ $d->id }}" tabindex="-1"
                                     aria-labelledby="editModalLabel" aria-hidden="true">
-                                    <form id="editForm" action="{{ route('ListDataUpdate', ['id' => $d->id]) }}"
+                                    <form id="editForm" action="{{ route('ListUpdateReguller', ['id' => $d->id]) }}"
                                         method="POST">
                                         @csrf
                                         @method('PUT')
@@ -277,7 +290,6 @@
                                                 <div class="modal-body">
                                                     <input type="hidden" id="editId" name="id">
                                                     <!-- Tampilkan pesan kesalahan jika ada -->
-
 
                                                     <!-- Data Wajib Section -->
                                                     <div class="mb-4">
@@ -298,11 +310,10 @@
                                                         </div>
 
                                                         <div class="mb-3">
-                                                                <label for="tipe" class="form-label">Tipe</label>
-                                                                <input type="text" class="form-control" id="tipe"
-                                                                    name="tipe" value="{{ ucfirst($d->tipe) }}"
-                                                                    readonly>
-                                                            </div>
+                                                            <label for="tipe" class="form-label">Tipe</label>
+                                                            <input type="text" class="form-control" id="tipe"
+                                                                name="tipe" value="{{ ucfirst($d->tipe) }}" readonly>
+                                                        </div>
                                                     </div>
 
                                                     <!-- Data Opsional Section -->
@@ -319,7 +330,8 @@
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="no_telpon" class="form-label">No Telepon</label>
+                                                            <label for="no_telpon" class="form-label">No
+                                                                Telepon</label>
                                                             <input type="text" class="form-control" id="no_telpon"
                                                                 name="no_telpon"
                                                                 value="{{ old('no_telpon', $d->no_telpon) }}"
@@ -334,7 +346,8 @@
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="jumlah_wbp" class="form-label">Jumlah BWP</label>
+                                                            <label for="jumlah_wbp" class="form-label">Jumlah
+                                                                BWP</label>
                                                             <input type="text" class="form-control" id="jumlah_wbp"
                                                                 name="jumlah_wbp" value="{{ $d->jumlah_wbp }}"
                                                                 placeholder="Masukkan jumlah BWP">
@@ -405,7 +418,8 @@
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="akses_topup_pulsa" class="form-label">Akses Top Up
+                                                            <label for="akses_topup_pulsa" class="form-label">Akses
+                                                                Top Up
                                                                 Pulsa</label>
                                                             <input type="text" class="form-control"
                                                                 id="akses_topup_pulsa" name="akses_topup_pulsa"
@@ -414,7 +428,8 @@
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="password_topup" class="form-label">Password Top Up
+                                                            <label for="password_topup" class="form-label">Password
+                                                                Top Up
                                                                 Pulsa</label>
                                                             <input type="text" class="form-control"
                                                                 id="password_topup" name="password_topup"
@@ -470,15 +485,9 @@
                                                                 placeholder="Masukkan password VPN">
                                                         </div>
 
-                                                        {{-- <div class="mb-3">
-                                                            <label for="jenis_vpn" class="form-label">Jenis VPN</label>
-                                                            <input type="text" class="form-control" id="jenis_vpn"
-                                                                name="jenis_vpn" value="{{ $d->jenis_vpn }}"
-                                                                placeholder="Contoh: PPTP, L2TP, OpenVPN, dsb">
-                                                        </div> --}}
-
                                                         <div class="mb-3">
-                                                            <label for="jenis_vpn" class="form-label">Jenis VPN</label>
+                                                            <label for="jenis_vpn" class="form-label">Jenis
+                                                                VPN</label>
                                                             <select class="form-control" id="jenis_vpn" name="jenis_vpn">
                                                                 <option value="">-- Pilih Jenis VPN --</option>
                                                                 @foreach ($providers as $p)
@@ -506,7 +515,6 @@
                                                                 placeholder="Masukkan jumlah">
                                                         </div>
 
-
                                                         <div class="mb-3">
                                                             <label for="pin_tes" class="form-label">Pin Test</label>
                                                             <input type="text" class="form-control" id="pin_tes"
@@ -517,7 +525,8 @@
                                                         <div class="mb-3">
                                                             <label for="no_extension" class="form-label">No
                                                                 Extension</label>
-                                                            <small class="text-muted d-block mb-2">Masukkan setiap nomor
+                                                            <small class="text-muted d-block mb-2">Masukkan setiap
+                                                                nomor
                                                                 extension pada baris terpisah</small>
                                                             <textarea class="form-control" id="no_extension" name="no_extension" rows="6"
                                                                 placeholder="Contoh:&#10;No Extension&#10;No Extension&#10;No Extension;">{{ $d->no_extension }}</textarea>
@@ -526,8 +535,10 @@
                                                         <div class="mb-3">
                                                             <label for="extension_password" class="form-label">Password
                                                                 Extension</label>
-                                                            <small class="text-muted d-block mb-2">Masukkan setiap password
-                                                                extension pada baris terpisah (sesuai urutan nomor extension
+                                                            <small class="text-muted d-block mb-2">Masukkan setiap
+                                                                password
+                                                                extension pada baris terpisah (sesuai urutan nomor
+                                                                extension
                                                                 di atas)</small>
                                                             <textarea class="form-control" id="extension_password" name="extension_password" rows="6"
                                                                 placeholder="Contoh:&#10;password&#10;password&#10;password">{{ $d->extension_password }}</textarea>

@@ -57,7 +57,7 @@
                         <div class="card bg-light">
                             <div class="card-header font-weight-bold d-flex justify-content-center">REGULER</div>
                             <div class="card-body">
-                                <a href="{{ route('DbReguler') }}" class="btn btn-primary btn-sm btn-block">List Data
+                                <a href="{{ route('ListDataReguller') }}" class="btn btn-primary btn-sm btn-block">List Data
                                     Customer</a>
                             </div>
                         </div>
@@ -68,7 +68,7 @@
                         <div class="card bg-light">
                             <div class="card-header font-weight-bold d-flex justify-content-center">REGULER/VPAS</div>
                             <div class="card-body">
-                                <a href="{{ route('DbReguler') }}" class="btn btn-primary btn-sm btn-block">List Data
+                                <a href="{{ route('ListDataVpr') }}" class="btn btn-primary btn-sm btn-block">List Data
                                     Customer</a>
                             </div>
                         </div>

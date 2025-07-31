@@ -112,7 +112,6 @@
                             {{-- Index Form Html --}}
 
 
-
                             {{-- User Create Modal --}}
                             <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel"
                                 aria-hidden="true">

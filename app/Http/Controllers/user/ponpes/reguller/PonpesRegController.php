@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\user\ponpes;
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Ponpes;
+namespace App\Http\Controllers\user\ponpes\reguller;
+use App\Models\Provider;
 use Carbon\Carbon;
+use App\Http\Controllers\Controller;
+use App\Models\Ponpes;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Barryvdh\DomPDF\Facade\Pdf;
-use App\Models\Provider;
 
-class PonpesController extends Controller
+class PonpesRegController extends Controller
 {
-    public function ListDataPonpes(Request $request)
+    public function ListDataReguller(Request $request)
     {
         $query = Ponpes::query();
 
@@ -67,7 +67,7 @@ class PonpesController extends Controller
         }
     }
 
-    public function ListDataPonpesUpdate(Request $request, $id)
+    public function ListUpdateReguller(Request $request, $id)
     {
         $validator = Validator::make(
             $request->all(),

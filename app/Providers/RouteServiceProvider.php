@@ -33,23 +33,14 @@ class RouteServiceProvider extends ServiceProvider
                 ->prefix('api')
                 ->group(base_path('routes/api.php'));
 
-            Route::middleware('web')
-                ->group(base_path('routes/web.php'));
-
-            Route::middleware('web')
-                ->group(base_path('routes/upt/pks.php'));
-
-            Route::middleware('web')
-                ->group(base_path('routes/upt/reguller.php'));
-
-            Route::middleware('web')
-                ->group(base_path('routes/upt/vpasreguller.php'));
-
-            Route::middleware('web')
-                ->group(base_path('routes/upt/vpas.php'));
-
-            Route::middleware('web')
-                ->group(base_path('routes/ponpes/ponpes.php'));
+            Route::middleware('web')->group(function () {
+                require base_path('routes/web.php');
+                require base_path('routes/upt/pks.php');
+                require base_path('routes/upt/vpr.php');
+                require base_path('routes/upt/vpas.php');
+                require base_path('routes/upt/reguller.php');
+                require base_path('routes/ponpes/ponpes.php');
+            });
         });
     }
 }

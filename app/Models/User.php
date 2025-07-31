@@ -44,7 +44,6 @@ class User extends Authenticatable
         'pin_tes',
         'jumlah_extension',
         'no_extension'
-
     ];
 
     /**

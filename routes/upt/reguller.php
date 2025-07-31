@@ -4,16 +4,15 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\user\PageUser;
 
 
-// REULLER 
+// REGULLER
 
 // User Page BAGIAN UPT
 // AWAL DATA WAJIB NGISI NAMA UPT DAN KANWIL
 
 // MENAMPILKAN DATA UPT DAN KANWIL DAN MENGISI DATA OPSIONALNYA
 Route::delete('/DataBasePageDestroy/{id}', [RegullerController::class, 'DataBasePageDestroy'])->name('DataBasePageDestroy');
-Route::get('/ListDataUpt', [RegullerController::class, 'ListDataUpt'])->name('ListDataUpt');
-Route::get('/DbReguler', [RegullerController::class, 'DbReguler'])->name('DbReguler');
-Route::put('/ListDataUpdate/{id}', [RegullerController::class, 'ListDataUpdate'])->name('ListDataUpdate');
+Route::get('/ListDataReguller', [RegullerController::class, 'ListDataReguller'])->name('ListDataReguller');
+Route::put('/ListUpdateReguller/{id}', [RegullerController::class, 'ListUpdateReguller'])->name('ListUpdateReguller');
 Route::get('/export-upt-csv/{id}', [RegullerController::class, 'exportVerticalCsv'])->name('export.upt.csv');
 Route::get('/export-upt-pdf/{id}', [RegullerController::class, 'exportUptPdf'])->name('export.upt.pdf');
 
