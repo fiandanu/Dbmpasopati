@@ -10,9 +10,9 @@ use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Barryvdh\DomPDF\Facade\Pdf;
 
-class PonpesRegController extends Controller
+class RegullerController extends Controller
 {
-    public function ListDataReguller(Request $request)
+    public function ListDataPonpes(Request $request)
     {
         $query = Ponpes::query();
 
@@ -67,7 +67,7 @@ class PonpesRegController extends Controller
         }
     }
 
-    public function ListUpdateReguller(Request $request, $id)
+    public function ListDataPonpesUpdate(Request $request, $id)
     {
         $validator = Validator::make(
             $request->all(),

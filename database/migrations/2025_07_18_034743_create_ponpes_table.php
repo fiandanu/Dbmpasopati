@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nama_ponpes')->unique();
             $table->string('nama_wilayah');
+            // $table->string('tipe')->nullable();
             $table->string('tanggal')->default(now());
 
             // Data Opsional (Form VPAS)

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('namaupt')->unique();
             $table->string('kanwil');
             $table->string('tanggal')->default(now());
+            
 
             // Data Opsional (Form VPAS)
             $table->string('pic_upt')->nullable();

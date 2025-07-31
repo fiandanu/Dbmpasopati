@@ -35,11 +35,15 @@ class RouteServiceProvider extends ServiceProvider
 
             Route::middleware('web')->group(function () {
                 require base_path('routes/web.php');
+                // KHUSUS UPT
                 require base_path('routes/upt/pks.php');
                 require base_path('routes/upt/vpr.php');
                 require base_path('routes/upt/vpas.php');
                 require base_path('routes/upt/reguller.php');
+
+                // KHUSUS PONPES
                 require base_path('routes/ponpes/ponpes.php');
+                require base_path('routes/ponpes/pks.php');
             });
         });
     }

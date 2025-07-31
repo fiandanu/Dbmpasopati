@@ -97,7 +97,7 @@
                                 <div class="alert alert-info">
                                     <i class="fas fa-info-circle"></i>
                                     Hasil pencarian untuk: "<strong>{{ request('table_search') }}</strong>"
-                                    <a href="{{ route('ListDataReguller') }}" class="btn btn-sm btn-secondary ml-2">
+                                    <a href="{{ route('ListDataPonpes') }}" class="btn btn-sm btn-secondary ml-2">
                                         <i class="fas fa-times"></i> Clear
                                     </a>
                                 </div>
@@ -108,7 +108,7 @@
                             <div class="card-header">
                                 <h3 class="card-title mt-2">Data VPAS</h3>
                                 <div class="card-tools">
-                                    <form action="{{ route('ListDataReguller') }}" method="GET">
+                                    <form action="{{ route('ListDataPonpes') }}" method="GET">
                                         <div class="input-group input-group-sm mt-2 mr-3" style="width: 200px;">
                                             <input type="text" name="table_search" class="form-control"
                                                 placeholder="Search" value="{{ request('table_search') }}">
@@ -204,11 +204,11 @@
                                                         data-bs-target="#editModal{{ $d->id }}">
                                                         <i class="fa fa-edit"></i> edit</a>
 
-                                                    <a href="{{ route('export.upt.pdf', $d->id) }}"
+                                                    <a href="{{ route('exportPonpesPdf', $d->id) }}"
                                                         class="btn btn-sm btn-success">
                                                         <i class="fa fa-file-pdf"></i> pdf</a>
 
-                                                    <a href="{{ route('export.upt.csv', $d->id) }}"
+                                                    <a href="{{ route('exportPonpesCsv', $d->id) }}"
                                                         class="btn btn-sm btn-success">
                                                         <i class="fa fa-file-csv"></i> csv</a>
 
@@ -237,7 +237,7 @@
                                                         <div class="modal-footer justify-content-between">
                                                             <button type="button" class="btn btn-default"
                                                                 data-dismiss="modal">Tutup</button>
-                                                            <form action="{{ route('DataBasePageDestroy', $d->id) }}"
+                                                            <form action="{{ route('PonpesPageDestroy', $d->id) }}"
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
@@ -274,7 +274,7 @@
                                 <div class="modal fade" id="editModal{{ $d->id }}" tabindex="-1"
                                     aria-labelledby="editModalLabel" aria-hidden="true">
                                     <form id="editForm"
-                                        action="{{ route('ListUpdateReguller', ['id' => $d->id]) }}"
+                                        action="{{ route('ListDataPonpesUpdate', ['id' => $d->id]) }}"
                                         method="POST">
                                         @csrf
                                         @method('PUT')
