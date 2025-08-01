@@ -36,44 +36,6 @@ class PksController extends Controller
         return view('db.upt.pks.indexPks', compact('data', 'providers'));
     }
 
-    public function DbReguler(Request $request)
-    {
-        $query = User::query();
-
-        // Cek apakah ada parameter pencarian
-        if ($request->has('table_search') && !empty($request->table_search)) {
-            $searchTerm = $request->table_search;
-
-            // Lakukan pencarian berdasarkan beberapa kolom
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('namaupt', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('kanwil', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('tanggal', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('pic_upt', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('alamat', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('provider_internet', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('status_wartel', 'LIKE', '%' . $searchTerm . '%');
-            });
-        }
-
-        $data = $query->get();
-        $providers = Provider::all();
-        return view('db.upt.reguler.indexUpt', compact('data', 'providers'));
-    }
-
-    public function exportUptPdf($id)
-    {
-        $user = User::findOrFail($id);
-
-        $data = [
-            'title' => 'LAPAS PEREMPUAN KELAS IIA JAKARTA',
-            'user' => $user,
-        ];
-
-        $pdf = Pdf::loadView('export.upt_pdf', $data);
-        return $pdf->download('data_upt_' . $user->namaupt . '.pdf');
-    }
-
     public function DatabasePageDestroy($id)
     {
         $dataupt = User::find($id);
@@ -81,31 +43,17 @@ class PksController extends Controller
         return redirect()->route('pks.ListDataPks');
     }
 
-    public function uploadFile(Request $request, $id)
+    public function viewUploadedPDF($id, $folder)
     {
-        $request->validate([
-            'upload_file' => 'required|file|mimes:pdf,doc,docx,xlsx,xls,jpg,jpeg,png|max:2048'
-        ]);
+        if (!in_array($folder, range(1, 10))) {
+            return abort(400, 'Folder tidak valid.');
+        }
 
-        $user = User::findOrFail($id);
-
-        $filename = time() . '_' . $request->file('upload_file')->getClientOriginalName();
-        $path = $request->file('upload_file')->storeAs('uploads/pks', $filename, 'public');
-
-        // Simpan path-nya ke database (kalau punya kolom khusus)
-        $user->uploaded_file = $path;
-        $user->save();
-
-        return redirect()->back()->with('success', 'File berhasil di-upload!');
-    }
-
-    public function viewUploadedPDF($id)
-    {
         $user = User::findOrFail($id);
 
         // Cek apakah file ada dan path tidak kosong
         if (empty($user->uploaded_pdf)) {
-            return abort(404, 'File PDF belum diupload.');
+            return abort(404, 'File PDF belum diupload.' . $folder . '.');
         }
 
         if (!Storage::disk('public')->exists($user->uploaded_pdf)) {
@@ -115,9 +63,8 @@ class PksController extends Controller
         return response()->file(storage_path('app/public/' . $user->uploaded_pdf));
     }
 
-    public function uploadFilePDF(Request $request, $id)
+    public function uploadFilePDFPks(Request $request, $id)
     {
-
         // dd($request);
 
         if (!$request->hasFile('uploaded_pdf')) {
@@ -149,5 +96,22 @@ class PksController extends Controller
         $user->save();
 
         return redirect()->back()->with('success', 'PDF berhasil di-upload!');
+    }
+
+    public function deleteFilePDF($id , $folder){
+        $user = User::findOrFail($id);
+
+        if (empty($user->uploaded_pdf)) {
+            return redirect()->back()->with('error', 'File PDF belum di upload');
+        }
+
+        if (Storage::disk('public')->exists($user->uploaded_pdf)) {
+            Storage::disk('public')->delete($user->uploaded_pdf);
+        }
+
+        $user->uploaded_pdf = null;
+        $user->save();
+
+        return redirect()->back()->with('success', 'File PDF berhasil dihapus');
     }
 }

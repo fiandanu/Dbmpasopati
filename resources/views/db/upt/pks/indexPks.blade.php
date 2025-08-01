@@ -11,6 +11,7 @@
                 </div>
             </div><!-- /.container-fluid -->
         </section>
+        
         {{-- Tampilkan pesan sukses total --}}
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mx-4" role="alert">
@@ -86,6 +87,7 @@
                 </div>
             </div>
         @endif
+        
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
@@ -131,7 +133,7 @@
                                             <th>Nama UPT</th>
                                             <th>Kanwil</th>
                                             <th>Tanggal Dibuat</th>
-                                            <th>Status Update</th>
+                                            <th>Status PDF</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -143,57 +145,20 @@
                                                 <td><span class="tag tag-success">{{ $d->kanwil }}</span></td>
                                                 <td>{{ $d->tanggal }}</td>
                                                 <td>
-                                                    @php
-                                                        // Cek apakah data opsional sudah diisi
-                                                        $optionalFields = [
-                                                            'pic_upt',
-                                                            'no_telpon',
-                                                            'alamat',
-                                                            'jumlah_wbp',
-                                                            'jumlah_line_reguler',
-                                                            'provider_internet',
-                                                            'kecepatan_internet',
-                                                            'tarif_wartel_reguler',
-                                                            'status_wartel',
-                                                            'akses_topup_pulsa',
-                                                            'password_topup',
-                                                            'akses_download_rekaman',
-                                                            'password_download',
-                                                            'internet_protocol',
-                                                            'vpn_user',
-                                                            'vpn_password',
-                                                            'jenis_vpn',
-                                                            'jumlah_extension',
-                                                            'no_extension',
-                                                            'extension_password',
-                                                            'pin_tes',
-                                                        ];
-
-                                                        $filledFields = 0;
-                                                        foreach ($optionalFields as $field) {
-                                                            if (!empty($d->$field)) {
-                                                                $filledFields++;
-                                                            }
-                                                        }
-
-                                                        $totalFields = count($optionalFields);
-                                                        $percentage = ($filledFields / $totalFields) * 100;
-                                                    @endphp
-
-                                                    @if ($filledFields == 0)
-                                                        <span class="badge badge-danger py-2">Belum di Update</span>
-                                                    @elseif($filledFields == $totalFields)
-                                                        <span class="badge badge-success py-2">Sudah di Update (100%)</span>
+                                                    @if (empty($d->uploaded_pdf))
+                                                        <span class="badge badge-danger py-2">
+                                                            <i class="fas fa-file-pdf"></i> PDF Belum di Update
+                                                        </span>
                                                     @else
-                                                        <span class="badge badge-warning py-2">Sebagian
-                                                            ({{ round($percentage) }}%)
+                                                        <span class="badge badge-success py-2">
+                                                            <i class="fas fa-check-circle"></i> PDF Sudah di Update
                                                         </span>
                                                     @endif
                                                 </td>
                                                 <td>
                                                     <div class="btn-group" role="group">
                                                         {{-- Upload PDF Button --}}
-                                                        <form action="{{ route('uploadFilePDF', $d->id) }}" method="POST"
+                                                        <form action="{{ route('uploadFilePDFPks', $d->id) }}" method="POST"
                                                             enctype="multipart/form-data"
                                                             id="uploadForm{{ $d->id }}" class="d-none">
                                                             @csrf
@@ -209,7 +174,7 @@
 
                                                         {{-- View PDF Button --}}
                                                         @if (!empty($d->uploaded_pdf))
-                                                            <a href="{{ route('viewpdf', $d->id) }}" target="_blank"
+                                                            <a href="{{ route('viewpdf', [$d->id, 'pdf' ]) }}" target="_blank"
                                                                 class="btn btn-sm btn-info mr-1" title="Lihat PDF">
                                                                 <i class="fas fa-eye"></i> View PDF
                                                             </a>
@@ -220,7 +185,16 @@
                                                             </button>
                                                         @endif
 
-                                                        {{-- Delete Button --}}
+                                                        {{-- Delete PDF Button --}}
+                                                        @if (!empty($d->uploaded_pdf))
+                                                            <button class="btn btn-sm btn-warning mr-1" data-toggle="modal"
+                                                                data-target="#deletePdfModal{{ $d->id }}"
+                                                                title="Hapus File PDF">
+                                                                <i class="fas fa-file-pdf"></i> Delete PDF
+                                                            </button>
+                                                        @endif
+
+                                                        {{-- Delete Data Button --}}
                                                         <button class="btn btn-sm btn-danger" data-toggle="modal"
                                                             data-target="#modal-default{{ $d->id }}"
                                                             title="Hapus Data">
@@ -230,7 +204,40 @@
                                                 </td>
                                             </tr>
 
-                                            {{-- Delete Modal --}}
+                                            {{-- Delete PDF Modal --}}
+                                            <div class="modal fade" id="deletePdfModal{{ $d->id }}">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h4 class="modal-title">Hapus File PDF</h4>
+                                                            <button type="button" class="close" data-dismiss="modal"
+                                                                aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>Apakah Anda yakin ingin menghapus file PDF untuk
+                                                                <b>{{ $d->namaupt }}</b>?</p>
+                                                            <p class="text-info"><small><i
+                                                                        class="fas fa-info-circle"></i> Data UPT tidak akan dihapus, hanya file PDF saja.</small></p>
+                                                        </div>
+                                                        <div class="modal-footer justify-content-between">
+                                                            <button type="button" class="btn btn-default"
+                                                                data-dismiss="modal">Batal</button>
+                                                            <form action="{{ route('deleteFilePDF', [$d->id, 'pks']) }}"
+                                                                method="POST">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="btn btn-warning">
+                                                                    <i class="fas fa-file-pdf"></i> Hapus PDF
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {{-- Delete Data Modal --}}
                                             <div class="modal fade" id="modal-default{{ $d->id }}">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">

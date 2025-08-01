@@ -13,8 +13,6 @@ class Provider extends Model
 
     protected $fillable = [
         'nama_provider',
-        'jenis_vpn',
-        'tanggal_update',
     ];
 
     protected $dates = [

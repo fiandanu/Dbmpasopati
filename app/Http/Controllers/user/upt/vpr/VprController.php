@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\Vpn;
 
 class VprController extends Controller
 {
@@ -38,7 +39,8 @@ class VprController extends Controller
 
         $data = $query->get();
         $providers = Provider::all();
-        return view('db.upt.vpr.indexVpr', compact('data', 'providers'));
+        $vpns = Vpn::all();
+        return view('db.upt.vpr.indexVpr', compact('data', 'providers', 'vpns'));
     }
 
     public function ListUpdateReguller(Request $request, $id)

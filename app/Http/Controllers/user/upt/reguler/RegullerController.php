@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Provider;
+use App\Models\Vpn; // TAMBAHKAN INI - Import model Vpn
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -38,9 +39,13 @@ class RegullerController extends Controller
 
         $data = $query->get();
         $providers = Provider::all();
-        return view('db.upt.reguler.indexUpt', compact('data', 'providers'));
+        $vpns = Vpn::all(); // TAMBAHKAN INI - Query data VPN
+        
+        // PERBAIKI INI - Tambahkan 'vpns' ke compact
+        return view('db.upt.reguler.indexUpt', compact('data', 'providers', 'vpns'));
     }
 
+    // Method lainnya tetap sama...
     public function ListUpdateReguller(Request $request, $id)
     {
         $validator = Validator::make(
@@ -164,6 +169,7 @@ class RegullerController extends Controller
         }
     }
 
+    // Method lainnya tidak berubah
     public function UserPageDestroy($id)
     {
         $dataupt = User::find($id);

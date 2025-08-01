@@ -5,22 +5,27 @@ namespace App\Http\Controllers\user\provider;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Provider;
-use Carbon\Carbon;
+use App\Models\Vpn;
 use Illuminate\Support\Facades\Validator;
 
 class ProviderController extends Controller
 {
+    public function index()
+    {
+        $dataprovider = Provider::all();
+        $datavpn = Vpn::all();
+        return view('user.indexProvider', compact('dataprovider', 'datavpn'));
+    }
+
     public function ProviderPageStore(Request $request)
     {
         $validator = Validator::make(
             $request->all(),
             [
                 'nama_provider' => 'required|string|max:255',
-                'jenis_vpn' => 'required|string|max:255',
             ],
             [
                 'nama_provider.required' => 'Nama Provider harus diisi.',
-                'jenis_vpn.required' => 'Jenis VPN harus diisi.',
             ]
         );
 
@@ -28,11 +33,8 @@ class ProviderController extends Controller
             return redirect()->back()->withInput()->withErrors($validator);
         }
 
-        // Buat data array untuk disimpan
         $dataprovider = [
             'nama_provider' => $request->nama_provider,
-            'jenis_vpn' => $request->jenis_vpn,
-            'tanggal_update' => Carbon::now()->format('Y-m-d'),
         ];
 
         Provider::create($dataprovider);
@@ -43,7 +45,7 @@ class ProviderController extends Controller
     {
         $dataprovider = Provider::findOrFail($id);
         $dataprovider->delete();
-        return redirect()->route('provider.DataProvider')->with('success', 'Data provider berhasil dihapus!');
+        return redirect()->back()->with('success', 'Data provider berhasil dihapus!');
     }
 
     public function ProviderPageUpdate(Request $request, $id)
@@ -52,11 +54,9 @@ class ProviderController extends Controller
             $request->all(),
             [
                 'nama_provider' => 'required|string|max:255',
-                'jenis_vpn' => 'required|string|max:255',
             ],
             [
                 'nama_provider.required' => 'Nama Provider harus diisi.',
-                'jenis_vpn.required' => 'Jenis VPN harus diisi.',
             ]
         );
 
@@ -67,8 +67,6 @@ class ProviderController extends Controller
         $dataprovider = Provider::findOrFail($id);
         $dataprovider->update([
             'nama_provider' => $request->nama_provider,
-            'jenis_vpn' => $request->jenis_vpn,
-            'tanggal_update' => Carbon::now()->format('Y-m-d'),
         ]);
 
         return redirect()->back()->with('success', 'Data provider berhasil diupdate!');

@@ -37,7 +37,7 @@
                         <div class="card bg-light">
                             <div class="card-header font-weight-bold d-flex justify-content-center">SPP</div>
                             <div class="card-body">
-                                <a href="" class="btn btn-primary btn-sm btn-block">List Data SPP</a>
+                                <a href="{{ route('spp.ListDataSpp')}}" class="btn btn-primary btn-sm btn-block">List Data SPP</a>
                             </div>
                         </div>
                     </div>

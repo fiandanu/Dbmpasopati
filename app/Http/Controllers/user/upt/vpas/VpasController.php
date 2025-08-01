@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\Vpn;
 
 class VpasController extends Controller
 {
@@ -39,7 +40,8 @@ class VpasController extends Controller
 
         $data = $query->get();
         $providers = Provider::all();
-        return view('db.upt.vpas.indexVpas', compact('data', 'providers'));
+        $vpns = Vpn::all();
+        return view('db.upt.vpas.indexVpas', compact('data', 'providers','vpns'));
     }
 
     public function ListUpdateVpas(Request $request, $id)

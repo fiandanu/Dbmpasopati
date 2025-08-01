@@ -9,7 +9,6 @@ use App\Http\Controllers\user\provider\ProviderController;
 use App\Http\Controllers\TutorialController;
 use App\Http\Controllers\user\PageUser;
 
-
 Route::get('/', [LoginController::class, 'login'])->name('login');
 Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
 
@@ -24,14 +23,13 @@ Route::prefix('database')->name('database.')->group(function () {
     Route::get('/DataBasePonpes', [PageUser::class, 'DataBasePonpes'])->name('DataBasePonpes');
 });
 
-// Provider Routes
-Route::prefix('provider')->name('provider.')->group(function () {
-    Route::get('/DataProvider', [PageUser::class, 'DataProvider'])->name('DataProvider');
-    Route::post('/ProviderPageStore', [ProviderController::class, 'ProviderPageStore'])->name('ProviderPageStore');
-    Route::delete('/ProviderPageDestroy/{id}', [ProviderController::class, 'ProviderPageDestroy'])->name('ProviderPageDestroy');
-    Route::put('/ProviderPageUpdate/{id}', [ProviderController::class, 'ProviderPageUpdate'])->name('ProviderPageUpdate');
-});
-
+// // Provider Routes
+// Route::prefix('provider')->name('provider.')->group(function () {
+//     Route::get('/DataProvider', [ProviderController::class, 'DataProvider'])->name('DataProvider');
+//     Route::post('/ProviderPageStore', [ProviderController::class, 'ProviderPageStore'])->name('ProviderPageStore');
+//     Route::delete('/ProviderPageDestroy/{id}', [ProviderController::class, 'ProviderPageDestroy'])->name('ProviderPageDestroy');
+//     Route::put('/ProviderPageUpdate/{id}', [ProviderController::class, 'ProviderPageUpdate'])->name('ProviderPageUpdate');
+// });
 
 
 

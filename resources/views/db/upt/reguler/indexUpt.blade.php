@@ -486,16 +486,20 @@
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="jenis_vpn" class="form-label">Jenis
-                                                                VPN</label>
+                                                            <label for="jenis_vpn" class="form-label">Jenis VPN</label>
                                                             <select class="form-control" id="jenis_vpn" name="jenis_vpn">
                                                                 <option value="">-- Pilih Jenis VPN --</option>
-                                                                @foreach ($providers as $p)
-                                                                    <option value="{{ $p->jenis_vpn }}"
-                                                                        {{ $d->jenis_vpn == $p->jenis_vpn ? 'selected' : '' }}>
-                                                                        {{ $p->jenis_vpn }}
-                                                                    </option>
-                                                                @endforeach
+                                                                @if (isset($vpns) && $vpns->count() > 0)
+                                                                    @foreach ($vpns as $p)
+                                                                        <option value="{{ $p->jenis_vpn }}"
+                                                                            {{ $d->jenis_vpn == $p->jenis_vpn ? 'selected' : '' }}>
+                                                                            {{ $p->jenis_vpn }}
+                                                                        </option>
+                                                                    @endforeach
+                                                                @else
+                                                                    <option value="" disabled>Tidak ada data VPN
+                                                                        tersedia</option>
+                                                                @endif
                                                             </select>
                                                         </div>
 

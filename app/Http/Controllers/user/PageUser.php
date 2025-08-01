@@ -29,10 +29,4 @@ class PageUser extends Controller
         return view('db.pageKategoriPonpes');
     }
 
-    // 🔷 FUNGSI: TAMPILKAN DATA PROVIDER
-    public function DataProvider()
-    {
-        $dataprovider = Provider::all();
-        return view('user.indexProvider', compact('dataprovider'));
-    }
 }

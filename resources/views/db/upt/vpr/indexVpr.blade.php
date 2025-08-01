@@ -490,7 +490,7 @@
                                                                 VPN</label>
                                                             <select class="form-control" id="jenis_vpn" name="jenis_vpn">
                                                                 <option value="">-- Pilih Jenis VPN --</option>
-                                                                @foreach ($providers as $p)
+                                                                @foreach ($vpns as $p)
                                                                     <option value="{{ $p->jenis_vpn }}"
                                                                         {{ $d->jenis_vpn == $p->jenis_vpn ? 'selected' : '' }}>
                                                                         {{ $p->jenis_vpn }}

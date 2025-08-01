@@ -11,6 +11,7 @@
                 </div>
             </div><!-- /.container-fluid -->
         </section>
+        
         {{-- Tampilkan pesan sukses total --}}
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mx-4" role="alert">
@@ -142,8 +143,6 @@
                                             $no = 1;
                                         @endphp
                                         @foreach ($data as $d)
-                                            {{-- Filter hanya untuk tipe vpas atau vpas/reguler --}}
-                                            {{-- @if ($d->tipe == 'vpas') --}}
                                                 <tr>
                                                     <td>{{ $no++ }}</td>
                                                     <td><strong>{{ $d->namaupt }}</strong></td>
@@ -255,27 +254,10 @@
                                             {{-- @endif --}}
                                         @endforeach
 
-                                        {{-- Tampilkan pesan jika tidak ada data VPAS --}}
-                                        {{-- @php
-                                            $hasVpasData =
-                                                $data->where('tipe', 'vpas')->count() +
-                                                $data->where('tipe', 'vpas/reguler')->count();
-                                        @endphp
-                                        @if ($hasVpasData == 0)
-                                            <tr>
-                                                <td colspan="7" class="text-center py-4">
-                                                    <div class="text-muted">
-                                                        <i class="fas fa-info-circle fa-2x mb-2"></i>
-                                                        <p>Tidak ada data VPAS yang tersedia</p>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @endif --}}
                                     </tbody>
                                 </table>
                             </div>
                             {{-- Index Form Html --}}
-
 
                             {{-- User Edit Modal --}}
                             @foreach ($data as $d)
@@ -513,7 +495,7 @@
                                                                 <select class="form-control" id="jenis_vpn"
                                                                     name="jenis_vpn">
                                                                     <option value="">-- Pilih Jenis VPN --</option>
-                                                                    @foreach ($providers as $p)
+                                                                    @foreach ($vpns as $p)
                                                                         <option value="{{ $p->jenis_vpn }}"
                                                                             {{ $d->jenis_vpn == $p->jenis_vpn ? 'selected' : '' }}>
                                                                             {{ $p->jenis_vpn }}
