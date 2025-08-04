@@ -43,17 +43,13 @@ class PksController extends Controller
         return redirect()->route('pks.ListDataPks');
     }
 
-    public function viewUploadedPDF($id, $folder)
+    public function viewUploadedPDF($id)
     {
-        if (!in_array($folder, range(1, 10))) {
-            return abort(400, 'Folder tidak valid.');
-        }
-
         $user = User::findOrFail($id);
 
         // Cek apakah file ada dan path tidak kosong
         if (empty($user->uploaded_pdf)) {
-            return abort(404, 'File PDF belum diupload.' . $folder . '.');
+            return abort(404, 'File PDF belum diupload');
         }
 
         if (!Storage::disk('public')->exists($user->uploaded_pdf)) {
@@ -98,7 +94,7 @@ class PksController extends Controller
         return redirect()->back()->with('success', 'PDF berhasil di-upload!');
     }
 
-    public function deleteFilePDF($id , $folder){
+    public function deleteFilePDF($id){
         $user = User::findOrFail($id);
 
         if (empty($user->uploaded_pdf)) {

@@ -6,7 +6,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>List Data Reguler Ponpes
+                        <h1>List Data VPR Ponpes
                     </div>
                 </div>
             </div><!-- /.container-fluid -->
@@ -97,7 +97,7 @@
                                 <div class="alert alert-info">
                                     <i class="fas fa-info-circle"></i>
                                     Hasil pencarian untuk: "<strong>{{ request('table_search') }}</strong>"
-                                    <a href="{{ route('ListDataPonpes') }}" class="btn btn-sm btn-secondary ml-2">
+                                    <a href="{{ route('ListDataVpr') }}" class="btn btn-sm btn-secondary ml-2">
                                         <i class="fas fa-times"></i> Clear
                                     </a>
                                 </div>
@@ -108,7 +108,7 @@
                             <div class="card-header">
                                 <h3 class="card-title mt-2">Data VPAS</h3>
                                 <div class="card-tools">
-                                    <form action="{{ route('ListDataPonpes') }}" method="GET">
+                                    <form action="{{ route('ListDataVpr') }}" method="GET">
                                         <div class="input-group input-group-sm mt-2 mr-3" style="width: 200px;">
                                             <input type="text" name="table_search" class="form-control"
                                                 placeholder="Search" value="{{ request('table_search') }}">

@@ -127,7 +127,6 @@ class RegullerController extends Controller
                 'pin_tes.min' => 'PIN Tes tidak boleh negatif.'
             ]
         );
-        $providers = Provider::all();
 
         // Jika validasi gagal
         if ($validator->fails()) {
@@ -190,6 +189,7 @@ class RegullerController extends Controller
             ],
             [
                 'namaupt.required' => 'Nama UPT harus diisi',
+                'namaupt.unique' => 'Nama UPT sudah ada',
                 'kanwil.required' => 'Kanwil harus diisi',
                 'tipe.required' => 'Tipe harus diisi',
             ]

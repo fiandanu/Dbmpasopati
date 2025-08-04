@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\user\ponpes\reguller;
+
 use App\Models\Provider;
 use Carbon\Carbon;
 use App\Http\Controllers\Controller;
@@ -9,12 +10,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\Vpn;
 
 class RegullerController extends Controller
 {
     public function ListDataPonpes(Request $request)
     {
         $query = Ponpes::query();
+
+        $query->where('tipe', 'reguler');
 
         // Search filter
         if ($request->has('table_search') && !empty($request->table_search)) {
@@ -31,7 +35,8 @@ class RegullerController extends Controller
         }
         $data = $query->get();
         $providers = Provider::all();
-        return view('db.ponpes.reguller.ponpes', compact('data', 'providers'));
+        $vpns = Vpn::all();
+        return view('db.ponpes.reguller.ponpes', compact('data', 'providers', 'vpns'));
     }
 
     public function UserPage()
@@ -42,26 +47,42 @@ class RegullerController extends Controller
 
     public function UserPageStore(Request $request)
     {
-        $request->validate(
+        // Validasi input
+        $validator = Validator::make(
+            $request->all(),
             [
                 'nama_ponpes' => 'required|string|unique:ponpes,nama_ponpes',
                 'nama_wilayah' => 'required|string',
+                'tipe' => 'required|string',
             ],
             [
-                'nama_ponpes.required' => 'Nama Ponpes harus di isi.',
-                'nama_ponpes.unique' => 'Nama Ponpes Sudah Terdaftar.',
-                'nama_wilayah.required' => 'Nama Daerah harus di isi.',
+                'nama_ponpes.required' => 'Nama Ponpes harus diisi.',
+                'nama_ponpes.unique' => 'Nama Ponpes sudah terdaftar.',
+                'nama_wilayah.required' => 'Nama Wilayah harus diisi.',
+                'tipe.required' => 'Tipe harus diisi.',
             ]
         );
 
-        try {
-            Ponpes::create([
-                'nama_ponpes' => $request->nama_ponpes,
-                'nama_wilayah' => $request->nama_wilayah,
-                'tanggal' => Carbon::now()->toDateString(), // Atau bisa pakai dari input hidden
-            ]);
+        // Cek jika validasi gagal
+        if ($validator->fails()) {
+            return redirect()->back()->withInput()->withErrors($validator);
+        }
 
-            return redirect()->back()->with('success', 'Data Ponpes berhasil ditambahkan!');
+        // Data siap simpan
+        $dataPonpes = [
+            'nama_ponpes' => $request->nama_ponpes,
+            'nama_wilayah' => $request->nama_wilayah,
+            'tipe' => $request->tipe,
+            'tanggal' => Carbon::today()->toDateString(),
+        ];
+
+        Ponpes::create($dataPonpes);
+        // return redirect()->route('ponpes.UserPage')->with('success', 'Data Ponpes berhasil ditambahkan!');
+
+        try {
+            Ponpes::create($dataPonpes);
+
+            return redirect()->route('ponpes.UserPage')->with('success', 'Data Ponpes berhasil ditambahkan!');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Gagal menambahkan data: ' . $e->getMessage());
         }
@@ -75,7 +96,8 @@ class RegullerController extends Controller
                 // Field Wajib
                 'nama_ponpes' => 'required|unique:ponpes,nama_ponpes,' . $id,
                 'nama_wilayah' => 'required|string|max:255',
-                'tanggal' => 'nullable|date',
+                'tipe' => 'required|string|max:255',
+                // 'tanggal' => 'nullable|date',
 
                 // Data Opsional
                 'pic_ponpes' => 'nullable|string|max:255',
@@ -221,7 +243,7 @@ class RegullerController extends Controller
         try {
             $data = Ponpes::findOrFail($id);
             $data->delete();
-            return redirect()->route('ListDataPonpes')->with('success', 'Data Ponpes berhasil dihapus!');
+            return redirect()->route('UserPage')->with('success', 'Data Ponpes berhasil dihapus!');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Gagal menghapus data: ' . $e->getMessage());
         }

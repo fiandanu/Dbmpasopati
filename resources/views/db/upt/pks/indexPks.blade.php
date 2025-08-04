@@ -11,7 +11,7 @@
                 </div>
             </div><!-- /.container-fluid -->
         </section>
-        
+
         {{-- Tampilkan pesan sukses total --}}
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mx-4" role="alert">
@@ -87,7 +87,7 @@
                 </div>
             </div>
         @endif
-        
+
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
@@ -158,8 +158,8 @@
                                                 <td>
                                                     <div class="btn-group" role="group">
                                                         {{-- Upload PDF Button --}}
-                                                        <form action="{{ route('uploadFilePDFPks', $d->id) }}" method="POST"
-                                                            enctype="multipart/form-data"
+                                                        <form action="{{ route('uploadFilePDFPks', $d->id) }}"
+                                                            method="POST" enctype="multipart/form-data"
                                                             id="uploadForm{{ $d->id }}" class="d-none">
                                                             @csrf
                                                             <input type="file" name="uploaded_pdf"
@@ -174,7 +174,7 @@
 
                                                         {{-- View PDF Button --}}
                                                         @if (!empty($d->uploaded_pdf))
-                                                            <a href="{{ route('viewpdf', [$d->id, 'pdf' ]) }}" target="_blank"
+                                                            <a href="{{ route('viewpdf.upt', $d->id) }}" target="_blank"
                                                                 class="btn btn-sm btn-info mr-1" title="Lihat PDF">
                                                                 <i class="fas fa-eye"></i> View PDF
                                                             </a>
@@ -187,7 +187,8 @@
 
                                                         {{-- Delete PDF Button --}}
                                                         @if (!empty($d->uploaded_pdf))
-                                                            <button class="btn btn-sm btn-warning mr-1" data-toggle="modal"
+                                                            <button class="btn btn-sm btn-warning mr-1"
+                                                                data-toggle="modal"
                                                                 data-target="#deletePdfModal{{ $d->id }}"
                                                                 title="Hapus File PDF">
                                                                 <i class="fas fa-file-pdf"></i> Delete PDF
@@ -217,14 +218,16 @@
                                                         </div>
                                                         <div class="modal-body">
                                                             <p>Apakah Anda yakin ingin menghapus file PDF untuk
-                                                                <b>{{ $d->namaupt }}</b>?</p>
-                                                            <p class="text-info"><small><i
-                                                                        class="fas fa-info-circle"></i> Data UPT tidak akan dihapus, hanya file PDF saja.</small></p>
+                                                                <b>{{ $d->namaupt }}</b>?
+                                                            </p>
+                                                            <p class="text-info"><small><i class="fas fa-info-circle"></i>
+                                                                    Data UPT tidak akan dihapus, hanya file PDF
+                                                                    saja.</small></p>
                                                         </div>
                                                         <div class="modal-footer justify-content-between">
                                                             <button type="button" class="btn btn-default"
                                                                 data-dismiss="modal">Batal</button>
-                                                            <form action="{{ route('deleteFilePDF', [$d->id, 'pks']) }}"
+                                                            <form action="{{ route('deleteFilePDF.upt', $d->id) }}"
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
@@ -250,7 +253,8 @@
                                                         </div>
                                                         <div class="modal-body">
                                                             <p>Apakah Anda yakin ingin menghapus data
-                                                                <b>{{ $d->namaupt }}</b>?</p>
+                                                                <b>{{ $d->namaupt }}</b>?
+                                                            </p>
                                                             <p class="text-warning"><small><i
                                                                         class="fas fa-exclamation-triangle"></i> File PDF
                                                                     yang terupload juga akan dihapus.</small></p>

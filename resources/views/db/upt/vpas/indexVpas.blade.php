@@ -352,7 +352,7 @@
 
                                                             <div class="mb-3">
                                                                 <label for="jumlah_line_reguler" class="form-label">Jumlah
-                                                                    Line Reguler Terpasang</label>
+                                                                    Line Vpas Terpasang</label>
                                                                 <input type="text" class="form-control"
                                                                     id="jumlah_line_reguler" name="jumlah_line_reguler"
                                                                     value="{{ $d->jumlah_line_reguler }}"
@@ -385,8 +385,7 @@
                                                             </div>
 
                                                             <div class="mb-3">
-                                                                <label for="tarif_wartel_reguler" class="form-label">Tarif
-                                                                    Wartel Reguler</label>
+                                                                <label for="tarif_wartel_reguler" class="form-label">Tarif Vpas</label>
                                                                 <input type="text" class="form-control"
                                                                     id="tarif_wartel_reguler" name="tarif_wartel_reguler"
                                                                     value="{{ $d->tarif_wartel_reguler }}"
@@ -513,8 +512,7 @@
                                                             </div>
 
                                                             <div class="mb-3">
-                                                                <label for="jumlah_extension" class="form-label">Jumlah
-                                                                    Extension</label>
+                                                                <label for="jumlah_extension" class="form-label">Nomor Pemanggil</label>
                                                                 <input type="text" class="form-control"
                                                                     id="jumlah_extension" name="jumlah_extension"
                                                                     value="{{ $d->jumlah_extension }}"
@@ -532,8 +530,7 @@
                                                             <div class="mb-3">
                                                                 <label for="no_extension" class="form-label">No
                                                                     Extension</label>
-                                                                <small class="text-muted d-block mb-2">Masukkan setiap
-                                                                    nomor
+                                                                <small class="text-muted d-block mb-2">Akses Airdroid
                                                                     extension pada baris terpisah</small>
                                                                 <textarea class="form-control" id="no_extension" name="no_extension" rows="6"
                                                                     placeholder="Contoh:&#10;No Extension&#10;No Extension&#10;No Extension;">{{ $d->no_extension }}</textarea>
@@ -541,8 +538,7 @@
 
                                                             <div class="mb-3">
                                                                 <label for="extension_password"
-                                                                    class="form-label">Password
-                                                                    Extension</label>
+                                                                    class="form-label">Password Airdroid</label>
                                                                 <small class="text-muted d-block mb-2">Masukkan setiap
                                                                     password
                                                                     extension pada baris terpisah (sesuai urutan nomor

@@ -16,5 +16,5 @@ Route::prefix('ponpes')->name('ponpes.')->group(function () {
     Route::post('/UserPageStore', [RegullerController::class, 'UserPageStore'])->name('UserPageStore');
     Route::get('/UserPageEdit/{id}', [RegullerController::class, 'UserPageEdit'])->name('UserPageEdit');
     Route::put('/UserPageUpdate/{id}', [RegullerController::class, 'UserPageUpdate'])->name('UserPageUpdate');
-    Route::delete('/UserPageDestroy/{id}', [RegullerController::class, 'UserPageDestroy'])->name('UserPageDestroy');
+    Route::delete('/PonpesPageDestroy/{id}', [RegullerController::class, 'PonpesPageDestroy'])->name('PonpesPageDestroy');
 });

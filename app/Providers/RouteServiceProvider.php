@@ -40,7 +40,6 @@ class RouteServiceProvider extends ServiceProvider
                 require base_path('routes/provider/provider.php');
                 require base_path('routes/provider/vpn.php');
 
-
                 // KHUSUS UPT
                 require base_path('routes/upt/pks.php');
                 require base_path('routes/upt/reguller.php');
@@ -49,8 +48,11 @@ class RouteServiceProvider extends ServiceProvider
                 require base_path('routes/upt/vpr.php');
 
                 // KHUSUS PONPES
-                require base_path('routes/ponpes/ponpes.php');
                 require base_path('routes/ponpes/pks.php');
+                require base_path('routes/ponpes/reguller.php');
+                require base_path('routes/ponpes/vtren.php');
+                require base_path('routes/ponpes/vpr.php');
+
             });
         });
     }

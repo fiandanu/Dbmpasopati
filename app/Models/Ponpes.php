@@ -14,6 +14,7 @@ class Ponpes extends Model
     protected $fillable = [
         'nama_ponpes',
         'nama_wilayah',
+        'tipe',
         'tanggal',
         'pic_ponpes',
         'no_telpon',

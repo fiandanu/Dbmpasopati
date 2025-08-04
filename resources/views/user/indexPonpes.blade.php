@@ -52,21 +52,24 @@
                                             <th>No</th>
                                             <th>Nama Ponpes</th>
                                             <th>Wilayah</th>
+                                            <th>Tipe</th>
                                             <th>Tanggal Dibuat</th>
                                             <th>Status</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach($dataponpes as $d)
+                                        @foreach ($dataponpes as $d)
                                             <tr>
-                                                <td>{{ $loop->iteration}}</td>
-                                                <td><strong>{{$d->nama_ponpes}}</strong></td>
-                                                <td><span class="tag tag-success">{{$d->nama_wilayah}}</span></td>
-                                                <td>{{$d->tanggal}}</td>
+                                                <td>{{ $loop->iteration }}</td>
+                                                <td><strong>{{ $d->nama_ponpes }}</strong></td>
+                                                <td><span class="tag tag-success">{{ $d->nama_wilayah }}</span></td>
+                                                <td>{{ ucfirst($d->tipe) }}</td>
+                                                <td>{{ $d->tanggal }}</td>
                                                 <td>
                                                     {{-- Edit Button --}}
                                                     <a href="#editModal{{ $d->id }}" class="btn btn-sm btn-primary"
-                                                        data-bs-toggle="modal" data-bs-target="#editModal{{ $d->id}}"><i
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#editModal{{ $d->id }}"><i
                                                             class="fa fa-edit"></i></a>
 
                                                     {{-- Delete Button --}}
@@ -90,7 +93,8 @@
                                                         <div class="modal-footer justify-content-between">
                                                             <button type="button" class="btn btn-default"
                                                                 data-dismiss="modal">Tutup</button>
-                                                            <form action="{{ route('ponpes.UserPageDestroy', $d->id) }}" method="POST">
+                                                            <form action="{{ route('ponpes.PonpesPageDestroy', $d->id) }}"
+                                                                method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="submit" class="btn btn-danger">Hapus</button>
@@ -106,44 +110,63 @@
                                 </table>
                             </div>
                             {{-- Index Form Html --}}
-                            
+
 
 
                             {{-- User Create Modal --}}
                             <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel"
                                 aria-hidden="true">
-                                <form id="addForm" action="{{ route('ponpes.UserPageStore')}}" method="POST">
+                                <form id="addForm" action="{{ route('ponpes.UserPageStore') }}" method="POST">
                                     @csrf
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="addModalLabel">Tambah Data</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
+                                                <button type="button" class="btn-close-custom" data-bs-dismiss="modal"
+                                                    aria-label="Close">
+                                                    <i class="bi bi-x"></i>
+                                                </button>
                                             </div>
 
                                             <div class="modal-body">
                                                 {{-- Input Nama Ponpes --}}
                                                 <div class="mb-3">
                                                     <label for="nama_ponpes" class="form-label">Nama Ponpes</label>
-                                                    <input type="text" class="form-control" id="nama_ponpes" name="nama_ponpes"
-                                                        required>
+                                                    <input type="text" class="form-control" id="nama_ponpes"
+                                                        name="nama_ponpes" required>
                                                 </div>
                                                 @error('nama_ponpes')
-                                                    <small>{{ $message}}</small>
+                                                    <small>{{ $message }}</small>
                                                 @enderror
                                                 {{-- Input Nama Ponpes --}}
 
                                                 {{-- Input Nama Wilayah --}}
                                                 <div class="mb-3">
                                                     <label for="nama_wilayah" class="form-label">Wilayah</label>
-                                                    <input type="text" class="form-control" id="nama_wilayah" name="nama_wilayah"
-                                                        required>
+                                                    <input type="text" class="form-control" id="nama_wilayah"
+                                                        name="nama_wilayah" required>
                                                 </div>
                                                 @error('nama_wilayah')
-                                                    <small>{{ $message}}</small>
+                                                    <small>{{ $message }}</small>
                                                 @enderror
                                                 {{-- Input Nama Wilayah --}}
+
+                                                <div class="mb-4">
+                                                    <label for="tipe2" class="form-label">Tipe (Solusi 2 - Bootstrap
+                                                        form-select)</label>
+                                                    <select class="form-control text-start" id="tipe" name="tipe"
+                                                        required>
+                                                        <option value="" disabled selected>Pilih Tipe</option>
+                                                        <option value="reguler">Reguler</option>
+                                                        <option value="vtren">Vtren</option>
+                                                        <option value="vtren/reguler">Vtren/Reguler</option>
+                                                    </select>
+                                                </div>
+
+                                                @error('tipe')
+                                                    <small class="text-danger">{{ $message }}</small>
+                                                @enderror
+                                                {{-- Input Tipe --}}
 
                                                 {{-- Input Tanggal Hidden --}}
                                                 <input type="hidden" id="addTanggal" name="tanggal">
@@ -163,46 +186,47 @@
 
 
                             @foreach ($dataponpes as $d)
-                            {{-- User Edit Modal --}}
-                            <div class="modal fade" id="editModal{{ $d->id }}" tabindex="-1" aria-labelledby="editModalLabel"
-                                aria-hidden="true">
-                                <form id="editForm" action="{{ route('ponpes.UserPageUpdate', ['id' => $d->id])}}" method="POST">
-                                    @csrf
-                                    @method('PUT')
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="editModalLabel">Edit Data</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-
-                                            <div class="modal-body">
-                                                <input type="hidden" id="editId" name="id">
-
-                                                <div class="mb-3">
-                                                    <label for="nama_ponpes" class="form-label">Nama Ponpes</label>
-                                                    <input type="text" class="form-control" id="nama_ponpes" name="nama_ponpes"
-                                                        value="{{ $d->nama_ponpes}}">
+                                {{-- User Edit Modal --}}
+                                <div class="modal fade" id="editModal{{ $d->id }}" tabindex="-1"
+                                    aria-labelledby="editModalLabel" aria-hidden="true">
+                                    <form id="editForm" action="{{ route('ponpes.UserPageUpdate', ['id' => $d->id]) }}"
+                                        method="POST">
+                                        @csrf
+                                        @method('PUT')
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="editModalLabel">Edit Data</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
                                                 </div>
 
-                                                <div class="mb-3">
-                                                    <label for="nama_wilayah" class="form-label">Wilayah</label>
-                                                    <input type="text" class="form-control" id="nama_wilayah" name="nama_wilayah"
-                                                        value="{{ $d->nama_wilayah}}">
+                                                <div class="modal-body">
+                                                    <input type="hidden" id="editId" name="id">
+
+                                                    <div class="mb-3">
+                                                        <label for="nama_ponpes" class="form-label">Nama Ponpes</label>
+                                                        <input type="text" class="form-control" id="nama_ponpes"
+                                                            name="nama_ponpes" value="{{ $d->nama_ponpes }}">
+                                                    </div>
+
+                                                    <div class="mb-3">
+                                                        <label for="nama_wilayah" class="form-label">Wilayah</label>
+                                                        <input type="text" class="form-control" id="nama_wilayah"
+                                                            name="nama_wilayah" value="{{ $d->nama_wilayah }}">
+                                                    </div>
+
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Cancel</button>
+                                                    <button type="submit" class="btn btn-primary">Update</button>
                                                 </div>
 
                                             </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-bs-dismiss="modal">Cancel</button>
-                                                <button type="submit" class="btn btn-primary">Update</button>
-                                            </div>
-
                                         </div>
-                                    </div>
-                                </form>
-                            </div>
+                                    </form>
+                                </div>
                             @endforeach
                             {{-- User Edit Modal --}}
 
@@ -217,5 +241,4 @@
         <!-- /.content -->
     </div>
     <!-- /.content-wrapper -->
-
 @endsection
