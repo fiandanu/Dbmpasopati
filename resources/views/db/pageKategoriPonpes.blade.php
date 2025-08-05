@@ -26,7 +26,7 @@
                         <div class="card bg-light">
                             <div class="card-header font-weight-bold d-flex justify-content-center">PKS</div>
                             <div class="card-body">
-                                <a href="" class="btn btn-primary btn-sm btn-block">List Data PKS</a>
+                                <a href="{{route ('ponpes.pks.ListDataPks')}}" class="btn btn-primary btn-sm btn-block">List Data PKS</a>
                             </div>
                         </div>
                     </div>
@@ -36,7 +36,8 @@
                         <div class="card bg-light">
                             <div class="card-header font-weight-bold d-flex justify-content-center">SPP</div>
                             <div class="card-body">
-                                <a href="" class="btn btn-primary btn-sm btn-block">List Data SPP</a>
+                                <a href="{{ route('sppPonpes.ListDataSpp')}}"
+                                    class="btn btn-primary btn-sm btn-block">List Data SPP</a>
                             </div>
                         </div>
                     </div>
@@ -68,7 +69,8 @@
                         <div class="card bg-light">
                             <div class="card-header font-weight-bold d-flex justify-content-center">REGULER/VPAS</div>
                             <div class="card-body">
-                                <a href="{{ route('ListDataVprPonpes') }}" class="btn btn-primary btn-sm btn-block">List Data
+                                <a href="{{ route('ListDataVprPonpes') }}" class="btn btn-primary btn-sm btn-block">List
+                                    Data
                                     Customer</a>
                             </div>
                         </div>

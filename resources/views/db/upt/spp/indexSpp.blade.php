@@ -164,7 +164,7 @@
                                                 aria-labelledby="uploadModalLabel{{ $d->id }}" aria-hidden="true">
                                                 <div class="modal-dialog modal-lg">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('uploadFilePDF', [$d->id, 1]) }}"
+                                                        <form action="{{ route('spp.uploadFilePDF', [$d->id, 1]) }}"
                                                             method="POST" enctype="multipart/form-data"
                                                             id="uploadForm{{ $d->id }}">
                                                             @csrf
@@ -220,7 +220,7 @@
                                                                                         </div>
                                                                                         <div class="btn-group mb-3"
                                                                                             role="group">
-                                                                                            <a href="{{ route('viewpdf', [$d->id, $i]) }}"
+                                                                                            <a href="{{ route('spp.viewpdf', [$d->id, $i]) }}"
                                                                                                 target="_blank"
                                                                                                 class="btn btn-info"
                                                                                                 title="Lihat PDF Folder {{ $i }}">
@@ -260,7 +260,7 @@
                                                                         name="uploaded_pdf" accept=".pdf">
                                                                     <small class="form-text text-muted">Pilih file PDF
                                                                         untuk mengupload atau mengganti file yang sudah
-                                                                        ada</small>
+                                                                        ada (maksimal 10MB)</small>
                                                                 </div>
                                                             </div>
                                                             <div class="modal-footer">
@@ -308,7 +308,7 @@
                                                             <div class="modal-footer justify-content-between">
                                                                 <button type="button" class="btn btn-default"
                                                                     data-dismiss="modal">Batal</button>
-                                                                <form action="{{ route('deleteFilePDF', [$d->id, $i]) }}"
+                                                                <form action="{{ route('spp.deleteFilePDF', [$d->id, $i]) }}"
                                                                     method="POST" style="display: inline;">
                                                                     @csrf
                                                                     @method('DELETE')
@@ -321,47 +321,6 @@
                                                     </div>
                                                 </div>
                                             @endfor
-
-
-                                            {{-- Delete PDF Modals for Each Folder --}}
-                                            {{-- @for ($i = 1; $i <= 10; $i++)
-                                                <div class="modal fade"
-                                                    id="deletePdfModal{{ $d->id }}_{{ $i }}">
-                                                    <div class="modal-dialog">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h4 class="modal-title">Hapus File PDF Folder
-                                                                    {{ $i }}</h4>
-                                                                <button type="button" class="close"
-                                                                    data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <p>Apakah Anda yakin ingin menghapus file PDF untuk
-                                                                    <b>{{ $d->namaupt }}</b> di Folder
-                                                                    {{ $i }}?
-                                                                </p>
-                                                                <p class="text-info"><small><i
-                                                                            class="fas fa-info-circle"></i> Data UPT tidak
-                                                                        akan dihapus, hanya file PDF saja.</small></p>
-                                                            </div>
-                                                            <div class="modal-footer justify-content-between">
-                                                                <button type="button" class="btn btn-default"
-                                                                    data-dismiss="modal">Batal</button>
-                                                                <form action="{{ route('deleteFilePDF', [$d->id, $i]) }}"
-                                                                    method="POST">
-                                                                    @csrf
-                                                                    @method('DELETE')
-                                                                    <button type="submit" class="btn btn-warning">
-                                                                        <i class="fas fa-file-pdf"></i> Hapus PDF
-                                                                    </button>
-                                                                </form>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endfor --}}
 
                                             {{-- Delete Data Modal --}}
                                             <div class="modal fade" id="modal-default{{ $d->id }}">
@@ -429,8 +388,8 @@
             hiddenInput.value = folder;
             currentFolderSpan.textContent = folder;
 
-            // Update action URL with the selected folder
-            form.action = "{{ route('uploadFilePDF', [':id', ':folder']) }}"
+            // Update action URL with the selected folder - Fixed route name
+            form.action = "{{ route('spp.uploadFilePDF', [':id', ':folder']) }}"
                 .replace(':id', id)
                 .replace(':folder', folder);
 

@@ -85,7 +85,7 @@ class PksController extends Controller
         $filename = time() . '_' . $file->getClientOriginalName();
 
         // Simpan ke dalam folder storage/app/public/uploads/pdf
-        $path = $file->storeAs('uploads/pdf', $filename, 'public');
+        $path = $file->storeAs('upt/pks', $filename, 'public');
 
         // Simpan path ke database
         $user->uploaded_pdf = $path;

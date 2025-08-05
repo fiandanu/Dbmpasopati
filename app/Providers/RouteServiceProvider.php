@@ -50,9 +50,9 @@ class RouteServiceProvider extends ServiceProvider
                 // KHUSUS PONPES
                 require base_path('routes/ponpes/pks.php');
                 require base_path('routes/ponpes/reguller.php');
-                require base_path('routes/ponpes/vtren.php');
+                require base_path('routes/ponpes/spp.php');
                 require base_path('routes/ponpes/vpr.php');
-
+                require base_path('routes/ponpes/vtren.php');
             });
         });
     }

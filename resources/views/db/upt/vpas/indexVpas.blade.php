@@ -512,11 +512,11 @@
                                                             </div>
 
                                                             <div class="mb-3">
-                                                                <label for="jumlah_extension" class="form-label">Nomor Pemanggil</label>
+                                                                <label for="jumlah_extension" class="form-label">Jumlah Nomor Pemanggil</label>
                                                                 <input type="text" class="form-control"
                                                                     id="jumlah_extension" name="jumlah_extension"
                                                                     value="{{ $d->jumlah_extension }}"
-                                                                    placeholder="Masukkan jumlah">
+                                                                    placeholder="Masukan Jumlah Nomor Pemanggil">
                                                             </div>
 
 
@@ -528,8 +528,7 @@
                                                             </div>
 
                                                             <div class="mb-3">
-                                                                <label for="no_extension" class="form-label">No
-                                                                    Extension</label>
+                                                                <label for="no_extension" class="form-label">Akses Aridroid</label>
                                                                 <small class="text-muted d-block mb-2">Akses Airdroid
                                                                     extension pada baris terpisah</small>
                                                                 <textarea class="form-control" id="no_extension" name="no_extension" rows="6"
