@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Provider;
+use App\Models\Upt;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
 
@@ -13,7 +14,7 @@ class PksController extends Controller
 {
     public function ListDataPks(Request $request)
     {
-        $query = User::query();
+        $query = Upt::query();
 
         // Cek apakah ada parameter pencarian
         if ($request->has('table_search') && !empty($request->table_search)) {
@@ -38,14 +39,14 @@ class PksController extends Controller
 
     public function DatabasePageDestroy($id)
     {
-        $dataupt = User::find($id);
+        $dataupt = Upt::find($id);
         $dataupt->delete();
         return redirect()->route('pks.ListDataPks');
     }
 
     public function viewUploadedPDF($id)
     {
-        $user = User::findOrFail($id);
+        $user = Upt::findOrFail($id);
 
         // Cek apakah file ada dan path tidak kosong
         if (empty($user->uploaded_pdf)) {
@@ -72,7 +73,7 @@ class PksController extends Controller
             'uploaded_pdf' => 'required|file|mimes:pdf|max:2048',
         ]);
 
-        $user = User::findOrFail($id);
+        $user = Upt::findOrFail($id);
 
         // Buat nama file unik
         $file = $request->file('uploaded_pdf');
@@ -95,7 +96,7 @@ class PksController extends Controller
     }
 
     public function deleteFilePDF($id){
-        $user = User::findOrFail($id);
+        $user = Upt::findOrFail($id);
 
         if (empty($user->uploaded_pdf)) {
             return redirect()->back()->with('error', 'File PDF belum di upload');

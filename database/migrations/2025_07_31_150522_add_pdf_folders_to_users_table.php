@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('upt', function (Blueprint $table) {
             for ($i = 1; $i <= 10; $i++) {
                 $table->string('pdf_folder_' . $i)->nullable()->after('uploaded_pdf');
             }
@@ -23,7 +23,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('upt', function (Blueprint $table) {
             for ($i = 1; $i <= 10; $i++) {
                 $table->dropColumn('pdf_folder_' . $i);
             }

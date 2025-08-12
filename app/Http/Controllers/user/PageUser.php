@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Ponpes;
 use App\Models\Provider;
+use App\Models\Upt;
 use Illuminate\Http\Request;
 
 class PageUser extends Controller
@@ -13,7 +14,7 @@ class PageUser extends Controller
     // 🔷 FUNGSI: TAMPILKAN DATA UPT
     public function UserPage()
     {
-        $dataupt = User::all();
+        $dataupt = Upt::all();
         return view('user.indexUser', compact('dataupt'));
     }
 

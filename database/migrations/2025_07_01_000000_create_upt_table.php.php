@@ -11,17 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('upt', function (Blueprint $table) {
             $table->id();
             // Field Wajib Form UPT
             $table->string('namaupt')->unique();
             $table->string('kanwil');
             $table->string('tanggal')->default(now());
-            
+
 
             // Data Opsional (Form VPAS)
             $table->string('pic_upt')->nullable();
-            $table->string('no_telpon', )->nullable();
+            $table->string('no_telpon',)->nullable();
             $table->text('alamat')->nullable();
             // kanwil sudah ada di atas
             $table->integer('jumlah_wbp')->nullable();
@@ -58,6 +58,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('upt');
     }
 };

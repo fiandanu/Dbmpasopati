@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('upt', function (Blueprint $table) {
             $table->string('uploaded_pdf')->nullable()->after('tanggal');
         });
     }
@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('upt', function (Blueprint $table) {
             //
         });
     }

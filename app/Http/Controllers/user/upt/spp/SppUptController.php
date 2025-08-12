@@ -6,13 +6,14 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Provider;
+use App\Models\Upt;
 use Illuminate\Support\Facades\Storage;
 
 class SppUptController extends Controller
 {
     public function ListDataSpp(Request $request)
     {
-        $query = User::query();
+        $query = Upt::query();
 
         // Cek apakah ada parameter pencarian
         if ($request->has('table_search') && !empty($request->table_search)) {
@@ -39,7 +40,7 @@ class SppUptController extends Controller
     public function DatabasePageDestroy($id)
     {
         try {
-            $dataupt = User::findOrFail($id);
+            $dataupt = Upt::findOrFail($id);
 
             // Hapus semua file PDF yang terkait dengan user ini
             for ($i = 1; $i <= 10; $i++) {
@@ -63,7 +64,7 @@ class SppUptController extends Controller
                 return abort(400, 'Folder tidak valid.');
             }
 
-            $user = User::findOrFail($id);
+            $user = Upt::findOrFail($id);
             $column = 'pdf_folder_' . $folder;
 
             // Cek apakah file ada dan path tidak kosong
@@ -103,7 +104,7 @@ class SppUptController extends Controller
                 return redirect()->back()->with('error', 'File tidak ditemukan dalam request!');
             }
 
-            $user = User::findOrFail($id);
+            $user = Upt::findOrFail($id);
             $file = $request->file('uploaded_pdf');
 
             // Debug: Cek apakah file valid
@@ -154,7 +155,7 @@ class SppUptController extends Controller
                 return redirect()->back()->with('error', 'Folder tidak valid.');
             }
 
-            $user = User::findOrFail($id);
+            $user = Upt::findOrFail($id);
             $column = 'pdf_folder_' . $folder;
 
             if (empty($user->$column)) {

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Provider;
+use App\Models\Upt;
 use App\Models\Vpn; // TAMBAHKAN INI - Import model Vpn
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
@@ -17,7 +18,7 @@ class RegullerController extends Controller
 
     public function ListDataReguller(Request $request)
     {
-        $query = User::query();
+        $query = Upt::query();
 
         $query->where('tipe', 'reguler');
 
@@ -144,7 +145,7 @@ class RegullerController extends Controller
             // Update field yang valid ke database
             try {
                 if (!empty($validatedData)) {
-                    $data = User::findOrFail($id);
+                    $data = Upt::findOrFail($id);
                     $data->update($validatedData);
                 }
             } catch (\Exception $e) {
@@ -159,7 +160,7 @@ class RegullerController extends Controller
 
         // Jika semua validasi berhasil
         try {
-            $data = User::findOrFail($id);
+            $data = Upt::findOrFail($id);
             $data->update($request->all());
 
             return redirect()->back()->with('success', 'Semua data berhasil diupdate!');
@@ -171,7 +172,7 @@ class RegullerController extends Controller
     // Method lainnya tidak berubah
     public function UserPageDestroy($id)
     {
-        $dataupt = User::find($id);
+        $dataupt = Upt::find($id);
         $dataupt->delete();
         return redirect()->route('upt.UserPage');
     }
@@ -183,7 +184,7 @@ class RegullerController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'namaupt' => 'required|string|unique:users,namaupt',
+                'namaupt' => 'required|string|unique:upt,namaupt',
                 'kanwil' => 'required|string',
                 'tipe' => 'required|string',
             ],
@@ -207,7 +208,7 @@ class RegullerController extends Controller
             'tanggal' => Carbon::now()->format('Y-m-d'), // Format tanggal yang konsisten
         ];
 
-        User::create($dataupt);
+        Upt::create($dataupt);
 
         return redirect()->route('upt.UserPage')->with('success', 'Data UPT berhasil ditambahkan!');
     }
@@ -217,7 +218,7 @@ class RegullerController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'namaupt' => 'required|string|unique:users,namaupt,' . $id,
+                'namaupt' => 'required|string|unique:upt,namaupt,' . $id,
                 'kanwil' => 'required|string',
                 'tipe' => 'required|string',
             ],
@@ -233,7 +234,7 @@ class RegullerController extends Controller
             return redirect()->back()->withInput()->withErrors($validator);
         }
 
-        $dataupt = User::findOrFail($id); // Gunakan findOrFail untuk error handling yang lebih baik
+        $dataupt = Upt::findOrFail($id); // Gunakan findOrFail untuk error handling yang lebih baik
         $dataupt->namaupt = $request->namaupt;
         $dataupt->kanwil = $request->kanwil;
         $dataupt->tipe = $request->tipe;
@@ -244,7 +245,7 @@ class RegullerController extends Controller
 
     public function exportVerticalCsv($id): StreamedResponse
     {
-        $user = User::findOrFail($id);
+        $user = Upt::findOrFail($id);
 
         $filename = 'data_upt_' . $user->namaupt . '.csv';
 
@@ -294,7 +295,7 @@ class RegullerController extends Controller
 
     public function exportUptPdf($id)
     {
-        $user = User::findOrFail($id);
+        $user = Upt::findOrFail($id);
 
         $data = [
             'title' => 'LAPAS PEREMPUAN KELAS IIA JAKARTA',
@@ -307,7 +308,7 @@ class RegullerController extends Controller
 
     public function DatabasePageDestroy($id)
     {
-        $dataupt = User::find($id);
+        $dataupt = Upt::find($id);
         $dataupt->delete();
         return redirect()->route('DbReguler');
     }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Provider;
+use App\Models\Upt;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -16,7 +17,7 @@ class VpasController extends Controller
 
     public function ListDataVpas(Request $request)
     {
-        $query = User::query();
+        $query = Upt::query();
 
         // Filter hanya data dengan tipe 'vpas'
         $query->where('tipe', 'vpas');
@@ -144,7 +145,7 @@ class VpasController extends Controller
             // Update field yang valid ke database
             try {
                 if (!empty($validatedData)) {
-                    $data = User::findOrFail($id);
+                    $data = Upt::findOrFail($id);
                     $data->update($validatedData);
                 }
             } catch (\Exception $e) {
@@ -159,7 +160,7 @@ class VpasController extends Controller
 
         // Jika semua validasi berhasil
         try {
-            $data = User::findOrFail($id);
+            $data = Upt::findOrFail($id);
             $data->update($request->all());
 
             return redirect()->back()->with('success', 'Semua data berhasil diupdate!');
@@ -170,7 +171,7 @@ class VpasController extends Controller
 
     public function exportVerticalCsv($id): StreamedResponse
     {
-        $user = User::findOrFail($id);
+        $user = Upt::findOrFail($id);
 
         $filename = 'data_upt_' . $user->namaupt . '.csv';
 
@@ -220,7 +221,7 @@ class VpasController extends Controller
 
     public function exportUptPdf($id)
     {
-        $user = User::findOrFail($id);
+        $user = Upt::findOrFail($id);
 
         $data = [
             'title' => 'LAPAS PEREMPUAN KELAS IIA JAKARTA',
@@ -233,7 +234,7 @@ class VpasController extends Controller
 
     public function DatabasePageDestroy($id)
     {
-        $dataupt = User::find($id);
+        $dataupt = Upt::find($id);
         $dataupt->delete();
         return redirect()->route('ListDataVpas');
     }
