@@ -41,7 +41,7 @@ class RegullerController extends Controller
 
     public function UserPage()
     {
-        $dataponpes  = Ponpes::all();
+        $dataponpes = Ponpes::all();
         return view('user.indexPonpes', compact('dataponpes'));
     }
 
@@ -51,40 +51,73 @@ class RegullerController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'nama_ponpes' => 'required|string|unique:ponpes,nama_ponpes',
+                'nama_ponpes' => 'required|string|max:255',
                 'nama_wilayah' => 'required|string',
-                'tipe' => 'required|string',
+                'tipe' => 'required|array|min:1', // Validasi array dengan minimal 1 pilihan
+                'tipe.*' => 'in:reguler,vtren', // Validasi setiap element array harus reguler atau vtren
             ],
             [
-                'nama_ponpes.required' => 'Nama Ponpes harus diisi.',
-                'nama_ponpes.unique' => 'Nama Ponpes sudah terdaftar.',
-                'nama_wilayah.required' => 'Nama Wilayah harus diisi.',
-                'tipe.required' => 'Tipe harus diisi.',
+                'nama_ponpes.required' => 'Nama Ponpes harus diisi',
+                'nama_wilayah.required' => 'Nama Wilayah harus diisi',
+                'tipe.required' => 'Tipe harus dipilih minimal satu',
+                'tipe.array' => 'Tipe harus berupa array',
+                'tipe.min' => 'Pilih minimal satu tipe',
+                'tipe.*.in' => 'Tipe hanya boleh reguler atau vtren',
             ]
         );
 
-        // Cek jika validasi gagal
         if ($validator->fails()) {
             return redirect()->back()->withInput()->withErrors($validator);
         }
 
-        // Data siap simpan
-        $dataPonpes = [
-            'nama_ponpes' => $request->nama_ponpes,
-            'nama_wilayah' => $request->nama_wilayah,
-            'tipe' => $request->tipe,
-            'tanggal' => Carbon::today()->toDateString(),
-        ];
+        // Ambil data tipe yang dipilih
+        $selectedTypes = $request->tipe;
+        $createdRecords = [];
+        
+        // Bersihkan nama Ponpes dari suffix ganda yang mungkin ada
+        $cleanNamaPonpes = $this->removeVtrenRegSuffix($request->nama_ponpes);
+        
+        // Tentukan nama Ponpes berdasarkan jumlah tipe yang dipilih
+        $namaPonpes = $cleanNamaPonpes;
+        if (count($selectedTypes) == 2 && in_array('reguler', $selectedTypes) && in_array('vtren', $selectedTypes)) {
+            $namaPonpes = $cleanNamaPonpes . ' (VtrenReg)';
+        }
 
-        Ponpes::create($dataPonpes);
-        // return redirect()->route('ponpes.UserPage')->with('success', 'Data Ponpes berhasil ditambahkan!');
+        // Validasi manual untuk kombinasi nama Ponpes + tipe
+        foreach ($selectedTypes as $tipeValue) {
+            $existingRecord = Ponpes::where('nama_ponpes', $namaPonpes)
+                                   ->where('tipe', $tipeValue)
+                                   ->first();
+            
+            if ($existingRecord) {
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', "Data Ponpes '{$namaPonpes}' dengan tipe '{$tipeValue}' sudah ada!");
+            }
+        }
 
-        try {
-            Ponpes::create($dataPonpes);
+        // Loop untuk setiap tipe yang dipilih
+        foreach ($selectedTypes as $tipeValue) {
+            // Buat record baru untuk setiap tipe
+            $dataPonpes = [
+                'nama_ponpes' => $namaPonpes,
+                'nama_wilayah' => $request->nama_wilayah,
+                'tipe' => $tipeValue,
+                'tanggal' => Carbon::now()->format('Y-m-d'),
+            ];
 
-            return redirect()->route('ponpes.UserPage')->with('success', 'Data Ponpes berhasil ditambahkan!');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Gagal menambahkan data: ' . $e->getMessage());
+            $newRecord = Ponpes::create($dataPonpes);
+            $createdRecords[] = $tipeValue;
+        }
+
+        // Berikan pesan berdasarkan hasil
+        if (count($createdRecords) > 0) {
+            $message = 'Data Ponpes berhasil ditambahkan untuk tipe: ' . implode(', ', $createdRecords);
+            return redirect()->route('ponpes.UserPage')->with('success', $message);
+        } else {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Gagal menambahkan data Ponpes');
         }
     }
 
@@ -94,7 +127,7 @@ class RegullerController extends Controller
             $request->all(),
             [
                 // Field Wajib
-                'nama_ponpes' => 'required|unique:ponpes,nama_ponpes,' . $id,
+                'nama_ponpes' => 'required|string|max:255',
                 'nama_wilayah' => 'required|string|max:255',
                 'tipe' => 'required|string|max:255',
                 // 'tanggal' => 'nullable|date',
@@ -131,7 +164,6 @@ class RegullerController extends Controller
             [
                 // Field Wajib
                 'nama_ponpes.required' => 'Nama Ponpes harus diisi.',
-                'nama_ponpes.unique' => 'Nama Ponpes sudah terdaftar.',
                 'nama_wilayah.required' => 'Nama Daerah harus diisi.',
                 'tanggal.date' => 'Format tanggal harus sesuai (YYYY-MM-DD).',
 
@@ -211,41 +243,121 @@ class RegullerController extends Controller
 
     public function UserPageUpdate(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), [
-            'nama_ponpes' => 'required|string|max:255',
-            'nama_wilayah' => 'required|string|max:255',
-        ]);
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'nama_ponpes' => [
+                    'required',
+                    'string',
+                    function ($attribute, $value, $fail) use ($id, $request) {
+                        // Cek apakah ada record lain dengan nama yang sama dan tipe yang sama
+                        $existingRecord = Ponpes::where('nama_ponpes', $value)
+                                                ->where('id', '!=', $id)
+                                                ->where('tipe', $request->tipe)
+                                                ->first();
+                        
+                        if ($existingRecord) {
+                            $fail("Nama Ponpes '{$value}' dengan tipe '{$request->tipe}' sudah ada.");
+                        }
+                    }
+                ],
+                'nama_wilayah' => 'required|string',
+                'tipe' => 'required|string|in:reguler,vtren', // Hanya terima reguler atau vtren
+            ],
+            [
+                'nama_ponpes.required' => 'Nama Ponpes harus diisi',
+                'nama_wilayah.required' => 'Nama Wilayah harus diisi',
+                'tipe.required' => 'Tipe harus diisi',
+                'tipe.in' => 'Tipe hanya boleh reguler atau vtren',
+            ]
+        );
 
         if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput();
+            return redirect()->back()->withInput()->withErrors($validator);
         }
 
-        try {
-            $ponpes = Ponpes::findOrFail($id);
+        $dataPonpes = Ponpes::findOrFail($id);
+        $dataPonpes->nama_ponpes = $request->nama_ponpes;
+        $dataPonpes->nama_wilayah = $request->nama_wilayah;
+        $dataPonpes->tipe = $request->tipe;
+        $dataPonpes->save();
 
-            $ponpes->update([
-                'nama_ponpes' => $request->nama_ponpes,
-                'nama_wilayah' => $request->nama_wilayah,
-            ]);
-
-            return redirect()->back()
-                ->with('success', 'Data ponpes berhasil diupdate.');
-        } catch (\Exception $e) {
-            return redirect()->back()
-                ->with('error', 'Terjadi kesalahan saat mengupdate data.');
-        }
+        return redirect()->route('ponpes.UserPage')->with('success', 'Data Ponpes berhasil diupdate!');
     }
 
     public function PonpesPageDestroy($id)
     {
-        try {
-            $data = Ponpes::findOrFail($id);
-            $data->delete();
-            return redirect()->route('UserPage')->with('success', 'Data Ponpes berhasil dihapus!');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Gagal menghapus data: ' . $e->getMessage());
+        $dataPonpes = Ponpes::find($id);
+        
+        if (!$dataPonpes) {
+            return redirect()->route('ponpes.UserPage')->with('error', 'Data tidak ditemukan!');
+        }
+        
+        // Ambil nama Ponpes tanpa suffix (VtrenReg) untuk pengecekan
+        $namaPonpesBase = $this->removeVtrenRegSuffix($dataPonpes->nama_ponpes);
+        
+        // Hapus data yang dipilih
+        $dataPonpes->delete();
+        
+        // Update nama Ponpes yang tersisa berdasarkan jumlah data
+        $this->updatePonpesNamesBySuffix($namaPonpesBase);
+        
+        return redirect()->route('ponpes.UserPage')->with('success', 'Data berhasil dihapus!');
+    }
+
+    /**
+     * Helper method untuk menghilangkan suffix (VtrenReg) dari nama Ponpes
+     * Menghapus semua kemungkinan suffix ganda
+     */
+    private function removeVtrenRegSuffix($namaPonpes)
+    {
+        // Hapus semua kemungkinan suffix (VtrenReg) yang mungkin ganda
+        return preg_replace('/\s*\(VtrenReg\)+/', '', $namaPonpes);
+    }
+
+    /**
+     * Helper method untuk mengecek apakah Ponpes memiliki kedua tipe (reguler dan vtren)
+     */
+    private function hasMultipleTypes($namaPonpes)
+    {
+        $namaPonpesBase = $this->removeVtrenRegSuffix($namaPonpes);
+        
+        $regulerExists = Ponpes::where('nama_ponpes', 'LIKE', $namaPonpesBase . '%')
+                              ->where('tipe', 'reguler')
+                              ->exists();
+                              
+        $vtrenExists = Ponpes::where('nama_ponpes', 'LIKE', $namaPonpesBase . '%')
+                             ->where('tipe', 'vtren')
+                             ->exists();
+        
+        return $regulerExists && $vtrenExists;
+    }
+
+    /**
+     * Helper method untuk update nama Ponpes berdasarkan jumlah tipe
+     */
+    private function updatePonpesNamesBySuffix($namaPonpesBase)
+    {
+        $relatedData = Ponpes::where('nama_ponpes', 'LIKE', $namaPonpesBase . '%')->get();
+        
+        // Jika ada 2 atau lebih data dengan nama base yang sama, pastikan ada suffix
+        if ($relatedData->count() >= 2) {
+            foreach ($relatedData as $data) {
+                if (!str_contains($data->nama_ponpes, '(VtrenReg)')) {
+                    $data->update([
+                        'nama_ponpes' => $namaPonpesBase . ' (VtrenReg)'
+                    ]);
+                }
+            }
+        }
+        // Jika hanya ada 1 data tersisa, hapus suffix
+        elseif ($relatedData->count() == 1) {
+            $remainingData = $relatedData->first();
+            if (str_contains($remainingData->nama_ponpes, '(VtrenReg)')) {
+                $remainingData->update([
+                    'nama_ponpes' => $namaPonpesBase
+                ]);
+            }
         }
     }
 

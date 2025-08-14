@@ -61,9 +61,21 @@
                                         @foreach ($dataupt as $d)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
-                                                <td><strong>{{ $d->namaupt }}</strong></td>
+                                                <td>
+                                                    <strong>{{ $d->namaupt }}</strong>
+                                                    @if(str_contains($d->namaupt, '(VpasReg)'))
+                                                        <br><small class="text-muted"><i class="fas fa-link"></i> Data terkait dengan Reguler & VPAS</small>
+                                                    @endif
+                                                </td>
                                                 <td><span class="tag tag-success">{{ $d->kanwil }}</span></td>
-                                                <td>{{ ucfirst($d->tipe) }}</td>
+                                                <td>
+                                                    <span class="badge 
+                                                        @if($d->tipe == 'reguler') badge-primary 
+                                                        @elseif($d->tipe == 'vpas') badge-warning
+                                                        @endif">
+                                                        {{ ucfirst($d->tipe) }}
+                                                    </span>
+                                                </td>
                                                 <td>{{ $d->tanggal }}</td>
                                                 <td>
                                                     {{-- Edit Button --}}
@@ -88,7 +100,13 @@
                                                             </button>
                                                         </div>
                                                         <div class="modal-body">
-                                                            <p>Apakah <b>{{ $d->namaupt }}</b> ingin dihapus?</p>
+                                                            <p>Apakah <b>{{ $d->namaupt }}</b> dengan tipe <b>{{ ucfirst($d->tipe) }}</b> ingin dihapus?</p>
+                                                            @if(str_contains($d->namaupt, '(VpasReg)'))
+                                                                <div class="alert alert-warning">
+                                                                    <i class="fas fa-exclamation-triangle"></i>
+                                                                    <strong>Perhatian:</strong> Data ini terkait dengan tipe lain. Jika ini adalah data terakhir yang terkait, maka suffix "(VpasReg)" akan dihapus otomatis dari data yang tersisa.
+                                                                </div>
+                                                            @endif
                                                         </div>
                                                         <div class="modal-footer justify-content-between">
                                                             <button type="button" class="btn btn-default"
@@ -133,7 +151,7 @@
                                                         required>
                                                 </div>
                                                 @error('namaupt')
-                                                    <small>{{ $message }}</small>
+                                                    <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                                 {{-- Input Nama UPT --}}
 
@@ -144,25 +162,35 @@
                                                         required>
                                                 </div>
                                                 @error('kanwil')
-                                                    <small>{{ $message }}</small>
+                                                    <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                                 {{-- Input Nama Kanwil --}}
 
-                                                {{-- Input Tipe --}}
+                                                {{-- Input Tipe Multiple Selection --}}
                                                 <div class="mb-3">
-                                                    <label for="tipe" class="form-label">Tipe</label>
-                                                    <select class="form-control" id="tipe" name="tipe" required>
-                                                        <option value="" disabled selected>Pilih Tipe</option>
-                                                        <option value="reguler">Reguler</option>
-                                                        <option value="vpas">VPAS</option>
-                                                        <option value="vpas/reguler">VPAS/Reguler</option>
-                                                    </select>
+                                                    <label for="tipe" class="form-label">Tipe UPT</label>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" name="tipe[]" 
+                                                               value="reguler" id="tipe_reguler">
+                                                        <label class="form-check-label" for="tipe_reguler">
+                                                            Reguler
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" name="tipe[]" 
+                                                               value="vpas" id="tipe_vpas">
+                                                        <label class="form-check-label" for="tipe_vpas">
+                                                            VPAS
+                                                        </label>
+                                                    </div>
+                                                    <div class="alert alert-info mt-2">
+                                                        <small><i class="fas fa-info-circle"></i> Pilih satu atau kedua tipe UPT. Jika keduanya dipilih, suffix "(VpasReg)" akan ditambahkan secara otomatis ke nama UPT.</small>
+                                                    </div>
                                                 </div>
                                                 @error('tipe')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
-                                                {{-- Input Tipe --}}
-
+                                                {{-- Input Tipe Multiple Selection --}}
 
                                                 {{-- Input Tanggal Hidden --}}
                                                 <input type="hidden" id="addTanggal" name="tanggal">
@@ -204,6 +232,12 @@
                                                         <label for="namaupt" class="form-label">Nama UPT</label>
                                                         <input type="text" class="form-control" id="namaupt"
                                                             name="namaupt" value="{{ $d->namaupt }}">
+                                                        @if(str_contains($d->namaupt, '(VpasReg)'))
+                                                            <small class="text-muted">
+                                                                <i class="fas fa-info-circle"></i>
+                                                                Data ini terkait dengan tipe lain. Harap berhati-hati saat mengubah nama.
+                                                            </small>
+                                                        @endif
                                                     </div>
 
                                                     <div class="mb-3">
@@ -221,9 +255,6 @@
                                                             </option>
                                                             <option value="vpas"
                                                                 {{ $d->tipe == 'vpas' ? 'selected' : '' }}>VPAS</option>
-                                                            <option value="vpas/reguler"
-                                                                {{ $d->tipe == 'vpas/reguler' ? 'selected' : '' }}>
-                                                                VPAS/Reguler</option>
                                                         </select>
                                                     </div>
                                                     @error('tipe')
@@ -255,4 +286,65 @@
         <!-- /.content -->
     </div>
     <!-- /.content-wrapper -->
+
+    {{-- JavaScript untuk menangani preview nama UPT --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tipeCheckboxes = document.querySelectorAll('input[name="tipe[]"]');
+            const namaUptInput = document.getElementById('namaupt');
+            let originalNamaUpt = '';
+            let isUpdatingPreview = false;
+
+            // Function untuk membersihkan suffix
+            function cleanNamaUpt(nama) {
+                return nama.replace(/ \(VpasReg\)/g, '').trim();
+            }
+
+            // Simpan nama UPT original saat pertama kali diketik
+            namaUptInput.addEventListener('input', function() {
+                if (!isUpdatingPreview) {
+                    originalNamaUpt = cleanNamaUpt(this.value);
+                    updateNamaUptPreview();
+                }
+            });
+
+            // Update preview saat checkbox diubah
+            tipeCheckboxes.forEach(function(checkbox) {
+                checkbox.addEventListener('change', function() {
+                    // Jika belum ada nama yang diketik, ambil dari input saat ini
+                    if (!originalNamaUpt && namaUptInput.value) {
+                        originalNamaUpt = cleanNamaUpt(namaUptInput.value);
+                    }
+                    updateNamaUptPreview();
+                });
+            });
+
+            function updateNamaUptPreview() {
+                if (!originalNamaUpt) return;
+                
+                isUpdatingPreview = true;
+                
+                const regulerChecked = document.getElementById('tipe_reguler').checked;
+                const vpasChecked = document.getElementById('tipe_vpas').checked;
+                
+                if (regulerChecked && vpasChecked) {
+                    namaUptInput.value = originalNamaUpt + ' (VpasReg)';
+                } else {
+                    namaUptInput.value = originalNamaUpt;
+                }
+                
+                setTimeout(() => {
+                    isUpdatingPreview = false;
+                }, 100);
+            }
+
+            // Reset saat modal dibuka
+            document.getElementById('addModal').addEventListener('show.bs.modal', function() {
+                originalNamaUpt = '';
+                namaUptInput.value = '';
+                document.getElementById('tipe_reguler').checked = false;
+                document.getElementById('tipe_vpas').checked = false;
+            });
+        });
+    </script>
 @endsection

@@ -61,9 +61,21 @@
                                         @foreach ($dataponpes as $d)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
-                                                <td><strong>{{ $d->nama_ponpes }}</strong></td>
+                                                <td>
+                                                    <strong>{{ $d->nama_ponpes }}</strong>
+                                                    @if(str_contains($d->nama_ponpes, '(VtrenReg)'))
+                                                        <br><small class="text-muted"><i class="fas fa-link"></i> Data terkait dengan Reguler & Vtren</small>
+                                                    @endif
+                                                </td>
                                                 <td><span class="tag tag-success">{{ $d->nama_wilayah }}</span></td>
-                                                <td>{{ ucfirst($d->tipe) }}</td>
+                                                <td>
+                                                    <span class="badge 
+                                                        @if($d->tipe == 'reguler') badge-primary 
+                                                        @elseif($d->tipe == 'vtren') badge-success
+                                                        @endif">
+                                                        {{ ucfirst($d->tipe) }}
+                                                    </span>
+                                                </td>
                                                 <td>{{ $d->tanggal }}</td>
                                                 <td>
                                                     {{-- Edit Button --}}
@@ -88,7 +100,13 @@
                                                             </button>
                                                         </div>
                                                         <div class="modal-body">
-                                                            <p>Apakah <b>{{ $d->nama_ponpes }}</b> ingin dihapus?</p>
+                                                            <p>Apakah <b>{{ $d->nama_ponpes }}</b> dengan tipe <b>{{ ucfirst($d->tipe) }}</b> ingin dihapus?</p>
+                                                            @if(str_contains($d->nama_ponpes, '(VtrenReg)'))
+                                                                <div class="alert alert-warning">
+                                                                    <i class="fas fa-exclamation-triangle"></i>
+                                                                    <strong>Perhatian:</strong> Data ini terkait dengan tipe lain. Jika ini adalah data terakhir yang terkait, maka suffix "(VtrenReg)" akan dihapus otomatis dari data yang tersisa.
+                                                                </div>
+                                                            @endif
                                                         </div>
                                                         <div class="modal-footer justify-content-between">
                                                             <button type="button" class="btn btn-default"
@@ -110,8 +128,6 @@
                                 </table>
                             </div>
                             {{-- Index Form Html --}}
-
-
 
                             {{-- User Create Modal --}}
                             <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel"
@@ -136,7 +152,7 @@
                                                         name="nama_ponpes" required>
                                                 </div>
                                                 @error('nama_ponpes')
-                                                    <small>{{ $message }}</small>
+                                                    <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                                 {{-- Input Nama Ponpes --}}
 
@@ -147,26 +163,35 @@
                                                         name="nama_wilayah" required>
                                                 </div>
                                                 @error('nama_wilayah')
-                                                    <small>{{ $message }}</small>
+                                                    <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                                 {{-- Input Nama Wilayah --}}
 
-                                                <div class="mb-4">
-                                                    <label for="tipe2" class="form-label">Tipe (Solusi 2 - Bootstrap
-                                                        form-select)</label>
-                                                    <select class="form-control text-start" id="tipe" name="tipe"
-                                                        required>
-                                                        <option value="" disabled selected>Pilih Tipe</option>
-                                                        <option value="reguler">Reguler</option>
-                                                        <option value="vtren">Vtren</option>
-                                                        <option value="vtren/reguler">Vtren/Reguler</option>
-                                                    </select>
+                                                {{-- Input Tipe Multiple Selection --}}
+                                                <div class="mb-3">
+                                                    <label for="tipe" class="form-label">Tipe Ponpes</label>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" name="tipe[]" 
+                                                               value="reguler" id="tipe_reguler">
+                                                        <label class="form-check-label" for="tipe_reguler">
+                                                            Reguler
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" name="tipe[]" 
+                                                               value="vtren" id="tipe_vtren">
+                                                        <label class="form-check-label" for="tipe_vtren">
+                                                            Vtren
+                                                        </label>
+                                                    </div>
+                                                    <div class="alert alert-info mt-2">
+                                                        <small><i class="fas fa-info-circle"></i> Pilih satu atau kedua tipe Ponpes. Jika keduanya dipilih, suffix "(VtrenReg)" akan ditambahkan secara otomatis ke nama Ponpes.</small>
+                                                    </div>
                                                 </div>
-
                                                 @error('tipe')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
-                                                {{-- Input Tipe --}}
+                                                {{-- Input Tipe Multiple Selection --}}
 
                                                 {{-- Input Tanggal Hidden --}}
                                                 <input type="hidden" id="addTanggal" name="tanggal">
@@ -183,7 +208,6 @@
                                 </form>
                             </div>
                             {{-- User Create Modal --}}
-
 
                             @foreach ($dataponpes as $d)
                                 {{-- User Edit Modal --}}
@@ -208,6 +232,12 @@
                                                         <label for="nama_ponpes" class="form-label">Nama Ponpes</label>
                                                         <input type="text" class="form-control" id="nama_ponpes"
                                                             name="nama_ponpes" value="{{ $d->nama_ponpes }}">
+                                                        @if(str_contains($d->nama_ponpes, '(VtrenReg)'))
+                                                            <small class="text-muted">
+                                                                <i class="fas fa-info-circle"></i>
+                                                                Data ini terkait dengan tipe lain. Harap berhati-hati saat mengubah nama.
+                                                            </small>
+                                                        @endif
                                                     </div>
 
                                                     <div class="mb-3">
@@ -215,6 +245,21 @@
                                                         <input type="text" class="form-control" id="nama_wilayah"
                                                             name="nama_wilayah" value="{{ $d->nama_wilayah }}">
                                                     </div>
+
+                                                    <div class="mb-3">
+                                                        <label for="tipe" class="form-label">Tipe</label>
+                                                        <select class="form-control" id="tipe" name="tipe"
+                                                            required>
+                                                            <option value="reguler"
+                                                                {{ $d->tipe == 'reguler' ? 'selected' : '' }}>Reguler
+                                                            </option>
+                                                            <option value="vtren"
+                                                                {{ $d->tipe == 'vtren' ? 'selected' : '' }}>Vtren</option>
+                                                        </select>
+                                                    </div>
+                                                    @error('tipe')
+                                                        <small class="text-danger">{{ $message }}</small>
+                                                    @enderror
 
                                                 </div>
                                                 <div class="modal-footer">
@@ -241,4 +286,65 @@
         <!-- /.content -->
     </div>
     <!-- /.content-wrapper -->
+
+    {{-- JavaScript untuk menangani preview nama Ponpes --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tipeCheckboxes = document.querySelectorAll('input[name="tipe[]"]');
+            const namaPonpesInput = document.getElementById('nama_ponpes');
+            let originalNamaPonpes = '';
+            let isUpdatingPreview = false;
+
+            // Function untuk membersihkan suffix
+            function cleanNamaPonpes(nama) {
+                return nama.replace(/ \(VtrenReg\)/g, '').trim();
+            }
+
+            // Simpan nama Ponpes original saat pertama kali diketik
+            namaPonpesInput.addEventListener('input', function() {
+                if (!isUpdatingPreview) {
+                    originalNamaPonpes = cleanNamaPonpes(this.value);
+                    updateNamaPonpesPreview();
+                }
+            });
+
+            // Update preview saat checkbox diubah
+            tipeCheckboxes.forEach(function(checkbox) {
+                checkbox.addEventListener('change', function() {
+                    // Jika belum ada nama yang diketik, ambil dari input saat ini
+                    if (!originalNamaPonpes && namaPonpesInput.value) {
+                        originalNamaPonpes = cleanNamaPonpes(namaPonpesInput.value);
+                    }
+                    updateNamaPonpesPreview();
+                });
+            });
+
+            function updateNamaPonpesPreview() {
+                if (!originalNamaPonpes) return;
+                
+                isUpdatingPreview = true;
+                
+                const regulerChecked = document.getElementById('tipe_reguler').checked;
+                const vtrenChecked = document.getElementById('tipe_vtren').checked;
+                
+                if (regulerChecked && vtrenChecked) {
+                    namaPonpesInput.value = originalNamaPonpes + ' (VtrenReg)';
+                } else {
+                    namaPonpesInput.value = originalNamaPonpes;
+                }
+                
+                setTimeout(() => {
+                    isUpdatingPreview = false;
+                }, 100);
+            }
+
+            // Reset saat modal dibuka
+            document.getElementById('addModal').addEventListener('show.bs.modal', function() {
+                originalNamaPonpes = '';
+                namaPonpesInput.value = '';
+                document.getElementById('tipe_reguler').checked = false;
+                document.getElementById('tipe_vtren').checked = false;
+            });
+        });
+    </script>
 @endsection

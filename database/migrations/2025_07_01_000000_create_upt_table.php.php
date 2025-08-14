@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('upt', function (Blueprint $table) {
             $table->id();
             // Field Wajib Form UPT
-            $table->string('namaupt')->unique();
+            $table->string('namaupt');
             $table->string('kanwil');
             $table->string('tanggal')->default(now());
 

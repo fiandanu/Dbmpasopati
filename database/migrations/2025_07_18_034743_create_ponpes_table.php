@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('ponpes', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_ponpes')->unique();
+            $table->string('nama_ponpes')->nullable();
             $table->string('nama_wilayah');
             $table->string('tanggal')->default(now());
             $table->string('uploaded_pdf')->nullable();

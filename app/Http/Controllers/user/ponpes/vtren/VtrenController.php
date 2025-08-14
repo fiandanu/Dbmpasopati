@@ -44,7 +44,7 @@ class VtrenController extends Controller
             $request->all(),
             [
                 // Field Wajib
-                'nama_ponpes' => 'required|unique:ponpes,nama_ponpes,' . $id,
+                'nama_ponpes' => 'required|string|max:255' . $id,
                 'nama_wilayah' => 'required|string|max:255',
                 'tipe' => 'required|string|max:255',
                 // 'tanggal' => 'nullable|date',
@@ -81,7 +81,6 @@ class VtrenController extends Controller
             [
                 // Field Wajib
                 'nama_ponpes.required' => 'Nama Ponpes harus diisi.',
-                'nama_ponpes.unique' => 'Nama Ponpes sudah terdaftar.',
                 'nama_wilayah.required' => 'Nama Daerah harus diisi.',
                 'tanggal.date' => 'Format tanggal harus sesuai (YYYY-MM-DD).',
 
