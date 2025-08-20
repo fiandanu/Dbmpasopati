@@ -1,0 +1,17 @@
+<?php
+
+use App\Http\Controllers\tutorial\ponpes\vtrenController;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/tutorial_ponpes_vtren', [vtrenController::class, 'tutorial_ponpes_vtren'])->name('tutorial_ponpes_vtren');
+
+Route::prefix('tutor_ponpes_vtren')->name('tutor_ponpes_vtren.')->group(function () {
+    Route::get('/ListDataSpp', [vtrenController::class, 'ListDataSpp'])->name('ListDataSpp');
+    Route::delete('/DataBasePageDestroy/{id}', [vtrenController::class, 'DatabasePageDestroy'])->name('DataBasePageDestroy');
+    Route::post('/store', [vtrenController::class, 'store'])->name('store');
+
+    // Move PDF routes inside the group for consistency
+    Route::post('/upload-pdf/{id}/{folder}', [vtrenController::class, 'uploadFilePDF'])->name('uploadFilePDF');
+    Route::get('/view-pdf/{id}/{folder}', [vtrenController::class, 'viewUploadedPDF'])->name('viewpdf');
+    Route::delete('/delete-pdf/{id}/{folder}', [vtrenController::class, 'deleteFilePDF'])->name('deleteFilePDF');
+});

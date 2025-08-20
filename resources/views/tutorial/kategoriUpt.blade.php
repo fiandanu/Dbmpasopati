@@ -1,6 +1,5 @@
 @extends('layout.sidebar')
 @section('content')
-
     <div class="content-wrapper">
         <div class="content-header">
             <div class="container-fluid">
@@ -27,7 +26,7 @@
                         <div class="card bg-light">
                             <div class="card-header font-weight-bold d-flex justify-content-center">VPAS</div>
                             <div class="card-body">
-                                <a href="" class="btn btn-primary btn-sm btn-block">List Data VPAS</a>
+                                <a href="{{ route('tutor_vpas.ListDataSpp')}}" class="btn btn-primary btn-sm btn-block">List Data VPAS</a>
                             </div>
                         </div>
                     </div>
@@ -37,7 +36,7 @@
                         <div class="card bg-light">
                             <div class="card-header font-weight-bold d-flex justify-content-center">Reguller</div>
                             <div class="card-body">
-                                <a href="" class="btn btn-primary btn-sm btn-block">List Data Reguller</a>
+                                <a href="{{ route('tutor_upt.ListDataSpp')}}" class="btn btn-primary btn-sm btn-block">List Data Reguller</a>
                             </div>
                         </div>
                     </div>

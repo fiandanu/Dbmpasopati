@@ -33,6 +33,10 @@
     {{-- Bootstrap Icons --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     {{-- Custom Css --}}
+
+    @vite('resources/css/app.css')
+    {{-- Tailwind Css --}}
+
     <style>
         .modal-content {
             border: none;
@@ -179,12 +183,6 @@
 <body class="hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
 
-        <!-- Preloader -->
-        <div class="preloader flex-column justify-content-center align-items-center">
-            <img class="animation__shake" src="dist/img/AdminLTELogo.png" alt="AdminLTELogo" height="60"
-                width="60">
-        </div>
-
         <!-- Navbar -->
         <nav class="main-header navbar navbar-expand navbar-white navbar-light">
             <!-- Left navbar links -->
@@ -258,8 +256,7 @@
                                 <div class="media-body">
                                     <h3 class="dropdown-item-title">
                                         John Pierce
-                                        <span class="float-right text-sm text-muted"><i
-                                                class="fas fa-star"></i></span>
+                                        <span class="float-right text-sm text-muted"><i class="fas fa-star"></i></span>
                                     </h3>
                                     <p class="text-sm">I got your message bro</p>
                                     <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
@@ -492,13 +489,13 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{{ route('TutorialServer') }}" class="nav-link">
+                                    <a href="{{ route('tutorial_server') }}" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Server</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{{ route('TutorialMicrotik') }}" class="nav-link">
+                                    <a href="{{ route('tutorial_mikrotik') }}" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Mirkrotik</p>
                                     </a>

@@ -4,7 +4,6 @@ namespace App\Http\Controllers\user\upt\reguler;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\User;
 use App\Models\Provider;
 use App\Models\Upt;
 use App\Models\Vpn; // TAMBAHKAN INI - Import model Vpn
@@ -41,7 +40,7 @@ class RegullerController extends Controller
         $data = $query->get();
         $providers = Provider::all();
         $vpns = Vpn::all(); // TAMBAHKAN INI - Query data VPN
-        
+
         // PERBAIKI INI - Tambahkan 'vpns' ke compact
         return view('db.upt.reguler.indexUpt', compact('data', 'providers', 'vpns'));
     }
@@ -173,20 +172,20 @@ class RegullerController extends Controller
     public function UserPageDestroy($id)
     {
         $dataupt = Upt::find($id);
-        
+
         if (!$dataupt) {
             return redirect()->route('upt.UserPage')->with('error', 'Data tidak ditemukan!');
         }
-        
+
         // Ambil nama UPT tanpa suffix (VpasReg) untuk pengecekan
         $namaUptBase = $this->removeVpasRegSuffix($dataupt->namaupt);
-        
+
         // Hapus data yang dipilih
         $dataupt->delete();
-        
+
         // Update nama UPT yang tersisa berdasarkan jumlah data
         $this->updateUptNamesBySuffix($namaUptBase);
-        
+
         return redirect()->route('upt.UserPage')->with('success', 'Data berhasil dihapus!');
     }
 
@@ -218,10 +217,10 @@ class RegullerController extends Controller
         // Ambil data tipe yang dipilih
         $selectedTypes = $request->tipe;
         $createdRecords = [];
-        
+
         // Bersihkan nama UPT dari suffix ganda yang mungkin ada
         $cleanNamaUpt = $this->removeVpasRegSuffix($request->namaupt);
-        
+
         // Tentukan nama UPT berdasarkan jumlah tipe yang dipilih
         $namaUpt = $cleanNamaUpt;
         if (count($selectedTypes) == 2 && in_array('reguler', $selectedTypes) && in_array('vpas', $selectedTypes)) {
@@ -231,9 +230,9 @@ class RegullerController extends Controller
         // Validasi manual untuk kombinasi nama UPT + tipe
         foreach ($selectedTypes as $tipeValue) {
             $existingRecord = Upt::where('namaupt', $namaUpt)
-                                ->where('tipe', $tipeValue)
-                                ->first();
-            
+                ->where('tipe', $tipeValue)
+                ->first();
+
             if ($existingRecord) {
                 return redirect()->back()
                     ->withInput()
@@ -277,10 +276,10 @@ class RegullerController extends Controller
                     function ($attribute, $value, $fail) use ($id, $request) {
                         // Cek apakah ada record lain dengan nama yang sama dan tipe yang sama
                         $existingRecord = Upt::where('namaupt', $value)
-                                            ->where('id', '!=', $id)
-                                            ->where('tipe', $request->tipe)
-                                            ->first();
-                        
+                            ->where('id', '!=', $id)
+                            ->where('tipe', $request->tipe)
+                            ->first();
+
                         if ($existingRecord) {
                             $fail("Nama UPT '{$value}' dengan tipe '{$request->tipe}' sudah ada.");
                         }
@@ -323,28 +322,29 @@ class RegullerController extends Controller
     /**
      * Helper method untuk mengecek apakah UPT memiliki kedua tipe (reguler dan vpas)
      */
-    private function hasMultipleTypes($namaUpt)
-    {
-        $namaUptBase = $this->removeVpasRegSuffix($namaUpt);
-        
-        $regulerExists = Upt::where('namaupt', 'LIKE', $namaUptBase . '%')
-                            ->where('tipe', 'reguler')
-                            ->exists();
-                            
-        $vpasExists = Upt::where('namaupt', 'LIKE', $namaUptBase . '%')
-                         ->where('tipe', 'vpas')
-                         ->exists();
-        
-        return $regulerExists && $vpasExists;
-    }
+    // private function hasMultipleTypes($namaUpt)
+    // {
+    //     $namaUptBase = $this->removeVpasRegSuffix($namaUpt);
+
+    //     $regulerExists = Upt::where('namaupt', 'LIKE', $namaUptBase . '%')
+    //         ->where('tipe', 'reguler')
+    //         ->exists();
+
+    //     $vpasExists = Upt::where('namaupt', 'LIKE', $namaUptBase . '%')
+    //         ->where('tipe', 'vpas')
+    //         ->exists();
+
+    //     return $regulerExists && $vpasExists;
+    // }
 
     /**
      * Helper method untuk update nama UPT berdasarkan jumlah tipe
      */
+    
     private function updateUptNamesBySuffix($namaUptBase)
     {
         $relatedData = Upt::where('namaupt', 'LIKE', $namaUptBase . '%')->get();
-        
+
         // Jika ada 2 atau lebih data dengan nama base yang sama, pastikan ada suffix
         if ($relatedData->count() >= 2) {
             foreach ($relatedData as $data) {
@@ -432,20 +432,20 @@ class RegullerController extends Controller
     public function DatabasePageDestroy($id)
     {
         $dataupt = Upt::find($id);
-        
+
         if (!$dataupt) {
             return redirect()->route('DbReguler')->with('error', 'Data tidak ditemukan!');
         }
-        
+
         // Ambil nama UPT tanpa suffix (VpasReg) untuk pengecekan
         $namaUptBase = $this->removeVpasRegSuffix($dataupt->namaupt);
-        
+
         // Hapus data yang dipilih
         $dataupt->delete();
-        
+
         // Update nama UPT yang tersisa berdasarkan jumlah data
         $this->updateUptNamesBySuffix($namaUptBase);
-        
+
         return redirect()->route('DbReguler')->with('success', 'Data berhasil dihapus!');
     }
 }

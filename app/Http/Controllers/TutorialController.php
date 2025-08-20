@@ -6,16 +6,14 @@ use Illuminate\Http\Request;
 
 class TutorialController extends Controller
 {
-    public function TutorialUpt(){
-        return view('tutorial.indexUpt');
-    }
+
     public function TutorialPonpes(){
         return view('tutorial.indexPonpes');
     }
     public function TutorialServer(){
-        return view('tutorial.indexServer');
+        return view('tutorial.upt.server');
     }
     public function TutorialMicrotik(){
-        return view('tutorial.indexMicrotik');
+        return view('tutorial.mikrotik');
     }
 }

@@ -3,11 +3,7 @@
 namespace App\Http\Controllers\user;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use App\Models\Ponpes;
-use App\Models\Provider;
 use App\Models\Upt;
-use Illuminate\Http\Request;
 
 class PageUser extends Controller
 {

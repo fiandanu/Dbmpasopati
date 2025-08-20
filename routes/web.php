@@ -62,11 +62,5 @@ Route::get('/KomplainUpt', [HomeController::class, 'KomplainUpt'])->name('Kompla
 Route::get('/KomplainPonpes', [HomeController::class, 'KomplainPonpes'])->name('KomplainPonpes');
 Route::get('/PencatatanKartu', [HomeController::class, 'PencatatanKartu'])->name('PencatatanKartu');
 
-// Monitoring Tutorial
-Route::get('/TutorialUpt', [TutorialController::class, 'TutorialUpt'])->name('TutorialUpt');
-Route::get('/TutorialPonpes', [TutorialController::class, 'TutorialPonpes'])->name('TutorialPonpes');
-Route::get('/TutorialServer', [TutorialController::class, 'TutorialServer'])->name('TutorialServer');
-Route::get('/TutorialMicrotik', [TutorialController::class, 'TutorialMicrotik'])->name('TutorialMicrotik');
-
 
 

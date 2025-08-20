@@ -1,18 +1,45 @@
 <?php
 
-namespace App\Http\Controllers\user\upt\spp;
+namespace App\Http\Controllers\tutorial\ponpes;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Provider;
-use App\Models\Upt;
+use App\Models\tutorial\ponpes\Reguller;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
-class SppUptController extends Controller
+class RegullerPonpesController extends Controller
 {
+    public function tutorial_ponpes_reguller()
+    {
+        $data = Reguller::all();
+        return view('tutorial.ponpes.reguller', compact('data'))->with('title', 'Tutorial Ponpes Reguller');
+    }
+    public function store(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'tutor_ponpes_reguller' => 'required|unique:tutor_ponpes_reguller,tutor_ponpes_reguller',
+            // Tambahkan validasi lain jika diperlukan
+        ], [
+            // Custom error messages
+            'tutor_ponpes_reguller.required' => 'Nama tutor wajib diisi.',
+            'tutor_ponpes_reguller.unique' => 'Nama tutor sudah ada, silakan gunakan nama lain.',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        // SOLUSI 1: Gunakan variabel $data yang sudah diset tanggalnya
+        $data = $request->all();
+        $data['tanggal'] = date('Y-m-d');
+        Reguller::create($data); // Gunakan $data yang sudah diset tanggalnya
+
+        return redirect()->route('tutor_ponpes_reguller.ListDataSpp')->with('success', 'Data berhasil disimpan');
+    }
     public function ListDataSpp(Request $request)
     {
-        $query = Upt::query();
+        $query = Reguller::query();
 
         // Cek apakah ada parameter pencarian
         if ($request->has('table_search') && !empty($request->table_search)) {
@@ -20,26 +47,17 @@ class SppUptController extends Controller
 
             // Lakukan pencarian berdasarkan beberapa kolom
             $query->where(function ($q) use ($searchTerm) {
-                $q->where('namaupt', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('kanwil', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('tanggal', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('pic_upt', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('alamat', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('provider_internet', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('status_wartel', 'LIKE', '%' . $searchTerm . '%');
+                $q->where('tutor_ponpes_reguller', 'LIKE', '%' . $searchTerm . '%');
             });
         }
 
         $data = $query->get();
-        $providers = Provider::all();
-        return view('db.upt.spp.indexSpp', compact('data', 'providers'));
+        return view('tutorial.ponpes.reguller', compact('data'))->with('title', 'Tutorial Ponpes Reguller');
     }
-
-    // Fix method name to match route
     public function DatabasePageDestroy($id)
     {
         try {
-            $dataupt = Upt::findOrFail($id);
+            $dataupt = Reguller::findOrFail($id);
 
             // Hapus semua file PDF yang terkait dengan user ini
             for ($i = 1; $i <= 10; $i++) {
@@ -50,12 +68,11 @@ class SppUptController extends Controller
             }
 
             $dataupt->delete();
-            return redirect()->route('spp.ListDataSpp')->with('success', 'Data berhasil dihapus');
+            return redirect()->route('tutor_ponpes_reguller.ListDataSpp')->with('success', 'Data berhasil dihapus');
         } catch (\Exception $e) {
-            return redirect()->route('spp.ListDataSpp')->with('error', 'Gagal menghapus data: ' . $e->getMessage());
+            return redirect()->route('tutor_ponpes_reguller.ListDataSpp')->with('error', 'Gagal menghapus data: ' . $e->getMessage());
         }
     }
-
     public function viewUploadedPDF($id, $folder)
     {
         try {
@@ -63,7 +80,7 @@ class SppUptController extends Controller
                 return abort(400, 'Folder tidak valid.');
             }
 
-            $user = Upt::findOrFail($id);
+            $user = Reguller::findOrFail($id);
             $column = 'pdf_folder_' . $folder;
 
             // Cek apakah file ada dan path tidak kosong
@@ -72,7 +89,7 @@ class SppUptController extends Controller
             }
 
             $filePath = storage_path('app/public/' . $user->$column);
-            
+
             if (!file_exists($filePath)) {
                 return abort(404, 'File tidak ditemukan di storage.');
             }
@@ -82,7 +99,6 @@ class SppUptController extends Controller
             return abort(500, 'Error loading PDF: ' . $e->getMessage());
         }
     }
-
     public function uploadFilePDF(Request $request, $id, $folder)
     {
         try {
@@ -103,7 +119,7 @@ class SppUptController extends Controller
                 return redirect()->back()->with('error', 'File tidak ditemukan dalam request!');
             }
 
-            $user = Upt::findOrFail($id);
+            $user = Reguller::findOrFail($id);
             $file = $request->file('uploaded_pdf');
 
             // Debug: Cek apakah file valid
@@ -123,7 +139,7 @@ class SppUptController extends Controller
             $filename = time() . '_' . $sanitizedName . '.pdf';
 
             // Pastikan direktori ada
-            $directory = 'upt/spp/folder_' . $folder;
+            $directory = 'tutorial/ponpes/reguller/folder_' . $folder;
             if (!Storage::disk('public')->exists($directory)) {
                 Storage::disk('public')->makeDirectory($directory);
             }
@@ -146,7 +162,6 @@ class SppUptController extends Controller
             return redirect()->back()->with('error', 'Gagal upload file: ' . $e->getMessage());
         }
     }
-
     public function deleteFilePDF($id, $folder)
     {
         try {
@@ -154,7 +169,7 @@ class SppUptController extends Controller
                 return redirect()->back()->with('error', 'Folder tidak valid.');
             }
 
-            $user = Upt::findOrFail($id);
+            $user = Reguller::findOrFail($id);
             $column = 'pdf_folder_' . $folder;
 
             if (empty($user->$column)) {
