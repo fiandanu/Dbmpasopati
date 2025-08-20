@@ -132,6 +132,7 @@
                                             <th>No</th>
                                             <th>Nama UPT</th>
                                             <th>Kanwil</th>
+                                            <th>Tipe</th>
                                             <th>Tanggal Dibuat</th>
                                             <th>Status PDF</th>
                                             <th>Action</th>
@@ -143,6 +144,7 @@
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td><strong>{{ $d->namaupt }}</strong></td>
                                                 <td><span class="tag tag-success">{{ $d->kanwil }}</span></td>
+                                                <td>{{ ucfirst($d->tipe) }}</td>
                                                 <td>{{ $d->tanggal }}</td>
                                                 <td>
                                                     @if (empty($d->uploaded_pdf))

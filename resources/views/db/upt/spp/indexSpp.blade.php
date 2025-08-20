@@ -131,6 +131,7 @@
                                             <th>No</th>
                                             <th>Nama UPT</th>
                                             <th>Kanwil</th>
+                                            <th>Tipe</th>
                                             <th>Tanggal Dibuat</th>
                                             <th>Action</th>
                                         </tr>
@@ -141,6 +142,7 @@
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td><strong>{{ $d->namaupt }}</strong></td>
                                                 <td><span class="tag tag-success">{{ $d->kanwil }}</span></td>
+                                                <td>{{ ucfirst($d->tipe) }}</td>
                                                 <td>{{ $d->tanggal }}</td>
                                                 <td>
                                                     <div class="btn-group" role="group">

@@ -130,7 +130,7 @@ class VpasController extends Controller
             // Buat nama file unik dengan sanitasi
             $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
             $sanitizedName = preg_replace('/[^A-Za-z0-9\-_.]/', '_', $originalName);
-            $filename = time() . '_' . $sanitizedName . '.pdf';
+            $filename = $sanitizedName . '.pdf';
 
             // Pastikan direktori ada
             $directory = 'tutorial/upt/vpas/folder_' . $folder;
@@ -155,6 +155,7 @@ class VpasController extends Controller
             return redirect()->back()->with('error', 'Gagal upload file: ' . $e->getMessage());
         }
     }
+
     public function deleteFilePDF($id, $folder)
     {
         try {
