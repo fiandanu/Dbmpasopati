@@ -153,7 +153,7 @@
                                                         }
 
                                                         $totalFolders = count($pdfColumns); // 10 folder
-                                                        $percentage = ($uploadedFolders / $totalFolders) * 100;
+                                                        // $percentage = ($uploadedFolders / $totalFolders) * 100;
                                                     @endphp
 
                                                     @if ($uploadedFolders == 0)

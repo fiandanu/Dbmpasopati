@@ -160,7 +160,8 @@
                                                         <span class="badge badge-danger py-2">Belum Upload</span>
                                                     @elseif($uploadedFolders == $totalFolders)
                                                         <span class="badge badge-success py-2">Semua Folder Lengkap
-                                                            (10/10)</span>
+                                                            (10/10)
+                                                        </span>
                                                     @else
                                                         <span class="badge badge-warning py-2">
                                                             {{ $uploadedFolders }}/{{ $totalFolders }} Folder
@@ -206,6 +207,7 @@
                                                                     <span aria-hidden="true">&times;</span>
                                                                 </button>
                                                             </div>
+
                                                             <div class="modal-body">
                                                                 <div class="form-group">
                                                                     <label for="folderSelect{{ $d->id }}">Pilih
@@ -215,8 +217,21 @@
                                                                         name="folder"
                                                                         onchange="updateFolder({{ $d->id }}, this.value)">
                                                                         @for ($i = 1; $i <= 10; $i++)
-                                                                            <option value="{{ $i }}">Folder
-                                                                                {{ $i }}</option>
+                                                                            @php
+                                                                                $column = 'pdf_folder_' . $i;
+                                                                                $fileName = !empty($d->$column)
+                                                                                    ? basename($d->$column)
+                                                                                    : null;
+                                                                            @endphp
+                                                                            <option value="{{ $i }}">
+                                                                                @if ($fileName)
+                                                                                    Folder {{ $i }}:
+                                                                                    {{ $fileName }}
+                                                                                @else
+                                                                                    Folder {{ $i }}: Tidak ada
+                                                                                    file
+                                                                                @endif
+                                                                            </option>
                                                                         @endfor
                                                                     </select>
                                                                 </div>
@@ -224,9 +239,25 @@
                                                                 <!-- PDF Status and Actions for Selected Folder -->
                                                                 <div class="card">
                                                                     <div class="card-header">
-                                                                        <h6 class="mb-0">Status dan Aksi untuk Folder
-                                                                            <span
+                                                                        <h6 class="mb-0">
+                                                                            Status dan Aksi untuk Folder <span
                                                                                 id="currentFolder{{ $d->id }}">1</span>
+                                                                            <span id="currentFileName{{ $d->id }}"
+                                                                                class="text-muted">
+                                                                                @php
+                                                                                    $firstColumn = 'pdf_folder_1';
+                                                                                    $firstFileName = !empty(
+                                                                                        $d->$firstColumn
+                                                                                    )
+                                                                                        ? basename($d->$firstColumn)
+                                                                                        : null;
+                                                                                @endphp
+                                                                                @if ($firstFileName)
+                                                                                    - {{ $firstFileName }}
+                                                                                @else
+                                                                                    - Tidak ada file
+                                                                                @endif
+                                                                            </span>
                                                                         </h6>
                                                                     </div>
                                                                     <div class="card-body">
@@ -243,9 +274,7 @@
                                                                                             <i
                                                                                                 class="fas fa-check-circle"></i>
                                                                                             PDF sudah tersedia untuk Folder
-                                                                                            {{ $i }} <br>
-                                                                                            <strong>Nama File: </strong>
-                                                                                            {{ basename($d->$column) }}
+                                                                                            {{ $i }}
                                                                                         </div>
                                                                                         <div class="btn-group mb-3"
                                                                                             role="group">
