@@ -215,8 +215,21 @@
                                                                         name="folder"
                                                                         onchange="updateFolder({{ $d->id }}, this.value)">
                                                                         @for ($i = 1; $i <= 10; $i++)
-                                                                            <option value="{{ $i }}">Folder
-                                                                                {{ $i }}</option>
+                                                                            @php
+                                                                                $column = 'pdf_folder_' . $i;
+                                                                                $fileName = !empty($d->$column)
+                                                                                    ? basename($d->$column)
+                                                                                    : null;
+                                                                            @endphp
+                                                                            <option value="{{ $i }}">
+                                                                                @if ($fileName)
+                                                                                    Folder {{ $i }}:
+                                                                                    {{ $fileName }}
+                                                                                @else
+                                                                                    Folder {{ $i }}: Tidak ada
+                                                                                    file
+                                                                                @endif
+                                                                            </option>
                                                                         @endfor
                                                                     </select>
                                                                 </div>

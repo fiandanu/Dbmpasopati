@@ -132,6 +132,7 @@
                                             <th>Nama UPT</th>
                                             <th>nama_wilayah</th>
                                             <th>Tanggal Dibuat</th>
+                                            <th>Status Upload PDF</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -142,6 +143,39 @@
                                                 <td><strong>{{ $d->nama_ponpes }}</strong></td>
                                                 <td><span class="tag tag-success">{{ $d->nama_wilayah }}</span></td>
                                                 <td>{{ $d->tanggal }}</td>
+                                                <td>
+                                                    @php
+                                                        // Daftar kolom PDF (folder 1-10)
+                                                        $pdfColumns = [];
+                                                        for ($i = 1; $i <= 10; $i++) {
+                                                            $pdfColumns[] = 'pdf_folder_' . $i;
+                                                        }
+
+                                                        // Hitung folder yang sudah ada PDF
+                                                        $uploadedFolders = 0;
+                                                        foreach ($pdfColumns as $column) {
+                                                            if (!empty($d->$column)) {
+                                                                $uploadedFolders++;
+                                                            }
+                                                        }
+
+                                                        $totalFolders = count($pdfColumns); // 10 folder
+                                                        $percentage = ($uploadedFolders / $totalFolders) * 100;
+                                                    @endphp
+
+                                                    @if ($uploadedFolders == 0)
+                                                        <span class="badge badge-danger py-2">Belum Upload</span>
+                                                    @elseif($uploadedFolders == $totalFolders)
+                                                        <span class="badge badge-success py-2">Semua Folder Lengkap
+                                                            (10/10)
+                                                        </span>
+                                                    @else
+                                                        <span class="badge badge-warning py-2">
+                                                            {{ $uploadedFolders }}/{{ $totalFolders }} Folder
+                                                            {{-- ({{ round($percentage) }}%) --}}
+                                                        </span>
+                                                    @endif
+                                                </td>
                                                 <td>
                                                     <div class="btn-group" role="group">
                                                         <button class="btn btn-sm btn-primary mr-1" data-toggle="modal"
@@ -188,18 +222,48 @@
                                                                         name="folder"
                                                                         onchange="updateFolder({{ $d->id }}, this.value)">
                                                                         @for ($i = 1; $i <= 10; $i++)
-                                                                            <option value="{{ $i }}">Folder
-                                                                                {{ $i }}</option>
+                                                                            @php
+                                                                                $column = 'pdf_folder_' . $i;
+                                                                                $fileName = !empty($d->$column)
+                                                                                    ? basename($d->$column)
+                                                                                    : null;
+                                                                            @endphp
+                                                                            <option value="{{ $i }}">
+                                                                                @if ($fileName)
+                                                                                    Folder {{ $i }}:
+                                                                                    {{ $fileName }}
+                                                                                @else
+                                                                                    Folder {{ $i }}: Tidak ada
+                                                                                    file
+                                                                                @endif
+                                                                            </option>
                                                                         @endfor
                                                                     </select>
                                                                 </div>
 
                                                                 <!-- PDF Status and Actions for Selected Folder -->
                                                                 <div class="card">
+                                                                    <div class="card">
                                                                     <div class="card-header">
-                                                                        <h6 class="mb-0">Status dan Aksi untuk Folder
-                                                                            <span
+                                                                        <h6 class="mb-0">
+                                                                            Status dan Aksi untuk Folder <span
                                                                                 id="currentFolder{{ $d->id }}">1</span>
+                                                                            <span id="currentFileName{{ $d->id }}"
+                                                                                class="text-muted">
+                                                                                @php
+                                                                                    $firstColumn = 'pdf_folder_1';
+                                                                                    $firstFileName = !empty(
+                                                                                        $d->$firstColumn
+                                                                                    )
+                                                                                        ? basename($d->$firstColumn)
+                                                                                        : null;
+                                                                                @endphp
+                                                                                @if ($firstFileName)
+                                                                                    - {{ $firstFileName }}
+                                                                                @else
+                                                                                    - Tidak ada file
+                                                                                @endif
+                                                                            </span>
                                                                         </h6>
                                                                     </div>
                                                                     <div class="card-body">

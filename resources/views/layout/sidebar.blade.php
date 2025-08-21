@@ -533,7 +533,7 @@
                                 <li class="nav-item">
                                     <a href="{{ route('provider.DataProvider') }}" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
-                                        <p>Data Provider</p>
+                                        <p>Data Provider/Vpn</p>
                                     </a>
                                 </li>
                             </ul>
