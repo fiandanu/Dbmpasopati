@@ -11,7 +11,7 @@ use App\Http\Controllers\user\PageUser;
 
 // MENAMPILKAN DATA UPT DAN KANWIL DAN MENGISI DATA OPSIONALNYA
 Route::delete('/DataBasePageDestroy/{id}', [RegullerController::class, 'DataBasePageDestroy'])->name('DataBasePageDestroy');
-Route::get('/ListDataReguller', [RegullerController::class, 'ListDataReguller'])->name('ListDataReguller');
+Route::get('/ListDataReguller', action: [RegullerController::class, 'ListDataReguller'])->name('ListDataReguller');
 Route::put('/ListUpdateReguller/{id}', [RegullerController::class, 'ListUpdateReguller'])->name('ListUpdateReguller');
 Route::get('/export-upt-csv/{id}', [RegullerController::class, 'exportVerticalCsv'])->name('export.upt.csv');
 Route::get('/export-upt-pdf/{id}', [RegullerController::class, 'exportUptPdf'])->name('export.upt.pdf');

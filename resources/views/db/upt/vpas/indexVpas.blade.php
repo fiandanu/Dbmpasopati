@@ -147,7 +147,9 @@
                                                     <td>{{ $no++ }}</td>
                                                     <td><strong>{{ $d->namaupt }}</strong></td>
                                                     <td><span class="tag tag-success">{{ $d->kanwil }}</span></td>
-                                                    <td>{{ ucfirst($d->tipe) }}</td>
+                                                    <td>
+                                                        <span class="Tipevpas">{{ ucfirst($d->tipe) }}</span>
+                                                    </td>
                                                     <td>{{ $d->tanggal }}</td>
                                                     <td>
                                                         @php

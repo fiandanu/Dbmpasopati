@@ -6,12 +6,12 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Komplain Ponpes</h1>
+                        <h1 class="m-0">Komplain UPT</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">Komplain Ponpes</li>
+                            <li class="breadcrumb-item active">Komplain UPT</li>
                         </ol>
                     </div>
                 </div>
@@ -27,7 +27,7 @@
                         <div class="card bg-light">
                             <div class="card-header font-weight-bold d-flex justify-content-center">VPAS</div>
                             <div class="card-body">
-                                <a href="" class="btn btn-primary btn-sm btn-block">List Data VPAS</a>
+                                <a href="{{ route('ListDataMclientVpas')}}" class="btn btn-primary btn-sm btn-block">List Data VPAS</a>
                             </div>
                         </div>
                     </div>

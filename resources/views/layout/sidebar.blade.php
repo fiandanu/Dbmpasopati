@@ -38,6 +38,103 @@
     {{-- Tailwind Css --}}
 
     <style>
+        :root {
+            --Netral-10: #FFFFFF;
+            --Netral-9: #FAFAFA;
+            --Netral-8: #EBEBEB;
+            --Netral-7: #DEDEDE;
+            --Netral-6: #C7C7C7;
+            --Netral-5: #ABABAB;
+            --Netral-4: #949494;
+            --Netral-3: #757575;
+            --Netral-2: #616161;
+            --Netral-1: #3D3D3D;
+            --Netral-0: #262626;
+
+            --Primary-01: #C7F5D5;
+            --Primary-02: #93EBAF;
+            --Primary-03: #5BE186;
+            --Primary-04: #27D35D;
+            --Primary-05: #1D9D45;
+            --Primary-06: #177D37;
+            --Primary-07: #125F2A;
+            --Primary-08: #0C411D;
+            --Primary-09: #061E0D;
+            --Primary-10: #031108;
+
+            --Secondary-00: #F1F6FE;
+            --Secondary-01: #E7F0FD;
+            --Secondary-02: #C5DAFC;
+            --Secondary-03: #99BFFA;
+            --Secondary-04: #639DF7;
+            --Secondary-05: #3882F5;
+            --Secondary-06: #186CE1;
+            --Secondary-07: #155DC2;
+            --Secondary-08: #124FA6;
+            --Secondary-09: #0D3C7C;
+            --Secondary-10: #08244A;
+
+            --yellow-00: #FFFDF0;
+            --yellow-01: #FFFAD6;
+            --yellow-02: #FFF7B8;
+            --yellow-03: #FFF28F;
+            --yellow-04: #FFEE70;
+            --yellow-05: #FFE942;
+            --yellow-06: #FFE314;
+            --yellow-07: #D6BD00;
+            --yellow-08: #AD9900;
+            --yellow-09: #756800;
+            --yellow-10: #3D3600;
+
+            --danger-00: #FFF0F1;
+            --danger-01: #FFD6D9;
+            --danger-02: #FFB8BF;
+            --danger-03: #FF8F9A;
+            --danger-04: #FF707E;
+            --danger-05: #FF4255;
+            --danger-06: #FF142B;
+            --danger-07: #D60015;
+            --danger-08: #AD0011;
+            --danger-09: #75000B;
+            --danger-10: #3D0006;
+        }
+
+        .Tipereguller {
+            background-color: var(--Secondary-01);
+            width: 74px;
+            height: 32px;
+            padding: 12px 6px;
+            border-radius: 50px;
+            border: 1px solid var(--Secondary-03);
+            opacity: 1;
+            font-family: Arial;
+            font-size: 12px;
+            color: var(--Secondary-07);
+            text-align: center;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center
+        }
+
+        .Tipevpas {
+            background-color: #C7F5D5;
+            width: 74px;
+            height: 32px;
+            padding: 12px 6px;
+            border-radius: 50px;
+            border: 1px solid #5BE186;
+            opacity: 1;
+            font-family: Arial;
+            font-size: 12px;
+            color: #125F2A;
+            text-align: center;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center
+        }
+
+
+
         .modal-content {
             border: none;
             border-radius: 8px;

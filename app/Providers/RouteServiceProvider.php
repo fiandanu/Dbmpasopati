@@ -63,6 +63,10 @@ class RouteServiceProvider extends ServiceProvider
                 require base_path('routes/tutorial/ponpes/reguller.php');
                 require base_path('routes/tutorial/ponpes/vtren.php');
 
+                // KHUSUS TUTORIAL MCLIENT
+                // require base_path('routes/tutorial/ponpes/reguller.php');
+                require base_path('routes/mclient/vpas.php');
+
             });
         });
     }
