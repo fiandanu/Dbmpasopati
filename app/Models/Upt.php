@@ -2,51 +2,35 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Model;
 
-class Upt extends Authenticatable
+class Upt extends Model
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-
-    protected $table = 'upt';   
+    protected $table = 'data_upt';
 
     protected $fillable = [
         'namaupt',
-        'kanwil',
+        'kanwil',   
         'tipe',
-        'tanggal',
-        'uploaded_pdf',
-        'pic_upt',
-        'no_telpon',
-        'alamat',
-        'jumlah_wbp',
-        'jumlah_line_reguler',
-        'provider_internet',
-        'kecepatan_internet',
-        'tarif_wartel_reguler',
-        'status_wartel',
-        'akses_topup_pulsa',
-        'password_topup',
-        'akses_download_rekaman',
-        'password_download',
-        'internet_protocol',
-        'vpn_user',
-        'vpn_password',
-        'jenis_vpn',
-        'extension_password',
-        'pin_tes',
-        'jumlah_extension',
-        'no_extension'
+        'tanggal'
     ];
 
+    protected $casts = [
+        'tanggal' => 'date'
+    ];
+
+    // Relasi ke DataOpsionalUpt
+    public function dataOpsional()
+    {
+        return $this->hasOne(DataOpsionalUpt::class, 'upt_id');
+    }
+
+    // Relasi ke UploadFolderUpt
+    public function uploadFolder()
+    {
+        return $this->hasOne(UploadFolderUpt::class, 'upt_id');
+    }
 }

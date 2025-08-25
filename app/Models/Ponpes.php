@@ -9,34 +9,38 @@ class Ponpes extends Model
 {
     use HasFactory;
 
-    protected $table = 'ponpes';
+    protected $table = 'data_ponpes';
 
     protected $fillable = [
         'nama_ponpes',
         'nama_wilayah',
-        'uploaded_pdf',
         'tipe',
-        'tanggal',
-        'pic_ponpes',
-        'no_telpon',
-        'alamat',
-        'jumlah_wbp',
-        'jumlah_line_reguler',
-        'provider_internet',
-        'kecepatan_internet',
-        'tarif_wartel_reguler',
-        'status_wartel',
-        'akses_topup_pulsa',
-        'password_topup',
-        'akses_download_rekaman',
-        'password_download',
-        'internet_protocol',
-        'vpn_user',
-        'vpn_password',
-        'jenis_vpn',
-        'extension_password',
-        'pin_tes',
-        'jumlah_extension',
-        'no_extension'
+        'tanggal'
     ];
+
+    protected $casts = [
+        'tanggal' => 'date'
+    ];
+
+    // Relasi ke data opsional ponpes
+    public function dataOpsional()
+    {
+        return $this->hasOne(DataOpsionalPonpes::class, 'ponpes_id');
+    }
+
+    // Relasi ke upload folder ponpes
+    public function uploadFolder()
+    {
+        return $this->hasOne(UploadFolderPonpes::class, 'ponpes_id');
+    }
+
+    // Accessor untuk mendapatkan semua data termasuk relasi
+    public function getAllDataAttribute()
+    {
+        $baseData = $this->toArray();
+        $opsionalData = $this->dataOpsional ? $this->dataOpsional->toArray() : [];
+        $uploadData = $this->uploadFolder ? $this->uploadFolder->toArray() : [];
+        
+        return array_merge($baseData, $opsionalData, $uploadData);
+    }
 }
