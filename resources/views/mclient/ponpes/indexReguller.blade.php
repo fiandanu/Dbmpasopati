@@ -48,7 +48,7 @@
                         <div class="alert-heading h5 mb-2">Periksa kembali Data yang dimasukkan</div>
                         <div class="small">
                             @foreach ($errors->all() as $error)
-                                <div class="mb-1">â€¢ {{ $error }}</div>
+                                <div class="mb-1">• {{ $error }}</div>
                             @endforeach
                         </div>
                     </div>
@@ -88,7 +88,7 @@
                                 <div class="alert alert-info">
                                     <i class="fas fa-info-circle"></i>
                                     Hasil pencarian untuk: "<strong>{{ request('table_search') }}</strong>"
-                                    <a href="{{ route('ListDataMclientVpas') }}" class="btn btn-sm btn-secondary ml-2">
+                                    <a href="{{ route('ListDataMclientPonpesReguller') }}" class="btn btn-sm btn-secondary ml-2">
                                         <i class="fas fa-times"></i> Clear
                                     </a>
                                 </div>
@@ -97,7 +97,7 @@
 
                         <div class="card mt-3">
                             <div class="card-header">
-                                <h3 class="card-title mt-2">Data Keluhan Client Vpas</h3>
+                                <h3 class="card-title mt-2">Data Keluhan Client Ponpes Reguller</h3>
                                 <div class="card-tools">
                                     <!-- Tombol Tambah Data -->
                                     <button type="button" class="btn btn-sm btn-primary mr-2 mt-2" data-bs-toggle="modal"
@@ -105,7 +105,7 @@
                                         <i class="fas fa-plus"></i> Tambah Data
                                     </button>
 
-                                    <form action="{{ route('ListDataMclientVpas') }}" method="GET" class="d-inline">
+                                    <form action="{{ route('ListDataMclientPonpesReguller') }}" method="GET" class="d-inline">
                                         <div class="input-group input-group-sm mt-2 mr-3" style="width: 200px;">
                                             <input type="text" name="table_search" class="form-control"
                                                 placeholder="Search" value="{{ request('table_search') }}">
@@ -125,9 +125,9 @@
                                     <thead>
                                         <tr>
                                             <th>No</th>
-                                            <th>Nama UPT</th>
-                                            <th>Kanwil</th>
-                                            <th>Kendala VPAS</th>
+                                            <th>Nama Ponpes</th>
+                                            <th>Nama Wilayah</th>
+                                            <th>Kendala Reguller</th>
                                             <th>Tanggal Terlapor</th>
                                             <th>Tanggal Selesai</th>
                                             <th>Durasi (Hari)</th>
@@ -144,10 +144,10 @@
                                         @forelse ($data as $d)
                                             <tr>
                                                 <td>{{ $no++ }}</td>
-                                                <td><strong>{{ $d->nama_upt ?? '-' }}</strong></td>
-                                                <td>{{ $d->kanwil ?? '-' }}</td>
+                                                <td><strong>{{ $d->nama_ponpes ?? '-' }}</strong></td>
+                                                <td>{{ $d->nama_wilayah ?? '-' }}</td>
                                                 <td>
-                                                    <span class="badge badge-warning">
+                                                    <span class="badge badge-info">
                                                         {{ Str::limit($d->jenis_kendala ?? 'Tidak ada kendala', 30) }}
                                                     </span>
                                                 </td>
@@ -155,7 +155,7 @@
                                                 <td>{{ $d->tanggal_selesai ?? '-' }}</td>
                                                 <td>
                                                     @if ($d->durasi_hari)
-                                                        <span class="badge badge-info">{{ $d->durasi_hari }} hari</span>
+                                                        <span class="badge badge-secondary">{{ $d->durasi_hari }} hari</span>
                                                     @else
                                                         -
                                                     @endif
@@ -211,14 +211,14 @@
                                                             </button>
                                                         </div>
                                                         <div class="modal-body">
-                                                            <p>Apakah data monitoring client VPAS di UPT
-                                                                <b>{{ $d->nama_upt }}</b> ingin dihapus?
+                                                            <p>Apakah data monitoring client Reguller di Ponpes
+                                                                <b>{{ $d->nama_ponpes }}</b> ingin dihapus?
                                                             </p>
                                                         </div>
                                                         <div class="modal-footer justify-content-between">
                                                             <button type="button" class="btn btn-default"
                                                                 data-dismiss="modal">Tutup</button>
-                                                            <form action="{{ route('MclientVpasDestroy', $d->id) }}"
+                                                            <form action="{{ route('MclientPonpesRegullerDestroy', $d->id) }}"
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
@@ -246,16 +246,15 @@
                             @endif
                         </div>
 
-                        {{-- Add Modal --}}
-                        {{-- Add Modal with Searchable UPT --}}
+                        {{-- Add Modal with Searchable Ponpes --}}
                         <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel"
                             aria-hidden="true">
-                            <form action="{{ route('MclientVpasStore') }}" method="POST">
+                            <form action="{{ route('MclientPonpesRegullerStore') }}" method="POST">
                                 @csrf
                                 <div class="modal-dialog modal-lg">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="addModalLabel">Tambah Data Keluhan Client VPAS
+                                            <h5 class="modal-title" id="addModalLabel">Tambah Data Keluhan Client Ponpes Reguller
                                             </h5>
                                             <button type="button" class="btn-close-custom" data-bs-dismiss="modal"
                                                 aria-label="Close">
@@ -267,42 +266,42 @@
                                             <div class="row">
                                                 <div class="col-md-6">
                                                     <div class="mb-3">
-                                                        <label for="nama_upt" class="form-label">Nama UPT <span
+                                                        <label for="nama_ponpes" class="form-label">Nama Ponpes <span
                                                                 class="text-danger">*</span></label>
                                                         <div class="dropdown">
                                                             <div class="input-group">
-                                                                <input type="text" class="form-control" id="upt_search" 
-                                                                    placeholder="Cari UPT..." autocomplete="off">
+                                                                <input type="text" class="form-control" id="ponpes_search" 
+                                                                    placeholder="Cari Ponpes..." autocomplete="off">
                                                                 <div class="input-group-append">
                                                                     <button type="button" class="btn btn-outline-secondary" 
-                                                                            onclick="toggleUptDropdown()">
+                                                                            onclick="togglePonpesDropdown()">
                                                                         <i class="fas fa-chevron-down"></i>
                                                                     </button>
                                                                 </div>
                                                             </div>
-                                                            <div class="dropdown-menu w-100" id="uptDropdownMenu" 
+                                                            <div class="dropdown-menu w-100" id="ponpesDropdownMenu" 
                                                                 style="max-height: 200px; overflow-y: auto; display: none;">
-                                                                @foreach ($uptList as $upt)
-                                                                    <a class="dropdown-item upt-option" href="#" 
-                                                                    data-value="{{ $upt->namaupt }}" 
-                                                                    data-kanwil="{{ $upt->kanwil }}"
-                                                                    onclick="selectUpt('{{ $upt->namaupt }}', '{{ $upt->kanwil }}')">
-                                                                        {{ $upt->namaupt }} - {{ $upt->kanwil }}
+                                                                @foreach ($ponpesList as $ponpes)
+                                                                    <a class="dropdown-item ponpes-option" href="#" 
+                                                                    data-value="{{ $ponpes->nama_ponpes }}" 
+                                                                    data-nama_wilayah="{{ $ponpes->nama_wilayah }}"
+                                                                    onclick="selectPonpes('{{ $ponpes->nama_ponpes }}', '{{ $ponpes->nama_wilayah }}')">
+                                                                        {{ $ponpes->nama_ponpes }} - {{ $ponpes->nama_wilayah }}
                                                                     </a>
                                                                 @endforeach
                                                             </div>
                                                         </div>
-                                                        <input type="hidden" id="nama_upt" name="nama_upt" required>
-                                                        <small class="form-text text-muted">Ketik untuk mencari UPT</small>
+                                                        <input type="hidden" id="nama_ponpes" name="nama_ponpes" required>
+                                                        <small class="form-text text-muted">Ketik untuk mencari Ponpes</small>
                                                     </div>
 
                                                     <div class="mb-3">
-                                                        <label for="kanwil" class="form-label">Kanwil</label>
-                                                        <input type="text" class="form-control" id="kanwil" name="kanwil" readonly>
+                                                        <label for="nama_wilayah" class="form-label">Nama Wilayah</label>
+                                                        <input type="text" class="form-control" id="nama_wilayah" name="nama_wilayah" readonly>
                                                     </div>
 
                                                     <div class="mb-3">
-                                                        <label for="jenis_kendala" class="form-label">Jenis Kendala VPAS</label>
+                                                        <label for="jenis_kendala" class="form-label">Jenis Kendala Reguller</label>
                                                         <select class="form-control" id="jenis_kendala"
                                                             name="jenis_kendala">
                                                             <option value="">-- Pilih Jenis Kendala --</option>
@@ -390,14 +389,14 @@
                         @foreach ($data as $d)
                             <div class="modal fade" id="editModal{{ $d->id }}" tabindex="-1"
                                 aria-labelledby="editModalLabel" aria-hidden="true">
-                                <form action="{{ route('MclientVpasUpdate', ['id' => $d->id]) }}" method="POST">
+                                <form action="{{ route('MclientPonpesRegullerUpdate', ['id' => $d->id]) }}" method="POST">
                                     @csrf
                                     @method('PUT')
                                     <div class="modal-dialog modal-lg">
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="editModalLabel">Edit Data Monitoring Client
-                                                    VPAS</h5>
+                                                    Ponpes Reguller</h5>
                                                 <button type="button" class="btn-close-custom" data-bs-dismiss="modal"
                                                     aria-label="Close">
                                                     <i class="bi bi-x"></i>
@@ -408,25 +407,25 @@
                                                 <div class="row">
                                                     <div class="col-md-6">
                                                         <div class="mb-3">
-                                                            <label for="nama_upt_edit" class="form-label">Nama UPT <span
+                                                            <label for="nama_ponpes_edit" class="form-label">Nama Ponpes <span
                                                                     class="text-danger">*</span></label>
-                                                            <select class="form-control" id="nama_upt_edit_{{ $d->id }}" name="nama_upt" required onchange="updateKanwilEdit(this.value, {{ $d->id }})">
-                                                                <option value="">-- Pilih UPT --</option>
-                                                                @foreach ($uptList as $upt)
-                                                                    <option value="{{ $upt->namaupt }}" data-kanwil="{{ $upt->kanwil }}" {{ $d->nama_upt == $upt->namaupt ? 'selected' : '' }}>
-                                                                        {{ $upt->namaupt }}
+                                                            <select class="form-control" id="nama_ponpes_edit_{{ $d->id }}" name="nama_ponpes" required onchange="updateNamaWilayahEdit(this.value, {{ $d->id }})">
+                                                                <option value="">-- Pilih Ponpes --</option>
+                                                                @foreach ($ponpesList as $ponpes)
+                                                                    <option value="{{ $ponpes->nama_ponpes }}" data-nama_wilayah="{{ $ponpes->nama_wilayah }}" {{ $d->nama_ponpes == $ponpes->nama_ponpes ? 'selected' : '' }}>
+                                                                        {{ $ponpes->nama_ponpes }}
                                                                     </option>
                                                                 @endforeach
                                                             </select>
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="kanwil_edit" class="form-label">Kanwil</label>
-                                                            <input type="text" class="form-control" id="kanwil_edit_{{ $d->id }}" name="kanwil" value="{{ $d->kanwil }}" readonly>
+                                                            <label for="nama_wilayah_edit" class="form-label">Nama Wilayah</label>
+                                                            <input type="text" class="form-control" id="nama_wilayah_edit_{{ $d->id }}" name="nama_wilayah" value="{{ $d->nama_wilayah }}" readonly>
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="jenis_kendala" class="form-label">Jenis Kendala VPAS</label>
+                                                            <label for="jenis_kendala" class="form-label">Jenis Kendala Reguller</label>
                                                             <select class="form-control" id="jenis_kendala"
                                                                 name="jenis_kendala">
                                                                 <option value="">-- Pilih Jenis Kendala --</option>
@@ -540,90 +539,67 @@
     <!-- /.content-wrapper -->
 
     <script>
-    // Function untuk update kanwil pada Add Modal
-    function updateKanwil(namaUpt) {
-        if (namaUpt === '') {
-            document.getElementById('kanwil').value = '';
+    // Function untuk update nama_wilayah pada Add Modal
+    function updateNamaWilayah(namaPonpes) {
+        if (namaPonpes === '') {
+            document.getElementById('nama_wilayah').value = '';
             return;
         }
         
-        const selectElement = document.getElementById('nama_upt');
-        const selectedOption = selectElement.querySelector(`option[value="${namaUpt}"]`);
+        const selectElement = document.getElementById('nama_ponpes');
+        const selectedOption = selectElement.querySelector(`option[value="${namaPonpes}"]`);
         
         if (selectedOption) {
-            const kanwil = selectedOption.getAttribute('data-kanwil');
-            document.getElementById('kanwil').value = kanwil || '';
+            const nama_wilayah = selectedOption.getAttribute('data-nama_wilayah');
+            document.getElementById('nama_wilayah').value = nama_wilayah || '';
         }
     }
 
-    // Function untuk update kanwil pada Edit Modal
-    function updateKanwilEdit(namaUpt, id) {
-        if (namaUpt === '') {
-            document.getElementById(`kanwil_edit_${id}`).value = '';
+    // Function untuk update nama_wilayah pada Edit Modal
+    function updateNamaWilayahEdit(namaPonpes, id) {
+        if (namaPonpes === '') {
+            document.getElementById(`nama_wilayah_edit_${id}`).value = '';
             return;
         }
         
-        const selectElement = document.getElementById(`nama_upt_edit_${id}`);
-        const selectedOption = selectElement.querySelector(`option[value="${namaUpt}"]`);
+        const selectElement = document.getElementById(`nama_ponpes_edit_${id}`);
+        const selectedOption = selectElement.querySelector(`option[value="${namaPonpes}"]`);
         
         if (selectedOption) {
-            const kanwil = selectedOption.getAttribute('data-kanwil');
-            document.getElementById(`kanwil_edit_${id}`).value = kanwil || '';
+            const nama_wilayah = selectedOption.getAttribute('data-nama_wilayah');
+            document.getElementById(`nama_wilayah_edit_${id}`).value = nama_wilayah || '';
         }
     }
 
-    // Set kanwil untuk edit modal saat modal dibuka
+    // Set nama_wilayah untuk edit modal saat modal dibuka
     document.addEventListener('DOMContentLoaded', function() {
-        // Set initial kanwil values for all edit modals
+        // Set initial nama_wilayah values for all edit modals
         @foreach ($data as $d)
-            const selectEdit{{ $d->id }} = document.getElementById('nama_upt_edit_{{ $d->id }}');
+            const selectEdit{{ $d->id }} = document.getElementById('nama_ponpes_edit_{{ $d->id }}');
             if (selectEdit{{ $d->id }}) {
                 const selectedOptionEdit{{ $d->id }} = selectEdit{{ $d->id }}.querySelector('option:checked');
                 if (selectedOptionEdit{{ $d->id }}) {
-                    const kanwilEdit{{ $d->id }} = selectedOptionEdit{{ $d->id }}.getAttribute('data-kanwil');
-                    if (kanwilEdit{{ $d->id }}) {
-                        document.getElementById('kanwil_edit_{{ $d->id }}').value = kanwilEdit{{ $d->id }};
+                    const nama_wilayahEdit{{ $d->id }} = selectedOptionEdit{{ $d->id }}.getAttribute('data-nama_wilayah');
+                    if (nama_wilayahEdit{{ $d->id }}) {
+                        document.getElementById('nama_wilayah_edit_{{ $d->id }}').value = nama_wilayahEdit{{ $d->id }};
                     }
                 }
             }
         @endforeach
     });
-    // Searchable UPT dropdown functionality
-document.addEventListener('DOMContentLoaded', function() {
-    const uptSearch = document.getElementById('upt_search');
-    const uptDropdown = document.getElementById('uptDropdownMenu');
-    const uptOptions = document.querySelectorAll('.upt-option');
-    
-    // Filter UPT options based on search input
-    uptSearch.addEventListener('input', function() {
-        const searchTerm = this.value.toLowerCase();
-        let hasVisibleOption = false;
+
+    // Searchable Ponpes dropdown functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const ponpesSearch = document.getElementById('ponpes_search');
+        const ponpesDropdown = document.getElementById('ponpesDropdownMenu');
+        const ponpesOptions = document.querySelectorAll('.ponpes-option');
         
-        uptOptions.forEach(option => {
-            const text = option.textContent.toLowerCase();
-            if (text.includes(searchTerm)) {
-                option.style.display = 'block';
-                hasVisibleOption = true;
-            } else {
-                option.style.display = 'none';
-            }
-        });
-        
-        // Show dropdown if there are visible options and search term is not empty
-        if (searchTerm.length > 0 && hasVisibleOption) {
-            uptDropdown.style.display = 'block';
-        } else if (searchTerm.length === 0) {
-            uptDropdown.style.display = 'none';
-        }
-    });
-    
-    // Show all options when clicking on search input
-    uptSearch.addEventListener('focus', function() {
-        if (this.value.length > 0) {
+        // Filter Ponpes options based on search input
+        ponpesSearch.addEventListener('input', function() {
             const searchTerm = this.value.toLowerCase();
             let hasVisibleOption = false;
             
-            uptOptions.forEach(option => {
+            ponpesOptions.forEach(option => {
                 const text = option.textContent.toLowerCase();
                 if (text.includes(searchTerm)) {
                     option.style.display = 'block';
@@ -633,58 +609,82 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
             
-            if (hasVisibleOption) {
-                uptDropdown.style.display = 'block';
+            // Show dropdown if there are visible options and search term is not empty
+            if (searchTerm.length > 0 && hasVisibleOption) {
+                ponpesDropdown.style.display = 'block';
+            } else if (searchTerm.length === 0) {
+                ponpesDropdown.style.display = 'none';
             }
-        }
-    });
-    
-    // Hide dropdown when clicking outside
-    document.addEventListener('click', function(event) {
-        if (!event.target.closest('.dropdown')) {
-            uptDropdown.style.display = 'none';
-        }
-    });
-});
-
-// Toggle dropdown visibility
-function toggleUptDropdown() {
-    const uptDropdown = document.getElementById('uptDropdownMenu');
-    const uptOptions = document.querySelectorAll('.upt-option');
-    
-    if (uptDropdown.style.display === 'none' || uptDropdown.style.display === '') {
-        // Show all options
-        uptOptions.forEach(option => {
-            option.style.display = 'block';
         });
-        uptDropdown.style.display = 'block';
-    } else {
-        uptDropdown.style.display = 'none';
+        
+        // Show all options when clicking on search input
+        ponpesSearch.addEventListener('focus', function() {
+            if (this.value.length > 0) {
+                const searchTerm = this.value.toLowerCase();
+                let hasVisibleOption = false;
+                
+                ponpesOptions.forEach(option => {
+                    const text = option.textContent.toLowerCase();
+                    if (text.includes(searchTerm)) {
+                        option.style.display = 'block';
+                        hasVisibleOption = true;
+                    } else {
+                        option.style.display = 'none';
+                    }
+                });
+                
+                if (hasVisibleOption) {
+                    ponpesDropdown.style.display = 'block';
+                }
+            }
+        });
+        
+        // Hide dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.dropdown')) {
+                ponpesDropdown.style.display = 'none';
+            }
+        });
+    });
+
+    // Toggle dropdown visibility
+    function togglePonpesDropdown() {
+        const ponpesDropdown = document.getElementById('ponpesDropdownMenu');
+        const ponpesOptions = document.querySelectorAll('.ponpes-option');
+        
+        if (ponpesDropdown.style.display === 'none' || ponpesDropdown.style.display === '') {
+            // Show all options
+            ponpesOptions.forEach(option => {
+                option.style.display = 'block';
+            });
+            ponpesDropdown.style.display = 'block';
+        } else {
+            ponpesDropdown.style.display = 'none';
+        }
     }
-}
 
-// Select UPT option
-function selectUpt(namaUpt, kanwil) {
-    document.getElementById('upt_search').value = namaUpt;
-    document.getElementById('nama_upt').value = namaUpt;
-    document.getElementById('kanwil').value = kanwil;
-    document.getElementById('uptDropdownMenu').style.display = 'none';
-}
-
-// Clear UPT selection when search is cleared
-document.getElementById('upt_search').addEventListener('input', function() {
-    if (this.value === '') {
-        document.getElementById('nama_upt').value = '';
-        document.getElementById('kanwil').value = '';
+    // Select Ponpes option
+    function selectPonpes(namaPonpes, nama_wilayah) {
+        document.getElementById('ponpes_search').value = namaPonpes;
+        document.getElementById('nama_ponpes').value = namaPonpes;
+        document.getElementById('nama_wilayah').value = nama_wilayah;
+        document.getElementById('ponpesDropdownMenu').style.display = 'none';
     }
-});
 
-// Reset form when modal is closed
-$('#addModal').on('hidden.bs.modal', function () {
-    document.getElementById('upt_search').value = '';
-    document.getElementById('nama_upt').value = '';
-    document.getElementById('kanwil').value = '';
-    document.getElementById('uptDropdownMenu').style.display = 'none';
-});
+    // Clear Ponpes selection when search is cleared
+    document.getElementById('ponpes_search').addEventListener('input', function() {
+        if (this.value === '') {
+            document.getElementById('nama_ponpes').value = '';
+            document.getElementById('nama_wilayah').value = '';
+        }
+    });
+
+    // Reset form when modal is closed
+    $('#addModal').on('hidden.bs.modal', function () {
+        document.getElementById('ponpes_search').value = '';
+        document.getElementById('nama_ponpes').value = '';
+        document.getElementById('nama_wilayah').value = '';
+        document.getElementById('ponpesDropdownMenu').style.display = 'none';
+    });
     </script>
 @endsection

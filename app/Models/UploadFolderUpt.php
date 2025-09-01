@@ -14,6 +14,7 @@ class UploadFolderUpt extends Model
 
     protected $fillable = [
         'upt_id',
+        'uploaded_pdf',
         'pdf_folder_1',
         'pdf_folder_2',
         'pdf_folder_3',

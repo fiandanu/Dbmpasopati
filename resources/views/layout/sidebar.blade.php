@@ -12,7 +12,8 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="{{ asset('lte/plugins/fontawesome-free/css/all.min.css') }}">
     <!-- Ionicons -->
-    <link rel="stylesheet" href="{{ asset('lte/https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css') }}">
+    <link rel="stylesheet"
+        href="{{ asset('lte/https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css') }}">
     <!-- Tempusdominus Bootstrap 4 -->
     <link rel="stylesheet"
         href="{{ asset('lte/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css') }}">
@@ -285,8 +286,7 @@
             <!-- Left navbar links -->
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i
-                            class="fas fa-bars"></i></a>
+                    <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
                 </li>
                 <li class="nav-item d-none d-sm-inline-block">
                     <a href="index3.html" class="nav-link">Home</a>
@@ -417,8 +417,8 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-widget="control-sidebar" data-controlsidebar-slide="true"
-                        href="#" role="button">
+                    <a class="nav-link" data-widget="control-sidebar" data-controlsidebar-slide="true" href="#"
+                        role="button">
                         <i class="fas fa-th-large"></i>
                     </a>
                 </li>

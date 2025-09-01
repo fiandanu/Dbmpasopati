@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('upload_folder_ponpes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('ponpes_id')->constrained('data_ponpes')->onDelete('cascade');
+            $table->string('uploaded_pdf')->nullable();
             $table->string('pdf_folder_1')->nullable();
             $table->string('pdf_folder_2')->nullable();
             $table->string('pdf_folder_3')->nullable();

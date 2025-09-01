@@ -147,22 +147,18 @@
                                                 <td>{{ $d->tanggal }}</td>
                                                 <td>
                                                     @php
-                                                        // Daftar kolom PDF (folder 1-10)
-                                                        $pdfColumns = [];
-                                                        for ($i = 1; $i <= 10; $i++) {
-                                                            $pdfColumns[] = 'pdf_folder_' . $i;
-                                                        }
-
-                                                        // Hitung folder yang sudah ada PDF
                                                         $uploadedFolders = 0;
-                                                        foreach ($pdfColumns as $column) {
-                                                            if (!empty($d->$column)) {
-                                                                $uploadedFolders++;
+                                                        $totalFolders = 10;
+                                                        
+                                                        // Check if uploadFolder relationship exists
+                                                        if ($d->uploadFolder) {
+                                                            for ($i = 1; $i <= 10; $i++) {
+                                                                $column = 'pdf_folder_' . $i;
+                                                                if (!empty($d->uploadFolder->$column)) {
+                                                                    $uploadedFolders++;
+                                                                }
                                                             }
                                                         }
-
-                                                        $totalFolders = count($pdfColumns); // 10 folder
-                                                        $percentage = ($uploadedFolders / $totalFolders) * 100;
                                                     @endphp
 
                                                     @if ($uploadedFolders == 0)
@@ -174,7 +170,6 @@
                                                     @else
                                                         <span class="badge badge-warning py-2">
                                                             {{ $uploadedFolders }}/{{ $totalFolders }} Folder
-                                                            {{-- ({{ round($percentage) }}%) --}}
                                                         </span>
                                                     @endif
                                                 </td>
@@ -225,18 +220,19 @@
                                                                         onchange="updateFolder({{ $d->id }}, this.value)">
                                                                         @for ($i = 1; $i <= 10; $i++)
                                                                             @php
-                                                                                $column = 'pdf_folder_' . $i;
-                                                                                $fileName = !empty($d->$column)
-                                                                                    ? basename($d->$column)
-                                                                                    : null;
+                                                                                $fileName = null;
+                                                                                if ($d->uploadFolder) {
+                                                                                    $column = 'pdf_folder_' . $i;
+                                                                                    $fileName = !empty($d->uploadFolder->$column) 
+                                                                                        ? basename($d->uploadFolder->$column) 
+                                                                                        : null;
+                                                                                }
                                                                             @endphp
                                                                             <option value="{{ $i }}">
                                                                                 @if ($fileName)
-                                                                                    Folder {{ $i }}:
-                                                                                    {{ $fileName }}
+                                                                                    Folder {{ $i }}: {{ $fileName }}
                                                                                 @else
-                                                                                    Folder {{ $i }}: Tidak ada
-                                                                                    file
+                                                                                    Folder {{ $i }}: Tidak ada file
                                                                                 @endif
                                                                             </option>
                                                                         @endfor
@@ -252,12 +248,10 @@
                                                                             <span id="currentFileName{{ $d->id }}"
                                                                                 class="text-muted">
                                                                                 @php
-                                                                                    $firstColumn = 'pdf_folder_1';
-                                                                                    $firstFileName = !empty(
-                                                                                        $d->$firstColumn
-                                                                                    )
-                                                                                        ? basename($d->$firstColumn)
-                                                                                        : null;
+                                                                                    $firstFileName = null;
+                                                                                    if ($d->uploadFolder && !empty($d->uploadFolder->pdf_folder_1)) {
+                                                                                        $firstFileName = basename($d->uploadFolder->pdf_folder_1);
+                                                                                    }
                                                                                 @endphp
                                                                                 @if ($firstFileName)
                                                                                     - {{ $firstFileName }}
@@ -270,21 +264,23 @@
                                                                     <div class="card-body">
                                                                         <div id="pdfActions{{ $d->id }}">
                                                                             @for ($i = 1; $i <= 10; $i++)
-                                                                                @php
-                                                                                    $column = 'pdf_folder_' . $i;
-                                                                                @endphp
                                                                                 <div class="pdf-folder-actions"
                                                                                     id="folderActions{{ $d->id }}_{{ $i }}"
                                                                                     style="display: {{ $i == 1 ? 'block' : 'none' }};">
-                                                                                    @if (!empty($d->$column))
+                                                                                    @php
+                                                                                        $hasFile = false;
+                                                                                        if ($d->uploadFolder) {
+                                                                                            $column = 'pdf_folder_' . $i;
+                                                                                            $hasFile = !empty($d->uploadFolder->$column);
+                                                                                        }
+                                                                                    @endphp
+                                                                                    
+                                                                                    @if ($hasFile)
                                                                                         <div class="alert alert-success">
-                                                                                            <i
-                                                                                                class="fas fa-check-circle"></i>
-                                                                                            PDF sudah tersedia untuk Folder
-                                                                                            {{ $i }}
+                                                                                            <i class="fas fa-check-circle"></i>
+                                                                                            PDF sudah tersedia untuk Folder {{ $i }}
                                                                                         </div>
-                                                                                        <div class="btn-group mb-3"
-                                                                                            role="group">
+                                                                                        <div class="btn-group mb-3" role="group">
                                                                                             <a href="{{ route('spp.viewpdf', [$d->id, $i]) }}"
                                                                                                 target="_blank"
                                                                                                 class="btn btn-info"
@@ -297,18 +293,15 @@
                                                                                                 data-toggle="modal"
                                                                                                 data-target="#deletePdfModal{{ $d->id }}_{{ $i }}"
                                                                                                 title="Hapus File PDF Folder {{ $i }}">
-                                                                                                <i
-                                                                                                    class="fas fa-trash"></i>
+                                                                                                <i class="fas fa-trash"></i>
                                                                                                 Delete PDF
                                                                                             </button>
                                                                                         </div>
                                                                                     @else
                                                                                         <div class="alert alert-warning">
-                                                                                            <i
-                                                                                                class="fas fa-exclamation-triangle"></i>
+                                                                                            <i class="fas fa-exclamation-triangle"></i>
                                                                                             Belum ada PDF yang diupload
-                                                                                            untuk Folder
-                                                                                            {{ $i }}
+                                                                                            untuk Folder {{ $i }}
                                                                                         </div>
                                                                                     @endif
                                                                                 </div>
@@ -341,9 +334,6 @@
 
                                             {{-- Delete PDF Modals for Each Folder --}}
                                             @for ($i = 1; $i <= 10; $i++)
-                                                @php
-                                                    $column = 'pdf_folder_' . $i;
-                                                @endphp
                                                 <div class="modal fade"
                                                     id="deletePdfModal{{ $d->id }}_{{ $i }}"
                                                     tabindex="-1" role="dialog"
@@ -423,7 +413,7 @@
                                             </div>
                                         @empty
                                             <tr>
-                                                <td colspan="5" class="text-center">
+                                                <td colspan="7" class="text-center">
                                                     <div class="py-4">
                                                         <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
                                                         <p class="text-muted">Tidak ada data yang ditemukan</p>
@@ -453,7 +443,7 @@
             hiddenInput.value = folder;
             currentFolderSpan.textContent = folder;
 
-            // Update action URL with the selected folder - Fixed route name
+            // Update action URL with the selected folder
             form.action = "{{ route('spp.uploadFilePDF', [':id', ':folder']) }}"
                 .replace(':id', id)
                 .replace(':folder', folder);
@@ -468,6 +458,17 @@
             const currentFolderActions = document.getElementById(`folderActions${id}_${folder}`);
             if (currentFolderActions) {
                 currentFolderActions.style.display = 'block';
+            }
+
+            // Update current file name display
+            const selectElement = document.getElementById('folderSelect' + id);
+            const selectedOption = selectElement.options[selectElement.selectedIndex];
+            const fileName = selectedOption.text.split(': ')[1] || 'Tidak ada file';
+            const currentFileNameSpan = document.getElementById('currentFileName' + id);
+            if (fileName === 'Tidak ada file') {
+                currentFileNameSpan.textContent = '- Tidak ada file';
+            } else {
+                currentFileNameSpan.textContent = '- ' + fileName;
             }
         }
 

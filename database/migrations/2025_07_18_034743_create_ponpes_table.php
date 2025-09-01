@@ -16,7 +16,8 @@ return new class extends Migration
             $table->string('nama_ponpes')->nullable();
             $table->string('nama_wilayah');
             $table->string('tipe')->nullable();
-            $table->string('tanggal')->default(now());
+            $table->date('tanggal')->default(now());
+            $table->timestamps();
         });
     }
 

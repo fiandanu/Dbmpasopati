@@ -23,34 +23,6 @@ Route::prefix('database')->name('database.')->group(function () {
     Route::get('/DataBasePonpes', [PageUser::class, 'DataBasePonpes'])->name('DataBasePonpes');
 });
 
-// // Provider Routes
-// Route::prefix('provider')->name('provider.')->group(function () {
-//     Route::get('/DataProvider', [ProviderController::class, 'DataProvider'])->name('DataProvider');
-//     Route::post('/ProviderPageStore', [ProviderController::class, 'ProviderPageStore'])->name('ProviderPageStore');
-//     Route::delete('/ProviderPageDestroy/{id}', [ProviderController::class, 'ProviderPageDestroy'])->name('ProviderPageDestroy');
-//     Route::put('/ProviderPageUpdate/{id}', [ProviderController::class, 'ProviderPageUpdate'])->name('ProviderPageUpdate');
-// });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // Monitoring Server
 Route::get('/GrafikServer', [MonitoringServerController::class, 'GrafikServer'])->name('GrafikServer');
 Route::get('/MonitoringUpt', [MonitoringServerController::class, 'MonitoringUpt'])->name('MonitoringUpt');

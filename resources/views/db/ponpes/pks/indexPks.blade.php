@@ -145,7 +145,7 @@
                                                 <td><span class="tag tag-success">{{ $d->nama_wilayah }}</span></td>
                                                 <td>{{ $d->tanggal }}</td>
                                                 <td>
-                                                    @if (empty($d->uploaded_pdf))
+                                                    @if (!$d->uploadFolder || empty($d->uploadFolder->uploaded_pdf))
                                                         <span class="badge badge-danger py-2">
                                                             <i class="fas fa-file-pdf"></i> PDF Belum di Update
                                                         </span>
@@ -173,7 +173,7 @@
                                                         </button>
 
                                                         {{-- View PDF Button --}}
-                                                        @if (!empty($d->uploaded_pdf))
+                                                        @if ($d->uploadFolder && !empty($d->uploadFolder->uploaded_pdf))
                                                             <a href="{{ route('viewpdf.ponpes', $d->id) }}"
                                                                 target="_blank" class="btn btn-sm btn-info mr-1"
                                                                 title="Lihat PDF">
@@ -187,7 +187,7 @@
                                                         @endif
 
                                                         {{-- Delete PDF Button --}}
-                                                        @if (!empty($d->uploaded_pdf))
+                                                        @if ($d->uploadFolder && !empty($d->uploadFolder->uploaded_pdf))
                                                             <button class="btn btn-sm btn-warning mr-1"
                                                                 data-toggle="modal"
                                                                 data-target="#deletePdfModal{{ $d->id }}"

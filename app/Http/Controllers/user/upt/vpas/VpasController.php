@@ -4,22 +4,22 @@ namespace App\Http\Controllers\user\upt\vpas;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\User;
 use App\Models\Provider;
 use App\Models\Upt;
+use App\Models\DataOpsionalUpt;
+use App\Models\Vpn;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Barryvdh\DomPDF\Facade\Pdf;
-use App\Models\Vpn;
 
 class VpasController extends Controller
 {
-
     public function ListDataVpas(Request $request)
     {
-        $query = Upt::query();
+        $query = Upt::with('dataOpsional');
 
-        // Filter hanya data dengan tipe 'vpas'
         $query->where('tipe', 'vpas');
 
         // Cek apakah ada parameter pencarian
@@ -31,46 +31,41 @@ class VpasController extends Controller
                 $q->where('namaupt', 'LIKE', '%' . $searchTerm . '%')
                     ->orWhere('kanwil', 'LIKE', '%' . $searchTerm . '%')
                     ->orWhere('tanggal', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('pic_upt', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('alamat', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('provider_internet', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('status_wartel', 'LIKE', '%' . $searchTerm . '%');
+                    ->orWhereHas('dataOpsional', function ($subQuery) use ($searchTerm) {
+                        $subQuery->where('pic_upt', 'LIKE', '%' . $searchTerm . '%')
+                            ->orWhere('alamat', 'LIKE', '%' . $searchTerm . '%')
+                            ->orWhere('provider_internet', 'LIKE', '%' . $searchTerm . '%');
+                    });
             });
         }
 
         $data = $query->get();
         $providers = Provider::all();
         $vpns = Vpn::all();
-        return view('db.upt.vpas.indexVpas', compact('data', 'providers','vpns'));
+
+        return view('db.upt.vpas.indexVpas', compact('data', 'providers', 'vpns'));
     }
 
     public function ListUpdateVpas(Request $request, $id)
     {
-        // dd($request->all());
         $validator = Validator::make(
             $request->all(),
             [
-                // Field Wajib Form UPT
-                'namaupt' => 'required|string|max:255',
-                'kanwil' => 'required|string|max:255',
-                'tipe' => 'required|string|max:255',
-                'tanggal' => 'nullable|date',
-
                 // Data Opsional (Form VPAS)
                 'pic_upt' => 'nullable|string|max:255',
                 'no_telpon' => 'nullable|string|regex:/^([0-9\s\-\+\(\)]*)$/|max:20',
                 'alamat' => 'nullable|string',
                 'jumlah_wbp' => 'nullable|integer|min:0',
-                'jumlah_line_reguler' => 'nullable|integer|min:0',
+                'jumlah_line_vpas' => 'nullable|integer|min:0',
                 'provider_internet' => 'nullable|string|max:255',
                 'kecepatan_internet' => 'nullable|string|max:255',
-                'tarif_wartel_reguler' => 'nullable|integer|min:0',
-                'status_wartel' => 'nullable|string|max:255',
+                'tarif_wartel_vpas' => 'nullable|numeric|min:0',
+                'status_wartel' => 'nullable|boolean',
 
                 // IMC PAS
-                'akses_topup_pulsa' => 'nullable|string|max:255',
+                'akses_topup_pulsa' => 'nullable|boolean',
                 'password_topup' => 'nullable|string|max:255',
-                'akses_download_rekaman' => 'nullable|string',
+                'akses_download_rekaman' => 'nullable|boolean',
                 'password_download' => 'nullable|string|max:255',
 
                 // AKSES VPN
@@ -79,37 +74,31 @@ class VpasController extends Controller
                 'vpn_password' => 'nullable|string|max:255',
                 'jenis_vpn' => 'nullable|string|max:255',
 
-                // Extension Reguler
+                // Extension VPAS
                 'jumlah_extension' => 'nullable|integer|min:0',
                 'no_extension' => 'nullable|string',
                 'extension_password' => 'nullable|string',
-                'pin_tes' => 'nullable|integer|min:0',
+                'pin_tes' => 'nullable|string|max:255',
             ],
             // Pesan Validasi
             [
-                // Field Wajib Form UPT
-                'namaupt.required' => 'Nama UPT harus diisi.',
-                'kanwil.required' => 'Kanwil harus diisi.',
-                'tanggal.date' => 'Format tanggal harus sesuai (YYYY-MM-DD).',
-
-                // Data Opsional (Form VPAS)
                 'pic_upt.string' => 'PIC UPT harus berupa teks.',
                 'no_telpon.regex' => 'Nomor telepon harus berupa angka.',
                 'alamat.string' => 'Alamat harus berupa teks.',
                 'jumlah_wbp.integer' => 'Jumlah WBP harus berupa angka.',
                 'jumlah_wbp.min' => 'Jumlah WBP tidak boleh negatif.',
-                'jumlah_line_reguler.integer' => 'Jumlah line reguler harus berupa angka.',
-                'jumlah_line_reguler.min' => 'Jumlah line reguler tidak boleh negatif.',
+                'jumlah_line_vpas.integer' => 'Jumlah line VPAS harus berupa angka.',
+                'jumlah_line_vpas.min' => 'Jumlah line VPAS tidak boleh negatif.',
                 'provider_internet.string' => 'Provider internet harus berupa teks.',
                 'kecepatan_internet.string' => 'Kecepatan internet harus berupa teks.',
-                'tarif_wartel_reguler.integer' => 'Tarif wartel harus berupa angka.',
-                'tarif_wartel_reguler.min' => 'Tarif wartel tidak boleh negatif.',
-                'status_wartel.string' => 'Status wartel harus berupa teks.',
+                'tarif_wartel_vpas.numeric' => 'Tarif wartel harus berupa angka.',
+                'tarif_wartel_vpas.min' => 'Tarif wartel tidak boleh negatif.',
+                'status_wartel.boolean' => 'Status wartel harus berupa boolean.',
 
                 // IMC PAS
-                'akses_topup_pulsa.string' => 'Akses top up pulsa harus berupa teks.',
+                'akses_topup_pulsa.boolean' => 'Akses top up pulsa harus berupa boolean.',
                 'password_topup.string' => 'Password top up harus berupa teks.',
-                'akses_download_rekaman.string' => 'Akses download rekaman harus berupa teks.',
+                'akses_download_rekaman.boolean' => 'Akses download rekaman harus berupa boolean.',
                 'password_download.string' => 'Password download rekaman harus berupa teks.',
 
                 // AKSES VPN
@@ -118,62 +107,250 @@ class VpasController extends Controller
                 'vpn_password.string' => 'Password VPN harus berupa teks.',
                 'jenis_vpn.string' => 'Jenis VPN harus berupa teks.',
 
-                // Extension Reguler
+                // Extension VPAS
                 'jumlah_extension.integer' => 'Jumlah extension harus berupa angka.',
                 'jumlah_extension.min' => 'Jumlah extension tidak boleh negatif.',
-                'no_extension.string' => 'Nomor extension 1 harus berupa teks.',
-                'extension_password.string' => 'Nomor extension 2 harus berupa teks.',
-                'pin_tes.integer' => 'PIN Tes harus berupa angka.',
-                'pin_tes.min' => 'PIN Tes tidak boleh negatif.'
+                'no_extension.string' => 'Nomor extension harus berupa teks.',
+                'extension_password.string' => 'Password extension harus berupa teks.',
+                'pin_tes.string' => 'PIN Tes harus berupa teks.',
             ]
         );
-        $providers = Provider::all();
 
         // Jika validasi gagal
         if ($validator->fails()) {
-            // Pisahkan data valid dan invalid
-            $validatedData = [];
-            $invalidFields = array_keys($validator->errors()->messages());
-
-            // Ambil hanya field yang valid
-            foreach ($request->all() as $key => $value) {
-                if (!in_array($key, $invalidFields)) {
-                    $validatedData[$key] = $value;
-                }
-            }
-
-            // Update field yang valid ke database
-            try {
-                if (!empty($validatedData)) {
-                    $data = Upt::findOrFail($id);
-                    $data->update($validatedData);
-                }
-            } catch (\Exception $e) {
-                // Jika ada error saat update, tetap tampilkan error validasi
-            }
-
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput()
-                ->with('partial_success', 'Data valid telah disimpan. Silakan perbaiki field yang bermasalah.');
+                ->with('error', 'Terdapat kesalahan dalam validasi data. Silakan periksa kembali.');
         }
 
-        // Jika semua validasi berhasil
-        try {
-            $data = Upt::findOrFail($id);
-            $data->update($request->all());
+        // Mulai database transaction
+        DB::beginTransaction();
 
-            return redirect()->back()->with('success', 'Semua data berhasil diupdate!');
+        try {
+            // Find UPT data
+            $upt = Upt::findOrFail($id);
+
+            // Prepare data for data_opsional_upt table
+            $opsionalData = [
+                'pic_upt' => $request->pic_upt,
+                'no_telpon' => $request->no_telpon,
+                'alamat' => $request->alamat,
+                'jumlah_wbp' => $request->jumlah_wbp,
+                'jumlah_line_vpas' => $request->jumlah_line_vpas,
+                'provider_internet' => $request->provider_internet,
+                'kecepatan_internet' => $request->kecepatan_internet,
+                'tarif_wartel_vpas' => $request->tarif_wartel_vpas,
+                'status_wartel' => $request->status_wartel ? 1 : 0,
+                'akses_topup_pulsa' => $request->akses_topup_pulsa ? 1 : 0,
+                'password_topup' => $request->password_topup,
+                'akses_download_rekaman' => $request->akses_download_rekaman ? 1 : 0,
+                'password_download' => $request->password_download,
+                'internet_protocol' => $request->internet_protocol,
+                'vpn_user' => $request->vpn_user,
+                'vpn_password' => $request->vpn_password,
+                'jenis_vpn' => $request->jenis_vpn,
+                'jumlah_extension' => $request->jumlah_extension,
+                'no_extension' => $request->no_extension,
+                'extension_password' => $request->extension_password,
+                'pin_tes' => $request->pin_tes,
+            ];
+
+            // Update or create data_opsional_upt record
+            DataOpsionalUpt::updateOrCreate(
+                ['upt_id' => $upt->id],
+                $opsionalData
+            );
+
+            DB::commit();
+            return redirect()->back()->with('success', 'Data berhasil diupdate!');
         } catch (\Exception $e) {
+            DB::rollback();
             return redirect()->back()->with('error', 'Gagal update data: ' . $e->getMessage());
+        }
+    }
+
+    public function UserPageDestroy($id)
+    {
+        $dataupt = Upt::find($id);
+
+        if (!$dataupt) {
+            return redirect()->route('upt.UserPage')->with('error', 'Data tidak ditemukan!');
+        }
+
+        // Ambil nama UPT tanpa suffix (VpasReg) untuk pengecekan
+        $namaUptBase = $this->removeVpasRegSuffix($dataupt->namaupt);
+
+        // Hapus data yang dipilih
+        $dataupt->delete();
+
+        // Update nama UPT yang tersisa berdasarkan jumlah data
+        $this->updateUptNamesBySuffix($namaUptBase);
+
+        return redirect()->route('upt.UserPage')->with('success', 'Data berhasil dihapus!');
+    }
+
+    public function UserPageStore(Request $request)
+    {
+        // Validasi input
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'namaupt' => 'required|string',
+                'kanwil' => 'required|string',
+                'tipe' => 'required|array|min:1',
+                'tipe.*' => 'in:reguler,vpas',
+            ],
+            [
+                'namaupt.required' => 'Nama UPT harus diisi',
+                'kanwil.required' => 'Kanwil harus diisi',
+                'tipe.required' => 'Tipe harus dipilih minimal satu',
+                'tipe.array' => 'Tipe harus berupa array',
+                'tipe.min' => 'Pilih minimal satu tipe',
+                'tipe.*.in' => 'Tipe hanya boleh reguler atau vpas',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return redirect()->back()->withInput()->withErrors($validator);
+        }
+
+        // Ambil data tipe yang dipilih
+        $selectedTypes = $request->tipe;
+        $createdRecords = [];
+
+        // Bersihkan nama UPT dari suffix ganda yang mungkin ada
+        $cleanNamaUpt = $this->removeVpasRegSuffix($request->namaupt);
+
+        // Tentukan nama UPT berdasarkan jumlah tipe yang dipilih
+        $namaUpt = $cleanNamaUpt;
+        if (count($selectedTypes) == 2 && in_array('reguler', $selectedTypes) && in_array('vpas', $selectedTypes)) {
+            $namaUpt = $cleanNamaUpt . ' (VpasReg)';
+        }
+
+        // Validasi manual untuk kombinasi nama UPT + tipe
+        foreach ($selectedTypes as $tipeValue) {
+            $existingRecord = Upt::where('namaupt', $namaUpt)
+                ->where('tipe', $tipeValue)
+                ->first();
+
+            if ($existingRecord) {
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', "Data UPT '{$namaUpt}' dengan tipe '{$tipeValue}' sudah ada!");
+            }
+        }
+
+        // Loop untuk setiap tipe yang dipilih
+        foreach ($selectedTypes as $tipeValue) {
+            // Buat record baru untuk setiap tipe
+            $dataupt = [
+                'namaupt' => $namaUpt,
+                'kanwil' => $request->kanwil,
+                'tipe' => $tipeValue,
+                'tanggal' => Carbon::now()->format('Y-m-d'),
+            ];
+
+            $newRecord = Upt::create($dataupt);
+            $createdRecords[] = $tipeValue;
+        }
+
+        // Berikan pesan berdasarkan hasil
+        if (count($createdRecords) > 0) {
+            $message = 'Data UPT berhasil ditambahkan untuk tipe: ' . implode(', ', $createdRecords);
+            return redirect()->route('upt.UserPage')->with('success', $message);
+        } else {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Gagal menambahkan data UPT');
+        }
+    }
+
+    public function UserPageUpdate(Request $request, $id)
+    {
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'namaupt' => [
+                    'required',
+                    'string',
+                    function ($attribute, $value, $fail) use ($id, $request) {
+                        // Cek apakah ada record lain dengan nama yang sama dan tipe yang sama
+                        $existingRecord = Upt::where('namaupt', $value)
+                            ->where('id', '!=', $id)
+                            ->where('tipe', $request->tipe)
+                            ->first();
+
+                        if ($existingRecord) {
+                            $fail("Nama UPT '{$value}' dengan tipe '{$request->tipe}' sudah ada.");
+                        }
+                    }
+                ],
+                'kanwil' => 'required|string',
+                'tipe' => 'required|string|in:reguler,vpas',
+            ],
+            [
+                'namaupt.required' => 'Nama UPT harus diisi',
+                'kanwil.required' => 'Kanwil harus diisi',
+                'tipe.required' => 'Tipe harus diisi',
+                'tipe.in' => 'Tipe hanya boleh reguler atau vpas',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return redirect()->back()->withInput()->withErrors($validator);
+        }
+
+        $dataupt = Upt::findOrFail($id);
+        $dataupt->namaupt = $request->namaupt;
+        $dataupt->kanwil = $request->kanwil;
+        $dataupt->tipe = $request->tipe;
+        $dataupt->save();
+
+        return redirect()->route('upt.UserPage')->with('success', 'Data UPT berhasil diupdate!');
+    }
+
+    /**
+     * Helper method untuk menghilangkan suffix (VpasReg) dari nama UPT
+     * Menghapus semua kemungkinan suffix ganda
+     */
+    private function removeVpasRegSuffix($namaUpt)
+    {
+        // Hapus semua kemungkinan suffix (VpasReg) yang mungkin ganda
+        return preg_replace('/\s*\(VpasReg\)+/', '', $namaUpt);
+    }
+
+    private function updateUptNamesBySuffix($namaUptBase)
+    {
+        $relatedData = Upt::where('namaupt', 'LIKE', $namaUptBase . '%')->get();
+
+        // Jika ada 2 atau lebih data dengan nama base yang sama, pastikan ada suffix
+        if ($relatedData->count() >= 2) {
+            foreach ($relatedData as $data) {
+                if (!str_contains($data->namaupt, '(VpasReg)')) {
+                    $data->update([
+                        'namaupt' => $namaUptBase . ' (VpasReg)'
+                    ]);
+                }
+            }
+        }
+        // Jika hanya ada 1 data tersisa, hapus suffix
+        elseif ($relatedData->count() == 1) {
+            $remainingData = $relatedData->first();
+            if (str_contains($remainingData->namaupt, '(VpasReg)')) {
+                $remainingData->update([
+                    'namaupt' => $namaUptBase
+                ]);
+            }
         }
     }
 
     public function exportVerticalCsv($id): StreamedResponse
     {
-        $user = Upt::findOrFail($id);
+        $user = Upt::with('dataOpsional')->findOrFail($id);
+        $dataOpsional = $user->dataOpsional;
 
-        $filename = 'data_upt_' . $user->namaupt . '.csv';
+        $filename = 'data_upt_vpas_' . $user->namaupt . '.csv';
 
         $headers = [
             "Content-type" => "text/csv",
@@ -184,28 +361,28 @@ class VpasController extends Controller
         ];
 
         $rows = [
-            ['PIC UPT', $user->pic_upt],
-            ['No. Telpon', $user->no_telpon],
-            ['Alamat', $user->alamat],
+            ['PIC UPT', $dataOpsional->pic_upt ?? ''],
+            ['No. Telpon', $dataOpsional->no_telpon ?? ''],
+            ['Alamat', $dataOpsional->alamat ?? ''],
             ['Kanwil', $user->kanwil],
-            ['Jumlah WBP', $user->jumlah_wbp],
-            ['Jumlah Line Reguler Terpasang', $user->jumlah_line_reguler],
-            ['Provider Internet', $user->provider_internet],
-            ['Kecepatan Internet (mbps)', $user->kecepatan_internet],
-            ['Tarif Wartel Reguler', $user->tarif_wartel_reguler],
-            ['Status Wartel', $user->status_wartel],
-            ['Akses Topup Pulsa', $user->akses_topup_pulsa],
-            ['Password Topup', $user->password_topup],
-            ['Akses Download Rekaman', $user->akses_download_rekaman],
-            ['Password Download Rekaman', $user->password_download],
-            ['Internet Protocol', $user->internet_protocol],
-            ['VPN User', $user->vpn_user],
-            ['VPN Password', $user->vpn_password],
-            ['Jenis VPN', $user->jenis_vpn],
-            ['Jumlah Extension', $user->jumlah_extension],
-            ['No Extension', $user->no_extension],
-            ['Extension Password', $user->extension_password],
-            ['PIN Tes', $user->pin_tes],
+            ['Jumlah WBP', $dataOpsional->jumlah_wbp ?? ''],
+            ['Jumlah Line VPAS Terpasang', $dataOpsional->jumlah_line_vpas ?? ''],
+            ['Provider Internet', $dataOpsional->provider_internet ?? ''],
+            ['Kecepatan Internet (mbps)', $dataOpsional->kecepatan_internet ?? ''],
+            ['Tarif Wartel VPAS', $dataOpsional->tarif_wartel_vpas ?? ''],
+            ['Status Wartel', $dataOpsional->status_wartel ? 'Aktif' : 'Tidak Aktif'],
+            ['Akses Topup Pulsa', $dataOpsional->akses_topup_pulsa ? 'Ya' : 'Tidak'],
+            ['Password Topup', $dataOpsional->password_topup ?? ''],
+            ['Akses Download Rekaman', $dataOpsional->akses_download_rekaman ? 'Ya' : 'Tidak'],
+            ['Password Download Rekaman', $dataOpsional->password_download ?? ''],
+            ['Internet Protocol', $dataOpsional->internet_protocol ?? ''],
+            ['VPN User', $dataOpsional->vpn_user ?? ''],
+            ['VPN Password', $dataOpsional->vpn_password ?? ''],
+            ['Jenis VPN', $dataOpsional->jenis_vpn ?? ''],
+            ['Jumlah Extension', $dataOpsional->jumlah_extension ?? ''],
+            ['No Extension', $dataOpsional->no_extension ?? ''],
+            ['Extension Password', $dataOpsional->extension_password ?? ''],
+            ['PIN Tes', $dataOpsional->pin_tes ?? ''],
         ];
 
         $callback = function () use ($rows) {
@@ -221,21 +398,35 @@ class VpasController extends Controller
 
     public function exportUptPdf($id)
     {
-        $user = Upt::findOrFail($id);
+        $user = Upt::with('dataOpsional')->findOrFail($id);
 
         $data = [
-            'title' => 'LAPAS PEREMPUAN KELAS IIA JAKARTA',
+            'title' => 'LAPAS PEREMPUAN KELAS IIA JAKARTA - VPAS',
             'user' => $user,
         ];
 
+        // Ganti dari 'export.vpas_pdf' menjadi 'export.upt_pdf'
         $pdf = Pdf::loadView('export.upt_pdf', $data);
-        return $pdf->download('data_upt_' . $user->namaupt . '.pdf');
+        return $pdf->download('data_upt_vpas_' . $user->namaupt . '.pdf');
     }
 
     public function DatabasePageDestroy($id)
     {
         $dataupt = Upt::find($id);
+
+        if (!$dataupt) {
+            return redirect()->route('DbVpas')->with('error', 'Data tidak ditemukan!');
+        }
+
+        // Ambil nama UPT tanpa suffix (VpasReg) untuk pengecekan
+        $namaUptBase = $this->removeVpasRegSuffix($dataupt->namaupt);
+
+        // Hapus data yang dipilih
         $dataupt->delete();
-        return redirect()->route('ListDataVpas');
+
+        // Update nama UPT yang tersisa berdasarkan jumlah data
+        $this->updateUptNamesBySuffix($namaUptBase);
+
+        return redirect()->route('DbVpas')->with('success', 'Data berhasil dihapus!');
     }
 }

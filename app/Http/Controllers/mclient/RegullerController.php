@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\mclient;
 
 use App\Http\Controllers\Controller;
-use App\Models\mclient\Vpas;
+use App\Models\mclient\Reguller;
 use App\Models\Upt; // Import model Upt yang sudah ada
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 
-class VpasController extends Controller
+class RegullerController extends Controller
 {
     private function getJenisKendala()
     {
@@ -42,15 +42,16 @@ class VpasController extends Controller
         ];
     }
 
-    // Update method ListDataMclientVpas untuk mengirim data jenis kendala dan UPT
-    public function ListDataMclientVpas(Request $request)
+    // Update method ListDataMclientReguller untuk mengirim data jenis kendala dan UPT
+    public function ListDataMclientReguller(Request $request)
     {
-        $query = Vpas::query();
+        $query = Reguller::query();
 
         // Cek apakah ada parameter pencarian
         if ($request->has('table_search') && !empty($request->table_search)) {
             $searchTerm = $request->table_search;
 
+            // Lakukan pencarian berdasarkan beberapa kolom
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('nama_upt', 'LIKE', '%' . $searchTerm . '%')
                     ->orWhere('kanwil', 'LIKE', '%' . $searchTerm . '%')
@@ -64,29 +65,30 @@ class VpasController extends Controller
             });
         }
 
+        // Urutkan berdasarkan data terbaru
         $data = $query->orderBy('created_at', 'desc')->paginate(10);
 
+        // Kirim juga data jenis kendala dan UPT ke view
         $jenisKendala = $this->getJenisKendala();
-
-        // PERUBAHAN: Filter UPT hanya yang memiliki tipe 'vpas'
+        // Filter UPT hanya yang memiliki tipe 'reguler'
         $uptList = Upt::select('namaupt', 'kanwil')
-            ->where('tipe', 'vpas')  // Tambahkan filter ini
-            ->orderBy('namaupt')
-            ->get();
+                    ->where('tipe', 'reguler')
+                    ->orderBy('namaupt')
+                    ->get();
 
-        return view('mclient.vpas.indexVpas', compact('data', 'jenisKendala', 'uptList'));
+        return view('mclient.reguller.indexReguller', compact('data', 'jenisKendala', 'uptList'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function MclientVpasStore(Request $request)
+    public function MclientRegullerStore(Request $request)
     {
         $validator = Validator::make(
             $request->all(),
             [
-                'nama_upt' => 'required|string|max:255', // Changed from 'lokasi'
-                'kanwil' => 'nullable|string|max:255', // Added kanwil validation
+                'nama_upt' => 'required|string|max:255',
+                'kanwil' => 'nullable|string|max:255',
                 'jenis_kendala' => 'nullable|string',
                 'detail_kendala' => 'nullable|string',
                 'tanggal_terlapor' => 'nullable|date',
@@ -97,13 +99,13 @@ class VpasController extends Controller
                 'pic_2' => 'nullable|string|max:255',
             ],
             [
-                'nama_upt.required' => 'Nama UPT harus diisi.', // Changed from 'lokasi'
+                'nama_upt.required' => 'Nama UPT harus diisi.',
                 'nama_upt.string' => 'Nama UPT harus berupa teks.',
                 'nama_upt.max' => 'Nama UPT tidak boleh lebih dari 255 karakter.',
-                'kanwil.string' => 'Kanwil harus berupa teks.', // Added kanwil validation message
+                'kanwil.string' => 'Kanwil harus berupa teks.',
                 'kanwil.max' => 'Kanwil tidak boleh lebih dari 255 karakter.',
-                'jenis_kendala.string' => 'Kendala VPAS harus berupa teks.',
-                'detail_kendala.string' => 'Detail kendala VPAS harus berupa teks.',
+                'jenis_kendala.string' => 'Kendala Reguller harus berupa teks.',
+                'detail_kendala.string' => 'Detail kendala Reguller harus berupa teks.',
                 'tanggal_terlapor.date' => 'Format tanggal terlapor harus valid.',
                 'tanggal_selesai.date' => 'Format tanggal selesai harus valid.',
                 'tanggal_selesai.after_or_equal' => 'Tanggal selesai tidak boleh lebih awal dari tanggal terlapor.',
@@ -134,9 +136,9 @@ class VpasController extends Controller
                 $data['durasi_hari'] = $tanggalSelesai->diffInDays($tanggalTerlapor);
             }
 
-            Vpas::create($data);
+            Reguller::create($data);
 
-            return redirect()->route('ListDataMclientVpas')->with('success', 'Data monitoring client VPAS berhasil ditambahkan!');
+            return redirect()->route('ListDataMclientReguller')->with('success', 'Data monitoring client Reguller berhasil ditambahkan!');
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
@@ -147,13 +149,13 @@ class VpasController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function MclientVpasUpdate(Request $request, $id)
+    public function MclientRegullerUpdate(Request $request, $id)
     {
         $validator = Validator::make(
             $request->all(),
             [
-                'nama_upt' => 'required|string|max:255', // Changed from 'lokasi'
-                'kanwil' => 'nullable|string|max:255', // Added kanwil validation
+                'nama_upt' => 'required|string|max:255',
+                'kanwil' => 'nullable|string|max:255',
                 'jenis_kendala' => 'nullable|string',
                 'detail_kendala' => 'nullable|string',
                 'tanggal_terlapor' => 'nullable|date',
@@ -169,8 +171,8 @@ class VpasController extends Controller
                 'nama_upt.max' => 'Nama UPT tidak boleh lebih dari 255 karakter.',
                 'kanwil.string' => 'Kanwil harus berupa teks.',
                 'kanwil.max' => 'Kanwil tidak boleh lebih dari 255 karakter.',
-                'jenis_kendala.string' => 'Kendala VPAS harus berupa teks.',
-                'detail_kendala.string' => 'Detail kendala VPAS harus berupa teks.',
+                'jenis_kendala.string' => 'Kendala Reguller harus berupa teks.',
+                'detail_kendala.string' => 'Detail kendala Reguller harus berupa teks.',
                 'tanggal_terlapor.date' => 'Format tanggal terlapor harus valid.',
                 'tanggal_selesai.date' => 'Format tanggal selesai harus valid.',
                 'tanggal_selesai.after_or_equal' => 'Tanggal selesai tidak boleh lebih awal dari tanggal terlapor.',
@@ -200,7 +202,7 @@ class VpasController extends Controller
             // Update field yang valid ke database
             try {
                 if (!empty($validatedData)) {
-                    $data = Vpas::findOrFail($id);
+                    $data = Reguller::findOrFail($id);
 
                     // Hitung durasi otomatis jika tanggal terlapor dan selesai diisi
                     if (isset($validatedData['tanggal_terlapor']) && isset($validatedData['tanggal_selesai'])) {
@@ -223,7 +225,7 @@ class VpasController extends Controller
 
         // Jika semua validasi berhasil
         try {
-            $data = Vpas::findOrFail($id);
+            $data = Reguller::findOrFail($id);
             $updateData = $request->all();
 
             // Hitung durasi otomatis jika tanggal terlapor dan selesai diisi
@@ -235,7 +237,7 @@ class VpasController extends Controller
 
             $data->update($updateData);
 
-            return redirect()->route('ListDataMclientVpas')->with('success', 'Data monitoring client VPAS berhasil diupdate!');
+            return redirect()->route('ListDataMclientReguller')->with('success', 'Data monitoring client Reguller berhasil diupdate!');
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
@@ -246,17 +248,17 @@ class VpasController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function MclientVpasDestroy($id)
+    public function MclientRegullerDestroy($id)
     {
         try {
-            $data = Vpas::findOrFail($id);
-            $namaUpt = $data->nama_upt; // Changed from lokasi
+            $data = Reguller::findOrFail($id);
+            $namaUpt = $data->nama_upt;
             $data->delete();
 
-            return redirect()->route('ListDataMclientVpas')
-                ->with('success', "Data monitoring client VPAS di UPT '{$namaUpt}' berhasil dihapus!");
+            return redirect()->route('ListDataMclientReguller')
+                ->with('success', "Data monitoring client Reguller di UPT '{$namaUpt}' berhasil dihapus!");
         } catch (\Exception $e) {
-            return redirect()->route('ListDataMclientVpas')
+            return redirect()->route('ListDataMclientReguller')
                 ->with('error', 'Gagal menghapus data: ' . $e->getMessage());
         }
     }
@@ -266,9 +268,9 @@ class VpasController extends Controller
      */
     public function exportCsv()
     {
-        $data = Vpas::orderBy('created_at', 'desc')->get();
+        $data = Reguller::orderBy('created_at', 'desc')->get();
 
-        $filename = 'monitoring_client_vpas_' . date('Y-m-d_H-i-s') . '.csv';
+        $filename = 'monitoring_client_reguller_' . date('Y-m-d_H-i-s') . '.csv';
 
         $headers = [
             "Content-type" => "text/csv",
@@ -284,9 +286,9 @@ class VpasController extends Controller
             // Header CSV
             fputcsv($file, [
                 'No',
-                'Nama UPT', // Changed from 'Lokasi'
-                'Kanwil', // Added Kanwil
-                'Kendala VPAS',
+                'Nama UPT',
+                'Kanwil',
+                'Kendala Reguller',
                 'Detail Kendala',
                 'Tanggal Terlapor',
                 'Tanggal Selesai',
@@ -303,8 +305,8 @@ class VpasController extends Controller
             foreach ($data as $row) {
                 fputcsv($file, [
                     $no++,
-                    $row->nama_upt, // Changed from lokasi
-                    $row->kanwil, // Added kanwil
+                    $row->nama_upt,
+                    $row->kanwil,
                     $row->jenis_kendala,
                     $row->detail_kendala,
                     $row->tanggal_terlapor,
@@ -329,18 +331,18 @@ class VpasController extends Controller
      */
     public function getDashboardStats()
     {
-        $totalData = Vpas::count();
-        $statusPending = Vpas::where('status', 'pending')->count();
-        $statusProses = Vpas::where('status', 'proses')->count();
-        $statusSelesai = Vpas::where('status', 'selesai')->count();
+        $totalData = Reguller::count();
+        $statusPending = Reguller::where('status', 'pending')->count();
+        $statusProses = Reguller::where('status', 'proses')->count();
+        $statusSelesai = Reguller::where('status', 'selesai')->count();
 
         // Data bulan ini
-        $bulanIni = Vpas::whereMonth('created_at', now()->month)
+        $bulanIni = Reguller::whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
             ->count();
 
         // Rata-rata durasi penyelesaian
-        $avgDurasi = Vpas::where('status', 'selesai')
+        $avgDurasi = Reguller::where('status', 'selesai')
             ->whereNotNull('durasi_hari')
             ->avg('durasi_hari');
 
@@ -361,14 +363,14 @@ class VpasController extends Controller
     {
         $namaUpt = $request->input('nama_upt');
         $upt = Upt::where('namaupt', $namaUpt)->first();
-
+        
         if ($upt) {
             return response()->json([
                 'status' => 'success',
                 'kanwil' => $upt->kanwil
             ]);
         }
-
+        
         return response()->json([
             'status' => 'error',
             'message' => 'UPT not found'

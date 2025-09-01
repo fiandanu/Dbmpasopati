@@ -56,32 +56,32 @@
     <div class="title">{{ $title }}</div>
     <table>
         <tr><td colspan="2" class="section-header">Data Opsional</td></tr>
-        <tr><td class="nowrap">PIC UPT</td><td>{{ $user->pic_upt }}</td></tr>
-        <tr><td>No. Telpon</td><td>{{ $user->no_telpon }}</td></tr>
-        <tr><td>Alamat</td><td>{{ $user->alamat }}</td></tr>
+        <tr><td class="nowrap">PIC UPT</td><td>{{ $user->dataOpsional->pic_upt ?? '' }}</td></tr>
+        <tr><td>No. Telpon</td><td>{{ $user->dataOpsional->no_telpon ?? '' }}</td></tr>
+        <tr><td>Alamat</td><td>{{ $user->dataOpsional->alamat ?? '' }}</td></tr>
         <tr><td>Kanwil</td><td>{{ $user->kanwil }}</td></tr>
-        <tr><td>Jumlah WBP</td><td>{{ $user->jumlah_wbp }}</td></tr>
-        <tr><td>Jumlah Line Reguler Terpasang</td><td>{{ $user->jumlah_line_reguler }}</td></tr>
-        <tr><td>Provider Internet</td><td>{{ $user->provider_internet }}</td></tr>
-        <tr><td>Kecepatan Internet (mbps)</td><td>{{ $user->kecepatan_internet }}</td></tr>
-        <tr><td>Tarif Wartel Reguler</td><td>{{ $user->tarif_wartel_reguler }}</td></tr>
-        <tr><td>Status Wartel</td><td>{{ $user->status_wartel }}</td></tr>
+        <tr><td>Jumlah WBP</td><td>{{ $user->dataOpsional->jumlah_wbp ?? '' }}</td></tr>
+        <tr><td>Jumlah Line VPAS Terpasang</td><td>{{ $user->dataOpsional->jumlah_line_vpas ?? '' }}</td></tr>
+        <tr><td>Provider Internet</td><td>{{ $user->dataOpsional->provider_internet ?? '' }}</td></tr>
+        <tr><td>Kecepatan Internet (mbps)</td><td>{{ $user->dataOpsional->kecepatan_internet ?? '' }}</td></tr>
+        <tr><td>Tarif Wartel VPAS</td><td>{{ $user->dataOpsional->tarif_wartel_vpas ?? '' }}</td></tr>
+        <tr><td>Status Wartel</td><td>{{ $user->dataOpsional->status_wartel ?? '' }}</td></tr>
 
         <tr><td colspan="2" class="section-header">IMC PAS</td></tr>
-        <tr><td>Akses Topup Pulsa</td><td>{{ $user->akses_topup_pulsa }}</td></tr>
-        <tr><td>Password Topup</td><td>{{ $user->password_topup }}</td></tr>
-        <tr><td>Akses Download Rekaman</td><td>{{ $user->akses_download_rekaman }}</td></tr>
-        <tr><td>Password Download</td><td>{{ $user->password_download }}</td></tr>
+        <tr><td>Akses Topup Pulsa</td><td>{{ $user->dataOpsional->akses_topup_pulsa ?? '' }}</td></tr>
+        <tr><td>Password Topup</td><td>{{ $user->dataOpsional->password_topup ?? '' }}</td></tr>
+        <tr><td>Akses Download Rekaman</td><td>{{ $user->dataOpsional->akses_download_rekaman ?? '' }}</td></tr>
+        <tr><td>Password Download</td><td>{{ $user->dataOpsional->password_download ?? '' }}</td></tr>
 
         <tr><td colspan="2" class="section-header">Akses VPN</td></tr>
-        <tr><td>Internet Protocol</td><td>{{ $user->internet_protocol }}</td></tr>
-        <tr><td>VPN User</td><td>{{ $user->vpn_user }}</td></tr>
-        <tr><td>VPN Password</td><td>{{ $user->vpn_password }}</td></tr>
-        <tr><td>Jenis VPN</td><td>{{ $user->jenis_vpn }}</td></tr>
+        <tr><td>Internet Protocol</td><td>{{ $user->dataOpsional->internet_protocol ?? '' }}</td></tr>
+        <tr><td>VPN User</td><td>{{ $user->dataOpsional->vpn_user ?? '' }}</td></tr>
+        <tr><td>VPN Password</td><td>{{ $user->dataOpsional->vpn_password ?? '' }}</td></tr>
+        <tr><td>Jenis VPN</td><td>{{ $user->dataOpsional->jenis_vpn ?? '' }}</td></tr>
 
-        <tr><td colspan="2" class="section-header">Extension Reguler</td></tr>
-        <tr><td>Jumlah Extension</td><td>{{ $user->jumlah_extension }}</td></tr>
-        <tr><td>PIN Tes</td><td>{{ $user->pin_tes }}</td></tr>
+        <tr><td colspan="2" class="section-header">Extension VPAS</td></tr>
+        <tr><td>Jumlah Extension</td><td>{{ $user->dataOpsional->jumlah_extension ?? '' }}</td></tr>
+        <tr><td>PIN Tes</td><td>{{ $user->dataOpsional->pin_tes ?? '' }}</td></tr>
     </table>
 
     <!-- Tabel Extension Terpisah -->
@@ -98,8 +98,8 @@
         </thead>
         <tbody>
             @php
-                $extensions = explode("\n", $user->no_extension ?? '');
-                $passwords = explode("\n", $user->extension_password ?? '');
+                $extensions = explode("\n", $user->dataOpsional->no_extension ?? '');
+                $passwords = explode("\n", $user->dataOpsional->extension_password ?? '');
                 $maxRows = max(count($extensions), count($passwords));
             @endphp
             

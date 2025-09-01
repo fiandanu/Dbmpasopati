@@ -152,7 +152,8 @@
                                                 <td>{{ $d->tanggal }}</td>
                                                 <td>
                                                     @php
-                                                        // Cek apakah data opsional sudah diisi
+                                                        // Cek apakah data opsional sudah diisi - sesuaikan dengan relasi
+                                                        $dataOpsional = $d->dataOpsional; // Asumsi ada relasi dataOpsional
                                                         $optionalFields = [
                                                             'pic_upt',
                                                             'no_telpon',
@@ -178,14 +179,16 @@
                                                         ];
 
                                                         $filledFields = 0;
-                                                        foreach ($optionalFields as $field) {
-                                                            if (!empty($d->$field)) {
-                                                                $filledFields++;
+                                                        if ($dataOpsional) {
+                                                            foreach ($optionalFields as $field) {
+                                                                if (!empty($dataOpsional->$field)) {
+                                                                    $filledFields++;
+                                                                }
                                                             }
                                                         }
 
                                                         $totalFields = count($optionalFields);
-                                                        $percentage = ($filledFields / $totalFields) * 100;
+                                                        $percentage = $totalFields > 0 ? ($filledFields / $totalFields) * 100 : 0;
                                                     @endphp
 
                                                     @if ($filledFields == 0)
@@ -203,8 +206,8 @@
                                                 <td>
                                                     {{-- Edit Button --}}
                                                     <a href="#editModal{{ $d->id }}" class="btn btn-sm btn-primary"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#editModal{{ $d->id }}">
+                                                        data-toggle="modal"
+                                                        data-target="#editModal{{ $d->id }}">
                                                         <i class="fa fa-edit"></i> edit</a>
 
                                                     <a href="{{ route('export.upt.pdf', $d->id) }}"
@@ -275,24 +278,26 @@
                             @foreach ($data as $d)
                                 {{-- User Edit Modal --}}
                                 <div class="modal fade" id="editModal{{ $d->id }}" tabindex="-1"
-                                    aria-labelledby="editModalLabel" aria-hidden="true">
-                                    <form id="editForm" action="{{ route('ListUpdateReguller', ['id' => $d->id]) }}"
+                                    aria-labelledby="editModalLabel{{ $d->id }}" aria-hidden="true">
+                                    <form id="editForm{{ $d->id }}" action="{{ route('ListUpdateReguller', ['id' => $d->id]) }}"
                                         method="POST">
                                         @csrf
                                         @method('PUT')
-                                        <div class="modal-dialog">
+                                        <div class="modal-dialog modal-lg">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="editModalLabel">Edit Data</h5>
-                                                    <button type="button" class="btn-close-custom"
-                                                        data-bs-dismiss="modal" aria-label="Close">
-                                                        <i class="bi bi-x"></i>
+                                                    <h5 class="modal-title" id="editModalLabel{{ $d->id }}">Edit Data</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
                                                     </button>
                                                 </div>
 
                                                 <div class="modal-body">
-                                                    <input type="hidden" id="editId" name="id">
-                                                    <!-- Tampilkan pesan kesalahan jika ada -->
+                                                    <input type="hidden" name="id" value="{{ $d->id }}">
+                                                    
+                                                    @php
+                                                        $dataOpsional = $d->dataOpsional; // Asumsi ada relasi
+                                                    @endphp
 
                                                     <!-- Data Wajib Section -->
                                                     <div class="mb-4">
@@ -301,20 +306,20 @@
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="namaupt" class="form-label">Nama UPT</label>
-                                                            <input type="text" class="form-control" id="namaupt"
+                                                            <label for="namaupt{{ $d->id }}" class="form-label">Nama UPT</label>
+                                                            <input type="text" class="form-control" id="namaupt{{ $d->id }}"
                                                                 name="namaupt" value="{{ $d->namaupt }}" readonly>
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="kanwil" class="form-label">Kanwil</label>
-                                                            <input type="text" class="form-control" id="kanwil"
+                                                            <label for="kanwil{{ $d->id }}" class="form-label">Kanwil</label>
+                                                            <input type="text" class="form-control" id="kanwil{{ $d->id }}"
                                                                 name="kanwil" value="{{ $d->kanwil }}" readonly>
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="tipe" class="form-label">Tipe</label>
-                                                            <input type="text" class="form-control" id="tipe"
+                                                            <label for="tipe{{ $d->id }}" class="form-label">Tipe</label>
+                                                            <input type="text" class="form-control" id="tipe{{ $d->id }}"
                                                                 name="tipe" value="{{ ucfirst($d->tipe) }}" readonly>
                                                         </div>
                                                     </div>
@@ -326,54 +331,54 @@
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="pic_upt" class="form-label">PIC UPT</label>
-                                                            <input type="text" class="form-control" id="pic_upt"
-                                                                name="pic_upt" value="{{ $d->pic_upt }}"
+                                                            <label for="pic_upt{{ $d->id }}" class="form-label">PIC UPT</label>
+                                                            <input type="text" class="form-control" id="pic_upt{{ $d->id }}"
+                                                                name="pic_upt" value="{{ $dataOpsional->pic_upt ?? '' }}"
                                                                 placeholder="Masukkan nama PIC UPT">
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="no_telpon" class="form-label">No
+                                                            <label for="no_telpon{{ $d->id }}" class="form-label">No
                                                                 Telepon</label>
-                                                            <input type="text" class="form-control" id="no_telpon"
+                                                            <input type="text" class="form-control" id="no_telpon{{ $d->id }}"
                                                                 name="no_telpon"
-                                                                value="{{ old('no_telpon', $d->no_telpon) }}"
+                                                                value="{{ $dataOpsional->no_telpon ?? '' }}"
                                                                 placeholder="Masukkan nomor telepon">
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="alamat" class="form-label">Alamat</label>
-                                                            <input type="text" class="form-control" id="alamat"
-                                                                name="alamat" value="{{ $d->alamat }}"
+                                                            <label for="alamat{{ $d->id }}" class="form-label">Alamat</label>
+                                                            <input type="text" class="form-control" id="alamat{{ $d->id }}"
+                                                                name="alamat" value="{{ $dataOpsional->alamat ?? '' }}"
                                                                 placeholder="Masukkan alamat lengkap">
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="jumlah_wbp" class="form-label">Jumlah
-                                                                BWP</label>
-                                                            <input type="text" class="form-control" id="jumlah_wbp"
-                                                                name="jumlah_wbp" value="{{ $d->jumlah_wbp }}"
-                                                                placeholder="Masukkan jumlah BWP">
+                                                            <label for="jumlah_wbp{{ $d->id }}" class="form-label">Jumlah
+                                                                WBP</label>
+                                                            <input type="number" class="form-control" id="jumlah_wbp{{ $d->id }}"
+                                                                name="jumlah_wbp" value="{{ $dataOpsional->jumlah_wbp ?? '' }}"
+                                                                placeholder="Masukkan jumlah WBP">
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="jumlah_line_reguler" class="form-label">Jumlah
+                                                            <label for="jumlah_line_reguler{{ $d->id }}" class="form-label">Jumlah
                                                                 Line Reguler Terpasang</label>
-                                                            <input type="text" class="form-control"
-                                                                id="jumlah_line_reguler" name="jumlah_line_reguler"
-                                                                value="{{ $d->jumlah_line_reguler }}"
+                                                            <input type="number" class="form-control"
+                                                                id="jumlah_line_reguler{{ $d->id }}" name="jumlah_line_reguler"
+                                                                value="{{ $dataOpsional->jumlah_line_reguler ?? '' }}"
                                                                 placeholder="Masukkan jumlah line reguler">
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="provider_internet" class="form-label">Provider
+                                                            <label for="provider_internet{{ $d->id }}" class="form-label">Provider
                                                                 Internet</label>
-                                                            <select class="form-control" id="provider_internet"
+                                                            <select class="form-control" id="provider_internet{{ $d->id }}"
                                                                 name="provider_internet">
                                                                 <option value="">-- Pilih Provider --</option>
                                                                 @foreach ($providers as $p)
                                                                     <option value="{{ $p->nama_provider }}"
-                                                                        {{ $d->provider_internet == $p->nama_provider ? 'selected' : '' }}>
+                                                                        {{ ($dataOpsional->provider_internet ?? '') == $p->nama_provider ? 'selected' : '' }}>
                                                                         {{ $p->nama_provider }}
                                                                     </option>
                                                                 @endforeach
@@ -381,34 +386,34 @@
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="kecepatan_internet" class="form-label">Kecepatan
+                                                            <label for="kecepatan_internet{{ $d->id }}" class="form-label">Kecepatan
                                                                 Internet (Mbps)</label>
                                                             <input type="text" class="form-control"
-                                                                id="kecepatan_internet" name="kecepatan_internet"
-                                                                value="{{ $d->kecepatan_internet }}"
+                                                                id="kecepatan_internet{{ $d->id }}" name="kecepatan_internet"
+                                                                value="{{ $dataOpsional->kecepatan_internet ?? '' }}"
                                                                 placeholder="Contoh: 20 Mbps">
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="tarif_wartel_reguler" class="form-label">Tarif
+                                                            <label for="tarif_wartel_reguler{{ $d->id }}" class="form-label">Tarif
                                                                 Wartel Reguler</label>
                                                             <input type="text" class="form-control"
-                                                                id="tarif_wartel_reguler" name="tarif_wartel_reguler"
-                                                                value="{{ $d->tarif_wartel_reguler }}"
-                                                                placeholder="Contoh: Rp 2.000 / menit">
+                                                                id="tarif_wartel_reguler{{ $d->id }}" name="tarif_wartel_reguler"
+                                                                value="{{ $dataOpsional->tarif_wartel_reguler ?? '' }}"
+                                                                placeholder="Contoh: 2000">
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="status_wartel" class="form-label">Status
+                                                            <label for="status_wartel{{ $d->id }}" class="form-label">Status
                                                                 Wartel</label>
-                                                            <select class="form-control" id="status_wartel"
+                                                            <select class="form-control" id="status_wartel{{ $d->id }}"
                                                                 name="status_wartel">
                                                                 <option value="">-- Pilih Status --</option>
-                                                                <option value="Aktif"
-                                                                    {{ $d->status_wartel == 'Aktif' ? 'selected' : '' }}>
+                                                                <option value="1"
+                                                                    {{ ($dataOpsional->status_wartel ?? 0) == 1 ? 'selected' : '' }}>
                                                                     Aktif</option>
-                                                                <option value="Tidak Aktif"
-                                                                    {{ $d->status_wartel == 'Tidak Aktif' ? 'selected' : '' }}>
+                                                                <option value="0"
+                                                                    {{ ($dataOpsional->status_wartel ?? 0) == 0 ? 'selected' : '' }}>
                                                                     Tidak Aktif</option>
                                                             </select>
                                                         </div>
@@ -421,40 +426,52 @@
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="akses_topup_pulsa" class="form-label">Akses
+                                                            <label for="akses_topup_pulsa{{ $d->id }}" class="form-label">Akses
                                                                 Top Up
                                                                 Pulsa</label>
-                                                            <input type="text" class="form-control"
-                                                                id="akses_topup_pulsa" name="akses_topup_pulsa"
-                                                                value="{{ $d->akses_topup_pulsa }}"
-                                                                placeholder="Masukkan akses top up pulsa">
+                                                            <select class="form-control" id="akses_topup_pulsa{{ $d->id }}"
+                                                                name="akses_topup_pulsa">
+                                                                <option value="">-- Pilih Akses --</option>
+                                                                <option value="1"
+                                                                    {{ ($dataOpsional->akses_topup_pulsa ?? 0) == 1 ? 'selected' : '' }}>
+                                                                    Ya</option>
+                                                                <option value="0"
+                                                                    {{ ($dataOpsional->akses_topup_pulsa ?? 0) == 0 ? 'selected' : '' }}>
+                                                                    Tidak</option>
+                                                            </select>
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="password_topup" class="form-label">Password
+                                                            <label for="password_topup{{ $d->id }}" class="form-label">Password
                                                                 Top Up
                                                                 Pulsa</label>
                                                             <input type="text" class="form-control"
-                                                                id="password_topup" name="password_topup"
-                                                                value="{{ $d->password_topup }}"
+                                                                id="password_topup{{ $d->id }}" name="password_topup"
+                                                                value="{{ $dataOpsional->password_topup ?? '' }}"
                                                                 placeholder="Masukkan password top up">
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="akses_download_rekaman" class="form-label">Akses
+                                                            <label for="akses_download_rekaman{{ $d->id }}" class="form-label">Akses
                                                                 Download Rekaman</label>
-                                                            <input type="text" class="form-control"
-                                                                id="akses_download_rekaman" name="akses_download_rekaman"
-                                                                value="{{ $d->akses_download_rekaman }}"
-                                                                placeholder="Masukkan akses download rekaman">
+                                                            <select class="form-control" id="akses_download_rekaman{{ $d->id }}"
+                                                                name="akses_download_rekaman">
+                                                                <option value="">-- Pilih Akses --</option>
+                                                                <option value="1"
+                                                                    {{ ($dataOpsional->akses_download_rekaman ?? 0) == 1 ? 'selected' : '' }}>
+                                                                    Ya</option>
+                                                                <option value="0"
+                                                                    {{ ($dataOpsional->akses_download_rekaman ?? 0) == 0 ? 'selected' : '' }}>
+                                                                    Tidak</option>
+                                                            </select>
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="password_download" class="form-label">Password
+                                                            <label for="password_download{{ $d->id }}" class="form-label">Password
                                                                 Download Rekaman</label>
                                                             <input type="text" class="form-control"
-                                                                id="password_download" name="password_download"
-                                                                value="{{ $d->password_download }}"
+                                                                id="password_download{{ $d->id }}" name="password_download"
+                                                                value="{{ $dataOpsional->password_download ?? '' }}"
                                                                 placeholder="Masukkan password download">
                                                         </div>
                                                     </div>
@@ -466,36 +483,36 @@
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="internet_protocol" class="form-label">Internet
+                                                            <label for="internet_protocol{{ $d->id }}" class="form-label">Internet
                                                                 Protocol</label>
                                                             <input type="text" class="form-control"
-                                                                id="internet_protocol" name="internet_protocol"
-                                                                value="{{ $d->internet_protocol }}"
+                                                                id="internet_protocol{{ $d->id }}" name="internet_protocol"
+                                                                value="{{ $dataOpsional->internet_protocol ?? '' }}"
                                                                 placeholder="Masukkan alamat IP atau domain">
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="vpn_user" class="form-label">User </label>
-                                                            <input type="text" class="form-control" id="vpn_user"
-                                                                name="vpn_user" value="{{ $d->vpn_user }}"
+                                                            <label for="vpn_user{{ $d->id }}" class="form-label">User VPN</label>
+                                                            <input type="text" class="form-control" id="vpn_user{{ $d->id }}"
+                                                                name="vpn_user" value="{{ $dataOpsional->vpn_user ?? '' }}"
                                                                 placeholder="Masukkan username VPN">
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="vpn_password" class="form-label">Password</label>
-                                                            <input type="text" class="form-control" id="vpn_password"
-                                                                name="vpn_password" value="{{ $d->vpn_password }}"
+                                                            <label for="vpn_password{{ $d->id }}" class="form-label">Password VPN</label>
+                                                            <input type="text" class="form-control" id="vpn_password{{ $d->id }}"
+                                                                name="vpn_password" value="{{ $dataOpsional->vpn_password ?? '' }}"
                                                                 placeholder="Masukkan password VPN">
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="jenis_vpn" class="form-label">Jenis VPN</label>
-                                                            <select class="form-control" id="jenis_vpn" name="jenis_vpn">
+                                                            <label for="jenis_vpn{{ $d->id }}" class="form-label">Jenis VPN</label>
+                                                            <select class="form-control" id="jenis_vpn{{ $d->id }}" name="jenis_vpn">
                                                                 <option value="">-- Pilih Jenis VPN --</option>
                                                                 @if (isset($vpns) && $vpns->count() > 0)
                                                                     @foreach ($vpns as $p)
                                                                         <option value="{{ $p->jenis_vpn }}"
-                                                                            {{ $d->jenis_vpn == $p->jenis_vpn ? 'selected' : '' }}>
+                                                                            {{ ($dataOpsional->jenis_vpn ?? '') == $p->jenis_vpn ? 'selected' : '' }}>
                                                                             {{ $p->jenis_vpn }}
                                                                         </option>
                                                                     @endforeach
@@ -510,52 +527,52 @@
 
                                                     <div class="mb-4">
                                                         <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                            <h5 class="fw-semibold text-info">Ekstension Reguler</h5>
+                                                            <h5 class="fw-semibold text-info">Extension Reguler</h5>
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="jumlah_extension" class="form-label">Jumlah
+                                                            <label for="jumlah_extension{{ $d->id }}" class="form-label">Jumlah
                                                                 Extension</label>
-                                                            <input type="text" class="form-control"
-                                                                id="jumlah_extension" name="jumlah_extension"
-                                                                value="{{ $d->jumlah_extension }}"
+                                                            <input type="number" class="form-control"
+                                                                id="jumlah_extension{{ $d->id }}" name="jumlah_extension"
+                                                                value="{{ $dataOpsional->jumlah_extension ?? '' }}"
                                                                 placeholder="Masukkan jumlah">
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="pin_tes" class="form-label">Pin Test</label>
-                                                            <input type="text" class="form-control" id="pin_tes"
-                                                                name="pin_tes" value="{{ $d->pin_tes }}"
-                                                                placeholder="Masukkan Pin Tes">
+                                                            <label for="pin_tes{{ $d->id }}" class="form-label">Pin Test</label>
+                                                            <input type="text" class="form-control" id="pin_tes{{ $d->id }}"
+                                                                name="pin_tes" value="{{ $dataOpsional->pin_tes ?? '' }}"
+                                                                placeholder="Masukkan Pin Test">
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="no_extension" class="form-label">No
+                                                            <label for="no_extension{{ $d->id }}" class="form-label">No
                                                                 Extension</label>
                                                             <small class="text-muted d-block mb-2">Masukkan setiap
                                                                 nomor
                                                                 extension pada baris terpisah</small>
-                                                            <textarea class="form-control" id="no_extension" name="no_extension" rows="6"
-                                                                placeholder="Contoh:&#10;No Extension&#10;No Extension&#10;No Extension;">{{ $d->no_extension }}</textarea>
+                                                            <textarea class="form-control" id="no_extension{{ $d->id }}" name="no_extension" rows="6"
+                                                                placeholder="Contoh:&#10;101&#10;102&#10;103">{{ $dataOpsional->no_extension ?? '' }}</textarea>
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="extension_password" class="form-label">Password
+                                                            <label for="extension_password{{ $d->id }}" class="form-label">Password
                                                                 Extension</label>
                                                             <small class="text-muted d-block mb-2">Masukkan setiap
                                                                 password
                                                                 extension pada baris terpisah (sesuai urutan nomor
                                                                 extension
                                                                 di atas)</small>
-                                                            <textarea class="form-control" id="extension_password" name="extension_password" rows="6"
-                                                                placeholder="Contoh:&#10;password&#10;password&#10;password">{{ $d->extension_password }}</textarea>
+                                                            <textarea class="form-control" id="extension_password{{ $d->id }}" name="extension_password" rows="6"
+                                                                placeholder="Contoh:&#10;password1&#10;password2&#10;password3">{{ $dataOpsional->extension_password ?? '' }}</textarea>
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary"
-                                                        data-bs-dismiss="modal">Cancel</button>
+                                                        data-dismiss="modal">Cancel</button>
                                                     <button type="submit" class="btn btn-primary">Update</button>
                                                 </div>
                                             </div>
@@ -574,4 +591,26 @@
         <!-- /.content -->
     </div>
     <!-- /.content-wrapper -->
+
+    {{-- Add JavaScript for Bootstrap 4 Modal --}}
+    <script>
+        $(document).ready(function() {
+            // Handle modal events if needed
+            $('.modal').on('show.bs.modal', function (e) {
+                // Modal is about to be shown
+                console.log('Modal is opening');
+            });
+            
+            $('.modal').on('shown.bs.modal', function (e) {
+                // Modal is fully shown
+                console.log('Modal is fully visible');
+            });
+            
+            $('.modal').on('hide.bs.modal', function (e) {
+                // Modal is about to be hidden
+                console.log('Modal is closing');
+            });
+        });
+    </script>
+
 @endsection

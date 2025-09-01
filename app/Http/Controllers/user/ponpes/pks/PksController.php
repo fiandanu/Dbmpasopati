@@ -6,13 +6,14 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Ponpes;
 use App\Models\Provider;
+use App\Models\UploadFolderPonpes;
 use Illuminate\Support\Facades\Storage;
 
 class PksController extends Controller
 {
     public function ListDataPks(Request $request)
     {
-        $query = Ponpes::query();
+        $query = Ponpes::with('uploadFolder'); // Load relasi upload folder
 
         // Cek apakah ada parameter pencarian
         if ($request->has('table_search') && !empty($request->table_search)) {
@@ -34,44 +35,60 @@ class PksController extends Controller
 
     public function DataBasePageDestroy($id)
     {
-        $dataponpes = Ponpes::find($id);
+        $dataponpes = Ponpes::with('uploadFolder')->find($id);
 
-        // Hapus file PDF jika ada
-        if (!empty($dataponpes->uploaded_pdf) && Storage::disk('public')->exists($dataponpes->uploaded_pdf)) {
-            Storage::disk('public')->delete($dataponpes->uploaded_pdf);
+        if ($dataponpes) {
+            // Hapus juga data upload folder terkait
+            if ($dataponpes->uploadFolder) {
+                $uploadFolder = $dataponpes->uploadFolder;
+                
+                // Hapus uploaded_pdf jika ada
+                if ($uploadFolder->uploaded_pdf && Storage::disk('public')->exists($uploadFolder->uploaded_pdf)) {
+                    Storage::disk('public')->delete($uploadFolder->uploaded_pdf);
+                }
+                
+                // Hapus pdf folder files jika ada (1-10)
+                for ($i = 1; $i <= 10; $i++) {
+                    $pdfField = "pdf_folder_$i";
+                    if ($uploadFolder->$pdfField && Storage::disk('public')->exists($uploadFolder->$pdfField)) {
+                        Storage::disk('public')->delete($uploadFolder->$pdfField);
+                    }
+                }
+                
+                $uploadFolder->delete();
+            }
+            
+            $dataponpes->delete();
         }
 
-        $dataponpes->delete();
         return redirect()->route('ponpes.pks.ListDataPks')->with('success', 'Data ponpes berhasil dihapus');
     }
 
     public function viewUploadedPDF($id)
     {
-        $ponpes = Ponpes::findOrFail($id);
+        $ponpes = Ponpes::with('uploadFolder')->findOrFail($id);
 
-        // Cek apakah file ada dan path tidak kosong
-        if (empty($ponpes->uploaded_pdf)) {
+        // Cek apakah ada upload folder dan file PDF
+        if (!$ponpes->uploadFolder || empty($ponpes->uploadFolder->uploaded_pdf)) {
             return abort(404, 'File PDF belum diupload');
         }
 
-        if (!Storage::disk('public')->exists($ponpes->uploaded_pdf)) {
+        if (!Storage::disk('public')->exists($ponpes->uploadFolder->uploaded_pdf)) {
             return abort(404, 'File tidak ditemukan di storage.');
         }
 
-        return response()->file(storage_path('app/public/' . $ponpes->uploaded_pdf));
+        return response()->file(storage_path('app/public/' . $ponpes->uploadFolder->uploaded_pdf));
     }
 
     public function uploadFilePDFPonpesPks(Request $request, $id)
     {
-        // dd($request);
-
         if (!$request->hasFile('uploaded_pdf')) {
             return redirect()->back()->with('error', 'File tidak ditemukan dalam request!');
         }
 
         // Validasi file PDF
         $request->validate([
-            'uploaded_pdf' => 'required|file|mimes:pdf|max:2048',
+            'uploaded_pdf' => 'required|file|mimes:pdf|max:5120', // 5MB
         ]);
 
         $ponpes = Ponpes::findOrFail($id);
@@ -84,37 +101,45 @@ class PksController extends Controller
             return redirect()->back()->with('error', 'File tidak valid!');
         }
 
-        // Hapus file lama jika ada
-        if (!empty($ponpes->uploaded_pdf) && Storage::disk('public')->exists($ponpes->uploaded_pdf)) {
-            Storage::disk('public')->delete($ponpes->uploaded_pdf);
-        }
-
         $filename = time() . '_' . $file->getClientOriginalName();
 
         // Simpan ke dalam folder storage/app/public/uploads/pdf/ponpes
         $path = $file->storeAs('ponpes/pks', $filename, 'public');
 
-        // Simpan path ke database
-        $ponpes->uploaded_pdf = $path;
-        $ponpes->save();
+        // Cari atau buat record upload folder
+        $uploadFolder = UploadFolderPonpes::firstOrCreate(
+            ['ponpes_id' => $ponpes->id],
+            ['uploaded_pdf' => null]
+        );
+
+        // Hapus file lama jika ada
+        if ($uploadFolder->uploaded_pdf && Storage::disk('public')->exists($uploadFolder->uploaded_pdf)) {
+            Storage::disk('public')->delete($uploadFolder->uploaded_pdf);
+        }
+
+        // Update path di database
+        $uploadFolder->uploaded_pdf = $path;
+        $uploadFolder->save();
 
         return redirect()->back()->with('success', 'PDF berhasil di-upload!');
     }
 
     public function deleteFilePDF($id)
     {
-        $ponpes = Ponpes::findOrFail($id);
+        $ponpes = Ponpes::with('uploadFolder')->findOrFail($id);
 
-        if (empty($ponpes->uploaded_pdf)) {
+        if (!$ponpes->uploadFolder || empty($ponpes->uploadFolder->uploaded_pdf)) {
             return redirect()->back()->with('error', 'File PDF belum di upload');
         }
 
-        if (Storage::disk('public')->exists($ponpes->uploaded_pdf)) {
-            Storage::disk('public')->delete($ponpes->uploaded_pdf);
+        $uploadFolder = $ponpes->uploadFolder;
+
+        if (Storage::disk('public')->exists($uploadFolder->uploaded_pdf)) {
+            Storage::disk('public')->delete($uploadFolder->uploaded_pdf);
         }
 
-        $ponpes->uploaded_pdf = null;
-        $ponpes->save();
+        $uploadFolder->uploaded_pdf = null;
+        $uploadFolder->save();
 
         return redirect()->back()->with('success', 'File PDF berhasil dihapus');
     }

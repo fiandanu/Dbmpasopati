@@ -1,5 +1,3 @@
-migrasi vpas
-
 <?php
 
 use Illuminate\Database\Migrations\Migration;
@@ -13,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('mclient_vpas', function (Blueprint $table) {
+        Schema::create('mclient_ponpes_reguller', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_upt')->nullable(); // Changed from 'lokasi' to 'nama_upt'
-            $table->string('kanwil')->nullable(); // Added kanwil column
+            $table->string('nama_ponpes')->nullable();
+            $table->string('nama_wilayah')->nullable();
             $table->string('jenis_kendala')->nullable();
             $table->string('detail_kendala')->nullable();
             $table->string('tanggal_terlapor')->nullable();
@@ -34,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('mclient_vpas');
+        Schema::dropIfExists('mclient_ponpes_reguller');
     }
 };

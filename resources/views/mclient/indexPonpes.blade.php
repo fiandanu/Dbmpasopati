@@ -27,7 +27,7 @@
                         <div class="card bg-light">
                             <div class="card-header font-weight-bold d-flex justify-content-center">VTREN</div>
                             <div class="card-body">
-                                <a href="" class="btn btn-primary btn-sm btn-block">List Data VTREN</a>
+                                <a href="{{ route('ListDataMclientPonpesVtren') }}" class="btn btn-primary btn-sm btn-block">List Data VTREN</a>
                             </div>
                         </div>
                     </div>
@@ -37,7 +37,7 @@
                         <div class="card bg-light">
                             <div class="card-header font-weight-bold d-flex justify-content-center">Reguller</div>
                             <div class="card-body">
-                                <a href="" class="btn btn-primary btn-sm btn-block">List Data Reguller</a>
+                                <a href="{{ route('ListDataMclientPonpesReguller') }}" class="btn btn-primary btn-sm btn-block">List Data Reguller</a>
                             </div>
                         </div>
                     </div>

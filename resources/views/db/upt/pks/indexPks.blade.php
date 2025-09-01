@@ -147,7 +147,7 @@
                                                 <td>{{ ucfirst($d->tipe) }}</td>
                                                 <td>{{ $d->tanggal }}</td>
                                                 <td>
-                                                    @if (empty($d->uploaded_pdf))
+                                                    @if (!$d->uploadFolder || empty($d->uploadFolder->uploaded_pdf))
                                                         <span class="badge badge-danger py-2">
                                                             <i class="fas fa-file-pdf"></i> PDF Belum di Update
                                                         </span>
@@ -175,7 +175,7 @@
                                                         </button>
 
                                                         {{-- View PDF Button --}}
-                                                        @if (!empty($d->uploaded_pdf))
+                                                        @if ($d->uploadFolder && !empty($d->uploadFolder->uploaded_pdf))
                                                             <a href="{{ route('viewpdf.upt', $d->id) }}" target="_blank"
                                                                 class="btn btn-sm btn-info mr-1" title="Lihat PDF">
                                                                 <i class="fas fa-eye"></i> View PDF
@@ -188,7 +188,7 @@
                                                         @endif
 
                                                         {{-- Delete PDF Button --}}
-                                                        @if (!empty($d->uploaded_pdf))
+                                                        @if ($d->uploadFolder && !empty($d->uploadFolder->uploaded_pdf))
                                                             <button class="btn btn-sm btn-warning mr-1"
                                                                 data-toggle="modal"
                                                                 data-target="#deletePdfModal{{ $d->id }}"
@@ -278,7 +278,7 @@
                                             </div>
                                         @empty
                                             <tr>
-                                                <td colspan="6" class="text-center">
+                                                <td colspan="7" class="text-center">
                                                     <div class="py-4">
                                                         <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
                                                         <p class="text-muted">Tidak ada data yang ditemukan</p>

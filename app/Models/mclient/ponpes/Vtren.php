@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Models\mclient;
+namespace App\Models\mclient\ponpes;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Upt;
+use App\Models\Ponpes;
 use Carbon\Carbon;
 
-class Vpas extends Model
+class Vtren extends Model
 {
     use HasFactory;
 
@@ -16,7 +16,7 @@ class Vpas extends Model
      *
      * @var string
      */
-    protected $table = 'mclient_vpas';
+    protected $table = 'mclient_ponpes_vtren';
 
     /**
      * The attributes that are mass assignable.
@@ -24,8 +24,8 @@ class Vpas extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'nama_upt', // Changed from 'lokasi'
-        'kanwil', // Added kanwil
+        'nama_ponpes',
+        'kanwil',
         'jenis_kendala',
         'detail_kendala',
         'tanggal_terlapor',
@@ -62,11 +62,11 @@ class Vpas extends Model
     ];
 
     /**
-     * Relationship with UPT
+     * Relationship with Ponpes
      */
-    public function upt()
+    public function ponpes()
     {
-        return $this->belongsTo(Upt::class, 'nama_upt', 'namaupt');
+        return $this->belongsTo(Ponpes::class, 'nama_ponpes', 'nama_ponpes');
     }
 
     /**
@@ -149,8 +149,8 @@ class Vpas extends Model
     public function scopeSearch($query, $term)
     {
         return $query->where(function ($q) use ($term) {
-            $q->where('nama_upt', 'LIKE', "%{$term}%") // Changed from 'lokasi'
-                ->orWhere('kanwil', 'LIKE', "%{$term}%") // Added kanwil search
+            $q->where('nama_ponpes', 'LIKE', "%{$term}%")
+                ->orWhere('kanwil', 'LIKE', "%{$term}%")
                 ->orWhere('jenis_kendala', 'LIKE', "%{$term}%")
                 ->orWhere('status', 'LIKE', "%{$term}%")
                 ->orWhere('pic_1', 'LIKE', "%{$term}%")

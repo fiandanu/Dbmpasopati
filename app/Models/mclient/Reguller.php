@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Upt;
 use Carbon\Carbon;
 
-class Vpas extends Model
+class Reguller extends Model
 {
     use HasFactory;
 
@@ -16,7 +16,7 @@ class Vpas extends Model
      *
      * @var string
      */
-    protected $table = 'mclient_vpas';
+    protected $table = 'mclient_reguller';
 
     /**
      * The attributes that are mass assignable.
@@ -24,8 +24,8 @@ class Vpas extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'nama_upt', // Changed from 'lokasi'
-        'kanwil', // Added kanwil
+        'nama_upt',
+        'kanwil',
         'jenis_kendala',
         'detail_kendala',
         'tanggal_terlapor',
@@ -149,8 +149,8 @@ class Vpas extends Model
     public function scopeSearch($query, $term)
     {
         return $query->where(function ($q) use ($term) {
-            $q->where('nama_upt', 'LIKE', "%{$term}%") // Changed from 'lokasi'
-                ->orWhere('kanwil', 'LIKE', "%{$term}%") // Added kanwil search
+            $q->where('nama_upt', 'LIKE', "%{$term}%")
+                ->orWhere('kanwil', 'LIKE', "%{$term}%")
                 ->orWhere('jenis_kendala', 'LIKE', "%{$term}%")
                 ->orWhere('status', 'LIKE', "%{$term}%")
                 ->orWhere('pic_1', 'LIKE', "%{$term}%")

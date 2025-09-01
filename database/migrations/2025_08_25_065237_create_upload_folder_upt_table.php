@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('upload_folder_upt', function (Blueprint $table) {
             $table->id();
             $table->foreignId('upt_id')->constrained('data_upt')->onDelete('cascade');
+            $table->string('uploaded_pdf')->nullable();
             $table->string('pdf_folder_1')->nullable();
             $table->string('pdf_folder_2')->nullable();
             $table->string('pdf_folder_3')->nullable();
@@ -27,6 +28,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('upload_folder');
+        Schema::dropIfExists('upload_folder_upt'); // Perbaikan: nama tabel harus konsisten
     }
 };

@@ -6,13 +6,15 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Provider;
 use App\Models\Upt;
+use App\Models\UploadFolderUpt;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class SppUptController extends Controller
 {
     public function ListDataSpp(Request $request)
     {
-        $query = Upt::query();
+        $query = Upt::with('uploadFolder'); // Load relasi ke upload folder
 
         // Cek apakah ada parameter pencarian
         if ($request->has('table_search') && !empty($request->table_search)) {
@@ -35,23 +37,31 @@ class SppUptController extends Controller
         return view('db.upt.spp.indexSpp', compact('data', 'providers'));
     }
 
-    // Fix method name to match route
     public function DatabasePageDestroy($id)
     {
         try {
             $dataupt = Upt::findOrFail($id);
-
-            // Hapus semua file PDF yang terkait dengan user ini
-            for ($i = 1; $i <= 10; $i++) {
-                $column = 'pdf_folder_' . $i;
-                if (!empty($dataupt->$column) && Storage::disk('public')->exists($dataupt->$column)) {
-                    Storage::disk('public')->delete($dataupt->$column);
+            
+            // Cari data upload folder yang terkait
+            $uploadFolder = UploadFolderUpt::where('upt_id', $id)->first();
+            
+            if ($uploadFolder) {
+                // Hapus semua file PDF yang terkait
+                for ($i = 1; $i <= 10; $i++) {
+                    $column = 'pdf_folder_' . $i;
+                    if (!empty($uploadFolder->$column) && Storage::disk('public')->exists($uploadFolder->$column)) {
+                        Storage::disk('public')->delete($uploadFolder->$column);
+                    }
                 }
+                
+                // Hapus record upload folder
+                $uploadFolder->delete();
             }
 
             $dataupt->delete();
             return redirect()->route('spp.ListDataSpp')->with('success', 'Data berhasil dihapus');
         } catch (\Exception $e) {
+            Log::error('Error deleting UPT: ' . $e->getMessage());
             return redirect()->route('spp.ListDataSpp')->with('error', 'Gagal menghapus data: ' . $e->getMessage());
         }
     }
@@ -63,15 +73,21 @@ class SppUptController extends Controller
                 return abort(400, 'Folder tidak valid.');
             }
 
-            $user = Upt::findOrFail($id);
+            $upt = Upt::findOrFail($id);
+            $uploadFolder = UploadFolderUpt::where('upt_id', $id)->first();
+            
+            if (!$uploadFolder) {
+                return abort(404, 'Data upload folder tidak ditemukan.');
+            }
+
             $column = 'pdf_folder_' . $folder;
 
             // Cek apakah file ada dan path tidak kosong
-            if (empty($user->$column)) {
+            if (empty($uploadFolder->$column)) {
                 return abort(404, 'File PDF belum diupload untuk folder ' . $folder . '.');
             }
 
-            $filePath = storage_path('app/public/' . $user->$column);
+            $filePath = storage_path('app/public/' . $uploadFolder->$column);
             
             if (!file_exists($filePath)) {
                 return abort(404, 'File tidak ditemukan di storage.');
@@ -79,6 +95,7 @@ class SppUptController extends Controller
 
             return response()->file($filePath);
         } catch (\Exception $e) {
+            Log::error('Error viewing PDF: ' . $e->getMessage());
             return abort(500, 'Error loading PDF: ' . $e->getMessage());
         }
     }
@@ -92,7 +109,7 @@ class SppUptController extends Controller
 
             // Validasi file PDF
             $request->validate([
-                'uploaded_pdf' => 'required|file|mimes:pdf|max:10240', // Increased to 10MB
+                'uploaded_pdf' => 'required|file|mimes:pdf|max:10240', // 10MB
             ], [
                 'uploaded_pdf.required' => 'File PDF harus dipilih.',
                 'uploaded_pdf.mimes' => 'File harus berformat PDF.',
@@ -103,7 +120,7 @@ class SppUptController extends Controller
                 return redirect()->back()->with('error', 'File tidak ditemukan dalam request!');
             }
 
-            $user = Upt::findOrFail($id);
+            $upt = Upt::findOrFail($id);
             $file = $request->file('uploaded_pdf');
 
             // Debug: Cek apakah file valid
@@ -111,10 +128,16 @@ class SppUptController extends Controller
                 return redirect()->back()->with('error', 'File tidak valid!');
             }
 
+            // Cari atau buat record upload folder
+            $uploadFolder = UploadFolderUpt::firstOrCreate(
+                ['upt_id' => $id],
+                ['upt_id' => $id]
+            );
+
             // Hapus file lama jika ada
             $column = 'pdf_folder_' . $folder;
-            if (!empty($user->$column) && Storage::disk('public')->exists($user->$column)) {
-                Storage::disk('public')->delete($user->$column);
+            if (!empty($uploadFolder->$column) && Storage::disk('public')->exists($uploadFolder->$column)) {
+                Storage::disk('public')->delete($uploadFolder->$column);
             }
 
             // Buat nama file unik dengan sanitasi
@@ -136,13 +159,17 @@ class SppUptController extends Controller
             }
 
             // Simpan path ke database
-            $user->$column = $path;
-            $user->save();
+            $uploadFolder->$column = $path;
+            $uploadFolder->save();
+
+            Log::info("PDF uploaded successfully for UPT ID: {$id}, Folder: {$folder}, Path: {$path}");
 
             return redirect()->back()->with('success', 'PDF berhasil di-upload ke folder ' . $folder . '!');
+            
         } catch (\Illuminate\Validation\ValidationException $e) {
             return redirect()->back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
+            Log::error('Error uploading PDF: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Gagal upload file: ' . $e->getMessage());
         }
     }
@@ -154,22 +181,29 @@ class SppUptController extends Controller
                 return redirect()->back()->with('error', 'Folder tidak valid.');
             }
 
-            $user = Upt::findOrFail($id);
+            $upt = Upt::findOrFail($id);
+            $uploadFolder = UploadFolderUpt::where('upt_id', $id)->first();
+            
+            if (!$uploadFolder) {
+                return redirect()->back()->with('error', 'Data upload folder tidak ditemukan.');
+            }
+
             $column = 'pdf_folder_' . $folder;
 
-            if (empty($user->$column)) {
+            if (empty($uploadFolder->$column)) {
                 return redirect()->back()->with('error', 'File PDF belum di-upload di folder ' . $folder . '.');
             }
 
-            if (Storage::disk('public')->exists($user->$column)) {
-                Storage::disk('public')->delete($user->$column);
+            if (Storage::disk('public')->exists($uploadFolder->$column)) {
+                Storage::disk('public')->delete($uploadFolder->$column);
             }
 
-            $user->$column = null;
-            $user->save();
+            $uploadFolder->$column = null;
+            $uploadFolder->save();
 
             return redirect()->back()->with('success', 'File PDF di folder ' . $folder . ' berhasil dihapus');
         } catch (\Exception $e) {
+            Log::error('Error deleting PDF: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Gagal menghapus file: ' . $e->getMessage());
         }
     }

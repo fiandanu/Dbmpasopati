@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\mclient;
+namespace App\Http\Controllers\mclient\ponpes;
 
 use App\Http\Controllers\Controller;
-use App\Models\mclient\Vpas;
-use App\Models\Upt; // Import model Upt yang sudah ada
+use App\Models\mclient\ponpes\Vtren;
+use App\Models\Ponpes; // Import model Ponpes yang sudah ada
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 
-class VpasController extends Controller
+class VtrenController extends Controller
 {
     private function getJenisKendala()
     {
@@ -42,18 +42,18 @@ class VpasController extends Controller
         ];
     }
 
-    // Update method ListDataMclientVpas untuk mengirim data jenis kendala dan UPT
-    public function ListDataMclientVpas(Request $request)
+    // Method ListDataMclientPonpesVtren untuk mengirim data jenis kendala dan Ponpes
+    public function ListDataMclientPonpesVtren(Request $request)
     {
-        $query = Vpas::query();
+        $query = Vtren::query();
 
         // Cek apakah ada parameter pencarian
         if ($request->has('table_search') && !empty($request->table_search)) {
             $searchTerm = $request->table_search;
 
             $query->where(function ($q) use ($searchTerm) {
-                $q->where('nama_upt', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('kanwil', 'LIKE', '%' . $searchTerm . '%')
+                $q->where('nama_ponpes', 'LIKE', '%' . $searchTerm . '%')
+                    ->orWhere('nama_wilayah', 'LIKE', '%' . $searchTerm . '%')
                     ->orWhere('jenis_kendala', 'LIKE', '%' . $searchTerm . '%')
                     ->orWhere('detail_kendala', 'LIKE', '%' . $searchTerm . '%')
                     ->orWhere('status', 'LIKE', '%' . $searchTerm . '%')
@@ -68,25 +68,25 @@ class VpasController extends Controller
 
         $jenisKendala = $this->getJenisKendala();
 
-        // PERUBAHAN: Filter UPT hanya yang memiliki tipe 'vpas'
-        $uptList = Upt::select('namaupt', 'kanwil')
-            ->where('tipe', 'vpas')  // Tambahkan filter ini
-            ->orderBy('namaupt')
+        // Ambil data ponpes untuk dropdown - HANYA TIPE VTREN
+        $ponpesList = Ponpes::select('nama_ponpes', 'nama_wilayah', 'tipe')
+            ->where('tipe', 'vtren')
+            ->orderBy('nama_ponpes')
             ->get();
 
-        return view('mclient.vpas.indexVpas', compact('data', 'jenisKendala', 'uptList'));
+        return view('mclient.ponpes.indexVtren', compact('data', 'jenisKendala', 'ponpesList'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function MclientVpasStore(Request $request)
+    public function MclientPonpesVtrenStore(Request $request)
     {
         $validator = Validator::make(
             $request->all(),
             [
-                'nama_upt' => 'required|string|max:255', // Changed from 'lokasi'
-                'kanwil' => 'nullable|string|max:255', // Added kanwil validation
+                'nama_ponpes' => 'required|string|max:255',
+                'nama_wilayah' => 'nullable|string|max:255',
                 'jenis_kendala' => 'nullable|string',
                 'detail_kendala' => 'nullable|string',
                 'tanggal_terlapor' => 'nullable|date',
@@ -97,13 +97,13 @@ class VpasController extends Controller
                 'pic_2' => 'nullable|string|max:255',
             ],
             [
-                'nama_upt.required' => 'Nama UPT harus diisi.', // Changed from 'lokasi'
-                'nama_upt.string' => 'Nama UPT harus berupa teks.',
-                'nama_upt.max' => 'Nama UPT tidak boleh lebih dari 255 karakter.',
-                'kanwil.string' => 'Kanwil harus berupa teks.', // Added kanwil validation message
-                'kanwil.max' => 'Kanwil tidak boleh lebih dari 255 karakter.',
-                'jenis_kendala.string' => 'Kendala VPAS harus berupa teks.',
-                'detail_kendala.string' => 'Detail kendala VPAS harus berupa teks.',
+                'nama_ponpes.required' => 'Nama Ponpes harus diisi.',
+                'nama_ponpes.string' => 'Nama Ponpes harus berupa teks.',
+                'nama_ponpes.max' => 'Nama Ponpes tidak boleh lebih dari 255 karakter.',
+                'nama_wilayah.string' => 'Nama wilayah harus berupa teks.',
+                'nama_wilayah.max' => 'Nama wilayah tidak boleh lebih dari 255 karakter.',
+                'jenis_kendala.string' => 'Kendala VTREN harus berupa teks.',
+                'detail_kendala.string' => 'Detail kendala VTREN harus berupa teks.',
                 'tanggal_terlapor.date' => 'Format tanggal terlapor harus valid.',
                 'tanggal_selesai.date' => 'Format tanggal selesai harus valid.',
                 'tanggal_selesai.after_or_equal' => 'Tanggal selesai tidak boleh lebih awal dari tanggal terlapor.',
@@ -134,9 +134,9 @@ class VpasController extends Controller
                 $data['durasi_hari'] = $tanggalSelesai->diffInDays($tanggalTerlapor);
             }
 
-            Vpas::create($data);
+            Vtren::create($data);
 
-            return redirect()->route('ListDataMclientVpas')->with('success', 'Data monitoring client VPAS berhasil ditambahkan!');
+            return redirect()->route('ListDataMclientPonpesVtren')->with('success', 'Data monitoring client Ponpes VTREN berhasil ditambahkan!');
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
@@ -147,13 +147,13 @@ class VpasController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function MclientVpasUpdate(Request $request, $id)
+    public function MclientPonpesVtrenUpdate(Request $request, $id)
     {
         $validator = Validator::make(
             $request->all(),
             [
-                'nama_upt' => 'required|string|max:255', // Changed from 'lokasi'
-                'kanwil' => 'nullable|string|max:255', // Added kanwil validation
+                'nama_ponpes' => 'required|string|max:255',
+                'nama_wilayah' => 'nullable|string|max:255',
                 'jenis_kendala' => 'nullable|string',
                 'detail_kendala' => 'nullable|string',
                 'tanggal_terlapor' => 'nullable|date',
@@ -164,13 +164,13 @@ class VpasController extends Controller
                 'pic_2' => 'nullable|string|max:255',
             ],
             [
-                'nama_upt.required' => 'Nama UPT harus diisi.',
-                'nama_upt.string' => 'Nama UPT harus berupa teks.',
-                'nama_upt.max' => 'Nama UPT tidak boleh lebih dari 255 karakter.',
-                'kanwil.string' => 'Kanwil harus berupa teks.',
-                'kanwil.max' => 'Kanwil tidak boleh lebih dari 255 karakter.',
-                'jenis_kendala.string' => 'Kendala VPAS harus berupa teks.',
-                'detail_kendala.string' => 'Detail kendala VPAS harus berupa teks.',
+                'nama_ponpes.required' => 'Nama Ponpes harus diisi.',
+                'nama_ponpes.string' => 'Nama Ponpes harus berupa teks.',
+                'nama_ponpes.max' => 'Nama Ponpes tidak boleh lebih dari 255 karakter.',
+                'nama_wilayah.string' => 'Nama wilayah harus berupa teks.',
+                'nama_wilayah.max' => 'Nama wilayah tidak boleh lebih dari 255 karakter.',
+                'jenis_kendala.string' => 'Kendala VTREN harus berupa teks.',
+                'detail_kendala.string' => 'Detail kendala VTREN harus berupa teks.',
                 'tanggal_terlapor.date' => 'Format tanggal terlapor harus valid.',
                 'tanggal_selesai.date' => 'Format tanggal selesai harus valid.',
                 'tanggal_selesai.after_or_equal' => 'Tanggal selesai tidak boleh lebih awal dari tanggal terlapor.',
@@ -200,7 +200,7 @@ class VpasController extends Controller
             // Update field yang valid ke database
             try {
                 if (!empty($validatedData)) {
-                    $data = Vpas::findOrFail($id);
+                    $data = Vtren::findOrFail($id);
 
                     // Hitung durasi otomatis jika tanggal terlapor dan selesai diisi
                     if (isset($validatedData['tanggal_terlapor']) && isset($validatedData['tanggal_selesai'])) {
@@ -223,7 +223,7 @@ class VpasController extends Controller
 
         // Jika semua validasi berhasil
         try {
-            $data = Vpas::findOrFail($id);
+            $data = Vtren::findOrFail($id);
             $updateData = $request->all();
 
             // Hitung durasi otomatis jika tanggal terlapor dan selesai diisi
@@ -235,7 +235,7 @@ class VpasController extends Controller
 
             $data->update($updateData);
 
-            return redirect()->route('ListDataMclientVpas')->with('success', 'Data monitoring client VPAS berhasil diupdate!');
+            return redirect()->route('ListDataMclientPonpesVtren')->with('success', 'Data monitoring client Ponpes VTREN berhasil diupdate!');
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
@@ -246,17 +246,17 @@ class VpasController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function MclientVpasDestroy($id)
+    public function MclientPonpesVtrenDestroy($id)
     {
         try {
-            $data = Vpas::findOrFail($id);
-            $namaUpt = $data->nama_upt; // Changed from lokasi
+            $data = Vtren::findOrFail($id);
+            $namaPonpes = $data->nama_ponpes;
             $data->delete();
 
-            return redirect()->route('ListDataMclientVpas')
-                ->with('success', "Data monitoring client VPAS di UPT '{$namaUpt}' berhasil dihapus!");
+            return redirect()->route('ListDataMclientPonpesVtren')
+                ->with('success', "Data monitoring client VTREN di Ponpes '{$namaPonpes}' berhasil dihapus!");
         } catch (\Exception $e) {
-            return redirect()->route('ListDataMclientVpas')
+            return redirect()->route('ListDataMclientPonpesVtren')
                 ->with('error', 'Gagal menghapus data: ' . $e->getMessage());
         }
     }
@@ -266,9 +266,9 @@ class VpasController extends Controller
      */
     public function exportCsv()
     {
-        $data = Vpas::orderBy('created_at', 'desc')->get();
+        $data = Vtren::orderBy('created_at', 'desc')->get();
 
-        $filename = 'monitoring_client_vpas_' . date('Y-m-d_H-i-s') . '.csv';
+        $filename = 'monitoring_client_ponpes_vtren_' . date('Y-m-d_H-i-s') . '.csv';
 
         $headers = [
             "Content-type" => "text/csv",
@@ -284,9 +284,9 @@ class VpasController extends Controller
             // Header CSV
             fputcsv($file, [
                 'No',
-                'Nama UPT', // Changed from 'Lokasi'
-                'Kanwil', // Added Kanwil
-                'Kendala VPAS',
+                'Nama Ponpes',
+                'nama_wilayah',
+                'Kendala VTREN',
                 'Detail Kendala',
                 'Tanggal Terlapor',
                 'Tanggal Selesai',
@@ -303,8 +303,8 @@ class VpasController extends Controller
             foreach ($data as $row) {
                 fputcsv($file, [
                     $no++,
-                    $row->nama_upt, // Changed from lokasi
-                    $row->kanwil, // Added kanwil
+                    $row->nama_ponpes,
+                    $row->nama_wilayah,
                     $row->jenis_kendala,
                     $row->detail_kendala,
                     $row->tanggal_terlapor,
@@ -329,18 +329,18 @@ class VpasController extends Controller
      */
     public function getDashboardStats()
     {
-        $totalData = Vpas::count();
-        $statusPending = Vpas::where('status', 'pending')->count();
-        $statusProses = Vpas::where('status', 'proses')->count();
-        $statusSelesai = Vpas::where('status', 'selesai')->count();
+        $totalData = Vtren::count();
+        $statusPending = Vtren::where('status', 'pending')->count();
+        $statusProses = Vtren::where('status', 'proses')->count();
+        $statusSelesai = Vtren::where('status', 'selesai')->count();
 
         // Data bulan ini
-        $bulanIni = Vpas::whereMonth('created_at', now()->month)
+        $bulanIni = Vtren::whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
             ->count();
 
         // Rata-rata durasi penyelesaian
-        $avgDurasi = Vpas::where('status', 'selesai')
+        $avgDurasi = Vtren::where('status', 'selesai')
             ->whereNotNull('durasi_hari')
             ->avg('durasi_hari');
 
@@ -355,23 +355,23 @@ class VpasController extends Controller
     }
 
     /**
-     * Get UPT data by name for AJAX requests
+     * Get Ponpes data by name for AJAX requests
      */
-    public function getUptData(Request $request)
+    public function getPonpesData(Request $request)
     {
-        $namaUpt = $request->input('nama_upt');
-        $upt = Upt::where('namaupt', $namaUpt)->first();
+        $namaPonpes = $request->input('nama_ponpes');
+        $ponpes = Ponpes::where('nama_ponpes', $namaPonpes)->first();
 
-        if ($upt) {
+        if ($ponpes) {
             return response()->json([
                 'status' => 'success',
-                'kanwil' => $upt->kanwil
+                'nama_wilayah' => $ponpes->nama_wilayah
             ]);
         }
 
         return response()->json([
             'status' => 'error',
-            'message' => 'UPT not found'
+            'message' => 'Ponpes not found'
         ]);
     }
 }
