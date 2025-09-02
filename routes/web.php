@@ -1,12 +1,9 @@
 <?php
-
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\login\LoginController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\DataBaseController;
 use App\Http\Controllers\MonitoringServerController;
-use App\Http\Controllers\user\provider\ProviderController;
-use App\Http\Controllers\TutorialController;
 use App\Http\Controllers\user\PageUser;
 
 Route::get('/', [LoginController::class, 'login'])->name('login');

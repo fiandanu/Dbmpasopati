@@ -20,9 +20,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $isNgrok = request()->getHost() && str_contains(request()->getHost(), 'ngrok');
-
-        if (config('app.env') === 'production' && !$isNgrok) {
+        if (config('app.env') === 'production' || request()->header('x-forwarded-proto') === 'https') {
             URL::forceScheme('https');
         }
     }
