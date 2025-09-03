@@ -6,12 +6,12 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>List Data Provider/VPN</h1>
+                        <h1>List Data Kendala/PIC</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">List Data Provider/VPN</li>
+                            <li class="breadcrumb-item active">List Data Kendala/PIC</li>
                         </ol>
                     </div>
                 </div>
@@ -47,7 +47,7 @@
                         <div class="alert-heading h5 mb-2">Periksa kembali Data yang dimasukkan</div>
                         <div class="small">
                             @foreach ($errors->all() as $error)
-                                <div class="mb-1">â€¢ {{ $error }}</div>
+                                <div class="mb-1">• {{ $error }}</div>
                             @endforeach
                         </div>
                     </div>
@@ -71,62 +71,62 @@
                 </div>
 
                 <div class="row">
-                    <!-- Tabel Provider -->
+                    <!-- Tabel Kendala -->
                     <div class="col-md-6">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">List Table Provider</h3>
+                                <h3 class="card-title">List Table Kendala</h3>
                             </div>
                             <div class="card-body table-responsive p-0">
                                 <table class="table table-hover text-nowrap">
                                     <thead>
                                         <tr>
                                             <th>No</th>
-                                            <th>Nama Provider</th>
+                                            <th>Jenis Kendala</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($dataprovider as $d)
+                                        @foreach ($datakendala as $k)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
-                                                <td><strong>{{ $d->nama_provider }}</strong></td>
+                                                <td><strong>{{ $k->jenis_kendala }}</strong></td>
                                                 <td>
                                                     {{-- Edit Button --}}
-                                                    <a href="#editProviderModal{{ $d->id }}"
+                                                    <a href="#editKendalaModal{{ $k->id }}"
                                                         class="btn btn-sm btn-primary" data-bs-toggle="modal"
-                                                        data-bs-target="#editProviderModal{{ $d->id }}">
+                                                        data-bs-target="#editKendalaModal{{ $k->id }}">
                                                         <i class="fa fa-edit"></i>
                                                     </a>
 
                                                     {{-- Delete Button --}}
                                                     <a data-toggle="modal"
-                                                        data-target="#deleteProviderModal{{ $d->id }}"
+                                                        data-target="#deleteKendalaModal{{ $k->id }}"
                                                         class="btn btn-sm btn-danger">
                                                         <i class="fas fa-trash-alt"></i>
                                                     </a>
                                                 </td>
                                             </tr>
 
-                                            <!-- Delete Modal Provider -->
-                                            <div class="modal fade" id="deleteProviderModal{{ $d->id }}">
+                                            <!-- Delete Modal Kendala -->
+                                            <div class="modal fade" id="deleteKendalaModal{{ $k->id }}">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h4 class="modal-title">Hapus Data Provider</h4>
+                                                            <h4 class="modal-title">Hapus Data Kendala</h4>
                                                             <button type="button" class="close" data-dismiss="modal"
                                                                 aria-label="Close">
                                                                 <span aria-hidden="true">&times;</span>
                                                             </button>
                                                         </div>
                                                         <div class="modal-body">
-                                                            <p>Apakah <b>{{ $d->nama_provider }}</b> ingin dihapus?</p>
+                                                            <p>Apakah <b>{{ $k->jenis_kendala }}</b> ingin dihapus?</p>
                                                         </div>
                                                         <div class="modal-footer justify-content-between">
                                                             <button type="button" class="btn btn-default"
                                                                 data-dismiss="modal">Tutup</button>
                                                             <form
-                                                                action="{{ route('provider.ProviderPageDestroy', $d->id) }}"
+                                                                action="{{ route('kendala.KendalaPageDestroy', $k->id) }}"
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
@@ -143,60 +143,60 @@
                         </div>
                     </div>
 
-                    <!-- Tabel VPN -->
+                    <!-- Tabel PIC -->
                     <div class="col-md-6">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">List Table VPN</h3>
+                                <h3 class="card-title">List Table PIC</h3>
                             </div>
                             <div class="card-body table-responsive p-0">
                                 <table class="table table-hover text-nowrap">
                                     <thead>
                                         <tr>
                                             <th>No</th>
-                                            <th>Jenis VPN</th>
+                                            <th>Nama PIC</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($datavpn as $v)
+                                        @foreach ($datapic as $p)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
-                                                <td><span class="tag tag-success">{{ $v->jenis_vpn }}</span></td>
+                                                <td><span class="tag tag-success">{{ $p->nama_pic }}</span></td>
                                                 <td>
                                                     {{-- Edit Button --}}
-                                                    <a href="#editVpnModal{{ $v->id }}"
+                                                    <a href="#editPicModal{{ $p->id }}"
                                                         class="btn btn-sm btn-primary" data-bs-toggle="modal"
-                                                        data-bs-target="#editVpnModal{{ $v->id }}">
+                                                        data-bs-target="#editPicModal{{ $p->id }}">
                                                         <i class="fa fa-edit"></i>
                                                     </a>
 
                                                     {{-- Delete Button --}}
-                                                    <a data-toggle="modal" data-target="#deleteVpnModal{{ $v->id }}"
+                                                    <a data-toggle="modal" data-target="#deletePicModal{{ $p->id }}"
                                                         class="btn btn-sm btn-danger">
                                                         <i class="fas fa-trash-alt"></i>
                                                     </a>
                                                 </td>
                                             </tr>
 
-                                            <!-- Delete Modal VPN -->
-                                            <div class="modal fade" id="deleteVpnModal{{ $v->id }}">
+                                            <!-- Delete Modal PIC -->
+                                            <div class="modal fade" id="deletePicModal{{ $p->id }}">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h4 class="modal-title">Hapus Data VPN</h4>
+                                                            <h4 class="modal-title">Hapus Data PIC</h4>
                                                             <button type="button" class="close" data-dismiss="modal"
                                                                 aria-label="Close">
                                                                 <span aria-hidden="true">&times;</span>
                                                             </button>
                                                         </div>
                                                         <div class="modal-body">
-                                                            <p>Apakah <b>{{ $v->jenis_vpn }}</b> ingin dihapus?</p>
+                                                            <p>Apakah <b>{{ $p->nama_pic }}</b> ingin dihapus?</p>
                                                         </div>
                                                         <div class="modal-footer justify-content-between">
                                                             <button type="button" class="btn btn-default"
                                                                 data-dismiss="modal">Tutup</button>
-                                                            <form action="{{ route('vpn.VpnPageDestroy', $v->id) }}"
+                                                            <form action="{{ route('pic.PicPageDestroy', $p->id) }}"
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
@@ -231,38 +231,38 @@
                         <div class="mb-3">
                             <label class="form-label">Pilih Jenis Data</label>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="data_type" id="provider_type"
-                                    value="provider" checked>
-                                <label class="form-check-label" for="provider_type">
-                                    <i class="fas fa-network-wired text-primary"></i> Provider
+                                <input class="form-check-input" type="radio" name="data_type" id="kendala_type"
+                                    value="kendala" checked>
+                                <label class="form-check-label" for="kendala_type">
+                                    <i class="fas fa-exclamation-triangle text-warning"></i> Kendala
                                 </label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="data_type" id="vpn_type"
-                                    value="vpn">
-                                <label class="form-check-label" for="vpn_type">
-                                    <i class="fas fa-shield-alt text-success"></i> VPN
+                                <input class="form-check-input" type="radio" name="data_type" id="pic_type"
+                                    value="pic">
+                                <label class="form-check-label" for="pic_type">
+                                    <i class="fas fa-user text-info"></i> PIC
                                 </label>
                             </div>
                         </div>
 
                         <!-- Dynamic Form Container -->
                         <div id="form_container">
-                            <!-- Provider Form -->
-                            <div id="provider_form" class="data-form">
+                            <!-- Kendala Form -->
+                            <div id="kendala_form" class="data-form">
                                 <div class="mb-3">
-                                    <label for="nama_provider" class="form-label">Nama Provider</label>
-                                    <input type="text" class="form-control" id="nama_provider" name="nama_provider"
-                                        placeholder="Masukkan nama provider">
+                                    <label for="jenis_kendala" class="form-label">Jenis Kendala</label>
+                                    <input type="text" class="form-control" id="jenis_kendala" name="jenis_kendala"
+                                        placeholder="Masukkan jenis kendala">
                                 </div>
                             </div>
 
-                            <!-- VPN Form -->
-                            <div id="vpn_form" class="data-form" style="display: none;">
+                            <!-- PIC Form -->
+                            <div id="pic_form" class="data-form" style="display: none;">
                                 <div class="mb-3">
-                                    <label for="jenis_vpn" class="form-label">Jenis VPN</label>
-                                    <input type="text" class="form-control" id="jenis_vpn" name="jenis_vpn"
-                                        placeholder="Masukkan jenis VPN">
+                                    <label for="nama_pic" class="form-label">Nama PIC</label>
+                                    <input type="text" class="form-control" id="nama_pic" name="nama_pic"
+                                        placeholder="Masukkan nama PIC">
                                 </div>
                             </div>
                         </div>
@@ -275,18 +275,18 @@
             </div>
         </div>
 
-        {{-- Provider Edit Modals --}}
-        @foreach ($dataprovider as $d)
-            <div class="modal fade" id="editProviderModal{{ $d->id }}" tabindex="-1"
-                aria-labelledby="editProviderModalLabel" aria-hidden="true">
-                <form id="editProviderForm" action="{{ route('provider.ProviderPageUpdate', ['id' => $d->id]) }}"
+        {{-- Kendala Edit Modals --}}
+        @foreach ($datakendala as $k)
+            <div class="modal fade" id="editKendalaModal{{ $k->id }}" tabindex="-1"
+                aria-labelledby="editKendalaModalLabel" aria-hidden="true">
+                <form id="editKendalaForm" action="{{ route('kendala.KendalaPageUpdate', ['id' => $k->id]) }}"
                     method="POST">
                     @csrf
                     @method('PUT')
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="editProviderModalLabel">Edit Data Provider</h5>
+                                <h5 class="modal-title" id="editKendalaModalLabel">Edit Data Kendala</h5>
                                 <button type="button" class="btn-close-custom" data-bs-dismiss="modal"
                                     aria-label="Close">
                                     <i class="bi bi-x"></i>
@@ -294,9 +294,9 @@
                             </div>
                             <div class="modal-body">
                                 <div class="mb-3">
-                                    <label for="nama_provider" class="form-label">Nama Provider</label>
-                                    <input type="text" class="form-control" id="nama_provider" name="nama_provider"
-                                        value="{{ $d->nama_provider }}">
+                                    <label for="jenis_kendala" class="form-label">Jenis Kendala</label>
+                                    <input type="text" class="form-control" id="jenis_kendala" name="jenis_kendala"
+                                        value="{{ $k->jenis_kendala }}">
                                 </div>
                             </div>
                             <div class="modal-footer">
@@ -309,17 +309,17 @@
             </div>
         @endforeach
 
-        {{-- VPN Edit Modals --}}
-        @foreach ($datavpn as $v)
-            <div class="modal fade" id="editVpnModal{{ $v->id }}" tabindex="-1"
-                aria-labelledby="editVpnModalLabel" aria-hidden="true">
-                <form id="editVpnForm" action="{{ route('vpn.VpnPageUpdate', ['id' => $v->id]) }}" method="POST">
+        {{-- PIC Edit Modals --}}
+        @foreach ($datapic as $p)
+            <div class="modal fade" id="editPicModal{{ $p->id }}" tabindex="-1"
+                aria-labelledby="editPicModalLabel" aria-hidden="true">
+                <form id="editPicForm" action="{{ route('pic.PicPageUpdate', ['id' => $p->id]) }}" method="POST">
                     @csrf
                     @method('PUT')
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="editVpnModalLabel">Edit Data VPN</h5>
+                                <h5 class="modal-title" id="editPicModalLabel">Edit Data PIC</h5>
                                 <button type="button" class="btn-close-custom" data-bs-dismiss="modal"
                                     aria-label="Close">
                                     <i class="bi bi-x"></i>
@@ -327,9 +327,9 @@
                             </div>
                             <div class="modal-body">
                                 <div class="mb-3">
-                                    <label for="jenis_vpn" class="form-label">Jenis VPN</label>
-                                    <input type="text" class="form-control" id="jenis_vpn" name="jenis_vpn"
-                                        value="{{ $v->jenis_vpn }}">
+                                    <label for="nama_pic" class="form-label">Nama PIC</label>
+                                    <input type="text" class="form-control" id="nama_pic" name="nama_pic"
+                                        value="{{ $p->nama_pic }}">
                                 </div>
                             </div>
                             <div class="modal-footer">
@@ -346,51 +346,51 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Get radio buttons
-            const providerRadio = document.getElementById('provider_type');
-            const vpnRadio = document.getElementById('vpn_type');
+            const kendalaRadio = document.getElementById('kendala_type');
+            const picRadio = document.getElementById('pic_type');
 
             // Get form containers
-            const providerForm = document.getElementById('provider_form');
-            const vpnForm = document.getElementById('vpn_form');
+            const kendalaForm = document.getElementById('kendala_form');
+            const picForm = document.getElementById('pic_form');
 
             // Get save button
             const saveBtn = document.getElementById('save_btn');
 
             // Function to toggle forms
             function toggleForms() {
-                if (providerRadio.checked) {
-                    providerForm.style.display = 'block';
-                    vpnForm.style.display = 'none';
-                    // Clear VPN form
-                    document.getElementById('jenis_vpn').value = '';
-                } else if (vpnRadio.checked) {
-                    providerForm.style.display = 'none';
-                    vpnForm.style.display = 'block';
-                    // Clear Provider form
-                    document.getElementById('nama_provider').value = '';
+                if (kendalaRadio.checked) {
+                    kendalaForm.style.display = 'block';
+                    picForm.style.display = 'none';
+                    // Clear PIC form
+                    document.getElementById('nama_pic').value = '';
+                } else if (picRadio.checked) {
+                    kendalaForm.style.display = 'none';
+                    picForm.style.display = 'block';
+                    // Clear Kendala form
+                    document.getElementById('jenis_kendala').value = '';
                 }
             }
 
             // Event listeners for radio buttons
-            providerRadio.addEventListener('change', toggleForms);
-            vpnRadio.addEventListener('change', toggleForms);
+            kendalaRadio.addEventListener('change', toggleForms);
+            picRadio.addEventListener('change', toggleForms);
 
             // Save button click event
             saveBtn.addEventListener('click', function() {
-                const isProvider = providerRadio.checked;
+                const isKendala = kendalaRadio.checked;
                 let form;
 
-                if (isProvider) {
-                    // Create provider form
-                    const namaProvider = document.getElementById('nama_provider').value;
-                    if (!namaProvider.trim()) {
-                        alert('Nama Provider harus diisi!');
+                if (isKendala) {
+                    // Create kendala form
+                    const jenisKendala = document.getElementById('jenis_kendala').value;
+                    if (!jenisKendala.trim()) {
+                        alert('Jenis Kendala harus diisi!');
                         return;
                     }
 
                     form = document.createElement('form');
                     form.method = 'POST';
-                    form.action = '{{ route('provider.ProviderPageStore') }}';
+                    form.action = '{{ route('kendala.KendalaPageStore') }}';
 
                     // Add CSRF token
                     const csrfInput = document.createElement('input');
@@ -399,24 +399,24 @@
                     csrfInput.value = '{{ csrf_token() }}';
                     form.appendChild(csrfInput);
 
-                    // Add provider name
-                    const nameInput = document.createElement('input');
-                    nameInput.type = 'hidden';
-                    nameInput.name = 'nama_provider';
-                    nameInput.value = namaProvider;
-                    form.appendChild(nameInput);
+                    // Add kendala type
+                    const kendalaInput = document.createElement('input');
+                    kendalaInput.type = 'hidden';
+                    kendalaInput.name = 'jenis_kendala';
+                    kendalaInput.value = jenisKendala;
+                    form.appendChild(kendalaInput);
 
                 } else {
-                    // Create VPN form
-                    const jenisVpn = document.getElementById('jenis_vpn').value;
-                    if (!jenisVpn.trim()) {
-                        alert('Jenis VPN harus diisi!');
+                    // Create PIC form
+                    const namaPic = document.getElementById('nama_pic').value;
+                    if (!namaPic.trim()) {
+                        alert('Nama PIC harus diisi!');
                         return;
                     }
 
                     form = document.createElement('form');
                     form.method = 'POST';
-                    form.action = '{{ route('vpn.VpnPageStore') }}';
+                    form.action = '{{ route('pic.PicPageStore') }}';
 
                     // Add CSRF token
                     const csrfInput = document.createElement('input');
@@ -425,12 +425,12 @@
                     csrfInput.value = '{{ csrf_token() }}';
                     form.appendChild(csrfInput);
 
-                    // Add VPN type
-                    const vpnInput = document.createElement('input');
-                    vpnInput.type = 'hidden';
-                    vpnInput.name = 'jenis_vpn';
-                    vpnInput.value = jenisVpn;
-                    form.appendChild(vpnInput);
+                    // Add PIC name
+                    const picInput = document.createElement('input');
+                    picInput.type = 'hidden';
+                    picInput.name = 'nama_pic';
+                    picInput.value = namaPic;
+                    form.appendChild(picInput);
                 }
 
                 // Submit form
@@ -440,15 +440,15 @@
 
             // Reset form when modal is closed
             document.getElementById('addDataModal').addEventListener('hidden.bs.modal', function() {
-                // Reset radio to provider
-                providerRadio.checked = true;
-                vpnRadio.checked = false;
+                // Reset radio to kendala
+                kendalaRadio.checked = true;
+                picRadio.checked = false;
 
                 // Reset forms
-                document.getElementById('nama_provider').value = '';
-                document.getElementById('jenis_vpn').value = '';
+                document.getElementById('jenis_kendala').value = '';
+                document.getElementById('nama_pic').value = '';
 
-                // Show provider form, hide VPN form
+                // Show kendala form, hide PIC form
                 toggleForms();
             });
         });

@@ -33,33 +33,37 @@ class RouteServiceProvider extends ServiceProvider
             Route::middleware('web')->group(function () {
                 require base_path('routes/web.php');
                 
-                
+                // Provider routes
                 require base_path('routes/provider/provider.php');
                 require base_path('routes/provider/vpn.php');
 
-                
+                // Kendala PIC routes
+                require base_path('routes/kendalapic/kendala.php');
+                require base_path('routes/kendalapic/pic.php');
+
+                // UPT routes
                 require base_path('routes/upt/pks.php');
                 require base_path('routes/upt/reguller.php');
                 require base_path('routes/upt/spp.php');
                 require base_path('routes/upt/vpas.php');
 
-                
+                // Ponpes routes
                 require base_path('routes/ponpes/pks.php');
                 require base_path('routes/ponpes/reguller.php');
                 require base_path('routes/ponpes/spp.php');
                 require base_path('routes/ponpes/vtren.php');
 
-                
-                
+                // Tutorial UPT routes
                 require base_path('routes/tutorial/upt/reguller.php');
                 require base_path('routes/tutorial/upt/vpas.php');
                 require base_path('routes/tutorial/upt/mikrotik.php');
                 require base_path('routes/tutorial/upt/server.php');
 
-                
+                // Tutorial Ponpes routes
                 require base_path('routes/tutorial/ponpes/reguller.php');
                 require base_path('routes/tutorial/ponpes/vtren.php');
                 
+                // MClient routes
                 require base_path('routes/mclient/vpas.php');
                 require base_path('routes/mclient/reguller.php');
 
