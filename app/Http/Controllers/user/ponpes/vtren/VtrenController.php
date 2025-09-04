@@ -17,11 +17,10 @@ class VtrenController extends Controller
 {
     public function ListDataVtrend(Request $request)
     {
-        $query = Ponpes::with('dataOpsional'); // Load relasi data opsional
+        $query = Ponpes::with('dataOpsional');
 
         $query->where('tipe', 'vtren');
 
-        // Search filter dengan relasi
         if ($request->has('table_search') && !empty($request->table_search)) {
             $searchTerm = $request->table_search;
             $query->where(function ($q) use ($searchTerm) {
@@ -47,13 +46,11 @@ class VtrenController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                // Field Wajib (Ponpes table)
                 'nama_ponpes' => 'required|string|max:255',
                 'nama_wilayah' => 'required|string|max:255',
                 'tipe' => 'required|string|max:255',
                 'tanggal' => 'nullable|date',
 
-                // Data Opsional (DataOpsionalPonpes table)
                 'pic_ponpes' => 'nullable|string|max:255',
                 'no_telpon' => 'nullable|string|regex:/^([0-9\s\-\+\(\)]*)$/|max:20',
                 'alamat' => 'nullable|string',
@@ -61,34 +58,29 @@ class VtrenController extends Controller
                 'jumlah_line_reguler' => 'nullable|integer|min:0',
                 'provider_internet' => 'nullable|string|max:255',
                 'kecepatan_internet' => 'nullable|string|max:255',
-                'tarif_wartel_reguler' => 'nullable|string|max:255', // Changed from numeric to string
-                'status_wartel' => 'nullable|string|in:Aktif,Tidak Aktif', // Changed validation
+                'tarif_wartel_reguler' => 'nullable|string|max:255',
+                'status_wartel' => 'nullable|string|in:Aktif,Tidak Aktif',
 
-                // IMC PAS
                 'akses_topup_pulsa' => 'nullable|string|max:255',
                 'password_topup' => 'nullable|string|max:255',
                 'akses_download_rekaman' => 'nullable|string|max:255',
                 'password_download' => 'nullable|string|max:255',
 
-                // Akses VPN
                 'internet_protocol' => 'nullable|string|max:255',
                 'vpn_user' => 'nullable|string|max:255',
                 'vpn_password' => 'nullable|string|max:255',
                 'jenis_vpn' => 'nullable|string|max:255',
 
-                // Extension Reguler
                 'jumlah_extension' => 'nullable|integer|min:0',
                 'no_extension' => 'nullable|string',
                 'extension_password' => 'nullable|string',
                 'pin_tes' => 'nullable|string|max:255',
             ],
             [
-                // Field Wajib
                 'nama_ponpes.required' => 'Nama Ponpes harus diisi.',
                 'nama_wilayah.required' => 'Nama Daerah harus diisi.',
                 'tanggal.date' => 'Format tanggal harus sesuai (YYYY-MM-DD).',
 
-                // Data Opsional
                 'pic_ponpes.string' => 'PIC Ponpes harus berupa teks.',
                 'no_telpon.regex' => 'Format nomor telepon tidak valid.',
                 'alamat.string' => 'Alamat harus berupa teks.',
@@ -101,19 +93,16 @@ class VtrenController extends Controller
                 'tarif_wartel_reguler.string' => 'Tarif wartel harus berupa teks.',
                 'status_wartel.in' => 'Status wartel harus Aktif atau Tidak Aktif.',
 
-                // IMC PAS
                 'akses_topup_pulsa.string' => 'Akses top up pulsa harus berupa teks.',
                 'password_topup.string' => 'Password top up harus berupa teks.',
                 'akses_download_rekaman.string' => 'Akses download rekaman harus berupa teks.',
                 'password_download.string' => 'Password download rekaman harus berupa teks.',
 
-                // Akses VPN
                 'internet_protocol.string' => 'Internet Protocol harus berupa teks.',
                 'vpn_user.string' => 'User VPN harus berupa teks.',
                 'vpn_password.string' => 'Password VPN harus berupa teks.',
                 'jenis_vpn.string' => 'Jenis VPN harus berupa teks.',
 
-                // Extension Reguler
                 'jumlah_extension.integer' => 'Jumlah extension harus berupa angka.',
                 'jumlah_extension.min' => 'Jumlah extension tidak boleh negatif.',
                 'no_extension.string' => 'Nomor extension harus berupa teks.',
@@ -122,7 +111,6 @@ class VtrenController extends Controller
             ]
         );
 
-        // Jika validasi gagal
         if ($validator->fails()) {
             return redirect()->back()
                 ->withErrors($validator)
@@ -130,14 +118,11 @@ class VtrenController extends Controller
                 ->with('error', 'Validasi gagal. Silakan periksa input Anda.');
         }
 
-        // Jika validasi berhasil, update data
         try {
             DB::beginTransaction();
 
-            // Cari data ponpes
             $ponpes = Ponpes::findOrFail($id);
 
-            // Data untuk tabel ponpes
             $ponpesData = [
                 'nama_ponpes' => $request->nama_ponpes,
                 'nama_wilayah' => $request->nama_wilayah,
@@ -145,10 +130,8 @@ class VtrenController extends Controller
                 'tanggal' => $request->tanggal ?? $ponpes->tanggal,
             ];
 
-            // Update tabel ponpes
             $ponpes->update($ponpesData);
 
-            // Data untuk tabel data_opsional_ponpes - Fixed boolean handling
             $opsionalData = [
                 'pic_ponpes' => $request->pic_ponpes,
                 'no_telpon' => $request->no_telpon,
@@ -158,7 +141,7 @@ class VtrenController extends Controller
                 'provider_internet' => $request->provider_internet,
                 'kecepatan_internet' => $request->kecepatan_internet,
                 'tarif_wartel_reguler' => $request->tarif_wartel_reguler,
-                'status_wartel' => $request->status_wartel == 'Aktif' ? 1 : 0, // Fixed boolean handling
+                'status_wartel' => $request->status_wartel == 'Aktif' ? 1 : 0,
                 'akses_topup_pulsa' => $request->akses_topup_pulsa ? 1 : 0,
                 'password_topup' => $request->password_topup,
                 'akses_download_rekaman' => $request->akses_download_rekaman ? 1 : 0,
@@ -173,7 +156,6 @@ class VtrenController extends Controller
                 'extension_password' => $request->extension_password,
             ];
 
-            // Update atau create data opsional
             $ponpes->dataOpsional()->updateOrCreate(
                 ['ponpes_id' => $ponpes->id],
                 $opsionalData
@@ -194,12 +176,10 @@ class VtrenController extends Controller
 
             $ponpes = Ponpes::findOrFail($id);
 
-            // Hapus data opsional terlebih dahulu (cascade delete seharusnya menangani ini)
             if ($ponpes->dataOpsional) {
                 $ponpes->dataOpsional->delete();
             }
 
-            // Hapus data ponpes
             $ponpes->delete();
 
             DB::commit();
@@ -211,9 +191,6 @@ class VtrenController extends Controller
         }
     }
 
-    /**
-     * Export Ponpes data to CSV
-     */
     public function exportPonpesCsv($id): StreamedResponse
     {
         $ponpes = Ponpes::with('dataOpsional')->findOrFail($id);
@@ -260,8 +237,8 @@ class VtrenController extends Controller
 
         $callback = function () use ($rows) {
             $file = fopen('php://output', 'w');
-            fputcsv($file, ['Data Ponpes Export - ' . date('Y-m-d H:i:s')]); // Header
-            fputcsv($file, []); // Empty line
+            fputcsv($file, ['Data Ponpes Export - ' . date('Y-m-d H:i:s')]);
+            fputcsv($file, []);
             foreach ($rows as $row) {
                 fputcsv($file, $row);
             }
@@ -271,9 +248,6 @@ class VtrenController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
-    /**
-     * Export Ponpes data to PDF
-     */
     public function exportPonpesPdf($id)
     {
         $ponpes = Ponpes::with('dataOpsional')->findOrFail($id);
@@ -285,7 +259,6 @@ class VtrenController extends Controller
 
         $pdf = Pdf::loadView('export.ponpes_pdf', $data);
 
-        // Set paper size dan orientasi
         $pdf->setPaper('A4', 'portrait');
 
         $filename = 'data_ponpes_' . str_replace(' ', '_', $ponpes->nama_ponpes) . '_' . date('Y-m-d') . '.pdf';

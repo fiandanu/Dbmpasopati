@@ -4,10 +4,13 @@ namespace App\Http\Controllers\mclient;
 
 use App\Http\Controllers\Controller;
 use App\Models\mclient\Vpas;
-use App\Models\Upt; // Import model Upt yang sudah ada
+use App\Models\Upt;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
+use App\Models\Kendala;
+use App\Models\Pic;
+
 
 class VpasController extends Controller
 {
@@ -42,12 +45,10 @@ class VpasController extends Controller
         ];
     }
 
-    // Update method ListDataMclientVpas untuk mengirim data jenis kendala dan UPT
     public function ListDataMclientVpas(Request $request)
     {
         $query = Vpas::query();
 
-        // Cek apakah ada parameter pencarian
         if ($request->has('table_search') && !empty($request->table_search)) {
             $searchTerm = $request->table_search;
 
@@ -66,41 +67,38 @@ class VpasController extends Controller
 
         $data = $query->orderBy('created_at', 'desc')->paginate(10);
 
-        $jenisKendala = $this->getJenisKendala();
+        $jenisKendala = Kendala::orderBy('jenis_kendala')->get();
+        $picList = Pic::orderBy('nama_pic')->get();
 
-        // PERUBAHAN: Filter UPT hanya yang memiliki tipe 'vpas'
         $uptList = Upt::select('namaupt', 'kanwil')
-            ->where('tipe', 'vpas')  // Tambahkan filter ini
+            ->where('tipe', 'vpas')
             ->orderBy('namaupt')
             ->get();
 
-        return view('mclient.vpas.indexVpas', compact('data', 'jenisKendala', 'uptList'));
+        return view('mclient.vpas.indexVpas', compact('data', 'jenisKendala', 'picList', 'uptList'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function MclientVpasStore(Request $request)
     {
         $validator = Validator::make(
             $request->all(),
             [
-                'nama_upt' => 'required|string|max:255', // Changed from 'lokasi'
-                'kanwil' => 'nullable|string|max:255', // Added kanwil validation
+                'nama_upt' => 'required|string|max:255',
+                'kanwil' => 'nullable|string|max:255',
                 'jenis_kendala' => 'nullable|string',
                 'detail_kendala' => 'nullable|string',
                 'tanggal_terlapor' => 'nullable|date',
                 'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_terlapor',
                 'durasi_hari' => 'nullable|integer|min:0',
-                'status' => 'nullable|string|in:pending,proses,selesai',
+                'status' => 'nullable|string|in:pending,proses,selesai,terjadwal',
                 'pic_1' => 'nullable|string|max:255',
                 'pic_2' => 'nullable|string|max:255',
             ],
             [
-                'nama_upt.required' => 'Nama UPT harus diisi.', // Changed from 'lokasi'
+                'nama_upt.required' => 'Nama UPT harus diisi.',
                 'nama_upt.string' => 'Nama UPT harus berupa teks.',
                 'nama_upt.max' => 'Nama UPT tidak boleh lebih dari 255 karakter.',
-                'kanwil.string' => 'Kanwil harus berupa teks.', // Added kanwil validation message
+                'kanwil.string' => 'Kanwil harus berupa teks.',
                 'kanwil.max' => 'Kanwil tidak boleh lebih dari 255 karakter.',
                 'jenis_kendala.string' => 'Kendala VPAS harus berupa teks.',
                 'detail_kendala.string' => 'Detail kendala VPAS harus berupa teks.',
@@ -109,7 +107,7 @@ class VpasController extends Controller
                 'tanggal_selesai.after_or_equal' => 'Tanggal selesai tidak boleh lebih awal dari tanggal terlapor.',
                 'durasi_hari.integer' => 'Durasi hari harus berupa angka.',
                 'durasi_hari.min' => 'Durasi hari tidak boleh negatif.',
-                'status.in' => 'Status harus salah satu dari: pending, proses, atau selesai.',
+                'status.in' => 'Status harus salah satu dari: pending, proses, selesai, atau terjadwal.',
                 'pic_1.string' => 'PIC 1 harus berupa teks.',
                 'pic_1.max' => 'PIC 1 tidak boleh lebih dari 255 karakter.',
                 'pic_2.string' => 'PIC 2 harus berupa teks.',
@@ -127,7 +125,6 @@ class VpasController extends Controller
         try {
             $data = $request->all();
 
-            // Hitung durasi otomatis jika tanggal terlapor dan selesai diisi
             if ($request->tanggal_terlapor && $request->tanggal_selesai) {
                 $tanggalTerlapor = Carbon::parse($request->tanggal_terlapor);
                 $tanggalSelesai = Carbon::parse($request->tanggal_selesai);
@@ -144,22 +141,19 @@ class VpasController extends Controller
         }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function MclientVpasUpdate(Request $request, $id)
     {
         $validator = Validator::make(
             $request->all(),
             [
-                'nama_upt' => 'required|string|max:255', // Changed from 'lokasi'
-                'kanwil' => 'nullable|string|max:255', // Added kanwil validation
+                'nama_upt' => 'required|string|max:255',
+                'kanwil' => 'nullable|string|max:255',
                 'jenis_kendala' => 'nullable|string',
                 'detail_kendala' => 'nullable|string',
                 'tanggal_terlapor' => 'nullable|date',
                 'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_terlapor',
                 'durasi_hari' => 'nullable|integer|min:0',
-                'status' => 'nullable|string|in:pending,proses,selesai',
+                'status' => 'nullable|string|in:pending,proses,selesai,terjadwal',
                 'pic_1' => 'nullable|string|max:255',
                 'pic_2' => 'nullable|string|max:255',
             ],
@@ -176,7 +170,7 @@ class VpasController extends Controller
                 'tanggal_selesai.after_or_equal' => 'Tanggal selesai tidak boleh lebih awal dari tanggal terlapor.',
                 'durasi_hari.integer' => 'Durasi hari harus berupa angka.',
                 'durasi_hari.min' => 'Durasi hari tidak boleh negatif.',
-                'status.in' => 'Status harus salah satu dari: pending, proses, atau selesai.',
+                'status.in' => 'Status harus salah satu dari: pending, proses, selesai, atau terjadwal.',
                 'pic_1.string' => 'PIC 1 harus berupa teks.',
                 'pic_1.max' => 'PIC 1 tidak boleh lebih dari 255 karakter.',
                 'pic_2.string' => 'PIC 2 harus berupa teks.',
@@ -184,25 +178,20 @@ class VpasController extends Controller
             ]
         );
 
-        // Jika validasi gagal
         if ($validator->fails()) {
-            // Pisahkan data valid dan invalid
             $validatedData = [];
             $invalidFields = array_keys($validator->errors()->messages());
 
-            // Ambil hanya field yang valid
             foreach ($request->all() as $key => $value) {
                 if (!in_array($key, $invalidFields)) {
                     $validatedData[$key] = $value;
                 }
             }
 
-            // Update field yang valid ke database
             try {
                 if (!empty($validatedData)) {
                     $data = Vpas::findOrFail($id);
 
-                    // Hitung durasi otomatis jika tanggal terlapor dan selesai diisi
                     if (isset($validatedData['tanggal_terlapor']) && isset($validatedData['tanggal_selesai'])) {
                         $tanggalTerlapor = Carbon::parse($validatedData['tanggal_terlapor']);
                         $tanggalSelesai = Carbon::parse($validatedData['tanggal_selesai']);
@@ -212,7 +201,6 @@ class VpasController extends Controller
                     $data->update($validatedData);
                 }
             } catch (\Exception $e) {
-                // Jika ada error saat update, tetap tampilkan error validasi
             }
 
             return redirect()->back()
@@ -221,12 +209,10 @@ class VpasController extends Controller
                 ->with('partial_success', 'Data valid telah disimpan. Silakan perbaiki field yang bermasalah.');
         }
 
-        // Jika semua validasi berhasil
         try {
             $data = Vpas::findOrFail($id);
             $updateData = $request->all();
 
-            // Hitung durasi otomatis jika tanggal terlapor dan selesai diisi
             if ($request->tanggal_terlapor && $request->tanggal_selesai) {
                 $tanggalTerlapor = Carbon::parse($request->tanggal_terlapor);
                 $tanggalSelesai = Carbon::parse($request->tanggal_selesai);
@@ -243,14 +229,11 @@ class VpasController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function MclientVpasDestroy($id)
     {
         try {
             $data = Vpas::findOrFail($id);
-            $namaUpt = $data->nama_upt; // Changed from lokasi
+            $namaUpt = $data->nama_upt;
             $data->delete();
 
             return redirect()->route('ListDataMclientVpas')
@@ -261,9 +244,6 @@ class VpasController extends Controller
         }
     }
 
-    /**
-     * Export data to CSV
-     */
     public function exportCsv()
     {
         $data = Vpas::orderBy('created_at', 'desc')->get();
@@ -281,11 +261,9 @@ class VpasController extends Controller
         $callback = function () use ($data) {
             $file = fopen('php://output', 'w');
 
-            // Header CSV
             fputcsv($file, [
-                'No',
-                'Nama UPT', // Changed from 'Lokasi'
-                'Kanwil', // Added Kanwil
+                'Nama UPT',
+                'Kanwil',
                 'Kendala VPAS',
                 'Detail Kendala',
                 'Tanggal Terlapor',
@@ -298,17 +276,14 @@ class VpasController extends Controller
                 'Diupdate Pada'
             ]);
 
-            // Data rows
-            $no = 1;
             foreach ($data as $row) {
                 fputcsv($file, [
-                    $no++,
-                    $row->nama_upt, // Changed from lokasi
-                    $row->kanwil, // Added kanwil
+                    $row->nama_upt,
+                    $row->kanwil,
                     $row->jenis_kendala,
                     $row->detail_kendala,
-                    $row->tanggal_terlapor,
-                    $row->tanggal_selesai,
+                    $row->tanggal_terlapor ? $row->tanggal_terlapor->format('Y-m-d') : '',
+                    $row->tanggal_selesai ? $row->tanggal_selesai->format('Y-m-d') : '',
                     $row->durasi_hari,
                     $row->status,
                     $row->pic_1,
@@ -324,22 +299,18 @@ class VpasController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
-    /**
-     * Get dashboard statistics
-     */
     public function getDashboardStats()
     {
         $totalData = Vpas::count();
         $statusPending = Vpas::where('status', 'pending')->count();
         $statusProses = Vpas::where('status', 'proses')->count();
         $statusSelesai = Vpas::where('status', 'selesai')->count();
+        $statusTerjadwal = Vpas::where('status', 'terjadwal')->count();
 
-        // Data bulan ini
         $bulanIni = Vpas::whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
             ->count();
 
-        // Rata-rata durasi penyelesaian
         $avgDurasi = Vpas::where('status', 'selesai')
             ->whereNotNull('durasi_hari')
             ->avg('durasi_hari');
@@ -349,14 +320,12 @@ class VpasController extends Controller
             'pending' => $statusPending,
             'proses' => $statusProses,
             'selesai' => $statusSelesai,
+            'terjadwal' => $statusTerjadwal,
             'bulan_ini' => $bulanIni,
             'avg_durasi' => round($avgDurasi, 1)
         ];
     }
 
-    /**
-     * Get UPT data by name for AJAX requests
-     */
     public function getUptData(Request $request)
     {
         $namaUpt = $request->input('nama_upt');

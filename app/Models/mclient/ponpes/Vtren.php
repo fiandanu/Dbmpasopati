@@ -11,21 +11,11 @@ class Vtren extends Model
 {
     use HasFactory;
 
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
     protected $table = 'mclient_ponpes_vtren';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'nama_ponpes',
-        'kanwil',
+        'nama_wilayah',
         'jenis_kendala',
         'detail_kendala',
         'tanggal_terlapor',
@@ -36,11 +26,6 @@ class Vtren extends Model
         'pic_2',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'tanggal_terlapor' => 'date',
         'tanggal_selesai' => 'date',
@@ -49,11 +34,6 @@ class Vtren extends Model
         'updated_at' => 'datetime',
     ];
 
-    /**
-     * The attributes that should be mutated to dates.
-     *
-     * @var array
-     */
     protected $dates = [
         'tanggal_terlapor',
         'tanggal_selesai',
@@ -61,33 +41,21 @@ class Vtren extends Model
         'updated_at',
     ];
 
-    /**
-     * Relationship with Ponpes
-     */
     public function ponpes()
     {
         return $this->belongsTo(Ponpes::class, 'nama_ponpes', 'nama_ponpes');
     }
 
-    /**
-     * Get the formatted tanggal terlapor.
-     */
     public function getFormattedTanggalTerlaporAttribute()
     {
-        return $this->tanggal_terlapor ? $this->tanggal_terlapor->format('d/m/Y') : null;
+        return $this->tanggal_terlapor ? $this->tanggal_terlapor->format('Y-m-d') : null;
     }
 
-    /**
-     * Get the formatted tanggal selesai.
-     */
     public function getFormattedTanggalSelesaiAttribute()
     {
-        return $this->tanggal_selesai ? $this->tanggal_selesai->format('d/m/Y') : null;
+        return $this->tanggal_selesai ? $this->tanggal_selesai->format('Y-m-d') : null;
     }
 
-    /**
-     * Get status badge class for styling.
-     */
     public function getStatusBadgeClassAttribute()
     {
         switch (strtolower($this->status ?? '')) {
@@ -97,60 +65,44 @@ class Vtren extends Model
                 return 'badge-warning';
             case 'pending':
                 return 'badge-danger';
+            case 'terjadwal':
+                return 'badge-info';
             default:
                 return 'badge-secondary';
         }
     }
 
-    /**
-     * Get formatted status for display.
-     */
     public function getFormattedStatusAttribute()
     {
         return ucfirst($this->status ?? 'Belum ditentukan');
     }
 
-    /**
-     * Scope untuk filter berdasarkan status.
-     */
     public function scopeByStatus($query, $status)
     {
         return $query->where('status', $status);
     }
 
-    /**
-     * Scope untuk filter berdasarkan tanggal.
-     */
     public function scopeByDateRange($query, $startDate, $endDate)
     {
         return $query->whereBetween('tanggal_terlapor', [$startDate, $endDate]);
     }
 
-    /**
-     * Scope untuk data bulan ini.
-     */
     public function scopeThisMonth($query)
     {
         return $query->whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year);
     }
 
-    /**
-     * Scope untuk data tahun ini.
-     */
     public function scopeThisYear($query)
     {
         return $query->whereYear('created_at', now()->year);
     }
 
-    /**
-     * Scope untuk pencarian.
-     */
     public function scopeSearch($query, $term)
     {
         return $query->where(function ($q) use ($term) {
             $q->where('nama_ponpes', 'LIKE', "%{$term}%")
-                ->orWhere('kanwil', 'LIKE', "%{$term}%")
+                ->orWhere('nama_wilayah', 'LIKE', "%{$term}%")
                 ->orWhere('jenis_kendala', 'LIKE', "%{$term}%")
                 ->orWhere('status', 'LIKE', "%{$term}%")
                 ->orWhere('pic_1', 'LIKE', "%{$term}%")
@@ -158,9 +110,6 @@ class Vtren extends Model
         });
     }
 
-    /**
-     * Hitung durasi otomatis berdasarkan tanggal.
-     */
     public function calculateDuration()
     {
         if ($this->tanggal_terlapor && $this->tanggal_selesai) {
@@ -172,9 +121,6 @@ class Vtren extends Model
         return null;
     }
 
-    /**
-     * Auto calculate duration before saving.
-     */
     protected static function boot()
     {
         parent::boot();
@@ -186,9 +132,6 @@ class Vtren extends Model
         });
     }
 
-    /**
-     * Get kendala summary (shortened version).
-     */
     public function getKendalaSummaryAttribute()
     {
         if (!$this->jenis_kendala) {
@@ -200,33 +143,26 @@ class Vtren extends Model
             : $this->jenis_kendala;
     }
 
-    /**
-     * Check if the issue is resolved.
-     */
     public function isResolved()
     {
         return strtolower($this->status ?? '') === 'selesai';
     }
 
-    /**
-     * Check if the issue is in progress.
-     */
     public function isInProgress()
     {
         return strtolower($this->status ?? '') === 'proses';
     }
 
-    /**
-     * Check if the issue is pending.
-     */
     public function isPending()
     {
         return strtolower($this->status ?? '') === 'pending';
     }
 
-    /**
-     * Get duration text.
-     */
+    public function isScheduled()
+    {
+        return strtolower($this->status ?? '') === 'terjadwal';
+    }
+
     public function getDurationTextAttribute()
     {
         if (!$this->durasi_hari) {

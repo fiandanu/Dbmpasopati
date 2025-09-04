@@ -22,31 +22,26 @@ class Upt extends Model
         'tanggal' => 'date'
     ];
 
-    // Relasi ke DataOpsionalUpt
     public function dataOpsional()
     {
         return $this->hasOne(DataOpsionalUpt::class, 'upt_id');
     }
 
-    // Relasi ke UploadFolderUpt
     public function uploadFolder()
     {
         return $this->hasOne(UploadFolderUpt::class, 'upt_id');
     }
 
-    // Accessor untuk mendapatkan status upload PDF
     public function getUploadedPdfAttribute()
     {
         return $this->uploadFolder ? $this->uploadFolder->uploaded_pdf : null;
     }
 
-    // Accessor untuk cek apakah PDF sudah diupload
     public function getHasPdfAttribute()
     {
         return $this->uploadFolder && !empty($this->uploadFolder->uploaded_pdf);
     }
 
-    // Accessor untuk mengecek apakah PDF sudah ada di folder tertentu
     public function hasPdfInFolder($folderNumber)
     {
         if (!$this->uploadFolder) {
@@ -57,7 +52,6 @@ class Upt extends Model
         return !empty($this->uploadFolder->$column);
     }
 
-    // Accessor untuk mendapatkan nama file PDF di folder tertentu
     public function getPdfFileNameInFolder($folderNumber)
     {
         if (!$this->uploadFolder) {
@@ -72,7 +66,6 @@ class Upt extends Model
         return null;
     }
 
-    // Accessor untuk menghitung berapa folder yang sudah memiliki PDF
     public function getUploadedFoldersCountAttribute()
     {
         if (!$this->uploadFolder) {

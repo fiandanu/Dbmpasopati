@@ -4,10 +4,12 @@ namespace App\Http\Controllers\mclient\ponpes;
 
 use App\Http\Controllers\Controller;
 use App\Models\mclient\ponpes\Vtren;
-use App\Models\Ponpes; // Import model Ponpes yang sudah ada
+use App\Models\Ponpes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
+use App\Models\Kendala;
+use App\Models\Pic;
 
 class VtrenController extends Controller
 {
@@ -42,12 +44,10 @@ class VtrenController extends Controller
         ];
     }
 
-    // Method ListDataMclientPonpesVtren untuk mengirim data jenis kendala dan Ponpes
     public function ListDataMclientPonpesVtren(Request $request)
     {
         $query = Vtren::query();
 
-        // Cek apakah ada parameter pencarian
         if ($request->has('table_search') && !empty($request->table_search)) {
             $searchTerm = $request->table_search;
 
@@ -66,20 +66,17 @@ class VtrenController extends Controller
 
         $data = $query->orderBy('created_at', 'desc')->paginate(10);
 
-        $jenisKendala = $this->getJenisKendala();
+        $jenisKendala = Kendala::orderBy('jenis_kendala')->get();
+        $picList = Pic::orderBy('nama_pic')->get();
 
-        // Ambil data ponpes untuk dropdown - HANYA TIPE VTREN
         $ponpesList = Ponpes::select('nama_ponpes', 'nama_wilayah', 'tipe')
             ->where('tipe', 'vtren')
             ->orderBy('nama_ponpes')
             ->get();
 
-        return view('mclient.ponpes.indexVtren', compact('data', 'jenisKendala', 'ponpesList'));
+        return view('mclient.ponpes.indexVtren', compact('data', 'jenisKendala', 'picList', 'ponpesList'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function MclientPonpesVtrenStore(Request $request)
     {
         $validator = Validator::make(
@@ -92,7 +89,7 @@ class VtrenController extends Controller
                 'tanggal_terlapor' => 'nullable|date',
                 'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_terlapor',
                 'durasi_hari' => 'nullable|integer|min:0',
-                'status' => 'nullable|string|in:pending,proses,selesai',
+                'status' => 'nullable|string|in:pending,proses,selesai,terjadwal',
                 'pic_1' => 'nullable|string|max:255',
                 'pic_2' => 'nullable|string|max:255',
             ],
@@ -109,7 +106,7 @@ class VtrenController extends Controller
                 'tanggal_selesai.after_or_equal' => 'Tanggal selesai tidak boleh lebih awal dari tanggal terlapor.',
                 'durasi_hari.integer' => 'Durasi hari harus berupa angka.',
                 'durasi_hari.min' => 'Durasi hari tidak boleh negatif.',
-                'status.in' => 'Status harus salah satu dari: pending, proses, atau selesai.',
+                'status.in' => 'Status harus salah satu dari: pending, proses, selesai, atau terjadwal.',
                 'pic_1.string' => 'PIC 1 harus berupa teks.',
                 'pic_1.max' => 'PIC 1 tidak boleh lebih dari 255 karakter.',
                 'pic_2.string' => 'PIC 2 harus berupa teks.',
@@ -127,7 +124,6 @@ class VtrenController extends Controller
         try {
             $data = $request->all();
 
-            // Hitung durasi otomatis jika tanggal terlapor dan selesai diisi
             if ($request->tanggal_terlapor && $request->tanggal_selesai) {
                 $tanggalTerlapor = Carbon::parse($request->tanggal_terlapor);
                 $tanggalSelesai = Carbon::parse($request->tanggal_selesai);
@@ -144,9 +140,6 @@ class VtrenController extends Controller
         }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function MclientPonpesVtrenUpdate(Request $request, $id)
     {
         $validator = Validator::make(
@@ -159,7 +152,7 @@ class VtrenController extends Controller
                 'tanggal_terlapor' => 'nullable|date',
                 'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_terlapor',
                 'durasi_hari' => 'nullable|integer|min:0',
-                'status' => 'nullable|string|in:pending,proses,selesai',
+                'status' => 'nullable|string|in:pending,proses,selesai,terjadwal',
                 'pic_1' => 'nullable|string|max:255',
                 'pic_2' => 'nullable|string|max:255',
             ],
@@ -176,7 +169,7 @@ class VtrenController extends Controller
                 'tanggal_selesai.after_or_equal' => 'Tanggal selesai tidak boleh lebih awal dari tanggal terlapor.',
                 'durasi_hari.integer' => 'Durasi hari harus berupa angka.',
                 'durasi_hari.min' => 'Durasi hari tidak boleh negatif.',
-                'status.in' => 'Status harus salah satu dari: pending, proses, atau selesai.',
+                'status.in' => 'Status harus salah satu dari: pending, proses, selesai, atau terjadwal.',
                 'pic_1.string' => 'PIC 1 harus berupa teks.',
                 'pic_1.max' => 'PIC 1 tidak boleh lebih dari 255 karakter.',
                 'pic_2.string' => 'PIC 2 harus berupa teks.',
@@ -184,25 +177,20 @@ class VtrenController extends Controller
             ]
         );
 
-        // Jika validasi gagal
         if ($validator->fails()) {
-            // Pisahkan data valid dan invalid
             $validatedData = [];
             $invalidFields = array_keys($validator->errors()->messages());
 
-            // Ambil hanya field yang valid
             foreach ($request->all() as $key => $value) {
                 if (!in_array($key, $invalidFields)) {
                     $validatedData[$key] = $value;
                 }
             }
 
-            // Update field yang valid ke database
             try {
                 if (!empty($validatedData)) {
                     $data = Vtren::findOrFail($id);
 
-                    // Hitung durasi otomatis jika tanggal terlapor dan selesai diisi
                     if (isset($validatedData['tanggal_terlapor']) && isset($validatedData['tanggal_selesai'])) {
                         $tanggalTerlapor = Carbon::parse($validatedData['tanggal_terlapor']);
                         $tanggalSelesai = Carbon::parse($validatedData['tanggal_selesai']);
@@ -212,7 +200,6 @@ class VtrenController extends Controller
                     $data->update($validatedData);
                 }
             } catch (\Exception $e) {
-                // Jika ada error saat update, tetap tampilkan error validasi
             }
 
             return redirect()->back()
@@ -221,12 +208,10 @@ class VtrenController extends Controller
                 ->with('partial_success', 'Data valid telah disimpan. Silakan perbaiki field yang bermasalah.');
         }
 
-        // Jika semua validasi berhasil
         try {
             $data = Vtren::findOrFail($id);
             $updateData = $request->all();
 
-            // Hitung durasi otomatis jika tanggal terlapor dan selesai diisi
             if ($request->tanggal_terlapor && $request->tanggal_selesai) {
                 $tanggalTerlapor = Carbon::parse($request->tanggal_terlapor);
                 $tanggalSelesai = Carbon::parse($request->tanggal_selesai);
@@ -243,9 +228,6 @@ class VtrenController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function MclientPonpesVtrenDestroy($id)
     {
         try {
@@ -261,9 +243,6 @@ class VtrenController extends Controller
         }
     }
 
-    /**
-     * Export data to CSV
-     */
     public function exportCsv()
     {
         $data = Vtren::orderBy('created_at', 'desc')->get();
@@ -281,11 +260,9 @@ class VtrenController extends Controller
         $callback = function () use ($data) {
             $file = fopen('php://output', 'w');
 
-            // Header CSV
             fputcsv($file, [
-                'No',
                 'Nama Ponpes',
-                'nama_wilayah',
+                'Nama Wilayah',
                 'Kendala VTREN',
                 'Detail Kendala',
                 'Tanggal Terlapor',
@@ -298,17 +275,14 @@ class VtrenController extends Controller
                 'Diupdate Pada'
             ]);
 
-            // Data rows
-            $no = 1;
             foreach ($data as $row) {
                 fputcsv($file, [
-                    $no++,
                     $row->nama_ponpes,
                     $row->nama_wilayah,
                     $row->jenis_kendala,
                     $row->detail_kendala,
-                    $row->tanggal_terlapor,
-                    $row->tanggal_selesai,
+                    $row->tanggal_terlapor ? $row->tanggal_terlapor->format('Y-m-d') : '',
+                    $row->tanggal_selesai ? $row->tanggal_selesai->format('Y-m-d') : '',
                     $row->durasi_hari,
                     $row->status,
                     $row->pic_1,
@@ -324,22 +298,18 @@ class VtrenController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
-    /**
-     * Get dashboard statistics
-     */
     public function getDashboardStats()
     {
         $totalData = Vtren::count();
         $statusPending = Vtren::where('status', 'pending')->count();
         $statusProses = Vtren::where('status', 'proses')->count();
         $statusSelesai = Vtren::where('status', 'selesai')->count();
+        $statusTerjadwal = Vtren::where('status', 'terjadwal')->count();
 
-        // Data bulan ini
         $bulanIni = Vtren::whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
             ->count();
 
-        // Rata-rata durasi penyelesaian
         $avgDurasi = Vtren::where('status', 'selesai')
             ->whereNotNull('durasi_hari')
             ->avg('durasi_hari');
@@ -349,14 +319,12 @@ class VtrenController extends Controller
             'pending' => $statusPending,
             'proses' => $statusProses,
             'selesai' => $statusSelesai,
+            'terjadwal' => $statusTerjadwal,
             'bulan_ini' => $bulanIni,
             'avg_durasi' => round($avgDurasi, 1)
         ];
     }
 
-    /**
-     * Get Ponpes data by name for AJAX requests
-     */
     public function getPonpesData(Request $request)
     {
         $namaPonpes = $request->input('nama_ponpes');

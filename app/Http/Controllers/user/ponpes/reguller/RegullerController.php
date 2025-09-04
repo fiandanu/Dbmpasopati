@@ -20,7 +20,6 @@ class RegullerController extends Controller
 
         $query->where('tipe', 'reguler');
 
-        // Search filter
         if ($request->has('table_search') && !empty($request->table_search)) {
             $searchTerm = $request->table_search;
             $query->where(function ($q) use ($searchTerm) {
@@ -47,14 +46,13 @@ class RegullerController extends Controller
 
     public function UserPageStore(Request $request)
     {
-        // Validasi input
         $validator = Validator::make(
             $request->all(),
             [
                 'nama_ponpes' => 'required|string|max:255',
                 'nama_wilayah' => 'required|string',
-                'tipe' => 'required|array|min:1', // Validasi array dengan minimal 1 pilihan
-                'tipe.*' => 'in:reguler,vtren', // Validasi setiap element array harus reguler atau vtren
+                'tipe' => 'required|array|min:1',
+                'tipe.*' => 'in:reguler,vtren',
             ],
             [
                 'nama_ponpes.required' => 'Nama Ponpes harus diisi',
@@ -70,20 +68,16 @@ class RegullerController extends Controller
             return redirect()->back()->withInput()->withErrors($validator);
         }
 
-        // Ambil data tipe yang dipilih
         $selectedTypes = $request->tipe;
         $createdRecords = [];
 
-        // Bersihkan nama Ponpes dari suffix ganda yang mungkin ada
         $cleanNamaPonpes = $this->removeVtrenRegSuffix($request->nama_ponpes);
 
-        // Tentukan nama Ponpes berdasarkan jumlah tipe yang dipilih
         $namaPonpes = $cleanNamaPonpes;
         if (count($selectedTypes) == 2 && in_array('reguler', $selectedTypes) && in_array('vtren', $selectedTypes)) {
             $namaPonpes = $cleanNamaPonpes . ' (VtrenReg)';
         }
 
-        // Validasi manual untuk kombinasi nama Ponpes + tipe
         foreach ($selectedTypes as $tipeValue) {
             $existingRecord = Ponpes::where('nama_ponpes', $namaPonpes)
                 ->where('tipe', $tipeValue)
@@ -96,9 +90,7 @@ class RegullerController extends Controller
             }
         }
 
-        // Loop untuk setiap tipe yang dipilih
         foreach ($selectedTypes as $tipeValue) {
-            // Buat record baru untuk setiap tipe
             $dataPonpes = [
                 'nama_ponpes' => $namaPonpes,
                 'nama_wilayah' => $request->nama_wilayah,
@@ -110,7 +102,6 @@ class RegullerController extends Controller
             $createdRecords[] = $tipeValue;
         }
 
-        // Berikan pesan berdasarkan hasil
         if (count($createdRecords) > 0) {
             $message = 'Data Ponpes berhasil ditambahkan untuk tipe: ' . implode(', ', $createdRecords);
             return redirect()->route('ponpes.UserPage')->with('success', $message);
@@ -126,12 +117,10 @@ class RegullerController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                // Field Wajib
                 'nama_ponpes' => 'required|string|max:255',
                 'nama_wilayah' => 'required|string|max:255',
                 'tipe' => 'required|string|max:255',
 
-                // Data Opsional
                 'pic_ponpes' => 'nullable|string|max:255',
                 'no_telpon' => 'nullable|string|regex:/^([0-9\s\-\+\(\)]*)$/|max:20',
                 'alamat' => 'nullable|string',
@@ -142,26 +131,22 @@ class RegullerController extends Controller
                 'tarif_wartel_reguler' => 'nullable|integer|min:0',
                 'status_wartel' => 'nullable|string|in:Aktif,Tidak Aktif',
 
-                // IMC PAS
                 'akses_topup_pulsa' => 'nullable|string|max:255',
                 'password_topup' => 'nullable|string|max:255',
                 'akses_download_rekaman' => 'nullable|string',
                 'password_download' => 'nullable|string|max:255',
 
-                // Akses VPN
                 'internet_protocol' => 'nullable|string|max:255',
                 'vpn_user' => 'nullable|string|max:255',
                 'vpn_password' => 'nullable|string|max:255',
                 'jenis_vpn' => 'nullable|string|max:255',
 
-                // Extension Reguler
                 'jumlah_extension' => 'nullable|integer|min:0',
                 'no_extension' => 'nullable|string',
                 'extension_password' => 'nullable|string',
-                'pin_tes' => 'nullable|string|max:255', // Changed from integer to string
+                'pin_tes' => 'nullable|string|max:255',
             ],
             [
-                // Validation messages (same as before)
                 'nama_ponpes.required' => 'Nama Ponpes harus diisi.',
                 'nama_wilayah.required' => 'Nama Daerah harus diisi.',
                 'pic_ponpes.string' => 'PIC Ponpes harus berupa teks.',
@@ -193,7 +178,6 @@ class RegullerController extends Controller
             ]
         );
 
-        // Jika validasi gagal
         if ($validator->fails()) {
             return redirect()->back()
                 ->withErrors($validator)
@@ -202,10 +186,8 @@ class RegullerController extends Controller
         }
 
         try {
-            // Find the main Ponpes record
             $ponpes = Ponpes::findOrFail($id);
 
-            // Update main Ponpes data (fields that exist in data_ponpes table)
             $mainData = [
                 'nama_ponpes' => $request->nama_ponpes,
                 'nama_wilayah' => $request->nama_wilayah,
@@ -214,7 +196,6 @@ class RegullerController extends Controller
 
             $ponpes->update($mainData);
 
-            // Prepare optional data for data_opsional_ponpes table
             $optionalData = [
                 'pic_ponpes' => $request->pic_ponpes,
                 'no_telpon' => $request->no_telpon,
@@ -239,12 +220,9 @@ class RegullerController extends Controller
                 'pin_tes' => $request->pin_tes,
             ];
 
-            // Update or create the optional data
             if ($ponpes->dataOpsional) {
-                // Update existing optional data
                 $ponpes->dataOpsional->update($optionalData);
             } else {
-                // Create new optional data record
                 $ponpes->dataOpsional()->create($optionalData);
             }
 
@@ -265,7 +243,6 @@ class RegullerController extends Controller
                     'required',
                     'string',
                     function ($attribute, $value, $fail) use ($id, $request) {
-                        // Cek apakah ada record lain dengan nama yang sama dan tipe yang sama
                         $existingRecord = Ponpes::where('nama_ponpes', $value)
                             ->where('id', '!=', $id)
                             ->where('tipe', $request->tipe)
@@ -277,7 +254,7 @@ class RegullerController extends Controller
                     }
                 ],
                 'nama_wilayah' => 'required|string',
-                'tipe' => 'required|string|in:reguler,vtren', // Hanya terima reguler atau vtren
+                'tipe' => 'required|string|in:reguler,vtren',
             ],
             [
                 'nama_ponpes.required' => 'Nama Ponpes harus diisi',
@@ -308,31 +285,20 @@ class RegullerController extends Controller
             return redirect()->route('ponpes.UserPage')->with('error', 'Data tidak ditemukan!');
         }
 
-        // Ambil nama Ponpes tanpa suffix (VtrenReg) untuk pengecekan
         $namaPonpesBase = $this->removeVtrenRegSuffix($dataPonpes->nama_ponpes);
 
-        // Hapus data yang dipilih
         $dataPonpes->delete();
 
-        // Update nama Ponpes yang tersisa berdasarkan jumlah data
         $this->updatePonpesNamesBySuffix($namaPonpesBase);
 
         return redirect()->route('ponpes.UserPage')->with('success', 'Data berhasil dihapus!');
     }
 
-    /**
-     * Helper method untuk menghilangkan suffix (VtrenReg) dari nama Ponpes
-     * Menghapus semua kemungkinan suffix ganda
-     */
     private function removeVtrenRegSuffix($namaPonpes)
     {
-        // Hapus semua kemungkinan suffix (VtrenReg) yang mungkin ganda
         return preg_replace('/\s*\(VtrenReg\)+/', '', $namaPonpes);
     }
 
-    /**
-     * Helper method untuk mengecek apakah Ponpes memiliki kedua tipe (reguler dan vtren)
-     */
     private function hasMultipleTypes($namaPonpes)
     {
         $namaPonpesBase = $this->removeVtrenRegSuffix($namaPonpes);
@@ -348,14 +314,10 @@ class RegullerController extends Controller
         return $regulerExists && $vtrenExists;
     }
 
-    /**
-     * Helper method untuk update nama Ponpes berdasarkan jumlah tipe
-     */
     private function updatePonpesNamesBySuffix($namaPonpesBase)
     {
         $relatedData = Ponpes::where('nama_ponpes', 'LIKE', $namaPonpesBase . '%')->get();
 
-        // Jika ada 2 atau lebih data dengan nama base yang sama, pastikan ada suffix
         if ($relatedData->count() >= 2) {
             foreach ($relatedData as $data) {
                 if (!str_contains($data->nama_ponpes, '(VtrenReg)')) {
@@ -365,7 +327,6 @@ class RegullerController extends Controller
                 }
             }
         }
-        // Jika hanya ada 1 data tersisa, hapus suffix
         elseif ($relatedData->count() == 1) {
             $remainingData = $relatedData->first();
             if (str_contains($remainingData->nama_ponpes, '(VtrenReg)')) {
@@ -376,9 +337,6 @@ class RegullerController extends Controller
         }
     }
 
-    /**
-     * Export Ponpes data to CSV
-     */
     public function exportPonpesCsv($id): StreamedResponse
     {
         $ponpes = Ponpes::findOrFail($id);
@@ -429,9 +387,6 @@ class RegullerController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
-    /**
-     * Export Ponpes data to PDF
-     */
     public function exportPonpesPdf($id)
     {
         $ponpes = Ponpes::findOrFail($id);

@@ -43,7 +43,6 @@ class DataOpsionalPonpes extends Model
         'tarif_wartel_reguler' => 'decimal:2'
     ];
 
-    // Relasi balik ke Ponpes
     public function ponpes()
     {
         return $this->belongsTo(Ponpes::class, 'ponpes_id');

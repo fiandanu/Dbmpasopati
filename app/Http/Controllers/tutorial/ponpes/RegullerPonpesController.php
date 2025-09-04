@@ -19,9 +19,7 @@ class RegullerPonpesController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'tutor_ponpes_reguller' => 'required|unique:tutor_ponpes_reguller,tutor_ponpes_reguller',
-            // Tambahkan validasi lain jika diperlukan
         ], [
-            // Custom error messages
             'tutor_ponpes_reguller.required' => 'Nama tutor wajib diisi.',
             'tutor_ponpes_reguller.unique' => 'Nama tutor sudah ada, silakan gunakan nama lain.',
         ]);
@@ -30,10 +28,9 @@ class RegullerPonpesController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        // SOLUSI 1: Gunakan variabel $data yang sudah diset tanggalnya
         $data = $request->all();
         $data['tanggal'] = date('Y-m-d');
-        Reguller::create($data); // Gunakan $data yang sudah diset tanggalnya
+        Reguller::create($data);
 
         return redirect()->route('tutor_ponpes_reguller.ListDataSpp')->with('success', 'Data berhasil disimpan');
     }
@@ -41,11 +38,9 @@ class RegullerPonpesController extends Controller
     {
         $query = Reguller::query();
 
-        // Cek apakah ada parameter pencarian
         if ($request->has('table_search') && !empty($request->table_search)) {
             $searchTerm = $request->table_search;
 
-            // Lakukan pencarian berdasarkan beberapa kolom
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('tutor_ponpes_reguller', 'LIKE', '%' . $searchTerm . '%');
             });
@@ -59,7 +54,6 @@ class RegullerPonpesController extends Controller
         try {
             $dataupt = Reguller::findOrFail($id);
 
-            // Hapus semua file PDF yang terkait dengan user ini
             for ($i = 1; $i <= 10; $i++) {
                 $column = 'pdf_folder_' . $i;
                 if (!empty($dataupt->$column) && Storage::disk('public')->exists($dataupt->$column)) {
@@ -83,7 +77,6 @@ class RegullerPonpesController extends Controller
             $user = Reguller::findOrFail($id);
             $column = 'pdf_folder_' . $folder;
 
-            // Cek apakah file ada dan path tidak kosong
             if (empty($user->$column)) {
                 return abort(404, 'File PDF belum diupload untuk folder ' . $folder . '.');
             }
@@ -106,9 +99,8 @@ class RegullerPonpesController extends Controller
                 return redirect()->back()->with('error', 'Folder tidak valid.');
             }
 
-            // Validasi file PDF
             $request->validate([
-                'uploaded_pdf' => 'required|file|mimes:pdf|max:10240', // Increased to 10MB
+                'uploaded_pdf' => 'required|file|mimes:pdf|max:10240',
             ], [
                 'uploaded_pdf.required' => 'File PDF harus dipilih.',
                 'uploaded_pdf.mimes' => 'File harus berformat PDF.',
@@ -122,36 +114,30 @@ class RegullerPonpesController extends Controller
             $user = Reguller::findOrFail($id);
             $file = $request->file('uploaded_pdf');
 
-            // Debug: Cek apakah file valid
             if (!$file || !$file->isValid()) {
                 return redirect()->back()->with('error', 'File tidak valid!');
             }
 
-            // Hapus file lama jika ada
             $column = 'pdf_folder_' . $folder;
             if (!empty($user->$column) && Storage::disk('public')->exists($user->$column)) {
                 Storage::disk('public')->delete($user->$column);
             }
 
-            // Buat nama file unik dengan sanitasi
             $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
             $sanitizedName = preg_replace('/[^A-Za-z0-9\-_.]/', '_', $originalName);
             $filename = time() . '_' . $sanitizedName . '.pdf';
 
-            // Pastikan direktori ada
             $directory = 'tutorial/ponpes/reguller/folder_' . $folder;
             if (!Storage::disk('public')->exists($directory)) {
                 Storage::disk('public')->makeDirectory($directory);
             }
 
-            // Simpan file
             $path = $file->storeAs($directory, $filename, 'public');
 
             if (!$path) {
                 return redirect()->back()->with('error', 'Gagal menyimpan file!');
             }
 
-            // Simpan path ke database
             $user->$column = $path;
             $user->save();
 

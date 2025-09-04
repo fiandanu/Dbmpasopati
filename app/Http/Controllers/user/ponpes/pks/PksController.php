@@ -13,13 +13,11 @@ class PksController extends Controller
 {
     public function ListDataPks(Request $request)
     {
-        $query = Ponpes::with('uploadFolder'); // Load relasi upload folder
+        $query = Ponpes::with('uploadFolder');
 
-        // Cek apakah ada parameter pencarian
         if ($request->has('table_search') && !empty($request->table_search)) {
             $searchTerm = $request->table_search;
 
-            // Lakukan pencarian berdasarkan beberapa kolom
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('nama_ponpes', 'LIKE', '%' . $searchTerm . '%')
                     ->orWhere('nama_wilayah', 'LIKE', '%' . $searchTerm . '%')
@@ -38,16 +36,13 @@ class PksController extends Controller
         $dataponpes = Ponpes::with('uploadFolder')->find($id);
 
         if ($dataponpes) {
-            // Hapus juga data upload folder terkait
             if ($dataponpes->uploadFolder) {
                 $uploadFolder = $dataponpes->uploadFolder;
                 
-                // Hapus uploaded_pdf jika ada
                 if ($uploadFolder->uploaded_pdf && Storage::disk('public')->exists($uploadFolder->uploaded_pdf)) {
                     Storage::disk('public')->delete($uploadFolder->uploaded_pdf);
                 }
                 
-                // Hapus pdf folder files jika ada (1-10)
                 for ($i = 1; $i <= 10; $i++) {
                     $pdfField = "pdf_folder_$i";
                     if ($uploadFolder->$pdfField && Storage::disk('public')->exists($uploadFolder->$pdfField)) {
@@ -68,7 +63,6 @@ class PksController extends Controller
     {
         $ponpes = Ponpes::with('uploadFolder')->findOrFail($id);
 
-        // Cek apakah ada upload folder dan file PDF
         if (!$ponpes->uploadFolder || empty($ponpes->uploadFolder->uploaded_pdf)) {
             return abort(404, 'File PDF belum diupload');
         }
@@ -86,38 +80,31 @@ class PksController extends Controller
             return redirect()->back()->with('error', 'File tidak ditemukan dalam request!');
         }
 
-        // Validasi file PDF
         $request->validate([
-            'uploaded_pdf' => 'required|file|mimes:pdf|max:5120', // 5MB
+            'uploaded_pdf' => 'required|file|mimes:pdf|max:5120',
         ]);
 
         $ponpes = Ponpes::findOrFail($id);
 
-        // Buat nama file unik
         $file = $request->file('uploaded_pdf');
 
-        // Debug: Cek apakah file valid
         if (!$file || !$file->isValid()) {
             return redirect()->back()->with('error', 'File tidak valid!');
         }
 
         $filename = time() . '_' . $file->getClientOriginalName();
 
-        // Simpan ke dalam folder storage/app/public/uploads/pdf/ponpes
         $path = $file->storeAs('ponpes/pks', $filename, 'public');
 
-        // Cari atau buat record upload folder
         $uploadFolder = UploadFolderPonpes::firstOrCreate(
             ['ponpes_id' => $ponpes->id],
             ['uploaded_pdf' => null]
         );
 
-        // Hapus file lama jika ada
         if ($uploadFolder->uploaded_pdf && Storage::disk('public')->exists($uploadFolder->uploaded_pdf)) {
             Storage::disk('public')->delete($uploadFolder->uploaded_pdf);
         }
 
-        // Update path di database
         $uploadFolder->uploaded_pdf = $path;
         $uploadFolder->save();
 

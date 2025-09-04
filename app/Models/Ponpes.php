@@ -23,13 +23,11 @@ class Ponpes extends Model
         'tanggal' => 'date'
     ];
 
-    // Relasi ke UploadFolderPonpes
     public function uploadFolder()
     {
         return $this->hasOne(UploadFolderPonpes::class, 'ponpes_id');
     }
 
-    // Accessor untuk mengecek apakah PDF sudah ada di folder tertentu
     public function hasPdfInFolder($folderNumber)
     {
         if (!$this->uploadFolder) {
@@ -40,7 +38,6 @@ class Ponpes extends Model
         return !empty($this->uploadFolder->$column);
     }
 
-    // Accessor untuk mendapatkan nama file PDF di folder tertentu
     public function getPdfFileNameInFolder($folderNumber)
     {
         if (!$this->uploadFolder) {
@@ -55,7 +52,6 @@ class Ponpes extends Model
         return null;
     }
 
-    // Accessor untuk menghitung berapa folder yang sudah memiliki PDF
     public function getUploadedFoldersCountAttribute()
     {
         if (!$this->uploadFolder) {
@@ -73,13 +69,11 @@ class Ponpes extends Model
         return $count;
     }
 
-    // Accessor untuk mendapatkan status upload PDF
     public function getUploadedPdfAttribute()
     {
         return $this->uploadFolder ? $this->uploadFolder->uploaded_pdf : null;
     }
 
-    // Accessor untuk cek apakah PDF sudah diupload
     public function getHasPdfAttribute()
     {
         return $this->uploadFolder && !empty($this->uploadFolder->uploaded_pdf);

@@ -1,7 +1,6 @@
 @extends('layout.sidebar')
 @section('content')
     <div class="content-wrapper">
-        {{-- Tampilkan pesan sukses total --}}
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mx-4" role="alert">
                 <div class="d-flex">
@@ -19,7 +18,6 @@
             </div>
         @endif
 
-        {{-- Tampilkan pesan sukses parsial --}}
         @if (session('partial_success'))
             <div class="alert alert-warning alert-dismissible fade show border-0 shadow-sm mx-4" role="alert">
                 <div class="d-flex">
@@ -37,7 +35,6 @@
             </div>
         @endif
 
-        {{-- Tampilkan error validasi --}}
         @if ($errors->any())
             <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm mx-4" role="alert">
                 <div class="d-flex">
@@ -59,7 +56,6 @@
             </div>
         @endif
 
-        {{-- Tampilkan error sistem --}}
         @if (session('error'))
             <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm mx-4" role="alert">
                 <div class="d-flex">
@@ -101,7 +97,7 @@
                                 <div class="card-tools">
                                     <!-- Tombol Tambah Data -->
                                     <button type="button" class="btn btn-sm btn-primary mr-2 mt-2" data-bs-toggle="modal"
-                                        data-bs-target="#addModal">
+                                        data-bs-target="
                                         <i class="fas fa-plus"></i> Tambah Data
                                     </button>
 
@@ -124,10 +120,9 @@
                                 <table class="table table-hover text-nowrap">
                                     <thead>
                                         <tr>
-                                            <th>No</th>
                                             <th>Nama UPT</th>
                                             <th>Kanwil</th>
-                                            <th>Kendala Reguller</th>
+                                            <th>Jenis Kendala</th>
                                             <th>Tanggal Terlapor</th>
                                             <th>Tanggal Selesai</th>
                                             <th>Durasi (Hari)</th>
@@ -143,7 +138,6 @@
                                         @endphp
                                         @forelse ($data as $d)
                                             <tr>
-                                                <td>{{ $no++ }}</td>
                                                 <td><strong>{{ $d->nama_upt ?? '-' }}</strong></td>
                                                 <td>{{ $d->kanwil ?? '-' }}</td>
                                                 <td>
@@ -151,8 +145,8 @@
                                                         {{ Str::limit($d->jenis_kendala ?? 'Tidak ada kendala', 30) }}
                                                     </span>
                                                 </td>
-                                                <td>{{ $d->tanggal_terlapor ?? '-' }}</td>
-                                                <td>{{ $d->tanggal_selesai ?? '-' }}</td>
+                                                <td>{{ $d->tanggal_terlapor ? $d->tanggal_terlapor->format('d/m/Y') : '-' }}</td>
+                                                <td>{{ $d->tanggal_selesai ? $d->tanggal_selesai->format('d/m/Y') : '-' }}</td>
                                                 <td>
                                                     @if ($d->durasi_hari)
                                                         <span class="badge badge-info">{{ $d->durasi_hari }} hari</span>
@@ -164,6 +158,9 @@
                                                     @php
                                                         $statusClass = '';
                                                         switch (strtolower($d->status ?? '')) {
+                                                            case 'terjadwal':
+                                                                $statusClass = 'badge-info';
+                                                                break;          
                                                             case 'selesai':
                                                                 $statusClass = 'badge-success';
                                                                 break;
@@ -184,22 +181,19 @@
                                                 <td>{{ $d->pic_1 ?? '-' }}</td>
                                                 <td>{{ $d->pic_2 ?? '-' }}</td>
                                                 <td>
-                                                    {{-- Edit Button --}}
-                                                    <a href="#editModal{{ $d->id }}" class="btn btn-sm btn-primary"
+                                                    <a href="
                                                         data-bs-toggle="modal"
-                                                        data-bs-target="#editModal{{ $d->id }}">
+                                                        data-bs-target="
                                                         <i class="fa fa-edit"></i> Edit
                                                     </a>
 
-                                                    {{-- Delete Button --}}
-                                                    <a data-toggle="modal" data-target="#modal-default{{ $d->id }}"
+                                                    <a data-toggle="modal" data-target="
                                                         class="btn btn-sm btn-danger">
                                                         <i class="fas fa-trash-alt"></i> Delete
                                                     </a>
                                                 </td>
                                             </tr>
 
-                                            {{-- Delete Modal --}}
                                             <div class="modal fade" id="modal-default{{ $d->id }}">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
@@ -231,7 +225,7 @@
                                             </div>
                                         @empty
                                             <tr>
-                                                <td colspan="11" class="text-center">Tidak ada data yang ditemukan</td>
+                                                <td colspan="10" class="text-center">Tidak ada data yang ditemukan</td>
                                             </tr>
                                         @endforelse
                                     </tbody>
@@ -246,8 +240,6 @@
                             @endif
                         </div>
 
-                        {{-- Add Modal --}}
-                        {{-- Add Modal with Searchable UPT --}}
                         <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel"
                             aria-hidden="true">
                             <form action="{{ route('MclientRegullerStore') }}" method="POST">
@@ -283,7 +275,7 @@
                                                             <div class="dropdown-menu w-100" id="uptDropdownMenu" 
                                                                 style="max-height: 200px; overflow-y: auto; display: none;">
                                                                 @foreach ($uptList as $upt)
-                                                                    <a class="dropdown-item upt-option" href="#" 
+                                                                    <a class="dropdown-item upt-option" href="
                                                                     data-value="{{ $upt->namaupt }}" 
                                                                     data-kanwil="{{ $upt->kanwil }}"
                                                                     onclick="selectUpt('{{ $upt->namaupt }}', '{{ $upt->kanwil }}')">
@@ -302,18 +294,14 @@
                                                     </div>
 
                                                     <div class="mb-3">
-                                                        <label for="jenis_kendala" class="form-label">Jenis Kendala Reguller</label>
-                                                        <select class="form-control" id="jenis_kendala"
-                                                            name="jenis_kendala">
+                                                        <label for="jenis_kendala" class="form-label">Jenis Kendala</label>
+                                                        <select class="form-control" id="jenis_kendala" name="jenis_kendala">
                                                             <option value="">-- Pilih Jenis Kendala --</option>
                                                             @foreach ($jenisKendala as $kendala)
-                                                                <option value="{{ $kendala }}">
-                                                                    {{ $kendala }}
+                                                                <option value="{{ $kendala->jenis_kendala }}">
+                                                                    {{ $kendala->jenis_kendala }}
                                                                 </option>
                                                             @endforeach
-                                                            <option value="lainnya">
-                                                                Lainnya (tulis di detail kendala)
-                                                            </option>
                                                         </select>
                                                     </div>
 
@@ -358,19 +346,35 @@
                                                             <option value="pending">Pending</option>
                                                             <option value="proses">Proses</option>
                                                             <option value="selesai">Selesai</option>
+                                                            <option value="terjadwal">Terjadwal</option>
+
                                                         </select>
                                                     </div>
 
+                                                    <!-- PIC 1 - ubah dari input text ke dropdown -->
                                                     <div class="mb-3">
                                                         <label for="pic_1" class="form-label">PIC 1</label>
-                                                        <input type="text" class="form-control" id="pic_1"
-                                                            name="pic_1" placeholder="Nama PIC pertama">
+                                                        <select class="form-control" id="pic_1" name="pic_1">
+                                                            <option value="">-- Pilih PIC 1 --</option>
+                                                            @foreach ($picList as $pic)
+                                                                <option value="{{ $pic->nama_pic }}">
+                                                                    {{ $pic->nama_pic }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
                                                     </div>
 
+                                                    <!-- PIC 2 - ubah dari input text ke dropdown -->
                                                     <div class="mb-3">
                                                         <label for="pic_2" class="form-label">PIC 2</label>
-                                                        <input type="text" class="form-control" id="pic_2"
-                                                            name="pic_2" placeholder="Nama PIC kedua">
+                                                        <select class="form-control" id="pic_2" name="pic_2">
+                                                            <option value="">-- Pilih PIC 2 --</option>
+                                                            @foreach ($picList as $pic)
+                                                                <option value="{{ $pic->nama_pic }}">
+                                                                    {{ $pic->nama_pic }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
                                                     </div>
                                                 </div>
                                             </div>
@@ -386,7 +390,6 @@
                             </form>
                         </div>
 
-                        {{-- Edit Modals --}}
                         @foreach ($data as $d)
                             <div class="modal fade" id="editModal{{ $d->id }}" tabindex="-1"
                                 aria-labelledby="editModalLabel" aria-hidden="true">
@@ -425,26 +428,21 @@
                                                             <input type="text" class="form-control" id="kanwil_edit_{{ $d->id }}" name="kanwil" value="{{ $d->kanwil }}" readonly>
                                                         </div>
 
+                                                        <!-- Jenis Kendala - ubah dari select hardcoded ke database -->
                                                         <div class="mb-3">
-                                                            <label for="jenis_kendala" class="form-label">Jenis Kendala Reguller</label>
-                                                            <select class="form-control" id="jenis_kendala"
-                                                                name="jenis_kendala">
+                                                            <label for="jenis_kendala" class="form-label">Jenis Kendala</label>
+                                                            <select class="form-control" id="jenis_kendala" name="jenis_kendala">
                                                                 <option value="">-- Pilih Jenis Kendala --</option>
                                                                 @foreach ($jenisKendala as $kendala)
-                                                                    <option value="{{ $kendala }}"
-                                                                        {{ $d->jenis_kendala == $kendala ? 'selected' : '' }}>
-                                                                        {{ $kendala }}
+                                                                    <option value="{{ $kendala->jenis_kendala }}" {{ $d->jenis_kendala == $kendala->jenis_kendala ? 'selected' : '' }}>
+                                                                        {{ $kendala->jenis_kendala }}
                                                                     </option>
                                                                 @endforeach
-                                                                <option value="lainnya"
-                                                                    {{ $d->jenis_kendala == 'lainnya' ? 'selected' : '' }}>
-                                                                    Lainnya (tulis di detail kendala)
-                                                                </option>
-                                                                <!-- Jika nilai existing tidak ada dalam array, tetap tampilkan -->
-                                                                @if ($d->jenis_kendala && !in_array($d->jenis_kendala, $jenisKendala) && $d->jenis_kendala != 'lainnya')
-                                                                    <option value="{{ $d->jenis_kendala }}" selected>
-                                                                        {{ $d->jenis_kendala }} (Custom)</option>
-                                                                @endif
+                                                                <!-- Jika nilai existing tidak ada dalam database, tetap tampilkan -->
+                                                                @php
+                                                                    $existingKendala = $jenisKendala->pluck('jenis_kendala')->toArray();
+                                                                @endphp
+                                                               
                                                             </select>
                                                         </div>
 
@@ -464,7 +462,7 @@
                                                                 Terlapor</label>
                                                             <input type="date" class="form-control"
                                                                 id="tanggal_terlapor" name="tanggal_terlapor"
-                                                                value="{{ $d->tanggal_terlapor }}">
+                                                                value="{{ $d->tanggal_terlapor ? $d->tanggal_terlapor->format('Y-m-d') : '' }}">
                                                         </div>
 
                                                         <div class="mb-3">
@@ -472,7 +470,7 @@
                                                                 Selesai</label>
                                                             <input type="date" class="form-control"
                                                                 id="tanggal_selesai" name="tanggal_selesai"
-                                                                value="{{ $d->tanggal_selesai }}">
+                                                                value="{{ $d->tanggal_selesai ? $d->tanggal_selesai->format('Y-m-d') : '' }}">
                                                         </div>
                                                     </div>
 
@@ -500,21 +498,51 @@
                                                                 <option value="selesai"
                                                                     {{ $d->status == 'selesai' ? 'selected' : '' }}>Selesai
                                                                 </option>
+                                                                <option value="terjadwal"
+                                                                    {{ $d->status == 'terjadwal' ? 'selected' : '' }}>Terjadwal
+                                                                </option>
                                                             </select>
                                                         </div>
 
+                                                        <!-- PIC 1 - ubah dari input text ke dropdown -->
                                                         <div class="mb-3">
                                                             <label for="pic_1" class="form-label">PIC 1</label>
-                                                            <input type="text" class="form-control" id="pic_1"
-                                                                name="pic_1" value="{{ $d->pic_1 }}"
-                                                                placeholder="Nama PIC pertama">
+                                                            <select class="form-control" id="pic_1" name="pic_1">
+                                                                <option value="">-- Pilih PIC 1 --</option>
+                                                                @foreach ($picList as $pic)
+                                                                    <option value="{{ $pic->nama_pic }}" {{ $d->pic_1 == $pic->nama_pic ? 'selected' : '' }}>
+                                                                        {{ $pic->nama_pic }}
+                                                                    </option>
+                                                                @endforeach
+                                                                <!-- Jika nilai existing tidak ada dalam database, tetap tampilkan -->
+                                                                @php
+                                                                    $existingPics = $picList->pluck('nama_pic')->toArray();
+                                                                @endphp
+                                                                @if ($d->pic_1 && !in_array($d->pic_1, $existingPics))
+                                                                    <option value="{{ $d->pic_1 }}" selected>
+                                                                        {{ $d->pic_1 }} (Custom)
+                                                                    </option>
+                                                                @endif
+                                                            </select>
                                                         </div>
 
+                                                        <!-- PIC 2 - ubah dari input text ke dropdown -->
                                                         <div class="mb-3">
                                                             <label for="pic_2" class="form-label">PIC 2</label>
-                                                            <input type="text" class="form-control" id="pic_2"
-                                                                name="pic_2" value="{{ $d->pic_2 }}"
-                                                                placeholder="Nama PIC kedua">
+                                                            <select class="form-control" id="pic_2" name="pic_2">
+                                                                <option value="">-- Pilih PIC 2 --</option>
+                                                                @foreach ($picList as $pic)
+                                                                    <option value="{{ $pic->nama_pic }}" {{ $d->pic_2 == $pic->nama_pic ? 'selected' : '' }}>
+                                                                        {{ $pic->nama_pic }}
+                                                                    </option>
+                                                                @endforeach
+                                                                <!-- Jika nilai existing tidak ada dalam database, tetap tampilkan -->
+                                                                @if ($d->pic_2 && !in_array($d->pic_2, $existingPics))
+                                                                    <option value="{{ $d->pic_2 }}" selected>
+                                                                        {{ $d->pic_2 }} (Custom)
+                                                                    </option>
+                                                                @endif
+                                                            </select>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -540,7 +568,6 @@
     <!-- /.content-wrapper -->
 
     <script>
-    // Function untuk update kanwil pada Add Modal
     function updateKanwil(namaUpt) {
         if (namaUpt === '') {
             document.getElementById('kanwil').value = '';
@@ -556,7 +583,6 @@
         }
     }
 
-    // Function untuk update kanwil pada Edit Modal
     function updateKanwilEdit(namaUpt, id) {
         if (namaUpt === '') {
             document.getElementById(`kanwil_edit_${id}`).value = '';
@@ -572,9 +598,7 @@
         }
     }
 
-    // Set kanwil untuk edit modal saat modal dibuka
     document.addEventListener('DOMContentLoaded', function() {
-        // Set initial kanwil values for all edit modals
         @foreach ($data as $d)
             const selectEdit{{ $d->id }} = document.getElementById('nama_upt_edit_{{ $d->id }}');
             if (selectEdit{{ $d->id }}) {
@@ -589,13 +613,11 @@
         @endforeach
     });
     
-    // Searchable UPT dropdown functionality
     document.addEventListener('DOMContentLoaded', function() {
         const uptSearch = document.getElementById('upt_search');
         const uptDropdown = document.getElementById('uptDropdownMenu');
         const uptOptions = document.querySelectorAll('.upt-option');
         
-        // Filter UPT options based on search input
         uptSearch.addEventListener('input', function() {
             const searchTerm = this.value.toLowerCase();
             let hasVisibleOption = false;
@@ -610,7 +632,6 @@
                 }
             });
             
-            // Show dropdown if there are visible options and search term is not empty
             if (searchTerm.length > 0 && hasVisibleOption) {
                 uptDropdown.style.display = 'block';
             } else if (searchTerm.length === 0) {
@@ -618,7 +639,6 @@
             }
         });
         
-        // Show all options when clicking on search input
         uptSearch.addEventListener('focus', function() {
             if (this.value.length > 0) {
                 const searchTerm = this.value.toLowerCase();
@@ -640,7 +660,6 @@
             }
         });
         
-        // Hide dropdown when clicking outside
         document.addEventListener('click', function(event) {
             if (!event.target.closest('.dropdown')) {
                 uptDropdown.style.display = 'none';
@@ -648,13 +667,11 @@
         });
     });
 
-    // Toggle dropdown visibility
     function toggleUptDropdown() {
         const uptDropdown = document.getElementById('uptDropdownMenu');
         const uptOptions = document.querySelectorAll('.upt-option');
         
         if (uptDropdown.style.display === 'none' || uptDropdown.style.display === '') {
-            // Show all options
             uptOptions.forEach(option => {
                 option.style.display = 'block';
             });
@@ -664,7 +681,6 @@
         }
     }
 
-    // Select UPT option
     function selectUpt(namaUpt, kanwil) {
         document.getElementById('upt_search').value = namaUpt;
         document.getElementById('nama_upt').value = namaUpt;
@@ -672,7 +688,6 @@
         document.getElementById('uptDropdownMenu').style.display = 'none';
     }
 
-    // Clear UPT selection when search is cleared
     document.getElementById('upt_search').addEventListener('input', function() {
         if (this.value === '') {
             document.getElementById('nama_upt').value = '';
@@ -680,7 +695,6 @@
         }
     });
 
-    // Reset form when modal is closed
     $('#addModal').on('hidden.bs.modal', function () {
         document.getElementById('upt_search').value = '';
         document.getElementById('nama_upt').value = '';

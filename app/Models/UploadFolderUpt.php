@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-// Model untuk Upload Folder UPT
 class UploadFolderUpt extends Model
 {
     use HasFactory;
@@ -27,13 +26,11 @@ class UploadFolderUpt extends Model
         'pdf_folder_10'
     ];
 
-    // Relasi balik ke UPT
     public function upt()
     {
         return $this->belongsTo(Upt::class, 'upt_id');
     }
 
-    // Accessor untuk mendapatkan semua PDF yang ada
     public function getPdfFilesAttribute()
     {
         $pdfs = [];
@@ -47,4 +44,3 @@ class UploadFolderUpt extends Model
     }
 }
 
-// Model untuk Upload Folder Ponpes

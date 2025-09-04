@@ -9,7 +9,6 @@ class DataOpsionalUpt extends Model
 {
     use HasFactory;
 
-    // Perbaikan: gunakan nama tabel yang sesuai dengan migration
     protected $table = 'data_opsional_upt';
 
     protected $fillable = [
@@ -44,7 +43,6 @@ class DataOpsionalUpt extends Model
         'tarif_wartel_reguler' => 'decimal:2'
     ];
 
-    // Relasi balik ke UPT
     public function upt()
     {
         return $this->belongsTo(Upt::class, 'upt_id');

@@ -25,21 +25,18 @@ class VpasController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        // SOLUSI 1: Gunakan variabel $data yang sudah diset tanggalnya
         $data = $request->all();
         $data['tanggal'] = date('Y-m-d');
-        Vpas::create($data); // Gunakan $data yang sudah diset tanggalnya
+        Vpas::create($data);
         return redirect()->route('tutorial_vpas')->with('success', 'Data berhasil disimpan');
     }
     public function ListDataSpp(Request $request)
     {
         $query = Vpas::query();
 
-        // Cek apakah ada parameter pencarian
         if ($request->has('table_search') && !empty($request->table_search)) {
             $searchTerm = $request->table_search;
 
-            // Lakukan pencarian berdasarkan beberapa kolom
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('tutor_vpas', 'LIKE', '%' . $searchTerm . '%');
             });
@@ -53,7 +50,6 @@ class VpasController extends Controller
         try {
             $dataupt = Vpas::findOrFail($id);
 
-            // Hapus semua file PDF yang terkait dengan user ini
             for ($i = 1; $i <= 10; $i++) {
                 $column = 'pdf_folder_' . $i;
                 if (!empty($dataupt->$column) && Storage::disk('public')->exists($dataupt->$column)) {
@@ -77,7 +73,6 @@ class VpasController extends Controller
             $user = Vpas::findOrFail($id);
             $column = 'pdf_folder_' . $folder;
 
-            // Cek apakah file ada dan path tidak kosong
             if (empty($user->$column)) {
                 return abort(404, 'File PDF belum diupload untuk folder ' . $folder . '.');
             }
@@ -100,9 +95,8 @@ class VpasController extends Controller
                 return redirect()->back()->with('error', 'Folder tidak valid.');
             }
 
-            // Validasi file PDF
             $request->validate([
-                'uploaded_pdf' => 'required|file|mimes:pdf|max:10240', // Increased to 10MB
+                'uploaded_pdf' => 'required|file|mimes:pdf|max:10240',
             ], [
                 'uploaded_pdf.required' => 'File PDF harus dipilih.',
                 'uploaded_pdf.mimes' => 'File harus berformat PDF.',
@@ -116,29 +110,24 @@ class VpasController extends Controller
             $user = Vpas::findOrFail($id);
             $file = $request->file('uploaded_pdf');
 
-            // Debug: Cek apakah file valid
             if (!$file || !$file->isValid()) {
                 return redirect()->back()->with('error', 'File tidak valid!');
             }
 
-            // Hapus file lama jika ada
             $column = 'pdf_folder_' . $folder;
             if (!empty($user->$column) && Storage::disk('public')->exists($user->$column)) {
                 Storage::disk('public')->delete($user->$column);
             }
 
-            // Buat nama file unik dengan sanitasi
             $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
             $sanitizedName = preg_replace('/[^A-Za-z0-9\-_.]/', '_', $originalName);
             $filename = $sanitizedName . '.pdf';
 
-            // Pastikan direktori ada
             $directory = 'tutorial/upt/vpas/folder_' . $folder;
             if (!Storage::disk('public')->exists($directory)) {
                 Storage::disk('public')->makeDirectory($directory);
             }
 
-            // Simpan file
             $path = $file->storeAs($directory, $filename, 'public');
 
             if (!$path) {

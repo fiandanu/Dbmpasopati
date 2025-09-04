@@ -19,7 +19,6 @@ class Provider extends Model
         'tanggal_update',
     ];
 
-    // Cast tanggal_update sebagai date
     protected $casts = [
         'tanggal_update' => 'date',
     ];

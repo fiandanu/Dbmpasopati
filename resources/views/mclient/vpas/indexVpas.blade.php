@@ -48,7 +48,7 @@
                         <div class="alert-heading h5 mb-2">Periksa kembali Data yang dimasukkan</div>
                         <div class="small">
                             @foreach ($errors->all() as $error)
-                                <div class="mb-1">â€¢ {{ $error }}</div>
+                                <div class="mb-1">• {{ $error }}</div>
                             @endforeach
                         </div>
                     </div>
@@ -124,10 +124,9 @@
                                 <table class="table table-hover text-nowrap">
                                     <thead>
                                         <tr>
-                                            <th>No</th>
                                             <th>Nama UPT</th>
                                             <th>Kanwil</th>
-                                            <th>Kendala VPAS</th>
+                                            <th>Jenis Kendala</th>
                                             <th>Tanggal Terlapor</th>
                                             <th>Tanggal Selesai</th>
                                             <th>Durasi (Hari)</th>
@@ -138,12 +137,8 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @php
-                                            $no = ($data->currentPage() - 1) * $data->perPage() + 1;
-                                        @endphp
                                         @forelse ($data as $d)
                                             <tr>
-                                                <td>{{ $no++ }}</td>
                                                 <td><strong>{{ $d->nama_upt ?? '-' }}</strong></td>
                                                 <td>{{ $d->kanwil ?? '-' }}</td>
                                                 <td>
@@ -151,8 +146,8 @@
                                                         {{ Str::limit($d->jenis_kendala ?? 'Tidak ada kendala', 30) }}
                                                     </span>
                                                 </td>
-                                                <td>{{ $d->tanggal_terlapor ?? '-' }}</td>
-                                                <td>{{ $d->tanggal_selesai ?? '-' }}</td>
+                                                <td>{{ $d->tanggal_terlapor ? $d->tanggal_terlapor->format('d/m/Y') : '-' }}</td>
+                                                <td>{{ $d->tanggal_selesai ? $d->tanggal_selesai->format('d/m/Y') : '-' }}</td>
                                                 <td>
                                                     @if ($d->durasi_hari)
                                                         <span class="badge badge-info">{{ $d->durasi_hari }} hari</span>
@@ -172,6 +167,9 @@
                                                                 break;
                                                             case 'pending':
                                                                 $statusClass = 'badge-danger';
+                                                                break;
+                                                            case 'terjadwal':
+                                                                $statusClass = 'badge-info';
                                                                 break;
                                                             default:
                                                                 $statusClass = 'badge-secondary';
@@ -231,7 +229,7 @@
                                             </div>
                                         @empty
                                             <tr>
-                                                <td colspan="11" class="text-center">Tidak ada data yang ditemukan</td>
+                                                <td colspan="10" class="text-center">Tidak ada data yang ditemukan</td>
                                             </tr>
                                         @endforelse
                                     </tbody>
@@ -302,18 +300,14 @@
                                                     </div>
 
                                                     <div class="mb-3">
-                                                        <label for="jenis_kendala" class="form-label">Jenis Kendala VPAS</label>
-                                                        <select class="form-control" id="jenis_kendala"
-                                                            name="jenis_kendala">
+                                                        <label for="jenis_kendala" class="form-label">Jenis Kendala</label>
+                                                        <select class="form-control" id="jenis_kendala" name="jenis_kendala">
                                                             <option value="">-- Pilih Jenis Kendala --</option>
                                                             @foreach ($jenisKendala as $kendala)
-                                                                <option value="{{ $kendala }}">
-                                                                    {{ $kendala }}
+                                                                <option value="{{ $kendala->jenis_kendala }}">
+                                                                    {{ $kendala->jenis_kendala }}
                                                                 </option>
                                                             @endforeach
-                                                            <option value="lainnya">
-                                                                Lainnya (tulis di detail kendala)
-                                                            </option>
                                                         </select>
                                                     </div>
 
@@ -358,20 +352,34 @@
                                                             <option value="pending">Pending</option>
                                                             <option value="proses">Proses</option>
                                                             <option value="selesai">Selesai</option>
+                                                            <option value="terjadwal">Terjadwal</option>
                                                         </select>
                                                     </div>
 
                                                     <div class="mb-3">
-                                                        <label for="pic_1" class="form-label">PIC 1</label>
-                                                        <input type="text" class="form-control" id="pic_1"
-                                                            name="pic_1" placeholder="Nama PIC pertama">
-                                                    </div>
+                                                    <label for="pic_1" class="form-label">PIC 1</label>
+                                                    <select class="form-control" id="pic_1" name="pic_1">
+                                                        <option value="">-- Pilih PIC 1 --</option>
+                                                        @foreach ($picList as $pic)
+                                                            <option value="{{ $pic->nama_pic }}">
+                                                                {{ $pic->nama_pic }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
 
-                                                    <div class="mb-3">
-                                                        <label for="pic_2" class="form-label">PIC 2</label>
-                                                        <input type="text" class="form-control" id="pic_2"
-                                                            name="pic_2" placeholder="Nama PIC kedua">
-                                                    </div>
+                                                <!-- PIC 2 - ubah dari input text ke dropdown -->
+                                                <div class="mb-3">
+                                                    <label for="pic_2" class="form-label">PIC 2</label>
+                                                    <select class="form-control" id="pic_2" name="pic_2">
+                                                        <option value="">-- Pilih PIC 2 --</option>
+                                                        @foreach ($picList as $pic)
+                                                            <option value="{{ $pic->nama_pic }}">
+                                                                {{ $pic->nama_pic }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -426,24 +434,22 @@
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="jenis_kendala" class="form-label">Jenis Kendala VPAS</label>
-                                                            <select class="form-control" id="jenis_kendala"
-                                                                name="jenis_kendala">
+                                                            <label for="jenis_kendala" class="form-label">Jenis Kendala</label>
+                                                            <select class="form-control" id="jenis_kendala" name="jenis_kendala">
                                                                 <option value="">-- Pilih Jenis Kendala --</option>
                                                                 @foreach ($jenisKendala as $kendala)
-                                                                    <option value="{{ $kendala }}"
-                                                                        {{ $d->jenis_kendala == $kendala ? 'selected' : '' }}>
-                                                                        {{ $kendala }}
+                                                                    <option value="{{ $kendala->jenis_kendala }}" {{ $d->jenis_kendala == $kendala->jenis_kendala ? 'selected' : '' }}>
+                                                                        {{ $kendala->jenis_kendala }}
                                                                     </option>
                                                                 @endforeach
-                                                                <option value="lainnya"
-                                                                    {{ $d->jenis_kendala == 'lainnya' ? 'selected' : '' }}>
-                                                                    Lainnya (tulis di detail kendala)
-                                                                </option>
-                                                                <!-- Jika nilai existing tidak ada dalam array, tetap tampilkan -->
-                                                                @if ($d->jenis_kendala && !in_array($d->jenis_kendala, $jenisKendala) && $d->jenis_kendala != 'lainnya')
+                                                                <!-- Jika nilai existing tidak ada dalam database, tetap tampilkan -->
+                                                                @php
+                                                                    $existingKendala = $jenisKendala->pluck('jenis_kendala')->toArray();
+                                                                @endphp
+                                                                @if ($d->jenis_kendala && !in_array($d->jenis_kendala, $existingKendala) && $d->jenis_kendala != 'lainnya')
                                                                     <option value="{{ $d->jenis_kendala }}" selected>
-                                                                        {{ $d->jenis_kendala }} (Custom)</option>
+                                                                        {{ $d->jenis_kendala }} (Custom)
+                                                                    </option>
                                                                 @endif
                                                             </select>
                                                         </div>
@@ -464,7 +470,7 @@
                                                                 Terlapor</label>
                                                             <input type="date" class="form-control"
                                                                 id="tanggal_terlapor" name="tanggal_terlapor"
-                                                                value="{{ $d->tanggal_terlapor }}">
+                                                                value="{{ $d->tanggal_terlapor ? $d->tanggal_terlapor->format('Y-m-d') : '' }}">
                                                         </div>
 
                                                         <div class="mb-3">
@@ -472,7 +478,7 @@
                                                                 Selesai</label>
                                                             <input type="date" class="form-control"
                                                                 id="tanggal_selesai" name="tanggal_selesai"
-                                                                value="{{ $d->tanggal_selesai }}">
+                                                                value="{{ $d->tanggal_selesai ? $d->tanggal_selesai->format('Y-m-d') : '' }}">
                                                         </div>
                                                     </div>
 
@@ -500,21 +506,51 @@
                                                                 <option value="selesai"
                                                                     {{ $d->status == 'selesai' ? 'selected' : '' }}>Selesai
                                                                 </option>
+                                                                <option value="terjadwal"
+                                                                    {{ $d->status == 'terjadwal' ? 'selected' : '' }}>Terjadwal
+                                                                </option>
                                                             </select>
                                                         </div>
 
+                                                        <!-- PIC 1 - ubah dari input text ke dropdown -->
                                                         <div class="mb-3">
                                                             <label for="pic_1" class="form-label">PIC 1</label>
-                                                            <input type="text" class="form-control" id="pic_1"
-                                                                name="pic_1" value="{{ $d->pic_1 }}"
-                                                                placeholder="Nama PIC pertama">
+                                                            <select class="form-control" id="pic_1" name="pic_1">
+                                                                <option value="">-- Pilih PIC 1 --</option>
+                                                                @foreach ($picList as $pic)
+                                                                    <option value="{{ $pic->nama_pic }}" {{ $d->pic_1 == $pic->nama_pic ? 'selected' : '' }}>
+                                                                        {{ $pic->nama_pic }}
+                                                                    </option>
+                                                                @endforeach
+                                                                <!-- Jika nilai existing tidak ada dalam database, tetap tampilkan -->
+                                                                @php
+                                                                    $existingPics = $picList->pluck('nama_pic')->toArray();
+                                                                @endphp
+                                                                @if ($d->pic_1 && !in_array($d->pic_1, $existingPics))
+                                                                    <option value="{{ $d->pic_1 }}" selected>
+                                                                        {{ $d->pic_1 }} (Custom)
+                                                                    </option>
+                                                                @endif
+                                                            </select>
                                                         </div>
 
+                                                        <!-- PIC 2 - ubah dari input text ke dropdown -->
                                                         <div class="mb-3">
                                                             <label for="pic_2" class="form-label">PIC 2</label>
-                                                            <input type="text" class="form-control" id="pic_2"
-                                                                name="pic_2" value="{{ $d->pic_2 }}"
-                                                                placeholder="Nama PIC kedua">
+                                                            <select class="form-control" id="pic_2" name="pic_2">
+                                                                <option value="">-- Pilih PIC 2 --</option>
+                                                                @foreach ($picList as $pic)
+                                                                    <option value="{{ $pic->nama_pic }}" {{ $d->pic_2 == $pic->nama_pic ? 'selected' : '' }}>
+                                                                        {{ $pic->nama_pic }}
+                                                                    </option>
+                                                                @endforeach
+                                                                <!-- Jika nilai existing tidak ada dalam database, tetap tampilkan -->
+                                                                @if ($d->pic_2 && !in_array($d->pic_2, $existingPics))
+                                                                    <option value="{{ $d->pic_2 }}" selected>
+                                                                        {{ $d->pic_2 }} (Custom)
+                                                                    </option>
+                                                                @endif
+                                                            </select>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -588,38 +624,15 @@
             }
         @endforeach
     });
+
     // Searchable UPT dropdown functionality
-document.addEventListener('DOMContentLoaded', function() {
-    const uptSearch = document.getElementById('upt_search');
-    const uptDropdown = document.getElementById('uptDropdownMenu');
-    const uptOptions = document.querySelectorAll('.upt-option');
-    
-    // Filter UPT options based on search input
-    uptSearch.addEventListener('input', function() {
-        const searchTerm = this.value.toLowerCase();
-        let hasVisibleOption = false;
+    document.addEventListener('DOMContentLoaded', function() {
+        const uptSearch = document.getElementById('upt_search');
+        const uptDropdown = document.getElementById('uptDropdownMenu');
+        const uptOptions = document.querySelectorAll('.upt-option');
         
-        uptOptions.forEach(option => {
-            const text = option.textContent.toLowerCase();
-            if (text.includes(searchTerm)) {
-                option.style.display = 'block';
-                hasVisibleOption = true;
-            } else {
-                option.style.display = 'none';
-            }
-        });
-        
-        // Show dropdown if there are visible options and search term is not empty
-        if (searchTerm.length > 0 && hasVisibleOption) {
-            uptDropdown.style.display = 'block';
-        } else if (searchTerm.length === 0) {
-            uptDropdown.style.display = 'none';
-        }
-    });
-    
-    // Show all options when clicking on search input
-    uptSearch.addEventListener('focus', function() {
-        if (this.value.length > 0) {
+        // Filter UPT options based on search input
+        uptSearch.addEventListener('input', function() {
             const searchTerm = this.value.toLowerCase();
             let hasVisibleOption = false;
             
@@ -633,58 +646,82 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
             
-            if (hasVisibleOption) {
+            // Show dropdown if there are visible options and search term is not empty
+            if (searchTerm.length > 0 && hasVisibleOption) {
                 uptDropdown.style.display = 'block';
+            } else if (searchTerm.length === 0) {
+                uptDropdown.style.display = 'none';
             }
-        }
+        });
+        
+        // Show all options when clicking on search input
+        uptSearch.addEventListener('focus', function() {
+            if (this.value.length > 0) {
+                const searchTerm = this.value.toLowerCase();
+                let hasVisibleOption = false;
+                
+                uptOptions.forEach(option => {
+                    const text = option.textContent.toLowerCase();
+                    if (text.includes(searchTerm)) {
+                        option.style.display = 'block';
+                        hasVisibleOption = true;
+                    } else {
+                        option.style.display = 'none';
+                    }
+                });
+                
+                if (hasVisibleOption) {
+                    uptDropdown.style.display = 'block';
+                }
+            }
+        });
+        
+        // Hide dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.dropdown')) {
+                uptDropdown.style.display = 'none';
+            }
+        });
     });
-    
-    // Hide dropdown when clicking outside
-    document.addEventListener('click', function(event) {
-        if (!event.target.closest('.dropdown')) {
+
+    // Toggle dropdown visibility
+    function toggleUptDropdown() {
+        const uptDropdown = document.getElementById('uptDropdownMenu');
+        const uptOptions = document.querySelectorAll('.upt-option');
+        
+        if (uptDropdown.style.display === 'none' || uptDropdown.style.display === '') {
+            // Show all options
+            uptOptions.forEach(option => {
+                option.style.display = 'block';
+            });
+            uptDropdown.style.display = 'block';
+        } else {
             uptDropdown.style.display = 'none';
         }
-    });
-});
-
-// Toggle dropdown visibility
-function toggleUptDropdown() {
-    const uptDropdown = document.getElementById('uptDropdownMenu');
-    const uptOptions = document.querySelectorAll('.upt-option');
-    
-    if (uptDropdown.style.display === 'none' || uptDropdown.style.display === '') {
-        // Show all options
-        uptOptions.forEach(option => {
-            option.style.display = 'block';
-        });
-        uptDropdown.style.display = 'block';
-    } else {
-        uptDropdown.style.display = 'none';
     }
-}
 
-// Select UPT option
-function selectUpt(namaUpt, kanwil) {
-    document.getElementById('upt_search').value = namaUpt;
-    document.getElementById('nama_upt').value = namaUpt;
-    document.getElementById('kanwil').value = kanwil;
-    document.getElementById('uptDropdownMenu').style.display = 'none';
-}
+    // Select UPT option
+    function selectUpt(namaUpt, kanwil) {
+        document.getElementById('upt_search').value = namaUpt;
+        document.getElementById('nama_upt').value = namaUpt;
+        document.getElementById('kanwil').value = kanwil;
+        document.getElementById('uptDropdownMenu').style.display = 'none';
+    }
 
-// Clear UPT selection when search is cleared
-document.getElementById('upt_search').addEventListener('input', function() {
-    if (this.value === '') {
+    // Clear UPT selection when search is cleared
+    document.getElementById('upt_search').addEventListener('input', function() {
+        if (this.value === '') {
+            document.getElementById('nama_upt').value = '';
+            document.getElementById('kanwil').value = '';
+        }
+    });
+
+    // Reset form when modal is closed
+    $('#addModal').on('hidden.bs.modal', function () {
+        document.getElementById('upt_search').value = '';
         document.getElementById('nama_upt').value = '';
         document.getElementById('kanwil').value = '';
-    }
-});
-
-// Reset form when modal is closed
-$('#addModal').on('hidden.bs.modal', function () {
-    document.getElementById('upt_search').value = '';
-    document.getElementById('nama_upt').value = '';
-    document.getElementById('kanwil').value = '';
-    document.getElementById('uptDropdownMenu').style.display = 'none';
-});
+        document.getElementById('uptDropdownMenu').style.display = 'none';
+    });
     </script>
 @endsection
