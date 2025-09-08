@@ -2,16 +2,34 @@
 @section('content')
 
     <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
-        <section class="content-header">
+
+        <section class="content">
             <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1>List Data VPAS </h1>
+                <div class="row py-3 align-items-center">
+                    <div class="col d-flex justify-content-between align-items-center">
+                        {{-- Left Navbar Links --}}
+                        <div class="d-flex justify-center align-items-center gap-12">
+                            <button class="btn-pushmenu" data-widget="pushmenu" role="button">
+                                <i class="fas fa-bars"></i>
+                            </button>
+                            <h1 class="headline-large-32 mb-0">List Data UPT Vpas</h1>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            {{-- seacrh bar --}}
+                            <div class="btn-searchbar">
+                                <span>
+                                    <i class="fas fa-search"></i>
+                                </span>
+                                <input type="text" name="table_search" id="btn-search" placeholder="Search">
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div><!-- /.container-fluid -->
+            </div>
         </section>
+
+
         {{-- Tampilkan pesan sukses total --}}
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mx-4" role="alert">
@@ -87,6 +105,7 @@
                 </div>
             </div>
         @endif
+
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
@@ -94,7 +113,7 @@
                 <div class="row">
                     <div class="col-12">
                         @if (request('table_search'))
-                            <div class="card-body">
+                            <div class="">
                                 <div class="alert alert-info">
                                     <i class="fas fa-info-circle"></i>
                                     Hasil pencarian untuk: "<strong>{{ request('table_search') }}</strong>"
@@ -105,36 +124,18 @@
                             </div>
                         @endif
                         <div class="card">
-                            {{-- Index Form Html --}}
-                            <div class="card-header">
-                                <h3 class="card-title mt-2">Data VPAS</h3>
-                                <div class="card-tools">
-                                    <form action="{{ route('ListDataVpas') }}" method="GET">
-                                        <div class="input-group input-group-sm mt-2 mr-3" style="width: 200px;">
-                                            <input type="text" name="table_search" class="form-control"
-                                                placeholder="Search" value="{{ request('table_search') }}">
-                                            <div class="input-group-append">
-                                                <button type="submit" class="btn btn-outline-secondary">
-                                                    <i class="fas fa-search"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
 
-                            <!-- /.card-header -->
                             <div class="card-body table-responsive p-0">
-                                <table class="table table-hover text-nowrap">
+                                <table class="table table-hover text-nowrap" id="Table">
                                     <thead>
                                         <tr>
                                             <th>No</th>
                                             <th>Nama UPT</th>
                                             <th>Kanwil</th>
-                                            <th>Tipe</th>
-                                            <th>Tanggal Dibuat</th>
-                                            <th>Status Update</th>
-                                            <th>Action</th>
+                                            <th class="text-center">Tipe</th>
+                                            <th class="text-center">Tanggal Dibuat</th>
+                                            <th class="text-center">Status Update</th>
+                                            <th class="text-center">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -144,13 +145,15 @@
                                         @foreach ($data as $d)
                                             <tr>
                                                 <td>{{ $no++ }}</td>
-                                                <td><strong>{{ $d->namaupt }}</strong></td>
+                                                <td>{{ $d->namaupt }}</td>
                                                 <td><span class="tag tag-success">{{ $d->kanwil }}</span></td>
-                                                <td>
+                                                <td class="text-center">
                                                     <span class="Tipevpas">{{ ucfirst($d->tipe) }}</span>
                                                 </td>
-                                                <td>{{ $d->tanggal }}</td>
-                                                <td>
+                                                <td class="text-center">
+                                                    {{ \Carbon\Carbon::parse($d->tanggal)->translatedFormat('d M Y') }}
+                                                </td>
+                                                <td class="text-center">
                                                     @php
                                                         // Cek apakah data opsional sudah diisi - sesuaikan dengan relasi
                                                         $dataOpsional = $d->dataOpsional;
@@ -159,10 +162,10 @@
                                                             'no_telpon',
                                                             'alamat',
                                                             'jumlah_wbp',
-                                                            'jumlah_line_vpas',
+                                                            'jumlah_line_reguler',
                                                             'provider_internet',
                                                             'kecepatan_internet',
-                                                            'tarif_wartel_vpas',
+                                                            'tarif_wartel_reguler',
                                                             'status_wartel',
                                                             'akses_topup_pulsa',
                                                             'password_topup',
@@ -188,41 +191,45 @@
                                                         }
 
                                                         $totalFields = count($optionalFields);
-                                                        $percentage = $totalFields > 0 ? ($filledFields / $totalFields) * 100 : 0;
+                                                        $percentage =
+                                                            $totalFields > 0 ? ($filledFields / $totalFields) * 100 : 0;
                                                     @endphp
 
                                                     @if ($filledFields == 0)
-                                                        <span class="badge badge-danger py-2">Belum di Update</span>
+                                                        <span class="badge body-small-12">Belum di Update</span>
                                                     @elseif($filledFields == $totalFields)
-                                                        <span class="badge badge-success py-2">Sudah di Update
-                                                            (100%)
+                                                        <span class="badge-succes">Sudah Update
                                                         </span>
                                                     @else
-                                                        <span class="badge badge-warning py-2">Sebagian
+                                                        <span class="badge-prosses">Sebagian
                                                             ({{ round($percentage) }}%)
                                                         </span>
                                                     @endif
                                                 </td>
-                                                <td>
+                                                <td class="text-center">
                                                     {{-- Edit Button --}}
-                                                    <a href="#editModal{{ $d->id }}" class="btn btn-sm btn-primary"
-                                                        data-toggle="modal"
-                                                        data-target="#editModal{{ $d->id }}">
-                                                        <i class="fa fa-edit"></i> edit</a>
+                                                    <button href="#editModal{{ $d->id }}" data-toggle="modal"
+                                                        data-target="#editModal{{ $d->id }}" title="Edit">
+                                                        <ion-icon name="pencil-outline"></ion-icon>
+                                                    </button>
 
-                                                    <a href="{{ route('export.vpas.pdf', $d->id) }}"
-                                                        class="btn btn-sm btn-success">
-                                                        <i class="fa fa-file-pdf"></i> pdf</a>
+                                                    {{-- Unduh PDF Button --}}
+                                                    <a href="{{ route('export.upt.pdf', $d->id) }}" title="Unduh PDF">
+                                                        <button>
+                                                            <ion-icon name="document-outline"></ion-icon>
+                                                        </button>
+                                                    </a>
 
-                                                    <a href="{{ route('export.vpas.csv', $d->id) }}"
-                                                        class="btn btn-sm btn-success">
-                                                        <i class="fa fa-file-csv"></i> csv</a>
+                                                    <a href="{{ route('export.upt.csv', $d->id) }}" title="Unduh CSV">
+                                                        <button>
+                                                            <ion-icon name="document-text-outline"></ion-icon>
+                                                        </button>
+                                                    </a>
 
                                                     {{-- Delete Button --}}
-                                                    <a data-toggle="modal"
-                                                        data-target="#modal-default{{ $d->id }}"
-                                                        class="btn btn-sm btn-danger"><i class="fas fa-trash-alt">
-                                                            delete</i></a>
+                                                    <button data-toggle="modal"
+                                                        data-target="#modal-default{{ $d->id }}">
+                                                        <ion-icon name="trash-outline"></ion-icon></button>
                                                 </td>
                                             </tr>
 
@@ -230,25 +237,21 @@
                                             <div class="modal fade" id="modal-default{{ $d->id }}">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h4 class="modal-title">Hapus Data</h4>
-                                                            <button type="button" class="close" data-dismiss="modal"
-                                                                aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
-                                                        </div>
-                                                        <div class="modal-body">
+                                                        <div class="modal-body text-center align-items-center">
+                                                            <ion-icon name="alert-circle-outline"
+                                                                class="text-9xl text-[var(--yellow-04)]"></ion-icon>
+                                                            <p class="headline-large-32">Anda Yakin?</p>
                                                             <p>Apakah <b>{{ $d->namaupt }}</b> ingin dihapus?</p>
                                                         </div>
-                                                        <div class="modal-footer justify-content-between">
-                                                            <button type="button" class="btn btn-default"
+                                                        <div class="modal-footer flex-row-reverse justify-content-between">
+                                                            <button type="button" class="btn-cancel-modal"
                                                                 data-dismiss="modal">Tutup</button>
                                                             <form action="{{ route('DataBasePageDestroy', $d->id) }}"
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="submit"
-                                                                    class="btn btn-danger">Hapus</button>
+                                                                    class="btn-delete">Hapus</button>
                                                             </form>
                                                         </div>
                                                         <!-- /.modal-content -->
@@ -279,22 +282,25 @@
                                 {{-- User Edit Modal --}}
                                 <div class="modal fade" id="editModal{{ $d->id }}" tabindex="-1"
                                     aria-labelledby="editModalLabel{{ $d->id }}" aria-hidden="true">
-                                    <form id="editForm{{ $d->id }}" action="{{ route('ListUpdateVpas', ['id' => $d->id]) }}"
-                                        method="POST">
+                                    <form id="editForm{{ $d->id }}"
+                                        action="{{ route('ListUpdateVpas', ['id' => $d->id]) }}" method="POST">
                                         @csrf
                                         @method('PUT')
                                         <div class="modal-dialog modal-lg">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="editModalLabel{{ $d->id }}">Edit Data VPAS</h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
+                                                    <label class="modal-title"
+                                                        id="editModalLabel{{ $d->id }}">Edit
+                                                        Data VPAS</label>
+                                                    <button type="button" class="btn-close-custom" data-dismiss="modal"
+                                                        aria-label="Close">
+                                                        <i class="bi bi-x"></i>
                                                     </button>
                                                 </div>
 
                                                 <div class="modal-body">
                                                     <input type="hidden" name="id" value="{{ $d->id }}">
-                                                    
+
                                                     @php
                                                         $dataOpsional = $d->dataOpsional;
                                                     @endphp
@@ -302,78 +308,95 @@
                                                     <!-- Data Wajib Section -->
                                                     <div class="mb-4">
                                                         <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                            <h5 class="fw-semibold text-primary">Data Wajib</h5>
+                                                            <h5>Data Wajib</h5>
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="namaupt{{ $d->id }}" class="form-label">Nama UPT</label>
-                                                            <input type="text" class="form-control" id="namaupt{{ $d->id }}"
-                                                                name="namaupt" value="{{ $d->namaupt }}" readonly>
+                                                            <label for="namaupt{{ $d->id }}"
+                                                                class="form-label">Nama UPT</label>
+                                                            <input type="text" class="form-control"
+                                                                id="namaupt{{ $d->id }}" name="namaupt"
+                                                                value="{{ $d->namaupt }}" readonly>
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="kanwil{{ $d->id }}" class="form-label">Kanwil</label>
-                                                            <input type="text" class="form-control" id="kanwil{{ $d->id }}"
-                                                                name="kanwil" value="{{ $d->kanwil }}" readonly>
+                                                            <label for="kanwil{{ $d->id }}"
+                                                                class="form-label">Kanwil</label>
+                                                            <input type="text" class="form-control"
+                                                                id="kanwil{{ $d->id }}" name="kanwil"
+                                                                value="{{ $d->kanwil }}" readonly>
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="tipe{{ $d->id }}" class="form-label">Tipe</label>
-                                                            <input type="text" class="form-control" id="tipe{{ $d->id }}"
-                                                                name="tipe" value="{{ ucfirst($d->tipe) }}" readonly>
+                                                            <label for="tipe{{ $d->id }}"
+                                                                class="form-label">Tipe</label>
+                                                            <input type="text" class="form-control"
+                                                                id="tipe{{ $d->id }}" name="tipe"
+                                                                value="{{ ucfirst($d->tipe) }}" readonly>
                                                         </div>
                                                     </div>
 
                                                     <!-- Data Opsional Section -->
                                                     <div class="mb-4">
                                                         <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                            <h5 class="fw-semibold text-success">Data Opsional</h5>
+                                                            <h5>Data Opsional</h5>
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="pic_upt{{ $d->id }}" class="form-label">PIC UPT</label>
-                                                            <input type="text" class="form-control" id="pic_upt{{ $d->id }}"
-                                                                name="pic_upt" value="{{ $dataOpsional->pic_upt ?? '' }}"
+                                                            <label for="pic_upt{{ $d->id }}"
+                                                                class="form-label">PIC UPT</label>
+                                                            <input type="text" class="form-control"
+                                                                id="pic_upt{{ $d->id }}" name="pic_upt"
+                                                                value="{{ $dataOpsional->pic_upt ?? '' }}"
                                                                 placeholder="Masukkan nama PIC UPT">
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="no_telpon{{ $d->id }}" class="form-label">No
+                                                            <label for="no_telpon{{ $d->id }}"
+                                                                class="form-label">No
                                                                 Telepon</label>
-                                                            <input type="text" class="form-control" id="no_telpon{{ $d->id }}"
-                                                                name="no_telpon"
+                                                            <input type="text" class="form-control"
+                                                                id="no_telpon{{ $d->id }}" name="no_telpon"
                                                                 value="{{ $dataOpsional->no_telpon ?? '' }}"
                                                                 placeholder="Masukkan nomor telepon">
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="alamat{{ $d->id }}" class="form-label">Alamat</label>
-                                                            <input type="text" class="form-control" id="alamat{{ $d->id }}"
-                                                                name="alamat" value="{{ $dataOpsional->alamat ?? '' }}"
+                                                            <label for="alamat{{ $d->id }}"
+                                                                class="form-label">Alamat</label>
+                                                            <input type="text" class="form-control"
+                                                                id="alamat{{ $d->id }}" name="alamat"
+                                                                value="{{ $dataOpsional->alamat ?? '' }}"
                                                                 placeholder="Masukkan alamat lengkap">
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="jumlah_wbp{{ $d->id }}" class="form-label">Jumlah
+                                                            <label for="jumlah_wbp{{ $d->id }}"
+                                                                class="form-label">Jumlah
                                                                 WBP</label>
-                                                            <input type="number" class="form-control" id="jumlah_wbp{{ $d->id }}"
-                                                                name="jumlah_wbp" value="{{ $dataOpsional->jumlah_wbp ?? '' }}"
+                                                            <input type="number" class="form-control"
+                                                                id="jumlah_wbp{{ $d->id }}" name="jumlah_wbp"
+                                                                value="{{ $dataOpsional->jumlah_wbp ?? '' }}"
                                                                 placeholder="Masukkan jumlah WBP">
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="jumlah_line_vpas{{ $d->id }}" class="form-label">Jumlah
+                                                            <label for="jumlah_line_reguler{{ $d->id }}"
+                                                                class="form-label">Jumlah
                                                                 Line VPAS Terpasang</label>
                                                             <input type="number" class="form-control"
-                                                                id="jumlah_line_vpas{{ $d->id }}" name="jumlah_line_vpas"
-                                                                value="{{ $dataOpsional->jumlah_line_vpas ?? '' }}"
+                                                                id="jumlah_line_reguler{{ $d->id }}"
+                                                                name="jumlah_line_reguler"
+                                                                value="{{ $dataOpsional->jumlah_line_reguler ?? '' }}"
                                                                 placeholder="Masukkan jumlah line VPAS">
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="provider_internet{{ $d->id }}" class="form-label">Provider
+                                                            <label for="provider_internet{{ $d->id }}"
+                                                                class="form-label">Provider
                                                                 Internet</label>
-                                                            <select class="form-control" id="provider_internet{{ $d->id }}"
+                                                            <select class="form-control"
+                                                                id="provider_internet{{ $d->id }}"
                                                                 name="provider_internet">
                                                                 <option value="">-- Pilih Provider --</option>
                                                                 @foreach ($providers as $p)
@@ -386,27 +409,33 @@
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="kecepatan_internet{{ $d->id }}" class="form-label">Kecepatan
+                                                            <label for="kecepatan_internet{{ $d->id }}"
+                                                                class="form-label">Kecepatan
                                                                 Internet (Mbps)</label>
                                                             <input type="text" class="form-control"
-                                                                id="kecepatan_internet{{ $d->id }}" name="kecepatan_internet"
+                                                                id="kecepatan_internet{{ $d->id }}"
+                                                                name="kecepatan_internet"
                                                                 value="{{ $dataOpsional->kecepatan_internet ?? '' }}"
                                                                 placeholder="Contoh: 20 Mbps">
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="tarif_wartel_vpas{{ $d->id }}" class="form-label">Tarif
+                                                            <label for="tarif_wartel_reguler{{ $d->id }}"
+                                                                class="form-label">Tarif
                                                                 Wartel VPAS</label>
                                                             <input type="text" class="form-control"
-                                                                id="tarif_wartel_vpas{{ $d->id }}" name="tarif_wartel_vpas"
-                                                                value="{{ $dataOpsional->tarif_wartel_vpas ?? '' }}"
+                                                                id="tarif_wartel_reguler{{ $d->id }}"
+                                                                name="tarif_wartel_reguler"
+                                                                value="{{ $dataOpsional->tarif_wartel_reguler ?? '' }}"
                                                                 placeholder="Contoh: 3000">
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="status_wartel{{ $d->id }}" class="form-label">Status
+                                                            <label for="status_wartel{{ $d->id }}"
+                                                                class="form-label">Status
                                                                 Wartel</label>
-                                                            <select class="form-control" id="status_wartel{{ $d->id }}"
+                                                            <select class="form-control"
+                                                                id="status_wartel{{ $d->id }}"
                                                                 name="status_wartel">
                                                                 <option value="">-- Pilih Status --</option>
                                                                 <option value="1"
@@ -422,14 +451,16 @@
                                                     <!-- IMC PAS Section -->
                                                     <div class="mb-4">
                                                         <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                            <h5 class="fw-semibold text-warning">IMC PAS</h5>
+                                                            <h5>IMC PAS</h5>
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="akses_topup_pulsa{{ $d->id }}" class="form-label">Akses
+                                                            <label for="akses_topup_pulsa{{ $d->id }}"
+                                                                class="form-label">Akses
                                                                 Top Up
                                                                 Pulsa</label>
-                                                            <select class="form-control" id="akses_topup_pulsa{{ $d->id }}"
+                                                            <select class="form-control"
+                                                                id="akses_topup_pulsa{{ $d->id }}"
                                                                 name="akses_topup_pulsa">
                                                                 <option value="">-- Pilih Akses --</option>
                                                                 <option value="1"
@@ -442,19 +473,23 @@
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="password_topup{{ $d->id }}" class="form-label">Password
+                                                            <label for="password_topup{{ $d->id }}"
+                                                                class="form-label">Password
                                                                 Top Up
                                                                 Pulsa</label>
                                                             <input type="text" class="form-control"
-                                                                id="password_topup{{ $d->id }}" name="password_topup"
+                                                                id="password_topup{{ $d->id }}"
+                                                                name="password_topup"
                                                                 value="{{ $dataOpsional->password_topup ?? '' }}"
                                                                 placeholder="Masukkan password top up">
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="akses_download_rekaman{{ $d->id }}" class="form-label">Akses
+                                                            <label for="akses_download_rekaman{{ $d->id }}"
+                                                                class="form-label">Akses
                                                                 Download Rekaman</label>
-                                                            <select class="form-control" id="akses_download_rekaman{{ $d->id }}"
+                                                            <select class="form-control"
+                                                                id="akses_download_rekaman{{ $d->id }}"
                                                                 name="akses_download_rekaman">
                                                                 <option value="">-- Pilih Akses --</option>
                                                                 <option value="1"
@@ -467,10 +502,12 @@
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="password_download{{ $d->id }}" class="form-label">Password
+                                                            <label for="password_download{{ $d->id }}"
+                                                                class="form-label">Password
                                                                 Download Rekaman</label>
                                                             <input type="text" class="form-control"
-                                                                id="password_download{{ $d->id }}" name="password_download"
+                                                                id="password_download{{ $d->id }}"
+                                                                name="password_download"
                                                                 value="{{ $dataOpsional->password_download ?? '' }}"
                                                                 placeholder="Masukkan password download">
                                                         </div>
@@ -479,35 +516,43 @@
                                                     <!-- Akses VPN Section -->
                                                     <div class="mb-4">
                                                         <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                            <h5 class="fw-semibold text-info">Akses VPN</h5>
+                                                            <h5>Akses VPN</h5>
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="internet_protocol{{ $d->id }}" class="form-label">Internet
+                                                            <label for="internet_protocol{{ $d->id }}"
+                                                                class="form-label">Internet
                                                                 Protocol</label>
                                                             <input type="text" class="form-control"
-                                                                id="internet_protocol{{ $d->id }}" name="internet_protocol"
+                                                                id="internet_protocol{{ $d->id }}"
+                                                                name="internet_protocol"
                                                                 value="{{ $dataOpsional->internet_protocol ?? '' }}"
                                                                 placeholder="Masukkan alamat IP atau domain">
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="vpn_user{{ $d->id }}" class="form-label">User VPN</label>
-                                                            <input type="text" class="form-control" id="vpn_user{{ $d->id }}"
-                                                                name="vpn_user" value="{{ $dataOpsional->vpn_user ?? '' }}"
+                                                            <label for="vpn_user{{ $d->id }}"
+                                                                class="form-label">User VPN</label>
+                                                            <input type="text" class="form-control"
+                                                                id="vpn_user{{ $d->id }}" name="vpn_user"
+                                                                value="{{ $dataOpsional->vpn_user ?? '' }}"
                                                                 placeholder="Masukkan username VPN">
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="vpn_password{{ $d->id }}" class="form-label">Password VPN</label>
-                                                            <input type="text" class="form-control" id="vpn_password{{ $d->id }}"
-                                                                name="vpn_password" value="{{ $dataOpsional->vpn_password ?? '' }}"
+                                                            <label for="vpn_password{{ $d->id }}"
+                                                                class="form-label">Password VPN</label>
+                                                            <input type="text" class="form-control"
+                                                                id="vpn_password{{ $d->id }}" name="vpn_password"
+                                                                value="{{ $dataOpsional->vpn_password ?? '' }}"
                                                                 placeholder="Masukkan password VPN">
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="jenis_vpn{{ $d->id }}" class="form-label">Jenis VPN</label>
-                                                            <select class="form-control" id="jenis_vpn{{ $d->id }}" name="jenis_vpn">
+                                                            <label for="jenis_vpn{{ $d->id }}"
+                                                                class="form-label">Jenis VPN</label>
+                                                            <select class="form-control"
+                                                                id="jenis_vpn{{ $d->id }}" name="jenis_vpn">
                                                                 <option value="">-- Pilih Jenis VPN --</option>
                                                                 @if (isset($vpns) && $vpns->count() > 0)
                                                                     @foreach ($vpns as $p)
@@ -527,27 +572,32 @@
 
                                                     <div class="mb-4">
                                                         <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                            <h5 class="fw-semibold text-info">Extension VPAS</h5>
+                                                            <h5>Extension VPAS</h5>
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="jumlah_extension{{ $d->id }}" class="form-label">Jumlah
+                                                            <label for="jumlah_extension{{ $d->id }}"
+                                                                class="form-label">Jumlah
                                                                 Extension</label>
                                                             <input type="number" class="form-control"
-                                                                id="jumlah_extension{{ $d->id }}" name="jumlah_extension"
+                                                                id="jumlah_extension{{ $d->id }}"
+                                                                name="jumlah_extension"
                                                                 value="{{ $dataOpsional->jumlah_extension ?? '' }}"
                                                                 placeholder="Masukkan jumlah">
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="pin_tes{{ $d->id }}" class="form-label">Pin Test</label>
-                                                            <input type="text" class="form-control" id="pin_tes{{ $d->id }}"
-                                                                name="pin_tes" value="{{ $dataOpsional->pin_tes ?? '' }}"
+                                                            <label for="pin_tes{{ $d->id }}"
+                                                                class="form-label">Pin Test</label>
+                                                            <input type="text" class="form-control"
+                                                                id="pin_tes{{ $d->id }}" name="pin_tes"
+                                                                value="{{ $dataOpsional->pin_tes ?? '' }}"
                                                                 placeholder="Masukkan Pin Test">
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="no_extension{{ $d->id }}" class="form-label">No
+                                                            <label for="no_extension{{ $d->id }}"
+                                                                class="form-label">No
                                                                 Extension</label>
                                                             <small class="text-muted d-block mb-2">Masukkan setiap
                                                                 nomor
@@ -557,7 +607,8 @@
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="extension_password{{ $d->id }}" class="form-label">Password
+                                                            <label for="extension_password{{ $d->id }}"
+                                                                class="form-label">Password
                                                                 Extension</label>
                                                             <small class="text-muted d-block mb-2">Masukkan setiap
                                                                 password
@@ -571,9 +622,9 @@
                                                 </div>
 
                                                 <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary"
+                                                    <button type="button" class="btn-cancel-modal"
                                                         data-dismiss="modal">Cancel</button>
-                                                    <button type="submit" class="btn btn-primary">Update</button>
+                                                    <button type="submit" class="btn-purple">Update</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -586,29 +637,133 @@
                     </div>
                 </div>
                 <!-- /.row -->
+
+
+
+
+                <!-- Pagination Controls - Same as Ponpes -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <!-- Row limit -->
+                    <div class="btn-datakolom">
+                        <button class="btn-select d-flex align-items-center">
+                            <select id="row-limit">
+                                <option value="10">10</option>
+                                <option value="15">15</option>
+                                <option value="20">20</option>
+                                <option value="9999">Semua</option>
+                            </select>
+                            Kolom
+                        </button>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="pagination-controls d-flex align-items-center gap-12">
+                        <button class="btn-page" id="prev-page" disabled>&laquo; Previous</button>
+                        <span id="page-info">Page 1 of 5</span>
+                        <button class="btn-page" id="next-page">Next &raquo;</button>
+                    </div>
+                </div>
             </div><!-- /.container-fluid -->
         </section>
         <!-- /.content -->
     </div>
     <!-- /.content-wrapper -->
 
-    {{-- Add JavaScript for Bootstrap 4 Modal --}}
+    {{-- jQuery Library --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    {{-- Search and Pagination JavaScript --}}
     <script>
         $(document).ready(function() {
-            // Handle modal events if needed
-            $('.modal').on('show.bs.modal', function (e) {
-                // Modal is about to be shown
-                console.log('Modal is opening');
+            const $rows = $("#Table tbody tr");
+            let limit = parseInt($("#row-limit").val());
+            let currentPage = 1;
+            let totalPages = Math.ceil($rows.length / limit);
+
+            function updateTable() {
+                $rows.hide();
+
+                let start = (currentPage - 1) * limit;
+                let end = start + limit;
+
+                $rows.slice(start, end).show();
+
+                // update info halaman
+                $("#page-info").text(`Page ${currentPage} of ${totalPages}`);
+
+                // disable prev/next sesuai kondisi
+                $("#prev-page").prop("disabled", currentPage === 1);
+                $("#next-page").prop("disabled", currentPage === totalPages);
+            }
+
+            // apply awal
+            updateTable();
+
+            // kalau ganti jumlah data
+            $("#row-limit").on("change", function() {
+                limit = parseInt($(this).val());
+                currentPage = 1;
+                totalPages = Math.ceil($rows.length / limit);
+                updateTable();
             });
-            
-            $('.modal').on('shown.bs.modal', function (e) {
-                // Modal is fully shown
-                console.log('Modal is fully visible');
+
+            // tombol prev
+            $("#prev-page").on("click", function() {
+                if (currentPage > 1) {
+                    currentPage--;
+                    updateTable();
+                }
             });
-            
-            $('.modal').on('hide.bs.modal', function (e) {
-                // Modal is about to be hidden
-                console.log('Modal is closing');
+
+            // tombol next
+            $("#next-page").on("click", function() {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    updateTable();
+                }
+            });
+
+            // Filter Data By Search
+            $("#btn-search").on("keyup", function() {
+                let value = $(this).val().toLowerCase();
+                $("#Table tbody tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+
+                // Update pagination after search
+                const $visibleRows = $("#Table tbody tr:visible");
+                totalPages = Math.ceil($visibleRows.length / limit);
+                currentPage = 1;
+
+                if (value === '') {
+                    // If search is cleared, show all rows with pagination
+                    updateTable();
+                } else {
+                    // If searching, hide pagination info
+                    $("#page-info").text(`Showing ${$visibleRows.length} results`);
+                    $("#prev-page").prop("disabled", true);
+                    $("#next-page").prop("disabled", true);
+                }
+            });
+
+            $(document).ready(function() {
+                // Handle modal events if needed
+                $('.modal').on('show.bs.modal', function(e) {
+                    // Modal is about to be shown
+                    console.log('Modal is opening');
+                });
+
+                $('.modal').on('shown.bs.modal', function(e) {
+                    // Modal is fully shown
+                    console.log('Modal is fully visible');
+                });
+
+                $('.modal').on('hide.bs.modal', function(e) {
+                    // Modal is about to be hidden
+                    console.log('Modal is closing');
+                });
             });
         });
     </script>

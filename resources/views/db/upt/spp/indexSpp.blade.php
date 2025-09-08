@@ -2,14 +2,29 @@
 @section('content')
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
-        <section class="content-header">
+        <section class="content">
             <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1>List Data UPT SPP (Surat Perintah Pemasangan)</h1>
+                <div class="row py-3 align-items-center">
+                    <div class="col d-flex justify-content-between align-items-center">
+                        <!-- Left navbar links -->
+                        <div class="d-flex justify-center align-items-center gap-12">
+                            <button class="btn-pushmenu" data-widget="pushmenu" role="button">
+                                <i class="fas fa-bars"></i></button>
+                            <h1 class="headline-large-32 mb-0">List Data SPP</h1>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            <!-- Search bar -->
+                            <div class="btn-searchbar">
+                                <span>
+                                    <i class="fas fa-search"></i>
+                                </span>
+                                <input type="text" id="btn-search" name="table_search" placeholder="Search">
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div><!-- /.container-fluid -->
+            </div>
         </section>
 
         {{-- Tampilkan pesan sukses total --}}
@@ -106,50 +121,40 @@
                             </div>
                         @endif
                         <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title mt-2">Data Reguler</h3>
-                                <div class="card-tools">
-                                    <form action="{{ route('spp.ListDataSpp') }}" method="GET">
-                                        <div class="input-group input-group-sm mt-2 mr-3" style="width: 200px;">
-                                            <input type="text" name="table_search" class="form-control"
-                                                placeholder="Search" value="{{ request('table_search') }}">
-                                            <div class="input-group-append">
-                                                <button type="submit" class="btn btn-outline-secondary">
-                                                    <i class="fas fa-search"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-
                             <!-- /.card-header -->
                             <div class="card-body table-responsive p-0">
-                                <table class="table table-hover text-nowrap">
+                                <table class="table table-hover text-nowrap" id="Table">
                                     <thead>
                                         <tr>
                                             <th>No</th>
                                             <th>Nama UPT</th>
                                             <th>Kanwil</th>
-                                            <th>Tipe</th>
-                                            <th>Tanggal Dibuat</th>
-                                            <th>Status Upload PDF</th>
-                                            <th>Action</th>
+                                            <th class="text-center">Tipe</th>
+                                            <th class="text-center">Tanggal Dibuat</th>
+                                            <th class="text-center">Status Upload PDF</th>
+                                            <th class="text-center">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @forelse ($data as $d)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
-                                                <td><strong>{{ $d->namaupt }}</strong></td>
+                                                <td>{{ $d->namaupt }}</td>
                                                 <td><span class="tag tag-success">{{ $d->kanwil }}</span></td>
-                                                <td>{{ ucfirst($d->tipe) }}</td>
-                                                <td>{{ $d->tanggal }}</td>
-                                                <td>
+                                                <td class="text-center">
+                                                    <span class="@if ($d->tipe == 'reguler') Tipereguller
+                                                        @elseif($d->tipe == 'vpas') Tipevpas @endif">
+                                                        {{ ucfirst($d->tipe)}}
+                                                    </span>
+                                                </td>
+                                                <td class="text-center">
+                                                    {{ \Carbon\Carbon::parse($d->tanggal)->translatedFormat('M d Y') }}
+                                                </td>
+                                                <td class="text-center-status">
                                                     @php
                                                         $uploadedFolders = 0;
                                                         $totalFolders = 10;
-                                                        
+
                                                         // Check if uploadFolder relationship exists
                                                         if ($d->uploadFolder) {
                                                             for ($i = 1; $i <= 10; $i++) {
@@ -162,30 +167,29 @@
                                                     @endphp
 
                                                     @if ($uploadedFolders == 0)
-                                                        <span class="badge badge-danger py-2">Belum Upload</span>
+                                                        <span class="badge body-small-12">Belum Upload</span>
                                                     @elseif($uploadedFolders == $totalFolders)
-                                                        <span class="badge badge-success py-2">Semua Folder Lengkap
-                                                            (10/10)
+                                                        <span class="badge-succes">
+                                                            10/10 Folder
                                                         </span>
                                                     @else
-                                                        <span class="badge badge-warning py-2">
-                                                            {{ $uploadedFolders }}/{{ $totalFolders }} Folder
+                                                        <span class="badge-prosses">
+                                                            {{ $uploadedFolders }}/{{ $totalFolders }} Terupload
                                                         </span>
                                                     @endif
                                                 </td>
-                                                <td>
+                                                <td class="text-center">
                                                     <div class="btn-group" role="group">
-                                                        <button class="btn btn-sm btn-primary mr-1" data-toggle="modal"
+                                                        <button class="" data-toggle="modal"
                                                             data-target="#uploadModal{{ $d->id }}"
                                                             title="Upload PDF">
-                                                            <i class="fas fa-upload"></i> Manage PDF
+                                                            <ion-icon name="folder-outline"></ion-icon>
                                                         </button>
 
-                                                        <button class="btn btn-sm btn-danger" data-toggle="modal"
+                                                        <button data-toggle="modal"
                                                             data-target="#modal-default{{ $d->id }}"
-                                                            title="Hapus Data">
-                                                            <i class="fas fa-trash-alt"></i> Delete
-                                                        </button>
+                                                            class="">
+                                                            <ion-icon name="trash-outline"></ion-icon></button>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -202,12 +206,10 @@
                                                             <input type="hidden" name="selected_folder"
                                                                 id="selectedFolder{{ $d->id }}" value="1">
                                                             <div class="modal-header">
-                                                                <h5 class="modal-title"
-                                                                    id="uploadModalLabel{{ $d->id }}">Manage PDF
-                                                                    untuk {{ $d->namaupt }}</h5>
-                                                                <button type="button" class="close"
+                                                                <label id="uploadModalLabel{{ $d->id }}">Manage PDF </label>
+                                                                <button type="button" class="btn-close-custom"
                                                                     data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
+                                                                    <i class="bi bi-x"></i>
                                                                 </button>
                                                             </div>
                                                             <div class="modal-body">
@@ -223,16 +225,22 @@
                                                                                 $fileName = null;
                                                                                 if ($d->uploadFolder) {
                                                                                     $column = 'pdf_folder_' . $i;
-                                                                                    $fileName = !empty($d->uploadFolder->$column) 
-                                                                                        ? basename($d->uploadFolder->$column) 
+                                                                                    $fileName = !empty(
+                                                                                        $d->uploadFolder->$column
+                                                                                    )
+                                                                                        ? basename(
+                                                                                            $d->uploadFolder->$column,
+                                                                                        )
                                                                                         : null;
                                                                                 }
                                                                             @endphp
                                                                             <option value="{{ $i }}">
                                                                                 @if ($fileName)
-                                                                                    Folder {{ $i }}: {{ $fileName }}
+                                                                                    Folder {{ $i }}:
+                                                                                    {{ $fileName }}
                                                                                 @else
-                                                                                    Folder {{ $i }}: Tidak ada file
+                                                                                    Folder {{ $i }}: Tidak ada
+                                                                                    file
                                                                                 @endif
                                                                             </option>
                                                                         @endfor
@@ -242,15 +250,24 @@
                                                                 <!-- PDF Status and Actions for Selected Folder -->
                                                                 <div class="card">
                                                                     <div class="card-header">
-                                                                        <h6 class="mb-0">
-                                                                            Status dan Aksi untuk Folder <span
+                                                                        <div class="label-medium-14">
+                                                                            Status dan Aksi <span
                                                                                 id="currentFolder{{ $d->id }}">1</span>
                                                                             <span id="currentFileName{{ $d->id }}"
                                                                                 class="text-muted">
                                                                                 @php
                                                                                     $firstFileName = null;
-                                                                                    if ($d->uploadFolder && !empty($d->uploadFolder->pdf_folder_1)) {
-                                                                                        $firstFileName = basename($d->uploadFolder->pdf_folder_1);
+                                                                                    if (
+                                                                                        $d->uploadFolder &&
+                                                                                        !empty(
+                                                                                            $d->uploadFolder
+                                                                                                ->pdf_folder_1
+                                                                                        )
+                                                                                    ) {
+                                                                                        $firstFileName = basename(
+                                                                                            $d->uploadFolder
+                                                                                                ->pdf_folder_1,
+                                                                                        );
                                                                                     }
                                                                                 @endphp
                                                                                 @if ($firstFileName)
@@ -259,7 +276,7 @@
                                                                                     - Tidak ada file
                                                                                 @endif
                                                                             </span>
-                                                                        </h6>
+                                                                        </div>
                                                                     </div>
                                                                     <div class="card-body">
                                                                         <div id="pdfActions{{ $d->id }}">
@@ -270,38 +287,48 @@
                                                                                     @php
                                                                                         $hasFile = false;
                                                                                         if ($d->uploadFolder) {
-                                                                                            $column = 'pdf_folder_' . $i;
-                                                                                            $hasFile = !empty($d->uploadFolder->$column);
+                                                                                            $column =
+                                                                                                'pdf_folder_' . $i;
+                                                                                            $hasFile = !empty(
+                                                                                                $d->uploadFolder
+                                                                                                    ->$column
+                                                                                            );
                                                                                         }
                                                                                     @endphp
-                                                                                    
+
                                                                                     @if ($hasFile)
-                                                                                        <div class="alert alert-success">
-                                                                                            <i class="fas fa-check-circle"></i>
-                                                                                            PDF sudah tersedia untuk Folder {{ $i }}
+                                                                                        <div
+                                                                                            class="badge-succes mb-3 text-center">
+                                                                                            <i
+                                                                                                class="fas fa-check-circle"></i>
+                                                                                            PDF sudah tersedia untuk Folder
+                                                                                            {{ $i }}
                                                                                         </div>
-                                                                                        <div class="btn-group mb-3" role="group">
+                                                                                        <div class="btn-group mb-3 gap-3"
+                                                                                            role="group">
                                                                                             <a href="{{ route('spp.viewpdf', [$d->id, $i]) }}"
                                                                                                 target="_blank"
-                                                                                                class="btn btn-info"
+                                                                                                class="view-btn-pdf"
                                                                                                 title="Lihat PDF Folder {{ $i }}">
                                                                                                 <i class="fas fa-eye"></i>
                                                                                                 View PDF
                                                                                             </a>
                                                                                             <button type="button"
-                                                                                                class="btn btn-warning"
+                                                                                                class="delete-btn-pdf"
                                                                                                 data-toggle="modal"
                                                                                                 data-target="#deletePdfModal{{ $d->id }}_{{ $i }}"
                                                                                                 title="Hapus File PDF Folder {{ $i }}">
-                                                                                                <i class="fas fa-trash"></i>
-                                                                                                Delete PDF
+                                                                                                <i
+                                                                                                    class="fas fa-trash"></i>
+                                                                                                Delete
                                                                                             </button>
                                                                                         </div>
                                                                                     @else
-                                                                                        <div class="alert alert-warning">
-                                                                                            <i class="fas fa-exclamation-triangle"></i>
-                                                                                            Belum ada PDF yang diupload
-                                                                                            untuk Folder {{ $i }}
+                                                                                        <div
+                                                                                            class="badge-prosses text-center">
+                                                                                            <i
+                                                                                                class="fas fa-exclamation-triangle"></i>
+                                                                                            Belum Upload Folder
                                                                                         </div>
                                                                                     @endif
                                                                                 </div>
@@ -310,21 +337,24 @@
                                                                     </div>
                                                                 </div>
 
-                                                                <div class="form-group">
-                                                                    <label for="uploaded_pdf{{ $d->id }}">Upload
-                                                                        File PDF Baru</label>
-                                                                    <input type="file" class="form-control-file"
+                                                                <div class="">
+                                                                    <label for="uploaded_pdf{{ $d->id }}"
+                                                                        class="btn-upload">
+                                                                        Upload PDF
+                                                                    </label>
+                                                                    <input type="file"
                                                                         id="uploaded_pdf{{ $d->id }}"
-                                                                        name="uploaded_pdf" accept=".pdf">
-                                                                    <small class="form-text text-muted">Pilih file PDF
-                                                                        untuk mengupload atau mengganti file yang sudah
-                                                                        ada (maksimal 10MB)</small>
+                                                                        name="uploaded_pdf" accept=".pdf"
+                                                                        style="display: none;">
+                                                                    <small class="form-text text-muted">Max Upload
+                                                                        10Mb</small>
                                                                 </div>
+
                                                             </div>
                                                             <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary"
+                                                                <button type="button" class="btn-cancel-modal"
                                                                     data-dismiss="modal">Tutup</button>
-                                                                <button type="submit" class="btn btn-primary">Upload
+                                                                <button type="submit" class="btn-purple">Upload
                                                                     PDF</button>
                                                             </div>
                                                         </form>
@@ -363,7 +393,8 @@
                                                             <div class="modal-footer justify-content-between">
                                                                 <button type="button" class="btn btn-default"
                                                                     data-dismiss="modal">Batal</button>
-                                                                <form action="{{ route('spp.deleteFilePDF', [$d->id, $i]) }}"
+                                                                <form
+                                                                    action="{{ route('spp.deleteFilePDF', [$d->id, $i]) }}"
                                                                     method="POST" style="display: inline;">
                                                                     @csrf
                                                                     @method('DELETE')
@@ -428,11 +459,39 @@
                     </div>
                 </div>
                 <!-- /.row -->
+
+                <!-- Pagination Controls - Same as Ponpes -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <!-- Row limit -->
+                    <div class="btn-datakolom">
+                        <button class="btn-select d-flex align-items-center">
+                            <select id="row-limit">
+                                <option value="10">10</option>
+                                <option value="15">15</option>
+                                <option value="20">20</option>
+                                <option value="9999">Semua</option>
+                            </select>
+                            Kolom
+                        </button>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="pagination-controls d-flex align-items-center gap-12">
+                        <button class="btn-page" id="prev-page" disabled>&laquo; Previous</button>
+                        <span id="page-info">Page 1 of 5</span>
+                        <button class="btn-page" id="next-page">Next &raquo;</button>
+                    </div>
+                </div>
             </div><!-- /.container-fluid -->
         </section>
         <!-- /.content -->
     </div>
     <!-- /.content-wrapper -->
+
+    {{-- jQuery Library --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script>
         function updateFolder(id, folder) {
@@ -483,6 +542,82 @@
                     }
                 });
             }, 5000);
+        });
+    </script>
+
+    {{-- Search and Pagination JavaScript - Same as Ponpes --}}
+    <script>
+        $(document).ready(function() {
+            const $rows = $("#Table tbody tr");
+            let limit = parseInt($("#row-limit").val());
+            let currentPage = 1;
+            let totalPages = Math.ceil($rows.length / limit);
+
+            function updateTable() {
+                $rows.hide();
+
+                let start = (currentPage - 1) * limit;
+                let end = start + limit;
+
+                $rows.slice(start, end).show();
+
+                // update info halaman
+                $("#page-info").text(`Page ${currentPage} of ${totalPages}`);
+
+                // disable prev/next sesuai kondisi
+                $("#prev-page").prop("disabled", currentPage === 1);
+                $("#next-page").prop("disabled", currentPage === totalPages);
+            }
+
+            // apply awal
+            updateTable();
+
+            // kalau ganti jumlah data
+            $("#row-limit").on("change", function() {
+                limit = parseInt($(this).val());
+                currentPage = 1;
+                totalPages = Math.ceil($rows.length / limit);
+                updateTable();
+            });
+
+            // tombol prev
+            $("#prev-page").on("click", function() {
+                if (currentPage > 1) {
+                    currentPage--;
+                    updateTable();
+                }
+            });
+
+            // tombol next
+            $("#next-page").on("click", function() {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    updateTable();
+                }
+            });
+
+            // Filter Data By Search
+            $("#btn-search").on("keyup", function() {
+                let value = $(this).val().toLowerCase();
+                $("#Table tbody tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+
+                // Update pagination after search
+                const $visibleRows = $("#Table tbody tr:visible");
+                totalPages = Math.ceil($visibleRows.length / limit);
+                currentPage = 1;
+
+                if (value === '') {
+                    // If search is cleared, show all rows with pagination
+                    updateTable();
+                } else {
+                    // If searching, hide pagination info
+                    $("#page-info").text(`Showing ${$visibleRows.length} results`);
+                    $("#prev-page").prop("disabled", true);
+                    $("#next-page").prop("disabled", true);
+                }
+            });
         });
     </script>
 @endsection

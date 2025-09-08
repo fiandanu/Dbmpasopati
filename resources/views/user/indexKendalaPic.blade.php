@@ -1,21 +1,18 @@
 @extends('layout.sidebar')
 @section('content')
     <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
-        <section class="content-header">
+
+        <section class="content">
             <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1>List Data Kendala/PIC</h1>
-                    </div>
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">List Data Kendala/PIC</li>
-                        </ol>
+                <div class="row mb-2 py-3 align-items-center">
+                    <div class="col d-flex justify-content-between align-items-center">
+                        <h1 class="headline-large-32">List Data Kendala/PIC</h1>
+                        <button class="btn-purple" data-bs-toggle="modal" data-bs-target="#addDataModal">
+                            <i class="fa fa-plus"></i> Add Data
+                        </button>
                     </div>
                 </div>
-            </div><!-- /.container-fluid -->
+            </div>
         </section>
 
         {{-- Tampilkan pesan sukses --}}
@@ -61,50 +58,36 @@
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
-                <!-- Single Add Button -->
-                <div class="row mb-3">
-                    <div class="col-12">
-                        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addDataModal">
-                            <i class="fa fa-plus"></i> Tambah Data
-                        </button>
-                    </div>
-                </div>
-
                 <div class="row">
                     <!-- Tabel Kendala -->
                     <div class="col-md-6">
                         <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">List Table Kendala</h3>
-                            </div>
                             <div class="card-body table-responsive p-0">
                                 <table class="table table-hover text-nowrap">
                                     <thead>
                                         <tr>
-                                            <th>No</th>
                                             <th>Jenis Kendala</th>
-                                            <th>Aksi</th>
+                                            <th class="text-center">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach ($datakendala as $k)
                                             <tr>
-                                                <td>{{ $loop->iteration }}</td>
-                                                <td><strong>{{ $k->jenis_kendala }}</strong></td>
-                                                <td>
+                                                <td>{{ $k->jenis_kendala }}</td>
+                                                <td class="text-center">
                                                     {{-- Edit Button --}}
-                                                    <a href="#editKendalaModal{{ $k->id }}"
-                                                        class="btn btn-sm btn-primary" data-bs-toggle="modal"
-                                                        data-bs-target="#editKendalaModal{{ $k->id }}">
-                                                        <i class="fa fa-edit"></i>
-                                                    </a>
+                                                    <button href="#editKendalaModal{{ $k->id }}"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#editKendalaModal{{ $k->id }}"
+                                                        title="Edit">
+                                                        <ion-icon name="pencil-outline"></ion-icon>
+                                                    </button>
 
                                                     {{-- Delete Button --}}
-                                                    <a data-toggle="modal"
-                                                        data-target="#deleteKendalaModal{{ $k->id }}"
-                                                        class="btn btn-sm btn-danger">
-                                                        <i class="fas fa-trash-alt"></i>
-                                                    </a>
+                                                    <button data-toggle="modal"
+                                                        data-target="#deleteKendalaModal{{ $k->id }}" title="Hapus">
+                                                        <ion-icon name="trash-outline"></ion-icon>
+                                                    </button>
                                                 </td>
                                             </tr>
 
@@ -125,8 +108,7 @@
                                                         <div class="modal-footer justify-content-between">
                                                             <button type="button" class="btn btn-default"
                                                                 data-dismiss="modal">Tutup</button>
-                                                            <form
-                                                                action="{{ route('kendala.KendalaPageDestroy', $k->id) }}"
+                                                            <form action="{{ route('kendala.KendalaPageDestroy', $k->id) }}"
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
@@ -146,36 +128,30 @@
                     <!-- Tabel PIC -->
                     <div class="col-md-6">
                         <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">List Table PIC</h3>
-                            </div>
                             <div class="card-body table-responsive p-0">
                                 <table class="table table-hover text-nowrap">
                                     <thead>
                                         <tr>
-                                            <th>No</th>
                                             <th>Nama PIC</th>
-                                            <th>Aksi</th>
+                                            <th class="text-center">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach ($datapic as $p)
                                             <tr>
-                                                <td>{{ $loop->iteration }}</td>
                                                 <td><span class="tag tag-success">{{ $p->nama_pic }}</span></td>
-                                                <td>
+                                                <td class="text-center">
                                                     {{-- Edit Button --}}
-                                                    <a href="#editPicModal{{ $p->id }}"
-                                                        class="btn btn-sm btn-primary" data-bs-toggle="modal"
-                                                        data-bs-target="#editPicModal{{ $p->id }}">
-                                                        <i class="fa fa-edit"></i>
-                                                    </a>
+                                                    <button href="#editPicModal{{ $p->id }}" data-bs-toggle="modal"
+                                                        data-bs-target="#editPicModal{{ $p->id }}" title="Edit">
+                                                        <ion-icon name="pencil-outline"></ion-icon>
+                                                    </button>
 
                                                     {{-- Delete Button --}}
-                                                    <a data-toggle="modal" data-target="#deletePicModal{{ $p->id }}"
-                                                        class="btn btn-sm btn-danger">
-                                                        <i class="fas fa-trash-alt"></i>
-                                                    </a>
+                                                    <button data-toggle="modal"
+                                                        data-target="#deletePicModal{{ $p->id }}" title="Hapus">
+                                                        <ion-icon name="trash-outline"></ion-icon>
+                                                    </button>
                                                 </td>
                                             </tr>
 

@@ -319,10 +319,6 @@ class RegullerController extends Controller
         return redirect()->route('upt.UserPage')->with('success', 'Data UPT berhasil diupdate!');
     }
 
-    /**
-     * Helper method untuk menghilangkan suffix (VpasReg) dari nama UPT
-     * Menghapus semua kemungkinan suffix ganda
-     */
     private function removeVpasRegSuffix($namaUpt)
     {
         // Hapus semua kemungkinan suffix (VpasReg) yang mungkin ganda
@@ -404,7 +400,6 @@ class RegullerController extends Controller
 
         return response()->stream($callback, 200, $headers);
     }
-
     public function exportUptPdf($id)
     {
         $user = Upt::with('dataOpsional')->findOrFail($id);

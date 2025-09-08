@@ -2,20 +2,17 @@
 @section('content')
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
-        <section class="content-header">
+        <section class="content">
             <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1>List Data Provider/VPN</h1>
-                    </div>
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">List Data Provider/VPN</li>
-                        </ol>
+                <div class="row mb-2 py-3 align-items-center">
+                    <div class="col d-flex justify-content-between align-items-center">
+                        <h1 class="headline-large-32">Provider dan Vpn</h1>
+                        <button class="btn-purple" data-bs-toggle="modal" data-bs-target="#addDataModal">
+                            <i class="fa fa-plus"></i> Add Data
+                        </button>
                     </div>
                 </div>
-            </div><!-- /.container-fluid -->
+            </div>
         </section>
 
         {{-- Tampilkan pesan sukses --}}
@@ -62,49 +59,40 @@
         <section class="content">
             <div class="container-fluid">
                 <!-- Single Add Button -->
-                <div class="row mb-3">
-                    <div class="col-12">
-                        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addDataModal">
-                            <i class="fa fa-plus"></i> Tambah Data
-                        </button>
-                    </div>
-                </div>
 
                 <div class="row">
                     <!-- Tabel Provider -->
                     <div class="col-md-6">
                         <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">List Table Provider</h3>
-                            </div>
                             <div class="card-body table-responsive p-0">
                                 <table class="table table-hover text-nowrap">
                                     <thead>
                                         <tr>
                                             <th>No</th>
                                             <th>Nama Provider</th>
-                                            <th>Aksi</th>
+                                            <th class="text-center">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach ($dataprovider as $d)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
-                                                <td><strong>{{ $d->nama_provider }}</strong></td>
-                                                <td>
+                                                <td>{{ $d->nama_provider }}</td>
+                                                <td class="text-center">
                                                     {{-- Edit Button --}}
-                                                    <a href="#editProviderModal{{ $d->id }}"
-                                                        class="btn btn-sm btn-primary" data-bs-toggle="modal"
-                                                        data-bs-target="#editProviderModal{{ $d->id }}">
-                                                        <i class="fa fa-edit"></i>
-                                                    </a>
+                                                    <button href="#editProviderModal{{ $d->id }}"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#editProviderModal{{ $d->id }}"
+                                                        title="Edit">
+                                                        <ion-icon name="pencil-outline"></ion-icon>
+                                                    </button>
 
                                                     {{-- Delete Button --}}
-                                                    <a data-toggle="modal"
+                                                    <button data-toggle="modal"
                                                         data-target="#deleteProviderModal{{ $d->id }}"
-                                                        class="btn btn-sm btn-danger">
-                                                        <i class="fas fa-trash-alt"></i>
-                                                    </a>
+                                                        title="Hapus">
+                                                        <ion-icon name="trash-outline"></ion-icon>
+                                                    </button>
                                                 </td>
                                             </tr>
 
@@ -146,16 +134,13 @@
                     <!-- Tabel VPN -->
                     <div class="col-md-6">
                         <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">List Table VPN</h3>
-                            </div>
                             <div class="card-body table-responsive p-0">
                                 <table class="table table-hover text-nowrap">
                                     <thead>
                                         <tr>
                                             <th>No</th>
                                             <th>Jenis VPN</th>
-                                            <th>Aksi</th>
+                                            <th class="text-center">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -163,19 +148,18 @@
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td><span class="tag tag-success">{{ $v->jenis_vpn }}</span></td>
-                                                <td>
+                                                <td class="text-center">
                                                     {{-- Edit Button --}}
-                                                    <a href="#editVpnModal{{ $v->id }}"
-                                                        class="btn btn-sm btn-primary" data-bs-toggle="modal"
-                                                        data-bs-target="#editVpnModal{{ $v->id }}">
-                                                        <i class="fa fa-edit"></i>
-                                                    </a>
+                                                    <button href="#editVpnModal{{ $v->id }}" data-bs-toggle="modal"
+                                                        data-bs-target="#editVpnModal{{ $v->id }}" title="Edit">
+                                                        <ion-icon name="pencil-outline"></ion-icon>
+                                                    </button>
 
                                                     {{-- Delete Button --}}
-                                                    <a data-toggle="modal" data-target="#deleteVpnModal{{ $v->id }}"
-                                                        class="btn btn-sm btn-danger">
-                                                        <i class="fas fa-trash-alt"></i>
-                                                    </a>
+                                                    <button data-toggle="modal"
+                                                        data-target="#deleteVpnModal{{ $v->id }}" title="Hapus">
+                                                        <ion-icon name="trash-outline"></ion-icon>
+                                                    </button>
                                                 </td>
                                             </tr>
 
@@ -218,34 +202,16 @@
         </section>
 
         {{-- Combined Create Modal --}}
+        {{-- Combined Create Modal --}}
         <div class="modal fade" id="addDataModal" tabindex="-1" aria-labelledby="addDataModalLabel"
             aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="addDataModalLabel">Tambah Data</h5>
+                        <label class="modal-title" id="addDataModalLabel">Tambah Data</label>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <!-- Data Type Selection -->
-                        <div class="mb-3">
-                            <label class="form-label">Pilih Jenis Data</label>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="data_type" id="provider_type"
-                                    value="provider" checked>
-                                <label class="form-check-label" for="provider_type">
-                                    <i class="fas fa-network-wired text-primary"></i> Provider
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="data_type" id="vpn_type"
-                                    value="vpn">
-                                <label class="form-check-label" for="vpn_type">
-                                    <i class="fas fa-shield-alt text-success"></i> VPN
-                                </label>
-                            </div>
-                        </div>
-
                         <!-- Dynamic Form Container -->
                         <div id="form_container">
                             <!-- Provider Form -->
@@ -266,10 +232,23 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- Data Type Selection - Changed to Radio Buttons -->                 <div class="mb-3">
+                            <label class="form-label">Pilih Jenis Data</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="data_type" id="provider_type"
+                                    value="provider" checked>
+                                <h6 class="form-check-label" for="provider_type"> Provider </h6>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="data_type" id="vpn_type"
+                                    value="vpn">
+                                <h6 class="form-check-label" for="vpn_type">VPN</h6>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary" id="save_btn">Simpan</button>
+                        <button type="button" class="btn-cancel-modal" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn-purple" id="save_btn">Simpan</button>
                     </div>
                 </div>
             </div>
@@ -345,9 +324,9 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Get radio buttons
-            const providerRadio = document.getElementById('provider_type');
-            const vpnRadio = document.getElementById('vpn_type');
+            // Get checkboxes
+            const providerCheckbox = document.getElementById('provider_type');
+            const vpnCheckbox = document.getElementById('vpn_type');
 
             // Get form containers
             const providerForm = document.getElementById('provider_form');
@@ -356,14 +335,33 @@
             // Get save button
             const saveBtn = document.getElementById('save_btn');
 
+            // Function to ensure only one checkbox is checked at a time
+            function handleCheckboxSelection() {
+                if (providerCheckbox.checked && vpnCheckbox.checked) {
+                    // If both are checked, uncheck the other one
+                    if (event.target === providerCheckbox) {
+                        vpnCheckbox.checked = false;
+                    } else {
+                        providerCheckbox.checked = false;
+                    }
+                }
+
+                // If none are checked, check provider as default
+                if (!providerCheckbox.checked && !vpnCheckbox.checked) {
+                    providerCheckbox.checked = true;
+                }
+
+                toggleForms();
+            }
+
             // Function to toggle forms
             function toggleForms() {
-                if (providerRadio.checked) {
+                if (providerCheckbox.checked) {
                     providerForm.style.display = 'block';
                     vpnForm.style.display = 'none';
                     // Clear VPN form
                     document.getElementById('jenis_vpn').value = '';
-                } else if (vpnRadio.checked) {
+                } else if (vpnCheckbox.checked) {
                     providerForm.style.display = 'none';
                     vpnForm.style.display = 'block';
                     // Clear Provider form
@@ -371,13 +369,13 @@
                 }
             }
 
-            // Event listeners for radio buttons
-            providerRadio.addEventListener('change', toggleForms);
-            vpnRadio.addEventListener('change', toggleForms);
+            // Event listeners for checkboxes
+            providerCheckbox.addEventListener('change', handleCheckboxSelection);
+            vpnCheckbox.addEventListener('change', handleCheckboxSelection);
 
-            // Save button click event
+            // Save button click event (same as before)
             saveBtn.addEventListener('click', function() {
-                const isProvider = providerRadio.checked;
+                const isProvider = providerCheckbox.checked;
                 let form;
 
                 if (isProvider) {
@@ -440,9 +438,9 @@
 
             // Reset form when modal is closed
             document.getElementById('addDataModal').addEventListener('hidden.bs.modal', function() {
-                // Reset radio to provider
-                providerRadio.checked = true;
-                vpnRadio.checked = false;
+                // Reset checkbox to provider
+                providerCheckbox.checked = true;
+                vpnCheckbox.checked = false;
 
                 // Reset forms
                 document.getElementById('nama_provider').value = '';
