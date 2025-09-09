@@ -180,7 +180,7 @@
                                                 </td>
                                                 <td class="text-center">
                                                     <div class="btn-group" role="group">
-                                                        <button class="" data-toggle="modal"
+                                                        <button data-toggle="modal"
                                                             data-target="#uploadModal{{ $d->id }}"
                                                             title="Upload PDF">
                                                             <ion-icon name="folder-outline"></ion-icon>
@@ -419,14 +419,14 @@
                                                                 <span aria-hidden="true">&times;</span>
                                                             </button>
                                                         </div>
-                                                        <div class="modal-body">
+                                                   aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa     <diaaaaaaaaaaaaaaaaaaav class="modal-body">
                                                             <p>Apakah Anda yakin ingin menghapus data
                                                                 <b>{{ $d->namaupt }}</b>?
                                                             </p>
                                                             <p class="text-warning"><small><i
                                                                         class="fas fa-exclamation-triangle"></i> Semua file
                                                                     PDF yang terupload juga akan dihapus.</small></p>
-                                                        </div>
+                                                        </diaaaaaaaaaaaaaaaaaaav>
                                                         <div class="modal-footer justify-content-between">
                                                             <button type="button" class="btn btn-default"
                                                                 data-dismiss="modal">Batal</button>

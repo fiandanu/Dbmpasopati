@@ -53,7 +53,7 @@
     </style>
 </head>
 <body>
-    <div class="title">{{ $title }}</div>
+    <div class="title">DATA UPT REGULLER</div>
     <table>
         <tr><td colspan="2" class="section-header">Data Opsional</td></tr>
         <tr><td class="nowrap">PIC UPT</td><td>{{ $user->dataOpsional->pic_upt ?? '' }}</td></tr>
@@ -61,10 +61,10 @@
         <tr><td>Alamat</td><td>{{ $user->dataOpsional->alamat ?? '' }}</td></tr>
         <tr><td>Kanwil</td><td>{{ $user->kanwil }}</td></tr>
         <tr><td>Jumlah WBP</td><td>{{ $user->dataOpsional->jumlah_wbp ?? '' }}</td></tr>
-        <tr><td>Jumlah Line VPAS Terpasang</td><td>{{ $user->dataOpsional->jumlah_line_vpas ?? '' }}</td></tr>
+        <tr><td>Jumlah Line Reguler Terpasang</td><td>{{ $user->dataOpsional->jumlah_line_reguler ?? '' }}</td></tr>
         <tr><td>Provider Internet</td><td>{{ $user->dataOpsional->provider_internet ?? '' }}</td></tr>
         <tr><td>Kecepatan Internet (mbps)</td><td>{{ $user->dataOpsional->kecepatan_internet ?? '' }}</td></tr>
-        <tr><td>Tarif Wartel VPAS</td><td>{{ $user->dataOpsional->tarif_wartel_vpas ?? '' }}</td></tr>
+        <tr><td>Tarif Wartel</td><td>{{ $user->dataOpsional->tarif_wartel_vpas ?? '' }}</td></tr>
         <tr><td>Status Wartel</td><td>{{ $user->dataOpsional->status_wartel ?? '' }}</td></tr>
 
         <tr><td colspan="2" class="section-header">IMC PAS</td></tr>

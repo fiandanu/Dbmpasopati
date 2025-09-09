@@ -409,7 +409,7 @@ class RegullerController extends Controller
             'user' => $user,
         ];
 
-        $pdf = Pdf::loadView('export.upt_pdf', $data);
+        $pdf = Pdf::loadView('export.uptReguler_pdf', $data);
         return $pdf->download('data_upt_' . $user->namaupt . '.pdf');
     }
 

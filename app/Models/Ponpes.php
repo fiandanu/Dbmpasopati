@@ -28,6 +28,10 @@ class Ponpes extends Model
         return $this->hasOne(UploadFolderPonpes::class, 'ponpes_id');
     }
 
+    public function dataOpsional(){
+        return $this->hasOne(DataOpsionalPonpes::class, 'ponpes_id');
+    }
+
     public function hasPdfInFolder($folderNumber)
     {
         if (!$this->uploadFolder) {

@@ -8,7 +8,7 @@
                     <div class="col d-flex justify-content-between align-items-center">
                         <!-- Left navbar links -->
                         <div class="d-flex justify-center align-items-center gap-12">
-                            <button class="btn-pushmenu" data-widget="pushmenu" href="#" role="button">
+                            <button class="btn-pushmenu" data-widget="pushmenu" role="button">
                                 <i class="fas fa-bars"></i></button>
                             <h1 class="headline-large-32 mb-0">List Data UPT</h1>
                         </div>
