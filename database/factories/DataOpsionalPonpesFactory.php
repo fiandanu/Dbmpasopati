@@ -29,10 +29,10 @@ class DataOpsionalPonpesFactory extends Factory
             'no_telpon' => $this->faker->phoneNumber,
             'alamat' => $this->faker->address,
             'jumlah_wbp' => $this->faker->numberBetween(20, 500), // Ponpes biasanya lebih sedikit dari lapas
-            'jumlah_line_reguler' => $this->faker->numberBetween(1, 10),
+            'jumlah_line' => $this->faker->numberBetween(1, 10),
             'provider_internet' => $this->faker->randomElement($providers),
             'kecepatan_internet' => $this->faker->randomElement($kecepatanOptions),
-            'tarif_wartel_reguler' => $this->faker->randomFloat(2, 1000, 3000),
+            'tarif_wartel' => $this->faker->randomFloat(2, 1000, 3000),
             'status_wartel' => $this->faker->boolean(70), // 70% kemungkinan true
             'akses_topup_pulsa' => $this->faker->boolean(60),
             'password_topup' => $this->faker->password(8, 16),
@@ -56,8 +56,8 @@ class DataOpsionalPonpesFactory extends Factory
     {
         return $this->state(fn(array $attributes) => [
             'status_wartel' => true,
-            'tarif_wartel_reguler' => $this->faker->randomFloat(2, 1500, 2500),
-            'jumlah_line_reguler' => $this->faker->numberBetween(3, 8),
+            'tarif_wartel' => $this->faker->randomFloat(2, 1500, 2500),
+            'jumlah_line' => $this->faker->numberBetween(3, 8),
         ]);
     }
 
@@ -68,8 +68,8 @@ class DataOpsionalPonpesFactory extends Factory
     {
         return $this->state(fn(array $attributes) => [
             'status_wartel' => false,
-            'tarif_wartel_reguler' => 0,
-            'jumlah_line_reguler' => 0,
+            'tarif_wartel' => 0,
+            'jumlah_line' => 0,
         ]);
     }
 
@@ -105,7 +105,7 @@ class DataOpsionalPonpesFactory extends Factory
     {
         return $this->state(fn(array $attributes) => [
             'jumlah_wbp' => $this->faker->numberBetween(20, 100),
-            'jumlah_line_reguler' => $this->faker->numberBetween(1, 3),
+            'jumlah_line' => $this->faker->numberBetween(1, 3),
             'jumlah_extension' => $this->faker->numberBetween(1, 5),
             'kecepatan_internet' => $this->faker->randomElement(['10 Mbps', '20 Mbps']),
         ]);
@@ -118,7 +118,7 @@ class DataOpsionalPonpesFactory extends Factory
     {
         return $this->state(fn(array $attributes) => [
             'jumlah_wbp' => $this->faker->numberBetween(300, 500),
-            'jumlah_line_reguler' => $this->faker->numberBetween(6, 10),
+            'jumlah_line' => $this->faker->numberBetween(6, 10),
             'jumlah_extension' => $this->faker->numberBetween(15, 20),
             'kecepatan_internet' => $this->faker->randomElement(['100 Mbps', '200 Mbps']),
         ]);

@@ -61,16 +61,16 @@
         <tr><td>Alamat</td><td>{{ $user->dataOpsional->alamat ?? '' }}</td></tr>
         <tr><td>Kanwil</td><td>{{ $user->kanwil }}</td></tr>
         <tr><td>Jumlah WBP</td><td>{{ $user->dataOpsional->jumlah_wbp ?? '' }}</td></tr>
-        <tr><td>Jumlah Line Reguler Terpasang</td><td>{{ $user->dataOpsional->jumlah_line_reguler ?? '' }}</td></tr>
+        <tr><td>Jumlah Line Reguler Terpasang</td><td>{{ $user->dataOpsional->jumlah_line ?? '' }}</td></tr>
         <tr><td>Provider Internet</td><td>{{ $user->dataOpsional->provider_internet ?? '' }}</td></tr>
         <tr><td>Kecepatan Internet (mbps)</td><td>{{ $user->dataOpsional->kecepatan_internet ?? '' }}</td></tr>
-        <tr><td>Tarif Wartel</td><td>{{ $user->dataOpsional->tarif_wartel_vpas ?? '' }}</td></tr>
-        <tr><td>Status Wartel</td><td>{{ $user->dataOpsional->status_wartel ?? '' }}</td></tr>
+        <tr><td>Tarif Wartel</td><td>{{ $user->dataOpsional->tarif_wartel ?? '' }}</td></tr>
+        <tr><td>Status Wartel</td><td>{{ ($user->dataOpsional->status_wartel ?? 0) == 1 ? 'Aktif' : 'Tidak Aktif' }}</td></tr>
 
         <tr><td colspan="2" class="section-header">IMC PAS</td></tr>
-        <tr><td>Akses Topup Pulsa</td><td>{{ $user->dataOpsional->akses_topup_pulsa ?? '' }}</td></tr>
+        <tr><td>Akses Topup Pulsa</td><td>{{ ($user->dataOpsional->akses_topup_pulsa ?? 0) == 1 ? 'Iya' : 'Tidak' }}</td></tr>
         <tr><td>Password Topup</td><td>{{ $user->dataOpsional->password_topup ?? '' }}</td></tr>
-        <tr><td>Akses Download Rekaman</td><td>{{ $user->dataOpsional->akses_download_rekaman ?? '' }}</td></tr>
+        <tr><td>Akses Download Rekaman</td><td>{{ ($user->dataOpsional->akses_download_rekaman ?? 0) == 1 ? 'Iya' : 'Tidak' }}</td></tr>
         <tr><td>Password Download</td><td>{{ $user->dataOpsional->password_download ?? '' }}</td></tr>
 
         <tr><td colspan="2" class="section-header">Akses VPN</td></tr>

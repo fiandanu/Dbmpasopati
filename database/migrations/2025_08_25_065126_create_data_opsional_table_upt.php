@@ -15,10 +15,10 @@ return new class extends Migration
             $table->string('no_telpon')->nullable();
             $table->text('alamat')->nullable();
             $table->integer('jumlah_wbp')->nullable();
-            $table->integer('jumlah_line_reguler')->nullable();
+            $table->integer('jumlah_line')->nullable();
             $table->string('provider_internet')->nullable();
             $table->string('kecepatan_internet')->nullable();
-            $table->decimal('tarif_wartel_reguler', 10, 2)->nullable();
+            $table->decimal('tarif_wartel', 10, 2)->nullable();
             $table->string('status_wartel');
             $table->boolean('akses_topup_pulsa')->default(0);
             $table->string('password_topup')->nullable();

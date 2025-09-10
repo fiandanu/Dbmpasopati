@@ -2,7 +2,7 @@
 :root {
     /* Font Families */
     --font-primary: "Poppins", sans-serif;
-    /* --font-secondary: 'Ag', sans-serif; */
+    --font-secondary: 'Ag', sans-serif;
 
     /* Font Sizes and Line Heights */
     --display-large-size: 64px;
@@ -422,7 +422,7 @@ h5 {
 }
 
 .badge {
-    /* padding: 0.375rem 0.75rem; */
+    padding: 0.375rem 0.75rem;
     border-radius: 3.125rem;
     background-color: var(--danger-01);
     border: solid 1px var(--danger-03);
@@ -434,7 +434,7 @@ h5 {
 }
 
 .badge-prosses {
-    /* padding: 0.375rem 0.75rem; */
+    padding: 0.375rem 0.75rem;
     border-radius: 3.125rem;
     background-color: var(--yellow-01);
     border: solid 1px var(--yellow-07);

@@ -157,10 +157,10 @@
                                                             'no_telpon',
                                                             'alamat',
                                                             'jumlah_wbp',
-                                                            'jumlah_line_reguler',
+                                                            'jumlah_line',
                                                             'provider_internet',
                                                             'kecepatan_internet',
-                                                            'tarif_wartel_reguler',
+                                                            'tarif_wartel',
                                                             'status_wartel',
                                                             'akses_topup_pulsa',
                                                             'password_topup',
@@ -341,11 +341,11 @@
                                                                                         placeholder="Masukkan Jumlah WBP">
                                                                                 </div>
                                                                                 <div class="mb-3">
-                                                                                    <label for="jumlah_line_reguler" class="form-label">Jumlah Line
+                                                                                    <label for="jumlah_line" class="form-label">Jumlah Line
                                                                                         Reguler Terpasang</label>
-                                                                                    <input type="number" class="form-control" id="jumlah_line_reguler"
-                                                                                        name="jumlah_line_reguler"
-                                                                                        value="{{ old('jumlah_line_reguler', $d->dataOpsional->jumlah_line_reguler ?? '') }}"
+                                                                                    <input type="number" class="form-control" id="jumlah_line"
+                                                                                        name="jumlah_line"
+                                                                                        value="{{ old('jumlah_line', $d->dataOpsional->jumlah_line ?? '') }}"
                                                                                         placeholder="Masukkan jumlah line reguler">
                                                                                 </div>
 
@@ -372,11 +372,11 @@
                                                                                         placeholder="Contoh: 20">
                                                                                 </div>
                                                                                 <div class="mb-3">
-                                                                                    <label for="tarif_wartel_reguler" class="form-label">Tarif Wartel
+                                                                                    <label for="tarif_wartel" class="form-label">Tarif Wartel
                                                                                         Reguler</label>
-                                                                                    <input type="text" class="form-control" id="tarif_wartel_reguler"
-                                                                                        name="tarif_wartel_reguler"
-                                                                                        value="{{ old('tarif_wartel_reguler', $d->dataOpsional->tarif_wartel_reguler ?? '') }}"
+                                                                                    <input type="text" class="form-control" id="tarif_wartel"
+                                                                                        name="tarif_wartel"
+                                                                                        value="{{ old('tarif_wartel', $d->dataOpsional->tarif_wartel ?? '') }}"
                                                                                         placeholder="Contoh: Rp 2.000 / menit">
                                                                                 </div>
                                                                                 <div class="mb-3">

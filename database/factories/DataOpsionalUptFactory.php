@@ -30,10 +30,10 @@ class DataOpsionalUptFactory extends Factory
             'no_telpon' => $this->faker->phoneNumber,
             'alamat' => $this->faker->address,
             'jumlah_wbp' => $this->faker->numberBetween(50, 2000),
-            'jumlah_line_reguler' => $this->faker->numberBetween(2, 20),
+            'jumlah_line' => $this->faker->numberBetween(2, 20),
             'provider_internet' => $this->faker->randomElement($providers),
             'kecepatan_internet' => $this->faker->randomElement($kecepatanOptions),
-            'tarif_wartel_reguler' => $this->faker->randomFloat(2, 500, 5000),
+            'tarif_wartel' => $this->faker->randomFloat(2, 500, 5000),
             'status_wartel' => $this->faker->boolean(80), // 80% kemungkinan true
             'akses_topup_pulsa' => $this->faker->boolean(70),
             'password_topup' => $this->faker->password(8, 16),
@@ -57,8 +57,8 @@ class DataOpsionalUptFactory extends Factory
     {
         return $this->state(fn(array $attributes) => [
             'status_wartel' => true,
-            'tarif_wartel_reguler' => $this->faker->randomFloat(2, 1000, 3000),
-            'jumlah_line_reguler' => $this->faker->numberBetween(5, 15),
+            'tarif_wartel' => $this->faker->randomFloat(2, 1000, 3000),
+            'jumlah_line' => $this->faker->numberBetween(5, 15),
         ]);
     }
 
@@ -69,8 +69,8 @@ class DataOpsionalUptFactory extends Factory
     {
         return $this->state(fn(array $attributes) => [
             'status_wartel' => false,
-            'tarif_wartel_reguler' => 0,
-            'jumlah_line_reguler' => 0,
+            'tarif_wartel' => 0,
+            'jumlah_line' => 0,
         ]);
     }
 
@@ -106,7 +106,7 @@ class DataOpsionalUptFactory extends Factory
     {
         return $this->state(fn(array $attributes) => [
             'jumlah_wbp' => $this->faker->numberBetween(50, 200),
-            'jumlah_line_reguler' => $this->faker->numberBetween(2, 5),
+            'jumlah_line' => $this->faker->numberBetween(2, 5),
             'jumlah_extension' => $this->faker->numberBetween(1, 10),
         ]);
     }
@@ -118,7 +118,7 @@ class DataOpsionalUptFactory extends Factory
     {
         return $this->state(fn(array $attributes) => [
             'jumlah_wbp' => $this->faker->numberBetween(1000, 2000),
-            'jumlah_line_reguler' => $this->faker->numberBetween(10, 20),
+            'jumlah_line' => $this->faker->numberBetween(10, 20),
             'jumlah_extension' => $this->faker->numberBetween(30, 50),
             'kecepatan_internet' => $this->faker->randomElement(['100 Mbps', '200 Mbps']),
         ]);

@@ -61,16 +61,17 @@
         <tr><td>Alamat</td><td>{{ $ponpes->dataOpsional->alamat ?? '' }}</td></tr>
         <tr><td>Wilayah</td><td>{{ $ponpes->nama_wilayah }}</td></tr>
         <tr><td>Jumlah WBP</td><td>{{ $ponpes->dataOpsional->jumlah_wbp ?? '' }}</td></tr>
-        <tr><td>Jumlah Line Reguler Terpasang</td><td>{{ $ponpes->dataOpsional->jumlah_line_reguler ?? '' }}</td></tr>
+        <tr><td>Jumlah Line Reguler Terpasang</td><td>{{ $ponpes->dataOpsional->jumlah_line ?? '' }}</td></tr>
         <tr><td>Provider Internet</td><td>{{ $ponpes->dataOpsional->provider_internet ?? '' }}</td></tr>
         <tr><td>Kecepatan Internet (mbps)</td><td>{{ $ponpes->dataOpsional->kecepatan_internet ?? '' }}</td></tr>
-        <tr><td>Tarif Wartel Reguler</td><td>{{ $ponpes->dataOpsional->tarif_wartel_reguler ?? '' }}</td></tr>
-        <tr><td>Status Wartel</td><td>{{ $ponpes->dataOpsional->status_wartel ?? '' }}</td></tr>
+        <tr><td>Tarif Wartel Reguler</td><td>{{ $ponpes->dataOpsional->tarif_wartel ?? '' }}</td></tr>
+        <tr><td>Status Wartel</td><td>{{ ($ponpes->dataOpsional->status_wartel ?? 0) == 1 ? 'Aktif' : 'Tidak Aktif' }}</td></tr>
+
 
         <tr><td colspan="2" class="section-header">IMC PAS</td></tr>
-        <tr><td>Akses Topup Pulsa</td><td>{{ $ponpes->dataOpsional->akses_topup_pulsa ?? '' }}</td></tr>
+        <tr><td>Akses Topup Pulsa</td><td>{{ ($ponpes->dataOpsional->akses_topup_pulsa ?? 0) == 1 ? 'Iya' : 'Tidak' }}</td></tr>
         <tr><td>Password Topup</td><td>{{ $ponpes->dataOpsional->password_topup ?? '' }}</td></tr>
-        <tr><td>Akses Download Rekaman</td><td>{{ $ponpes->dataOpsional->akses_download_rekaman ?? '' }}</td></tr>
+        <tr><td>Akses Download Rekaman</td><td>{{ ($ponpes->dataOpsional->akses_download_rekaman ?? 0) == 1 ? 'Iya' : 'Tidak' }}</td></tr>
         <tr><td>Password Download</td><td>{{ $ponpes->dataOpsional->password_download ?? '' }}</td></tr>
 
         <tr><td colspan="2" class="section-header">Akses VPN</td></tr>

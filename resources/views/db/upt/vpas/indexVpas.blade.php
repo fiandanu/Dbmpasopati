@@ -162,10 +162,10 @@
                                                             'no_telpon',
                                                             'alamat',
                                                             'jumlah_wbp',
-                                                            'jumlah_line_reguler',
+                                                            'jumlah_line',
                                                             'provider_internet',
                                                             'kecepatan_internet',
-                                                            'tarif_wartel_reguler',
+                                                            'tarif_wartel',
                                                             'status_wartel',
                                                             'akses_topup_pulsa',
                                                             'password_topup',
@@ -381,13 +381,13 @@
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="jumlah_line_reguler{{ $d->id }}"
+                                                            <label for="jumlah_line{{ $d->id }}"
                                                                 class="form-label">Jumlah
                                                                 Line VPAS Terpasang</label>
                                                             <input type="number" class="form-control"
-                                                                id="jumlah_line_reguler{{ $d->id }}"
-                                                                name="jumlah_line_reguler"
-                                                                value="{{ $dataOpsional->jumlah_line_reguler ?? '' }}"
+                                                                id="jumlah_line{{ $d->id }}"
+                                                                name="jumlah_line"
+                                                                value="{{ $dataOpsional->jumlah_line ?? '' }}"
                                                                 placeholder="Masukkan jumlah line VPAS">
                                                         </div>
 
@@ -420,13 +420,13 @@
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="tarif_wartel_reguler{{ $d->id }}"
+                                                            <label for="tarif_wartel{{ $d->id }}"
                                                                 class="form-label">Tarif
                                                                 Wartel VPAS</label>
                                                             <input type="text" class="form-control"
-                                                                id="tarif_wartel_reguler{{ $d->id }}"
-                                                                name="tarif_wartel_reguler"
-                                                                value="{{ $dataOpsional->tarif_wartel_reguler ?? '' }}"
+                                                                id="tarif_wartel{{ $d->id }}"
+                                                                name="tarif_wartel"
+                                                                value="{{ $dataOpsional->tarif_wartel ?? '' }}"
                                                                 placeholder="Contoh: 3000">
                                                         </div>
 

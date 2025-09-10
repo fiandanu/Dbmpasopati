@@ -17,10 +17,10 @@ class DataOpsionalUpt extends Model
         'no_telpon',
         'alamat',
         'jumlah_wbp',
-        'jumlah_line_reguler',
+        'jumlah_line',
         'provider_internet',
         'kecepatan_internet',
-        'tarif_wartel_reguler',
+        'tarif_wartel',
         'status_wartel',
         'akses_topup_pulsa',
         'password_topup',
@@ -40,7 +40,7 @@ class DataOpsionalUpt extends Model
         'status_wartel' => 'boolean',
         'akses_topup_pulsa' => 'boolean',
         'akses_download_rekaman' => 'boolean',
-        'tarif_wartel_reguler' => 'decimal:2'
+        'tarif_wartel' => 'decimal:2'
     ];
 
     public function upt()

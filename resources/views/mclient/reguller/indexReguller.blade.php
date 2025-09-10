@@ -97,7 +97,7 @@
                                 <div class="card-tools">
                                     <!-- Tombol Tambah Data -->
                                     <button type="button" class="btn btn-sm btn-primary mr-2 mt-2" data-bs-toggle="modal"
-                                        data-bs-target="
+                                        data-bs-target="#addModal">
                                         <i class="fas fa-plus"></i> Tambah Data
                                     </button>
 
@@ -181,17 +181,19 @@
                                                 <td>{{ $d->pic_1 ?? '-' }}</td>
                                                 <td>{{ $d->pic_2 ?? '-' }}</td>
                                                 <td>
-                                                    <a href="
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="
-                                                        <i class="fa fa-edit"></i> Edit
-                                                    </a>
+                                                {{-- Edit Button --}}
+                                                <a href="#editModal{{ $d->id }}" class="btn btn-sm btn-primary"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#editModal{{ $d->id }}">
+                                                    <i class="fa fa-edit"></i> Edit
+                                                </a>
 
-                                                    <a data-toggle="modal" data-target="
-                                                        class="btn btn-sm btn-danger">
-                                                        <i class="fas fa-trash-alt"></i> Delete
-                                                    </a>
-                                                </td>
+                                                {{-- Delete Button --}}
+                                                <a data-toggle="modal" data-target="#modal-default{{ $d->id }}"
+                                                    class="btn btn-sm btn-danger">
+                                                    <i class="fas fa-trash-alt"></i> Delete
+                                                </a>
+                                            </td>
                                             </tr>
 
                                             <div class="modal fade" id="modal-default{{ $d->id }}">
@@ -275,7 +277,7 @@
                                                             <div class="dropdown-menu w-100" id="uptDropdownMenu" 
                                                                 style="max-height: 200px; overflow-y: auto; display: none;">
                                                                 @foreach ($uptList as $upt)
-                                                                    <a class="dropdown-item upt-option" href="
+                                                                    <a class="dropdown-item upt-option" href="#" 
                                                                     data-value="{{ $upt->namaupt }}" 
                                                                     data-kanwil="{{ $upt->kanwil }}"
                                                                     onclick="selectUpt('{{ $upt->namaupt }}', '{{ $upt->kanwil }}')">
