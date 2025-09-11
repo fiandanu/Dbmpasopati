@@ -221,14 +221,14 @@
                                                     </a>
 
                                                     {{-- Delete Button --}}
-                                                    <button data-toggle="modal"
+                                                    {{-- <button data-toggle="modal"
                                                         data-target="#modal-default{{ $d->id }}" title="Hapus">
-                                                        <ion-icon name="trash-outline"></ion-icon></button>
+                                                        <ion-icon name="trash-outline"></ion-icon></button> --}}
                                                 </td>
                                             </tr>
 
                                             {{-- Delete Modal --}}
-                                            <div class="modal fade" id="modal-default{{ $d->id }}">
+                                            {{-- <div class="modal fade" id="modal-default{{ $d->id }}">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
 
@@ -252,7 +252,7 @@
                                                     </div>
                                                     <!-- /.modal-dialog -->
                                                 </div>
-                                            </div>
+                                            </div> --}}
                                         @endforeach
 
                                         {{-- Tampilkan pesan jika tidak ada data VPAS --}}

@@ -91,18 +91,16 @@
                                                 </td>
                                             </tr>
 
+                                            {{-- Delete Modal --}}
                                             <div class="modal fade" id="modal-default{{ $d->id }}">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
                                                         <div class="modal-body text-center align-items-center">
                                                             <ion-icon name="alert-circle-outline"
                                                                 class="text-9xl text-[var(--yellow-04)]"></ion-icon>
-                                                            <p class="headline-large-32">Anda Yakin? <br>
-                                                            <h3><i>{{ $d->nama_ponpes }}</i>
-                                                                Tipe <i>{{ ucfirst($d->tipe) }}</i> ingin dihapus?
-                                                            </h3>
-                                                            <br>
-                                                            </p>
+                                                            <p class="headline-large-32">Anda Yakin?</p> <br>
+                                                            <b>{{ $d->nama_ponpes }}</b> ingin dihapus?
+                                                            
                                                             @if (str_contains($d->nama_ponpes, '(VtrenReg)'))
                                                                 <div class="alert alert-warning">
                                                                     <i class="fas fa-exclamation-triangle"></i>

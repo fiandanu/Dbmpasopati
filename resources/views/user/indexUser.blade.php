@@ -96,12 +96,9 @@
                                                         <div class="modal-body text-center align-items-center">
                                                             <ion-icon name="alert-circle-outline"
                                                                 class="text-9xl text-[var(--yellow-04)]"></ion-icon>
-                                                            <p class="headline-large-32">Anda Yakin? <br>
-                                                            <h3><i>{{ $d->namaupt }}</i>
-                                                                Tipe <i>{{ ucfirst($d->tipe) }}</i> ingin dihapus?
-                                                            </h3>
-                                                            <b>{{$d->namaupt}}</b> ingin dihapus?
-                                                            </p>
+                                                            <p class="headline-large-32">Anda Yakin? <br></p>
+                                                            <b>{{ $d->namaupt }}</b> ingin dihapus?
+
                                                             @if (str_contains($d->namaupt, '(VpasReg)'))
                                                                 <div class="alert alert-warning">
                                                                     <i class="fas fa-exclamation-triangle"></i>
@@ -227,9 +224,11 @@
                                         <div class="modal-dialog">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="editModalLabel">Edit Data</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                        aria-label="Close"></button>
+                                                    <label id="editModalLabel">Edit Data</label>
+                                                    <button type="button" class="btn-close-custom"
+                                                        data-bs-dismiss="modal" aria-label="Close">
+                                                        <i class="bi bi-x"></i>
+                                                    </button>
                                                 </div>
 
                                                 <div class="modal-body">
@@ -271,9 +270,9 @@
 
                                                 </div>
                                                 <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary"
+                                                    <button type="button" class="btn-cancel-modal"
                                                         data-bs-dismiss="modal">Cancel</button>
-                                                    <button type="submit" class="btn btn-primary">Update</button>
+                                                    <button type="submit" class="btn-purple">Update</button>
                                                 </div>
 
                                             </div>
@@ -291,9 +290,11 @@
                 <!-- /.row -->
 
 
+                {{-- Pagination Controls --}}
                 <div class="d-flex justify-content-between align-items-center mb-3">
+                    {{-- Row limit --}}
                     <div class="btn-datakolom">
-                        <button class="btn-select d-flex align-items-center">
+                        <button class="d-flex ajustify-content-center align-items-center">
                             <select id="row-limit">
                                 <option value="10">10</option>
                                 <option value="15">15</option>
@@ -307,7 +308,7 @@
                     {{-- Pagination --}}
                     <div class="pagination-controls d-flex align-items-center gap-12">
                         <button class="btn-page" id="prev-page" disabled>&laquo; Previous</button>
-                        <span id="page-info">Page 1 of 5</span>
+                        <span id="page-info"> Page 1 of 5</span>
                         <button class="btn-page" id="next-page">Next &raquo;</button>
                     </div>
                 </div>
@@ -368,23 +369,12 @@
         });
     </script>
 
+    {{-- jQuery Library --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
         integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-    {{-- Ajax Search --}}
-    <script>
-        $(document).ready(function() {
-            $("#btn-search").on("keyup", function() {
-                let value = $(this).val().toLowerCase();
-                $("#Table tbody tr").filter(function() {
-                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-                });
-            });
-        });
-    </script>
-
-    {{-- Ajax Table Limit --}}
+    {{-- Search and Pagination JavaScript - Same as Ponpes --}}
     <script>
         $(document).ready(function() {
             const $rows = $("#Table tbody tr");
@@ -436,13 +426,39 @@
             });
 
             // Filter Data By Search
-            $(document).ready(function() {
-                $("#btn-search").on("keyup", function() {
-                    let value = $(this).val().toLowerCase();
-                    $("#Table tbody tr").filter(function() {
-                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-                    });
+            $("#btn-search").on("keyup", function() {
+                let value = $(this).val().toLowerCase();
+                $("#Table tbody tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
                 });
+
+                // Update pagination after search
+                const $visibleRows = $("#Table tbody tr:visible");
+                totalPages = Math.ceil($visibleRows.length / limit);
+                currentPage = 1;
+
+                if (value === '') {
+                    // If search is cleared, show all rows with pagination
+                    updateTable();
+                } else {
+                    // If searching, hide pagination info
+                    $("#page-info").text(`Showing ${$visibleRows.length} results`);
+                    $("#prev-page").prop("disabled", true);
+                    $("#next-page").prop("disabled", true);
+                }
+            });
+
+            // Handle modal events
+            $('.modal').on('show.bs.modal', function(e) {
+                console.log('Modal is opening');
+            });
+
+            $('.modal').on('shown.bs.modal', function(e) {
+                console.log('Modal is fully visible');
+            });
+
+            $('.modal').on('hide.bs.modal', function(e) {
+                console.log('Modal is closing');
             });
         });
     </script>

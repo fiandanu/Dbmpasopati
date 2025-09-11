@@ -194,11 +194,11 @@
                                                         @endif
 
                                                         {{-- Delete Data Button --}}
-                                                        <button data-toggle="modal"
+                                                        {{-- <button data-toggle="modal"
                                                             data-target="#modal-default{{ $d->id }}"
                                                             title="Hapus Data">
                                                             <ion-icon name="trash-outline"></ion-icon></button>
-                                                        </button>
+                                                        </button> --}}
                                                     </div>
                                                 </td>
                                             </tr>
@@ -230,7 +230,7 @@
                                             </div>
 
                                             {{-- Delete Data Modal --}}
-                                            <div class="modal fade" id="modal-default{{ $d->id }}">
+                                            {{-- <div class="modal fade" id="modal-default{{ $d->id }}">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
                                                         <div class="modal-body text-center align-items-center">
@@ -254,7 +254,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> --}}
                                         @empty
                                             <tr>
                                                 <td colspan="6" class="text-center">

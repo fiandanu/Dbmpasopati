@@ -6,7 +6,12 @@
             <div class="container-fluid">
                 <div class="row mb-2 py-3 align-items-center">
                     <div class="col d-flex justify-content-between align-items-center">
-                        <h1 class="headline-large-32">Provider dan Vpn</h1>
+                        <!-- Left navbar links -->
+                        <div class="d-flex justify-content-center align-items-center gap-12">
+                            <button class="btn-pushmenu" data-widget="pushmenu" href="#" role="button">
+                                <i class="fas fa-bars"></i></button>
+                            <h1 class="headline-large-32 mb-0">Provider dan Vpn</h1>
+                        </div>
                         <button class="btn-purple" data-bs-toggle="modal" data-bs-target="#addDataModal">
                             <i class="fa fa-plus"></i> Add Data
                         </button>
@@ -59,7 +64,6 @@
         <section class="content">
             <div class="container-fluid">
                 <!-- Single Add Button -->
-
                 <div class="row">
                     <!-- Tabel Provider -->
                     <div class="col-md-6">
@@ -177,8 +181,7 @@
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
-                                                                <button type="submit"
-                                                                    class="btn-delete">Hapus</button>
+                                                                <button type="submit" class="btn-delete">Hapus</button>
                                                             </form>
                                                         </div>
                                                     </div>
@@ -194,7 +197,6 @@
             </div>
         </section>
 
-        {{-- Combined Create Modal --}}
         {{-- Combined Create Modal --}}
         <div class="modal fade" id="addDataModal" tabindex="-1" aria-labelledby="addDataModalLabel"
             aria-hidden="true">
@@ -259,7 +261,7 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="editProviderModalLabel">Edit Data Provider</h5>
+                                <label class="modal-title" id="editProviderModalLabel">Edit Data Provider</label>
                                 <button type="button" class="btn-close-custom" data-bs-dismiss="modal"
                                     aria-label="Close">
                                     <i class="bi bi-x"></i>
@@ -267,14 +269,14 @@
                             </div>
                             <div class="modal-body">
                                 <div class="mb-3">
-                                    <label for="nama_provider" class="form-label">Nama Provider</label>
+                                    <label for="nama_provider">Nama Provider</label>
                                     <input type="text" class="form-control" id="nama_provider" name="nama_provider"
                                         value="{{ $d->nama_provider }}">
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                <button type="submit" class="btn btn-primary">Update</button>
+                                <button type="button" class="btn-cancel-modal" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn-purple">Update</button>
                             </div>
                         </div>
                     </div>
@@ -292,7 +294,7 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="editVpnModalLabel">Edit Data VPN</h5>
+                                <label class="modal-title" id="editVpnModalLabel">Edit Data VPN</label>
                                 <button type="button" class="btn-close-custom" data-bs-dismiss="modal"
                                     aria-label="Close">
                                     <i class="bi bi-x"></i>
@@ -306,8 +308,8 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                <button type="submit" class="btn btn-primary">Update</button>
+                                <button type="button" class="btn-cancel-modal" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn-purple">Update</button>
                             </div>
                         </div>
                     </div>
@@ -316,6 +318,7 @@
         @endforeach
     </div>
 
+    {{-- JS --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Get checkboxes

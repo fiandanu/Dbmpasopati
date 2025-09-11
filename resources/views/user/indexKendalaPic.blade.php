@@ -199,29 +199,13 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="addDataModalLabel">Tambah Data</h5>
+                        <label class="modal-title" id="addDataModalLabel">Tambah Data</label>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="bi bi-x"></i>
+                        </button>
                     </div>
                     <div class="modal-body">
-                        <!-- Data Type Selection -->
-                        <div class="mb-3">
-                            <label class="form-label">Pilih Jenis Data</label>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="data_type" id="kendala_type"
-                                    value="kendala" checked>
-                                <label class="form-check-label" for="kendala_type">
-                                    <i class="fas fa-exclamation-triangle text-warning"></i> Kendala
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="data_type" id="pic_type"
-                                    value="pic">
-                                <label class="form-check-label" for="pic_type">
-                                    <i class="fas fa-user text-info"></i> PIC
-                                </label>
-                            </div>
-                        </div>
-
                         <!-- Dynamic Form Container -->
                         <div id="form_container">
                             <!-- Kendala Form -->
@@ -242,10 +226,30 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Data Type Selection -->
+                        <div class="mb-3">
+                            <label class="form-label">Pilih Jenis Data</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="data_type" id="kendala_type"
+                                    value="kendala" checked>
+                                <h6 class="form-check-label" for="kendala_type">
+                                    Kendala
+                                </h6>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="data_type" id="pic_type"
+                                    value="pic">
+                                <h6 class="form-check-label" for="pic_type">
+                                    PIC
+                                </h6>
+                            </div>
+                        </div>
+
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary" id="save_btn">Simpan</button>
+                        <button type="button" class="btn-cancel-modal" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn-purple" id="save_btn">Simpan</button>
                     </div>
                 </div>
             </div>

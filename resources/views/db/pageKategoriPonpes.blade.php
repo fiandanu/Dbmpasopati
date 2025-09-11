@@ -1,21 +1,21 @@
 @extends('layout.sidebar')
 @section('content')
     <div class="content-wrapper">
-        <div class="content-header">
+        <!-- Content Header (Page header) -->
+        <section class="content">
             <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1 class="m-0">DataBase Ponpes</h1>
-                    </div>
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">DataBase Ponpes</li>
-                        </ol>
+                <div class="row py-3 align-items-center">
+                    <div class="col d-flex justify-content-between align-items-center">
+                        <!-- Left navbar links -->
+                        <div class="d-flex justify-content-center align-items-center gap-12">
+                            <button class="btn-pushmenu" data-widget="pushmenu" role="button">
+                                <i class="fas fa-bars"></i>
+                            </button>
+                            <h1 class="headline-large-32 mb-0">List Data Ponpes</h1>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
+        </section>
 
         <!-- CARD KATEGORI -->
         <div class="content">
@@ -31,8 +31,7 @@
                                 <span class="checkmark">✓</span>
                                 100 Data
                             </div>
-                                <a href="{{ route('ponpes.pks.ListDataPks') }}"
-                                    class="list-button">List Data PKS</a>
+                            <a href="{{ route('ponpes.pks.ListDataPks') }}" class="list-button">List Data PKS</a>
                         </div>
                     </div>
 
@@ -44,8 +43,8 @@
                             <span class="data-badge mb-3">
                                 100 Data
                             </span>
-                                <a href="{{ route('sppPonpes.ListDataSpp') }}" class="list-button">List
-                                    Data SPP</a>
+                            <a href="{{ route('sppPonpes.ListDataSpp') }}" class="list-button">List
+                                Data SPP</a>
                         </div>
                     </div>
 

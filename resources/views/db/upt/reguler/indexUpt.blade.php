@@ -292,8 +292,8 @@
                                         <div class="modal-dialog modal-lg">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="editModalLabel{{ $d->id }}">Edit
-                                                        Data</h5>
+                                                    <label class="modal-title" id="editModalLabel{{ $d->id }}">Edit
+                                                        Data</label>
                                                     <button type="button" class="btn-close-custom" data-dismiss="modal"
                                                         aria-label="Close">
                                                         <i class="bi bi-x"></i>

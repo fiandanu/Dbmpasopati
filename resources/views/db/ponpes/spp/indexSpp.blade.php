@@ -179,11 +179,12 @@
                                                             <ion-icon name="folder-outline"></ion-icon>
                                                         </button>
 
-                                                        <button data-toggle="modal"
+                                                        {{-- Delete Data Button --}}
+                                                        {{-- <button data-toggle="modal"
                                                             data-target="#modal-default{{ $d->id }}"
                                                             title="Hapus Data">
                                                             <ion-icon name="trash-outline"></ion-icon>
-                                                        </button>
+                                                        </button> --}}
                                                     </div>
                                                 </td>
                                             </tr>
@@ -320,7 +321,7 @@
                                                                                             </button>
                                                                                         </div>
                                                                                     @else
-                                                                                        <div class="alert alert-warning">
+                                                                                        <div class="badge-prosses text-center">
                                                                                             <i
                                                                                                 class="fas fa-exclamation-triangle"></i>
                                                                                             Belum ada PDF yang diupload
@@ -390,7 +391,7 @@
                                             @endfor
 
                                             {{-- Delete Data Modal --}}
-                                            <div class="modal fade" id="modal-default{{ $d->id }}">
+                                            {{-- <div class="modal fade" id="modal-default{{ $d->id }}">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
                                                         <div class="modal-body text-center align-items-center">
@@ -414,7 +415,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> --}}
 
                                         @empty
                                             <tr>
