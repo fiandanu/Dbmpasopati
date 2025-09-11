@@ -200,10 +200,10 @@
                                                     @if ($filledFields == 0)
                                                         <span class="badge">Belum di Update</span>
                                                     @elseif($filledFields == $totalFields)
-                                                        <span class="badge badge-success py-2">Sudah di Update (100%)</span>
+                                                        <span class="badge-succes">Update (100%)</span>
                                                     @else
-                                                        <span class="badge-prosses">Belum di Update
-                                                            {{-- ({{ round($percentage) }}%) --}}
+                                                        <span class="badge-prosses">Sebagian
+                                                            ({{ round($percentage) }}%)
                                                         </span>
                                                     @endif
                                                 </td>
@@ -244,7 +244,7 @@
                                                             <ion-icon name="alert-circle-outline"
                                                                 class="text-9xl text-[var(--yellow-04)]"></ion-icon>
                                                             <p class="headline-large-32">Anda Yakin?</p>
-                                                            <p>Apakah <b>{{$d->nama_ponpes}}</b>ingin dihapus?</p>
+                                                            <p>Apakah <b>{{ $d->nama_ponpes }}</b>ingin dihapus?</p>
                                                         </div>
                                                         <div class="modal-footer flex-row-reverse justify-content-between">
                                                             <button type="button" class="btn-cancel-modal"
@@ -253,8 +253,7 @@
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
-                                                                <button type="submit"
-                                                                    class="btn-delete">Hapus</button>
+                                                                <button type="submit" class="btn-delete">Hapus</button>
                                                             </form>
                                                         </div>
                                                         <!-- /.modal-content -->
@@ -362,8 +361,8 @@
                                                         <div class="mb-3">
                                                             <label for="jumlah_line" class="form-label">Jumlah
                                                                 Line Reguler Terpasang</label>
-                                                            <input type="number" class="form-control"
-                                                                id="jumlah_line" name="jumlah_line"
+                                                            <input type="number" class="form-control" id="jumlah_line"
+                                                                name="jumlah_line"
                                                                 value="{{ old('jumlah_line', $d->dataOpsional->jumlah_line ?? '') }}"
                                                                 placeholder="Masukkan jumlah line reguler">
                                                         </div>
@@ -394,8 +393,8 @@
                                                         <div class="mb-3">
                                                             <label for="tarif_wartel" class="form-label">Tarif
                                                                 Wartel Reguler</label>
-                                                            <input type="text" class="form-control"
-                                                                id="tarif_wartel" name="tarif_wartel"
+                                                            <input type="text" class="form-control" id="tarif_wartel"
+                                                                name="tarif_wartel"
                                                                 value="{{ old('tarif_wartel', $d->dataOpsional->tarif_wartel ?? '') }}"
                                                                 placeholder="Contoh: Rp 2.000 / menit">
                                                         </div>

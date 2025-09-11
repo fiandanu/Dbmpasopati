@@ -230,14 +230,14 @@
                                                     </a>
 
                                                     {{-- Delete Button --}}
-                                                    <button data-toggle="modal"
+                                                    {{-- <button data-toggle="modal"
                                                         data-target="#modal-default{{ $d->id }}" title="Hapus">
-                                                        <ion-icon name="trash-outline"></ion-icon></button>
+                                                        <ion-icon name="trash-outline"></ion-icon></button> --}}
                                                 </td>
                                             </tr>
 
                                             {{-- Delete Modal --}}
-                                            <div class="modal fade" id="modal-default{{ $d->id }}">
+                                            {{-- <div class="modal fade" id="modal-default{{ $d->id }}">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
                                                         <div class="modal-body text-center align-items-center">
@@ -261,7 +261,7 @@
                                                     </div>
                                                     <!-- /.modal-dialog -->
                                                 </div>
-                                            </div>
+                                            </div> --}}
                                         @endforeach
 
                                         {{-- Tampilkan pesan jika tidak ada data UPT --}}
@@ -387,8 +387,7 @@
                                                                 class="form-label">Jumlah
                                                                 Line Reguler Terpasang</label>
                                                             <input type="number" class="form-control"
-                                                                id="jumlah_line{{ $d->id }}"
-                                                                name="jumlah_line"
+                                                                id="jumlah_line{{ $d->id }}" name="jumlah_line"
                                                                 value="{{ $dataOpsional->jumlah_line ?? '' }}"
                                                                 placeholder="Masukkan jumlah line reguler">
                                                         </div>
@@ -426,8 +425,7 @@
                                                                 class="form-label">Tarif
                                                                 Wartel Reguler</label>
                                                             <input type="text" class="form-control"
-                                                                id="tarif_wartel{{ $d->id }}"
-                                                                name="tarif_wartel"
+                                                                id="tarif_wartel{{ $d->id }}" name="tarif_wartel"
                                                                 value="{{ $dataOpsional->tarif_wartel ?? '' }}"
                                                                 placeholder="Contoh: 2000">
                                                         </div>
@@ -461,18 +459,14 @@
                                                                 class="form-label">Akses
                                                                 Top Up
                                                                 Pulsa</label>
-                                                            <select class="form-control"
+
+                                                            <input type="text" class="form-control"
                                                                 id="akses_topup_pulsa{{ $d->id }}"
-                                                                name="akses_topup_pulsa">
-                                                                <option value="">-- Pilih Akses --</option>
-                                                                <option value="1"
-                                                                    {{ ($dataOpsional->akses_topup_pulsa ?? 0) == 1 ? 'selected' : '' }}>
-                                                                    Ya</option>
-                                                                <option value="0"
-                                                                    {{ ($dataOpsional->akses_topup_pulsa ?? 0) == 0 ? 'selected' : '' }}>
-                                                                    Tidak</option>
-                                                            </select>
+                                                                name="akses_topup_pulsa"
+                                                                value="{{ $dataOpsional->akses_topup_pulsa ?? '' }}"
+                                                                placeholder="Masukkan akses top up pulsa">
                                                         </div>
+
 
                                                         <div class="mb-3">
                                                             <label for="password_topup{{ $d->id }}"
@@ -490,7 +484,13 @@
                                                             <label for="akses_download_rekaman{{ $d->id }}"
                                                                 class="form-label">Akses
                                                                 Download Rekaman</label>
-                                                            <select class="form-control"
+
+                                                            <input type="text" class="form-control"
+                                                                id="akses_download_rekaman{{ $d->id }}"
+                                                                name="akses_download_rekaman"
+                                                                value="{{ $dataOpsional->akses_download_rekaman ?? '' }}"
+                                                                placeholder="Masukkan akses download rekaman">
+                                                            {{-- <select class="form-control"
                                                                 id="akses_download_rekaman{{ $d->id }}"
                                                                 name="akses_download_rekaman">
                                                                 <option value="">-- Pilih Akses --</option>
@@ -500,7 +500,7 @@
                                                                 <option value="0"
                                                                     {{ ($dataOpsional->akses_download_rekaman ?? 0) == 0 ? 'selected' : '' }}>
                                                                     Tidak</option>
-                                                            </select>
+                                                            </select> --}}
                                                         </div>
 
                                                         <div class="mb-3">

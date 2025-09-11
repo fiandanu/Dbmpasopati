@@ -38,8 +38,8 @@ class DataOpsionalUpt extends Model
 
     protected $casts = [
         'status_wartel' => 'boolean',
-        'akses_topup_pulsa' => 'boolean',
-        'akses_download_rekaman' => 'boolean',
+        'akses_topup_pulsa' => 'string',
+        'akses_download_rekaman' => 'string',
         'tarif_wartel' => 'decimal:2'
     ];
 

@@ -9,6 +9,6 @@ class DataBaseController extends Controller
 {
     public function DbVpas()
     {
-        return view('db.vpas.indexVpas');
+        return view('db.upt.reguler.indexUpt');
     }
 }

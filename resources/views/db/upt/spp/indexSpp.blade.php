@@ -142,9 +142,10 @@
                                                 <td>{{ $d->namaupt }}</td>
                                                 <td><span class="tag tag-success">{{ $d->kanwil }}</span></td>
                                                 <td class="text-center">
-                                                    <span class="@if ($d->tipe == 'reguler') Tipereguller
+                                                    <span
+                                                        class="@if ($d->tipe == 'reguler') Tipereguller
                                                         @elseif($d->tipe == 'vpas') Tipevpas @endif">
-                                                        {{ ucfirst($d->tipe)}}
+                                                        {{ ucfirst($d->tipe) }}
                                                     </span>
                                                 </td>
                                                 <td class="text-center">
@@ -186,10 +187,10 @@
                                                             <ion-icon name="folder-outline"></ion-icon>
                                                         </button>
 
-                                                        <button data-toggle="modal"
+                                                        {{-- <button data-toggle="modal"
                                                             data-target="#modal-default{{ $d->id }}"
                                                             class="">
-                                                            <ion-icon name="trash-outline"></ion-icon></button>
+                                                            <ion-icon name="trash-outline"></ion-icon></button> --}}
                                                     </div>
                                                 </td>
                                             </tr>
@@ -206,7 +207,8 @@
                                                             <input type="hidden" name="selected_folder"
                                                                 id="selectedFolder{{ $d->id }}" value="1">
                                                             <div class="modal-header">
-                                                                <label id="uploadModalLabel{{ $d->id }}">Manage PDF </label>
+                                                                <label id="uploadModalLabel{{ $d->id }}">Manage PDF
+                                                                </label>
                                                                 <button type="button" class="btn-close-custom"
                                                                     data-dismiss="modal" aria-label="Close">
                                                                     <i class="bi bi-x"></i>
@@ -337,7 +339,7 @@
                                                                     </div>
                                                                 </div>
 
-                                                                <div class="">
+                                                                <div>
                                                                     <label for="uploaded_pdf{{ $d->id }}"
                                                                         class="btn-upload">
                                                                         Upload PDF
@@ -346,6 +348,8 @@
                                                                         id="uploaded_pdf{{ $d->id }}"
                                                                         name="uploaded_pdf" accept=".pdf"
                                                                         style="display: none;">
+                                                                    <span id="fileNameDisplay{{ $d->id }}"
+                                                                        class="text-muted"></span>
                                                                     <small class="form-text text-muted">Max Upload
                                                                         10Mb</small>
                                                                 </div>
@@ -371,34 +375,24 @@
                                                     aria-hidden="true">
                                                     <div class="modal-dialog">
                                                         <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h4 class="modal-title"
-                                                                    id="deletePdfModalLabel{{ $d->id }}_{{ $i }}">
-                                                                    Hapus File PDF Folder {{ $i }}</h4>
-                                                                <button type="button" class="close"
-                                                                    data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <p>Apakah Anda yakin ingin menghapus file PDF untuk
-                                                                    <b>{{ $d->namaupt }}</b> di Folder
-                                                                    {{ $i }}?
-                                                                </p>
-                                                                <p class="text-info">
-                                                                    <small><i class="fas fa-info-circle"></i> Data UPT
-                                                                        tidak akan dihapus, hanya file PDF saja.</small>
+                                                            <div class="modal-body text-center align-items-center">
+                                                                <ion-icon name="alert-circle-outline"
+                                                                    class="text-9xl text-[var(--yellow-04)]"></ion-icon>
+                                                                <p class="headline-large-32">Anda Yakin? </p>
+                                                                <p>Apakah Folder {{ $i }}
+                                                                    <b>{{ $d->namaupt }}</b> ingin dihapus?
                                                                 </p>
                                                             </div>
-                                                            <div class="modal-footer justify-content-between">
-                                                                <button type="button" class="btn btn-default"
+                                                            <div
+                                                                class="modal-footer flex-row-reverse justify-content-between">
+                                                                <button type="button" class="btn-cancel-modal"
                                                                     data-dismiss="modal">Batal</button>
                                                                 <form
                                                                     action="{{ route('spp.deleteFilePDF', [$d->id, $i]) }}"
                                                                     method="POST" style="display: inline;">
                                                                     @csrf
                                                                     @method('DELETE')
-                                                                    <button type="submit" class="btn btn-warning">
+                                                                    <button type="submit" class="btn-delete">
                                                                         <i class="fas fa-file-pdf"></i> Hapus PDF
                                                                     </button>
                                                                 </form>
@@ -409,7 +403,7 @@
                                             @endfor
 
                                             {{-- Delete Data Modal --}}
-                                            <div class="modal fade" id="modal-default{{ $d->id }}">
+                                            {{-- <div class="modal fade" id="modal-default{{ $d->id }}">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
@@ -441,7 +435,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> --}}
                                         @empty
                                             <tr>
                                                 <td colspan="7" class="text-center">
@@ -620,4 +614,23 @@
             });
         });
     </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Loop melalui semua input file berdasarkan ID dinamis
+            document.querySelectorAll('input[type="file"][id^="uploaded_pdf"]').forEach(function(input) {
+                input.addEventListener('change', function() {
+                    const id = this.id.replace('uploaded_pdf', ''); // Ambil ID dari input
+                    const fileNameDisplay = document.getElementById('fileNameDisplay' +
+                        id); // Ambil elemen span
+                    const fileName = this.files.length > 0 ? this.files[0].name :
+                        'Tidak ada file yang dipilih';
+
+                    // Perbarui teks di span dengan nama file
+                    fileNameDisplay.textContent = fileName;
+                });
+            });
+        });
+    </script>
+
 @endsection

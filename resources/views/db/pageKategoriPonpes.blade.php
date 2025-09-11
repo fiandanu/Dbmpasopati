@@ -21,48 +21,63 @@
         <div class="content">
             <div class="container-fluid">
                 <div class="row">
+
                     <!-- Kategori PKS -->
                     <div class="col-md-3">
-                        <div class="card bg-light">
-                            <div class="card-header font-weight-bold d-flex justify-content-center">PKS</div>
-                            <div class="card-body">
-                                <a href="{{route ('ponpes.pks.ListDataPks')}}" class="btn btn-primary btn-sm btn-block">List Data PKS</a>
+                        <div class="card-kategori">
+                            <h3>PKS</h3>
+                            <p class="text-kategori mb-2">Layanan Pks</p>
+                            <div class="data-badge mb-3">
+                                <span class="checkmark">✓</span>
+                                100 Data
                             </div>
+                                <a href="{{ route('ponpes.pks.ListDataPks') }}"
+                                    class="list-button">List Data PKS</a>
                         </div>
                     </div>
 
                     <!-- Kategori SPP -->
                     <div class="col-md-3">
-                        <div class="card bg-light">
-                            <div class="card-header font-weight-bold d-flex justify-content-center">SPP</div>
-                            <div class="card-body">
-                                <a href="{{ route('sppPonpes.ListDataSpp')}}"
-                                    class="btn btn-primary btn-sm btn-block">List Data SPP</a>
-                            </div>
+                        <div class="card-kategori">
+                            <h3>SPP</h3>
+                            <p class="text-kategori mb-2">Layanan Vtren</p>
+                            <span class="data-badge mb-3">
+                                100 Data
+                            </span>
+                                <a href="{{ route('sppPonpes.ListDataSpp') }}" class="list-button">List
+                                    Data SPP</a>
                         </div>
                     </div>
 
                     <!-- Kategori VTREN -->
                     <div class="col-md-3">
-                        <div class="card bg-light">
-                            <div class="card-header font-weight-bold d-flex justify-content-center">VTREN</div>
-                            <div class="card-body">
-                                <a href="{{ route('ListDataVtrend') }}" class="btn btn-primary btn-sm btn-block">List Data
-                                    Customer</a>
+                        <div class="card-kategori">
+                            <h3>VTREN</h3>
+                            <p class="text-kategori mb-2">Layanan Vtren</p>
+                            <div class="data-badge mb-3">
+                                <span class="checkmark">✓</span>
+                                100 Data
                             </div>
+                            <a href="{{ route('ListDataVtrend') }}" class="list-button">List Data
+                                Vtren</a>
                         </div>
                     </div>
 
                     <!-- Kategori REGULER -->
                     <div class="col-md-3">
-                        <div class="card bg-light">
-                            <div class="card-header font-weight-bold d-flex justify-content-center">REGULER</div>
-                            <div class="card-body">
-                                <a href="{{ route('ListDataPonpes') }}" class="btn btn-primary btn-sm btn-block">List Data
-                                    Customer</a>
+                        <div class="card-kategori">
+                            <h3>REGULER</h3>
+                            <p class="text-kategori mb-2">Layanan Reguler</p>
+                            <div class="data-badge mb-3">
+                                <span class="checkmark">✓</span>
+                                100 Data
                             </div>
+                            <a href="{{ route('ListDataPonpes') }}" class="list-button">
+                                List Data PKS
+                            </a>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>

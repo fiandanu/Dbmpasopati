@@ -60,12 +60,12 @@ class VpasController extends Controller
                 'provider_internet' => 'nullable|string|max:255',
                 'kecepatan_internet' => 'nullable|string|max:255',
                 'tarif_wartel' => 'nullable|numeric|min:0',
-                'status_wartel' => 'nullable|boolean',
+                'status_wartel' => 'nullable|string',
 
                 // IMC PAS
-                'akses_topup_pulsa' => 'nullable|boolean',
+                'akses_topup_pulsa' => 'nullable|string',
                 'password_topup' => 'nullable|string|max:255',
-                'akses_download_rekaman' => 'nullable|boolean',
+                'akses_download_rekaman' => 'nullable|string',
                 'password_download' => 'nullable|string|max:255',
 
                 // AKSES VPN
@@ -96,9 +96,9 @@ class VpasController extends Controller
                 'status_wartel.boolean' => 'Status wartel harus berupa boolean.',
 
                 // IMC PAS
-                'akses_topup_pulsa.boolean' => 'Akses top up pulsa harus berupa boolean.',
+                'akses_topup_pulsa.string' => 'Akses top up pulsa harus berupa String.',
                 'password_topup.string' => 'Password top up harus berupa teks.',
-                'akses_download_rekaman.boolean' => 'Akses download rekaman harus berupa boolean.',
+                'akses_download_rekaman.string' => 'Akses download rekaman harus berupa string.',
                 'password_download.string' => 'Password download rekaman harus berupa teks.',
 
                 // AKSES VPN
@@ -142,9 +142,9 @@ class VpasController extends Controller
                 'kecepatan_internet' => $request->kecepatan_internet,
                 'tarif_wartel' => $request->tarif_wartel,
                 'status_wartel' => $request->status_wartel ? 1 : 0,
-                'akses_topup_pulsa' => $request->akses_topup_pulsa ? 1 : 0,
+                'akses_topup_pulsa' => $request->akses_topup_pulsa,
                 'password_topup' => $request->password_topup,
-                'akses_download_rekaman' => $request->akses_download_rekaman ? 1 : 0,
+                'akses_download_rekaman' => $request->akses_download_rekaman,
                 'password_download' => $request->password_download,
                 'internet_protocol' => $request->internet_protocol,
                 'vpn_user' => $request->vpn_user,
@@ -371,9 +371,9 @@ class VpasController extends Controller
             ['Kecepatan Internet (mbps)', $dataOpsional->kecepatan_internet ?? ''],
             ['Tarif Wartel VPAS', $dataOpsional->tarif_wartel ?? ''],
             ['Status Wartel', $dataOpsional->status_wartel ? 'Aktif' : 'Tidak Aktif'],
-            ['Akses Topup Pulsa', $dataOpsional->akses_topup_pulsa ? 'Ya' : 'Tidak'],
+            ['Akses Topup Pulsa', $dataOpsional->akses_topup_pulsa ?? ''],
             ['Password Topup', $dataOpsional->password_topup ?? ''],
-            ['Akses Download Rekaman', $dataOpsional->akses_download_rekaman ? 'Ya' : 'Tidak'],
+            ['Akses Download Rekaman', $dataOpsional->akses_download_rekaman ?? ''],
             ['Password Download Rekaman', $dataOpsional->password_download ?? ''],
             ['Internet Protocol', $dataOpsional->internet_protocol ?? ''],
             ['VPN User', $dataOpsional->vpn_user ?? ''],

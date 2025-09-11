@@ -68,9 +68,9 @@
         <tr><td>Status Wartel</td><td>{{ ($user->dataOpsional->status_wartel ?? 0) == 1 ? 'Aktif' : 'Tidak Aktif' }}</td></tr>
 
         <tr><td colspan="2" class="section-header">IMC PAS</td></tr>
-        <tr><td>Akses Topup Pulsa</td><td>{{ ($user->dataOpsional->akses_topup_pulsa ?? 0) == 1 ? 'Iya' : 'Tidak' }}</td></tr>
+        <tr><td>Akses Topup Pulsa</td><td>{{ $user->dataOpsional->akses_topup_pulsa ?? '' }}</td></tr>
         <tr><td>Password Topup</td><td>{{ $user->dataOpsional->password_topup ?? '' }}</td></tr>
-        <tr><td>Akses Download Rekaman</td><td>{{ ($user->dataOpsional->akses_download_rekaman ?? 0) == 1 ? 'Iya' : 'Tidak' }}</td></tr>
+        <tr><td>Akses Download Rekaman</td><td>{{ $user->dataOpsional->akses_download_rekaman ?? '' }}</td></tr>
         <tr><td>Password Download</td><td>{{ $user->dataOpsional->password_download ?? '' }}</td></tr>
 
         <tr><td colspan="2" class="section-header">Akses VPN</td></tr>

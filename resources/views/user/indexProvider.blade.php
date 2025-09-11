@@ -100,25 +100,22 @@
                                             <div class="modal fade" id="deleteProviderModal{{ $d->id }}">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h4 class="modal-title">Hapus Data Provider</h4>
-                                                            <button type="button" class="close" data-dismiss="modal"
-                                                                aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
+                                                        <div class="modal-body text-center align-items-center">
+                                                            <ion-icon name="alert-circle-outline"
+                                                                class="text-9xl text-[var(--yellow-04)]"></ion-icon>
+                                                            <p class="headline-large-32">Anda Yakin?</p>
+                                                            <label>Apakah <b>{{ $d->nama_provider }}</b> ingin
+                                                                dihapus?</label>
                                                         </div>
-                                                        <div class="modal-body">
-                                                            <p>Apakah <b>{{ $d->nama_provider }}</b> ingin dihapus?</p>
-                                                        </div>
-                                                        <div class="modal-footer justify-content-between">
-                                                            <button type="button" class="btn btn-default"
-                                                                data-dismiss="modal">Tutup</button>
+                                                        <div class="modal-footer flex-row-reverse justify-content-between">
+                                                            <button type="button" class="btn-cancel-modal"
+                                                                data-dismiss="modal">Cancel</button>
                                                             <form
                                                                 action="{{ route('provider.ProviderPageDestroy', $d->id) }}"
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
-                                                                <button type="submit" class="btn btn-danger">Hapus</button>
+                                                                <button type="submit" class="btn-delete">Hapus</button>
                                                             </form>
                                                         </div>
                                                     </div>
@@ -163,29 +160,25 @@
                                                 </td>
                                             </tr>
 
-                                            <!-- Delete Modal VPN -->
+                                            <!-- Delete Modal Vpn -->
                                             <div class="modal fade" id="deleteVpnModal{{ $v->id }}">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h4 class="modal-title">Hapus Data VPN</h4>
-                                                            <button type="button" class="close" data-dismiss="modal"
-                                                                aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
+                                                        <div class="modal-body text-center align-items-center">
+                                                            <ion-icon name="alert-circle-outline"
+                                                                class="text-9xl text-[var(--yellow-04)]"></ion-icon>
+                                                            <p class="headline-large-32">Anda Yakin?</p>
+                                                            <label>Apakah <b>{{ $v->jenis_vpn }}</b> ingin dihapus?</label>
                                                         </div>
-                                                        <div class="modal-body">
-                                                            <p>Apakah <b>{{ $v->jenis_vpn }}</b> ingin dihapus?</p>
-                                                        </div>
-                                                        <div class="modal-footer justify-content-between">
-                                                            <button type="button" class="btn btn-default"
+                                                        <div class="modal-footer flex-row-reverse justify-content-between">
+                                                            <button type="button" class="btn-cancel-modal"
                                                                 data-dismiss="modal">Tutup</button>
                                                             <form action="{{ route('vpn.VpnPageDestroy', $v->id) }}"
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="submit"
-                                                                    class="btn btn-danger">Hapus</button>
+                                                                    class="btn-delete">Hapus</button>
                                                             </form>
                                                         </div>
                                                     </div>
@@ -232,7 +225,8 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- Data Type Selection - Changed to Radio Buttons -->                 <div class="mb-3">
+                        <!-- Data Type Selection - Changed to Radio Buttons -->
+                        <div class="mb-3">
                             <label class="form-label">Pilih Jenis Data</label>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" name="data_type" id="provider_type"

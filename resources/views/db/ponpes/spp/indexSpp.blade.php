@@ -123,7 +123,7 @@
                         <div class="card">
                             <!-- /.card-header -->
                             <div class="card-body table-responsive p-0">
-                                <table class="table table-hover text-nowrap">
+                                <table class="table table-hover text-nowrap" id="Table">
                                     <thead>
                                         <tr>
                                             <th>No</th>
@@ -182,7 +182,7 @@
                                                         <button data-toggle="modal"
                                                             data-target="#modal-default{{ $d->id }}"
                                                             title="Hapus Data">
-                                                            <ion-icon name="trash-outline"></ion-icon></button>
+                                                            <ion-icon name="trash-outline"></ion-icon>
                                                         </button>
                                                     </div>
                                                 </td>
@@ -341,6 +341,8 @@
                                                                         id="uploaded_pdf{{ $d->id }}"
                                                                         name="uploaded_pdf" accept=".pdf"
                                                                         style="display: none;">
+                                                                    <spa id="fileNameDisplay{{ $d->id }}"
+                                                                        class="text-muted"></spa>
                                                                     <small class="form-text text-muted">Max Upload
                                                                         10Mb</small>
                                                                 </div>
@@ -368,14 +370,7 @@
                                                             <div class="modal-body text-center align-items-center">
                                                                 <ion-icon name="alert-circle-outline"
                                                                     class="text-9xl text-[var(--yellow-04)]"></ion-icon>
-                                                                <p>Anda yakin ingin menghapus file PDF untuk
-                                                                    <b>{{ $d->nama_ponpes }}</b> di Folder
-                                                                    {{ $i }}?
-                                                                </p>
-                                                                <label class="text-info">
-                                                                    <small><i class="fas fa-info-circle"></i> Data Ponpes
-                                                                        tidak akan dihapus, hanya file PDF saja.</small>
-                                                                </label>
+                                                                <p>Apakah Folder {{ $i }} <b>{{ $d->nama_ponpes }}</b> ingin dihapus?</p>
                                                             </div>
                                                             <div class="modal-footer justify-content-between">
                                                                 <button type="button" class="btn-cancel-modal"
@@ -398,30 +393,21 @@
                                             <div class="modal fade" id="modal-default{{ $d->id }}">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h4 class="modal-title">Hapus Data</h4>
-                                                            <button type="button" class="close" data-dismiss="modal"
-                                                                aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <p>Apakah Anda yakin ingin menghapus data
-                                                                <b>{{ $d->nama_ponpes }}</b>?
-                                                            </p>
-                                                            <p class="text-warning"><small><i
-                                                                        class="fas fa-exclamation-triangle"></i> Semua file
-                                                                    PDF yang terupload juga akan dihapus.</small></p>
+                                                        <div class="modal-body text-center align-items-center">
+                                                            <ion-icon name="alert-circle-outline"
+                                                                    class="text-9xl text-[var(--yellow-04)]"></ion-icon>
+                                                            <p class="headline-large-32">Anda Yakin?</p>
+                                                                <b>{{ $d->nama_ponpes }}</b> ingin dihapus?
                                                         </div>
                                                         <div class="modal-footer justify-content-between">
-                                                            <button type="button" class="btn btn-default"
-                                                                data-dismiss="modal">Batal</button>
+                                                            <button type="button" class="btn-cancel-modal"
+                                                                data-dismiss="modal">cancel</button>
                                                             <form
                                                                 action="{{ route('sppPonpes.DataBasePageDestroy', $d->id) }}"
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
-                                                                <button type="submit" class="btn btn-danger">
+                                                                <button type="submit" class="btn-delete">
                                                                     <i class="fas fa-trash-alt"></i> Hapus
                                                                 </button>
                                                             </form>
@@ -429,6 +415,7 @@
                                                     </div>
                                                 </div>
                                             </div>
+
                                         @empty
                                             <tr>
                                                 <td colspan="6" class="text-center">
@@ -446,12 +433,43 @@
                     </div>
                 </div>
                 <!-- /.row -->
+
+
+                <!-- Pagination Controls - Same as Ponpes -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <!-- Row limit -->
+                    <div class="btn-datakolom">
+                        <button class="btn-select d-flex align-items-center">
+                            <select id="row-limit">
+                                <option value="10">10</option>
+                                <option value="15">15</option>
+                                <option value="20">20</option>
+                                <option value="9999">Semua</option>
+                            </select>
+                            Kolom
+                        </button>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="pagination-controls d-flex align-items-center gap-12">
+                        <button class="btn-page" id="prev-page" disabled>&laquo; Previous</button>
+                        <span id="page-info">Page 1 of 5</span>
+                        <button class="btn-page" id="next-page">Next &raquo;</button>
+                    </div>
+                </div>
+
             </div><!-- /.container-fluid -->
         </section>
         <!-- /.content -->
     </div>
     <!-- /.content-wrapper -->
 
+    {{-- jQuery Library --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    {{-- JavaScript Update --}}
     <script>
         function updateFolder(id, folder) {
             const form = document.getElementById('uploadForm' + id);
@@ -503,4 +521,113 @@
             }, 5000);
         });
     </script>
+
+    {{-- Search and Pagination JavaScript - Same as Ponpes --}}
+    <script>
+        $(document).ready(function() {
+            const $rows = $("#Table tbody tr");
+            let limit = parseInt($("#row-limit").val());
+            let currentPage = 1;
+            let totalPages = Math.ceil($rows.length / limit);
+
+            function updateTable() {
+                $rows.hide();
+
+                let start = (currentPage - 1) * limit;
+                let end = start + limit;
+
+                $rows.slice(start, end).show();
+
+                // update info halaman
+                $("#page-info").text(`Page ${currentPage} of ${totalPages}`);
+
+                // disable prev/next sesuai kondisi
+                $("#prev-page").prop("disabled", currentPage === 1);
+                $("#next-page").prop("disabled", currentPage === totalPages);
+            }
+
+            // apply awal
+            updateTable();
+
+            // kalau ganti jumlah data
+            $("#row-limit").on("change", function() {
+                limit = parseInt($(this).val());
+                currentPage = 1;
+                totalPages = Math.ceil($rows.length / limit);
+                updateTable();
+            });
+
+            // tombol prev
+            $("#prev-page").on("click", function() {
+                if (currentPage > 1) {
+                    currentPage--;
+                    updateTable();
+                }
+            });
+
+            // tombol next
+            $("#next-page").on("click", function() {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    updateTable();
+                }
+            });
+
+            // Filter Data By Search
+            $("#btn-search").on("keyup", function() {
+                let value = $(this).val().toLowerCase();
+                $("#Table tbody tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+
+                // Update pagination after search
+                const $visibleRows = $("#Table tbody tr:visible");
+                totalPages = Math.ceil($visibleRows.length / limit);
+                currentPage = 1;
+
+                if (value === '') {
+                    // If search is cleared, show all rows with pagination
+                    updateTable();
+                } else {
+                    // If searching, hide pagination info
+                    $("#page-info").text(`Showing ${$visibleRows.length} results`);
+                    $("#prev-page").prop("disabled", true);
+                    $("#next-page").prop("disabled", true);
+                }
+            });
+
+            // Handle modal events
+            $('.modal').on('show.bs.modal', function(e) {
+                console.log('Modal is opening');
+            });
+
+            $('.modal').on('shown.bs.modal', function(e) {
+                console.log('Modal is fully visible');
+            });
+
+            $('.modal').on('hide.bs.modal', function(e) {
+                console.log('Modal is closing');
+            });
+        });
+    </script>
+
+    {{-- File Name Display --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Loop melalui semua input file berdasarkan ID dinamis
+            document.querySelectorAll('input[type="file"][id^="uploaded_pdf"]').forEach(function(input) {
+                input.addEventListener('change', function() {
+                    const id = this.id.replace('uploaded_pdf', ''); // Ambil ID dari input
+                    const fileNameDisplay = document.getElementById('fileNameDisplay' +
+                        id); // Ambil elemen span
+                    const fileName = this.files.length > 0 ? this.files[0].name :
+                        'Tidak ada file yang dipilih';
+
+                    // Perbarui teks di span dengan nama file
+                    fileNameDisplay.textContent = fileName;
+                });
+            });
+        });
+    </script>
+
 @endsection

@@ -69,9 +69,9 @@ class RegullerController extends Controller
                 'status_wartel' => 'nullable|boolean',
 
                 // IMC PAS
-                'akses_topup_pulsa' => 'nullable|boolean',
+                'akses_topup_pulsa' => 'nullable|string',
                 'password_topup' => 'nullable|string|max:255',
-                'akses_download_rekaman' => 'nullable|boolean',
+                'akses_download_rekaman' => 'nullable|string',
                 'password_download' => 'nullable|string|max:255',
 
                 // AKSES VPN
@@ -103,9 +103,9 @@ class RegullerController extends Controller
                 'status_wartel.boolean' => 'Status wartel harus berupa boolean.',
 
                 // IMC PAS
-                'akses_topup_pulsa.boolean' => 'Akses top up pulsa harus berupa boolean.',
+                'akses_topup_pulsa.string' => 'Akses top up pulsa harus berupa String.',
                 'password_topup.string' => 'Password top up harus berupa teks.',
-                'akses_download_rekaman.boolean' => 'Akses download rekaman harus berupa boolean.',
+                'akses_download_rekaman.string' => 'Akses download rekaman harus berupa string.',
                 'password_download.string' => 'Password download rekaman harus berupa teks.',
 
                 // AKSES VPN
@@ -149,9 +149,9 @@ class RegullerController extends Controller
                 'kecepatan_internet' => $request->kecepatan_internet,
                 'tarif_wartel' => $request->tarif_wartel,
                 'status_wartel' => $request->status_wartel ? 1 : 0,
-                'akses_topup_pulsa' => $request->akses_topup_pulsa ? 1 : 0,
+                'akses_topup_pulsa' => $request->akses_topup_pulsa,
                 'password_topup' => $request->password_topup,
-                'akses_download_rekaman' => $request->akses_download_rekaman ? 1 : 0,
+                'akses_download_rekaman' => $request->akses_download_rekaman,
                 'password_download' => $request->password_download,
                 'internet_protocol' => $request->internet_protocol,
                 'vpn_user' => $request->vpn_user,
@@ -375,10 +375,10 @@ class RegullerController extends Controller
             ['Provider Internet', $dataOpsional->provider_internet ?? ''],
             ['Kecepatan Internet (mbps)', $dataOpsional->kecepatan_internet ?? ''],
             ['Tarif Wartel Reguler', $dataOpsional->tarif_wartel ?? ''],
-            ['Status Wartel', $dataOpsional->status_wartel ? 'Aktif' : 'Tidak Aktif'],
-            ['Akses Topup Pulsa', $dataOpsional->akses_topup_pulsa ? 'Ya' : 'Tidak'],
+            ['Status Wartel', $dataOpsional->status_wartel ?? ''],
+            ['Akses Topup Pulsa', $dataOpsional->akses_topup_pulsa ?? ''],
             ['Password Topup', $dataOpsional->password_topup ?? ''],
-            ['Akses Download Rekaman', $dataOpsional->akses_download_rekaman ? 'Ya' : 'Tidak'],
+            ['Akses Download Rekaman', $dataOpsional->akses_download_rekaman ?? ''],
             ['Password Download Rekaman', $dataOpsional->password_download ?? ''],
             ['Internet Protocol', $dataOpsional->internet_protocol ?? ''],
             ['VPN User', $dataOpsional->vpn_user ?? ''],
@@ -418,7 +418,7 @@ class RegullerController extends Controller
         $dataupt = Upt::find($id);
 
         if (!$dataupt) {
-            return redirect()->route('DbReguler')->with('error', 'Data tidak ditemukan!');
+            return redirect()->route('ListDataReguller')->with('error', 'Data tidak ditemukan!');
         }
 
         // Ambil nama UPT tanpa suffix (VpasReg) untuk pengecekan
@@ -430,6 +430,6 @@ class RegullerController extends Controller
         // Update nama UPT yang tersisa berdasarkan jumlah data
         $this->updateUptNamesBySuffix($namaUptBase);
 
-        return redirect()->route('DbReguler')->with('success', 'Data berhasil dihapus!');
+        return redirect()->route('ListDataReguller')->with('success', 'Data berhasil dihapus!');
     }
 }
