@@ -428,12 +428,8 @@
     <script src="{{ asset('lte/plugins/moment/moment.min.js') }}"></script>
     <script src="{{ asset('lte/plugins/daterangepicker/daterangepicker.js') }}"></script>
 
-
-
     <!-- Tempusdominus Bootstrap 4 -->
     {{-- <script src="{{ asset('lte/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js') }}"></script> --}}
-
-
 
     <!-- Summernote -->
     <script src="{{ asset('lte/plugins/summernote/summernote-bs4.min.js') }}"></script>
