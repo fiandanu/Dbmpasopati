@@ -150,7 +150,7 @@
                                                 <td>{{ $d->kanwil ?? '-' }}</td>
                                                 <td class="text-center">
                                                     <span class="badge badge-warning">
-                                                        {{ Str::limit($d->jenis_kendala ?? 'Tidak ada kendala', 30) }}
+                                                        {{ Str::limit($d->jenis_kendala ?? 'Belum ditentukan', 30) }}
                                                     </span>
                                                 </td>
                                                 <td class="text-center">
@@ -161,7 +161,7 @@
                                                 </td>
                                                 <td class="text-center">
                                                     @if ($d->durasi_hari)
-                                                        <span class="badge badge-info">{{ $d->durasi_hari }} hari</span>
+                                                        <span class="Tipereguller">{{ $d->durasi_hari }} hari</span>
                                                     @else
                                                         -
                                                     @endif
@@ -214,10 +214,10 @@
                                                             <ion-icon name="alert-circle-outline"
                                                                 class="text-9xl text-[var(--yellow-04)]"></ion-icon>
                                                             <p class="headline-large-32">Anda Yakin?</p>
-                                                            <label>Apakah Data <b> {{ $d->nama_upt }} </b> ingin
+                                                            <label>Apakah Data Keluhan <b> {{ $d->nama_upt }} </b> ingin
                                                                 dihapus?</label>
                                                         </div>
-                                                        <div class="modal-footer justify-content-between">
+                                                        <div class="modal-footer flex-row-reverse justify-content-between">
                                                             <button type="button" class="btn-cancel-modal"
                                                                 data-dismiss="modal">Cancel</button>
                                                             <form action="{{ route('MclientRegullerDestroy', $d->id) }}"
@@ -225,7 +225,7 @@
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="submit"
-                                                                    class="btn-purple">Hapus</button>
+                                                                    class="btn-delete">Hapus</button>
                                                             </form>
                                                         </div>
                                                     </div>

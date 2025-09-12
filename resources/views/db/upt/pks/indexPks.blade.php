@@ -219,7 +219,8 @@
                                                             <ion-icon name="alert-circle-outline"
                                                                 class="text-9xl text-[var(--yellow-04)]"></ion-icon>
                                                             <p class="headline-large-32">Anda Yakin?</p>
-                                                            <p>Apakah Folder <b>{{ $d->namaupt }} </b>ingin dihapus?</p>
+                                                            <label>Folder PKS Dari<b> {{ $d->namaupt }} </b> ingin
+                                                                dihapus?</label>
                                                         </div>
                                                         <div class="modal-footer flex-row-reverse justify-content-between">
                                                             <button type="button" class="btn-cancel-modal"
