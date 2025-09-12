@@ -1,22 +1,22 @@
 @extends('layout.sidebar')
 @section('content')
-
     <div class="content-wrapper">
-        <div class="content-header">
+
+        <section class="content">
             <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1 class="m-0">Komplain Ponpes</h1>
-                    </div>
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">Komplain Ponpes</li>
-                        </ol>
+                <div class="row py-3 align-items-center">
+                    <div class="col d-flex justify-content-between align-items-center">
+                        <!-- Left navbar links -->
+                        <div class="d-flex justify-center align-items-center gap-12">
+                            <button class="btn-pushmenu" data-widget="pushmenu" role="button">
+                                <i class="fas fa-bars"></i>
+                            </button>
+                            <h1 class="headline-large-32 mb-0">Komplain Ponpes</h1>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
         <!-- CARD KATEGORI -->
         <div class="content">
@@ -24,41 +24,54 @@
                 <div class="row">
                     <!-- Kategori VTREN -->
                     <div class="col-md-3">
-                        <div class="card bg-light">
-                            <div class="card-header font-weight-bold d-flex justify-content-center">VTREN</div>
-                            <div class="card-body">
-                                <a href="{{ route('ListDataMclientPonpesVtren') }}" class="btn btn-primary btn-sm btn-block">List Data VTREN</a>
+                        <div class="card-kategori">
+                            <h3>VTREN</h3>
+                            <p class="text-kategori mb-2">Layanan VTREN</p>
+                            <div class="data-badge mb-3">
+                                <span class="checkmark">✓</span>
+                                100 Data
                             </div>
+                            <a href="{{ route('ListDataMclientPonpesVtren') }}" class="list-button">Data VTREN</a>
                         </div>
                     </div>
 
                     <!-- Kategori Reguller -->
                     <div class="col-md-3">
-                        <div class="card bg-light">
-                            <div class="card-header font-weight-bold d-flex justify-content-center">Reguller</div>
-                            <div class="card-body">
-                                <a href="{{ route('ListDataMclientPonpesReguller') }}" class="btn btn-primary btn-sm btn-block">List Data Reguller</a>
+                        <div class="card-kategori">
+                            <h3>Reguller</h3>
+                            <p class="text-kategori mb-2">Layanan Reguller</p>
+                            <div class="data-badge mb-3">
+                                <span class="checkmark">✓</span>
+                                100 Data
                             </div>
+                            <a href="{{ route('ListDataMclientPonpesReguller') }}" class="list-button">Data
+                                Reguller</a>
                         </div>
                     </div>
 
                     <!-- Kategori Kunjungan Ponpes -->
                     <div class="col-md-3">
-                        <div class="card bg-light">
-                            <div class="card-header font-weight-bold d-flex justify-content-center">Kunjungan Ponpes</div>
-                            <div class="card-body">
-                                <a href="" class="btn btn-primary btn-sm btn-block">List Data Kunjungan Ponpes</a>
+                        <div class="card-kategori">
+                            <h3>Kunjungan Ponpes</h3>
+                            <p class="text-kategori mb-2">Layanan Kunjungan Ponpes</p>
+                            <div class="data-badge mb-3">
+                                <span class="checkmark">✓</span>
+                                100 Data
                             </div>
+                            <a href="" class="list-button"> Kunjungan Ponpes</a>
                         </div>
                     </div>
 
                     <!-- Kategori Pengiriman Alat Ponpes -->
                     <div class="col-md-3">
-                        <div class="card bg-light">
-                            <div class="card-header font-weight-bold d-flex justify-content-center">Pengiriman Alat Ponpes</div>
-                            <div class="card-body">
-                                <a href="" class="btn btn-primary btn-sm btn-block">List Data Pengiriman Alat Ponpes</a>
+                        <div class="card-kategori">
+                            <h3>Pengiriman Alat Ponpes</h3>
+                            <p class="text-kategori mb-2">Layanan Pengiriman Alat Ponpes</p>
+                            <div class="data-badge mb-3">
+                                <span class="checkmark">✓</span>
+                                100 Data
                             </div>
+                            <a href="" class="list-button">Pengiriman Alat Ponpes</a>
                         </div>
                     </div>
                 </div>

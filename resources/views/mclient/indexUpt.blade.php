@@ -1,79 +1,91 @@
 @extends('layout.sidebar')
 @section('content')
-
     <div class="content-wrapper">
-        <div class="content-header">
+
+        <section class="content">
             <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1 class="m-0">Komplain UPT</h1>
-                    </div>
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">Komplain UPT</li>
-                        </ol>
+                <div class="row py-3 align-items-center">
+                    <div class="col d-flex justify-content-between align-items-center">
+                        <!-- Left navbar links -->
+                        <div class="d-flex justify-center align-items-center gap-12">
+                            <button class="btn-pushmenu" data-widget="pushmenu" role="button">
+                                <i class="fas fa-bars"></i>
+                            </button>
+                            <h1 class="headline-large-32 mb-0">Komplain UPT</h1>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
         <!-- CARD KATEGORI -->
         <div class="content">
             <div class="container-fluid">
                 <div class="row">
                     <!-- Kategori VPAS -->
-                    <div class="col-md-3">
-                        <div class="card bg-light">
-                            <div class="card-header font-weight-bold d-flex justify-content-center">VPAS</div>
-                            <div class="card-body">
-                                <a href="{{ route('ListDataMclientVpas')}}" class="btn btn-primary btn-sm btn-block">List Data VPAS</a>
+                    <div class="col-md-3 mb-3">
+                        <div class="card-kategori">
+                            <h3>VPAS</h3>
+                            <p class="text-kategori mb-2">Layanan VPAS</p>
+                            <div class="data-badge mb-3">
+                                <span class="checkmark">✓</span>
+                                100 Data
                             </div>
+                            <a href="{{ route('ListDataMclientVpas') }}" class="list-button">List Data VPAS</a>
                         </div>
                     </div>
 
                     <!-- Kategori Reguller -->
-                    <div class="col-md-3">
-                        <div class="card bg-light">
-                            <div class="card-header font-weight-bold d-flex justify-content-center">Reguller</div>
-                            <div class="card-body">
-                                <a href="{{ route('ListDataMclientReguller')}}" class="btn btn-primary btn-sm btn-block">List Data Reguller</a>
+                    <div class="col-md-3 mb-3">
+                        <div class="card-kategori">
+                            <h3>Reguller</h3>
+                            <p class="text-kategori mb-2">Layanan Reguller</p>
+                            <div class="data-badge mb-3">
+                                <span class="checkmark">✓</span>
+                                100 Data
                             </div>
+                            <a href="{{ route('ListDataMclientReguller') }}" class="list-button">List Data Reguller</a>
                         </div>
                     </div>
 
                     <!-- Kategori Kunjungan UPT -->
-                    <div class="col-md-3">
-                        <div class="card bg-light">
-                            <div class="card-header font-weight-bold d-flex justify-content-center">Kunjungan UPT</div>
-                            <div class="card-body">
-                                <a href="" class="btn btn-primary btn-sm btn-block">List Data Kunjungan UPT</a>
+                    <div class="col-md-3 mb-3">
+                        <div class="card-kategori">
+                            <h3>Kunjungan UPT</h3>
+                            <p class="text-kategori mb-2">Layanan Kunjungan UPT</p>
+                            <div class="data-badge mb-3">
+                                <span class="checkmark">✓</span>
+                                100 Data
                             </div>
+                            <a href="" class="list-button">List Data Kunjungan UPT</a>
                         </div>
                     </div>
 
                     <!-- Kategori Pengiriman Alat UPT -->
-                    <div class="col-md-3">
-                        <div class="card bg-light">
-                            <div class="card-header font-weight-bold d-flex justify-content-center">Pengiriman Alat UPT
+                    <div class="col-md-3 mb-3">
+                        <div class="card-kategori">
+                            <h3>Pengiriman Alat UPT</h3>
+                            <p class="text-kategori mb-2">Layanan Pengiriman Alat UPT</p>
+                            <div class="data-badge mb-3">
+                                <span class="checkmark">✓</span>
+                                100 Data
                             </div>
-                            <div class="card-body">
-                                <a href="" class="btn btn-primary btn-sm btn-block">List Data Pengiriman Alat UPT</a>
-                            </div>
+                            <a href="" class="list-button">List Data Pengiriman Alat UPT</a>
                         </div>
                     </div>
 
-                    {{-- Kategori Setting Alat UPT --}}
-                    <div class="col-md-3">
-                        <div class="card bg-light">
-                            <div class="card-header font-weight-bold d-flex justify-content-center">Setting Alat UPT</div>
-                            <div class="card-body">
-                                <a href="" class="btn btn-primary btn-sm btn-block">List Data Setting Alat UPT</a>
+                    <!-- Kategori Setting Alat UPT -->
+                    <div class="col-md-3 mb-3">
+                        <div class="card-kategori">
+                            <h3>Setting Alat UPT</h3>
+                            <p class="text-kategori mb-2">Layanan Setting Alat UPT</p>
+                            <div class="data-badge mb-3">
+                                <span class="checkmark">✓</span>
+                                100 Data
                             </div>
+                            <a href="" class="list-button">List Data Setting Alat UPT</a>
                         </div>
                     </div>
-
-
                 </div>
             </div>
         </div>

@@ -1,21 +1,21 @@
 @extends('layout.sidebar')
 @section('content')
     <div class="content-wrapper">
-        <div class="content-header">
+
+        <section class="content">
             <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1 class="m-0">Tutorial Ponpes</h1>
-                    </div>
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">Tutorial Ponpes</li>
-                        </ol>
+                <div class="row py-3 align-items-center">
+                    <div class="col d-flex justify-content-between align-items-center">
+                        <!-- Left navbar links -->
+                        <div class="d-flex justify-center align-items-center gap-12">
+                            <button class="btn-pushmenu" data-widget="pushmenu" role="button">
+                                <i class="fas fa-bars"></i></button>
+                            <h1 class="headline-large-32 mb-0">Tutorial Ponpes</h1>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
         <!-- CARD KATEGORI -->
         <div class="content">
@@ -23,23 +23,29 @@
                 <div class="row">
                     <!-- Kategori VTREN -->
                     <div class="col-md-3">
-                        <div class="card bg-light">
-                            <div class="card-header font-weight-bold d-flex justify-content-center">VTREN</div>
-                            <div class="card-body">
-                                <a href="{{ route('tutorial_ponpes_vtren') }}" class="btn btn-primary btn-sm btn-block">List
+                        <div class="card-kategori">
+                            <h3>VTREN</h3>
+                            <p class="text-kategori mb-2">Layanan VTREN</p>
+                            <span class="data-badge mb-3">
+                                <span class="checkmark">✓</span>
+                                100 Data
+                            </span>
+                                <a href="{{ route('tutorial_ponpes_vtren') }}" class="list-button">List
                                     Data VTREN</a>
-                            </div>
                         </div>
                     </div>
 
                     <!-- Kategori Reguller -->
                     <div class="col-md-3">
-                        <div class="card bg-light">
-                            <div class="card-header font-weight-bold d-flex justify-content-center">Reguller</div>
-                            <div class="card-body">
+                        <div class="card-kategori">
+                            <h3>REGULER</h3>
+                            <p class="text-kategori mb-2">Layanan Reguler</p>
+                            <span class="data-badge mb-3">
+                                <span class="checkmark">✓</span>
+                                100 Data
+                            </span>
                                 <a href="{{ route('tutorial_ponpes_reguller') }}"
-                                    class="btn btn-primary btn-sm btn-block">List Data Reguller</a>
-                            </div>
+                                    class="list-button">List Data Reguller</a>
                         </div>
                     </div>
                 </div>

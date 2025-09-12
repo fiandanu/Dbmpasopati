@@ -378,10 +378,10 @@
                                                             <div class="modal-body text-center align-items-center">
                                                                 <ion-icon name="alert-circle-outline"
                                                                     class="text-9xl text-[var(--yellow-04)]"></ion-icon>
-                                                                <p class="headline-large-32">Anda Yakin? </p>
-                                                                <p>Apakah Folder {{ $i }}
-                                                                    <b>{{ $d->namaupt }}</b> ingin dihapus?
-                                                                </p>
+                                                                <p class="headline-large-32">Anda Yakin?</p>
+                                                                <label>Apakah Folder <b> {{ $d->namaupt }} </b>
+                                                                    ingin
+                                                                    dihapus?</label>
                                                             </div>
                                                             <div
                                                                 class="modal-footer flex-row-reverse justify-content-between">
@@ -393,7 +393,7 @@
                                                                     @csrf
                                                                     @method('DELETE')
                                                                     <button type="submit" class="btn-delete">
-                                                                        <i class="fas fa-file-pdf"></i> Hapus PDF
+                                                                        Hapus 
                                                                     </button>
                                                                 </form>
                                                             </div>
@@ -487,6 +487,7 @@
         integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+    {{-- Update Folder --}}
     <script>
         function updateFolder(id, folder) {
             const form = document.getElementById('uploadForm' + id);
@@ -615,6 +616,7 @@
         });
     </script>
 
+    {{-- File Name Display --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Loop melalui semua input file berdasarkan ID dinamis

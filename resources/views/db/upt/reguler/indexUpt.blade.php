@@ -292,7 +292,8 @@
                                         <div class="modal-dialog modal-lg">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <label class="modal-title" id="editModalLabel{{ $d->id }}">Edit
+                                                    <label class="modal-title"
+                                                        id="editModalLabel{{ $d->id }}">Edit
                                                         Data</label>
                                                     <button type="button" class="btn-close-custom" data-dismiss="modal"
                                                         aria-label="Close">
@@ -639,6 +640,7 @@
                     </div>
                 </div>
                 <!-- /.row -->
+
 
                 <!-- Pagination Controls - Same as Ponpes -->
                 <div class="d-flex justify-content-between align-items-center mb-3">
