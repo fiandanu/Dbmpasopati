@@ -1,15 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\mclient;
+namespace App\Http\Controllers\mclient\reguler;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use App\Models\mclient\Reguller;
 use App\Models\Upt;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 use App\Models\Kendala;
 use App\Models\Pic;
+
 class RegullerController extends Controller
 {
     private function getJenisKendala()
@@ -68,11 +69,11 @@ class RegullerController extends Controller
         $jenisKendala = Kendala::orderBy('jenis_kendala')->get();
         $picList = Pic::orderBy('nama_pic')->get();
         $uptList = Upt::select('namaupt', 'kanwil')
-                    ->where('tipe', 'reguler')
-                    ->orderBy('namaupt')
-                    ->get();
+            ->where('tipe', 'reguler')
+            ->orderBy('namaupt')
+            ->get();
 
-        return view('mclient.reguller.indexReguller', compact('data', 'jenisKendala','picList' , 'uptList'));
+        return view('mclient.upt.indexReguller', compact('data', 'jenisKendala', 'picList', 'uptList'));
     }
 
     public function MclientRegullerStore(Request $request)
@@ -130,7 +131,7 @@ class RegullerController extends Controller
 
             Reguller::create($data);
 
-            return redirect()->route('ListDataMclientReguller')->with('success', 'Data monitoring client Reguller berhasil ditambahkan!');
+            return redirect()->back()->with('success', 'Data monitoring client Reguller berhasil ditambahkan!');
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
@@ -218,7 +219,7 @@ class RegullerController extends Controller
 
             $data->update($updateData);
 
-            return redirect()->route('ListDataMclientReguller')->with('success', 'Data monitoring client Reguller berhasil diupdate!');
+            return redirect()->back()->with('success', 'Data monitoring client Reguller berhasil diupdate!');
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
@@ -233,10 +234,10 @@ class RegullerController extends Controller
             $namaUpt = $data->nama_upt;
             $data->delete();
 
-            return redirect()->route('ListDataMclientReguller')
+            return redirect()->back()
                 ->with('success', "Data monitoring client Reguller di UPT '{$namaUpt}' berhasil dihapus!");
         } catch (\Exception $e) {
-            return redirect()->route('ListDataMclientReguller')
+            return redirect()->back()
                 ->with('error', 'Gagal menghapus data: ' . $e->getMessage());
         }
     }
@@ -330,14 +331,14 @@ class RegullerController extends Controller
     {
         $namaUpt = $request->input('nama_upt');
         $upt = Upt::where('namaupt', $namaUpt)->first();
-        
+
         if ($upt) {
             return response()->json([
                 'status' => 'success',
                 'kanwil' => $upt->kanwil
             ]);
         }
-        
+
         return response()->json([
             'status' => 'error',
             'message' => 'UPT not found'

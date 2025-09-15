@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\mclient\RegullerController;
+use App\Http\Controllers\mclient\reguler\RegullerController;
 
 Route::prefix('mclient-reguller')->group(function () {
     Route::get('/', [RegullerController::class, 'ListDataMclientReguller'])->name('ListDataMclientReguller');

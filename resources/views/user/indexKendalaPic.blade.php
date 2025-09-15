@@ -95,24 +95,21 @@
                                             <div class="modal fade" id="deleteKendalaModal{{ $k->id }}">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h4 class="modal-title">Hapus Data Kendala</h4>
-                                                            <button type="button" class="close" data-dismiss="modal"
-                                                                aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
+                                                        <div class="modal-body text-center align-items-center">
+                                                            <ion-icon name="alert-circle-outline"
+                                                                class="text-9xl text-[var(--yellow-04)]"></ion-icon>
+                                                            <p class="headline-large-32">Anda Yakin?</p>
+                                                            <label>Apakah <b> {{ $k->jenis_kendala }} </b> ingin
+                                                                dihapus?</label>
                                                         </div>
-                                                        <div class="modal-body">
-                                                            <p>Apakah <b>{{ $k->jenis_kendala }}</b> ingin dihapus?</p>
-                                                        </div>
-                                                        <div class="modal-footer justify-content-between">
-                                                            <button type="button" class="btn btn-default"
+                                                        <div class="modal-footer flex-row-reverse justify-content-between">
+                                                            <button type="button" class="btn-cancel-modal"
                                                                 data-dismiss="modal">Tutup</button>
                                                             <form action="{{ route('kendala.KendalaPageDestroy', $k->id) }}"
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
-                                                                <button type="submit" class="btn btn-danger">Hapus</button>
+                                                                <button type="submit" class="btn-delete">Hapus</button>
                                                             </form>
                                                         </div>
                                                     </div>
@@ -159,25 +156,22 @@
                                             <div class="modal fade" id="deletePicModal{{ $p->id }}">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h4 class="modal-title">Hapus Data PIC</h4>
-                                                            <button type="button" class="close" data-dismiss="modal"
-                                                                aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
+                                                        <div class="modal-body text-center align-items-center">
+                                                            <ion-icon name="alert-circle-outline"
+                                                                class="text-9xl text-[var(--yellow-04)]"></ion-icon>
+                                                            <p class="headline-large-32">Anda Yakin?</p>
+                                                            <label>Apakah <b> {{ $p->nama_pic }} </b> ingin
+                                                                dihapus?</label>
                                                         </div>
-                                                        <div class="modal-body">
-                                                            <p>Apakah <b>{{ $p->nama_pic }}</b> ingin dihapus?</p>
-                                                        </div>
-                                                        <div class="modal-footer justify-content-between">
-                                                            <button type="button" class="btn btn-default"
+                                                        <div class="modal-footer flex-row-reverse justify-content-between">
+                                                            <button type="button" class="btn-cancel-modal"
                                                                 data-dismiss="modal">Tutup</button>
                                                             <form action="{{ route('pic.PicPageDestroy', $p->id) }}"
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="submit"
-                                                                    class="btn btn-danger">Hapus</button>
+                                                                    class="btn-delete">Hapus</button>
                                                             </form>
                                                         </div>
                                                     </div>
@@ -323,6 +317,9 @@
         @endforeach
     </div>
 
+
+
+    {{-- JS --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Get radio buttons

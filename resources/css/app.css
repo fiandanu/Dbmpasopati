@@ -1007,4 +1007,10 @@ body {
     display: none;
 }
 
+.alert-danger {
+    background-color: var(--danger-01);
+    color: var(--danger-07);
+}
+
+
 

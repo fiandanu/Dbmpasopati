@@ -95,12 +95,14 @@
                                             <div class="modal fade" id="modal-default{{ $d->id }}">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
+
                                                         <div class="modal-body text-center align-items-center">
                                                             <ion-icon name="alert-circle-outline"
                                                                 class="text-9xl text-[var(--yellow-04)]"></ion-icon>
-                                                            <p class="headline-large-32">Anda Yakin?</p> <br>
-                                                            <b>{{ $d->nama_ponpes }}</b> ingin dihapus?
-                                                            
+                                                            <p class="headline-large-32">Anda Yakin?</p>
+                                                            <label>Apakah Folder <b> {{ $d->nama_ponpes }} </b> ingin
+                                                                dihapus?</label>
+
                                                             @if (str_contains($d->nama_ponpes, '(VtrenReg)'))
                                                                 <div class="alert alert-warning">
                                                                     <i class="fas fa-exclamation-triangle"></i>
@@ -113,13 +115,12 @@
                                                         </div>
                                                         <div class="modal-footer flex-row-reverse justify-content-between">
                                                             <button type="button" class="btn-cancel-modal"
-                                                                data-dismiss="modal">Tutup</button>
+                                                                data-dismiss="modal">Cancel</button>
                                                             <form action="{{ route('ponpes.PonpesPageDestroy', $d->id) }}"
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
-                                                                <button type="submit"
-                                                                    class="btn-delete">Hapus</button>
+                                                                <button type="submit" class="btn-delete">Hapus</button>
                                                             </form>
                                                         </div>
                                                         <!-- /.modal-content -->
@@ -127,7 +128,6 @@
                                                     <!-- /.modal-dialog -->
                                                 </div>
                                             </div>
-
                                         @endforeach
                                     </tbody>
                                 </table>

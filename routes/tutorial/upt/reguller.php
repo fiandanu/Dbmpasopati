@@ -19,26 +19,7 @@ Route::prefix('tutor_upt')->name('tutor_upt.')->group(function () {
     Route::delete('/delete-pdf/{id}/{folder}', [RegullerController::class, 'deleteFilePDF'])->name('deleteFilePDF');
 });
 
-
-
-
-
-
 // // Monitoring Tutorial
 Route::get('/TutorialPonpes', [TutorialController::class, 'TutorialPonpes'])->name('TutorialPonpes');
 // Route::get('/TutorialServer', [TutorialController::class, 'TutorialServer'])->name('TutorialServer');
 Route::get('/TutorialMicrotik', [TutorialController::class, 'TutorialMicrotik'])->name('TutorialMicrotik');
-
-
-// Route::prefix('spp')->name('spp.')->group(function () {
-//     Route::get('/ListTutorUpt', [RegullerController::class, 'ListTutorUpt'])->name('ListTutorUpt');
-//     Route::delete('/DataBasePageDestroy/{id}', [RegullerController::class, 'DatabasePageDestroy'])->name('DataBasePageDestroy');
-
-//     // Move PDF routes inside the group for consistency
-//     Route::post('/upload-pdf/{id}/{folder}', [RegullerController::class, 'uploadFilePDF'])->name('uploadFilePDF');
-//     Route::get('/view-pdf/{id}/{folder}', [RegullerController::class, 'viewUploadedPDF'])->name('viewpdf');
-//     Route::delete('/delete-pdf/{id}/{folder}', [RegullerController::class, 'deleteFilePDF'])->name('deleteFilePDF');
-// });
-
-// // Tutorial Routes
-// Route::post('/tutorial/store', [RegullerController::class, 'store'])->name('tutorial.store');

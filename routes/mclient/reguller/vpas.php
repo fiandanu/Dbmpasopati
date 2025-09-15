@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\mclient\VpasController;
+use App\Http\Controllers\mclient\reguler\VpasController;
 
 Route::prefix('mclient-vpas')->group(function () {
     

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\mclient;
+namespace App\Http\Controllers\mclient\reguler;
 
 use App\Http\Controllers\Controller;
 use App\Models\mclient\Vpas;
@@ -75,7 +75,7 @@ class VpasController extends Controller
             ->orderBy('namaupt')
             ->get();
 
-        return view('mclient.vpas.indexVpas', compact('data', 'jenisKendala', 'picList', 'uptList'));
+        return view('mclient.upt.indexVpas', compact('data', 'jenisKendala', 'picList', 'uptList'));
     }
 
     public function MclientVpasStore(Request $request)
@@ -133,7 +133,7 @@ class VpasController extends Controller
 
             Vpas::create($data);
 
-            return redirect()->route('ListDataMclientVpas')->with('success', 'Data monitoring client VPAS berhasil ditambahkan!');
+            return redirect()->back()->with('success', 'Data monitoring client VPAS berhasil ditambahkan!');
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
@@ -221,7 +221,7 @@ class VpasController extends Controller
 
             $data->update($updateData);
 
-            return redirect()->route('ListDataMclientVpas')->with('success', 'Data monitoring client VPAS berhasil diupdate!');
+            return redirect()->back()->with('success', 'Data monitoring client VPAS berhasil diupdate!');
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
@@ -236,10 +236,10 @@ class VpasController extends Controller
             $namaUpt = $data->nama_upt;
             $data->delete();
 
-            return redirect()->route('ListDataMclientVpas')
+            return redirect()->back()
                 ->with('success', "Data monitoring client VPAS di UPT '{$namaUpt}' berhasil dihapus!");
         } catch (\Exception $e) {
-            return redirect()->route('ListDataMclientVpas')
+            return redirect()->back()
                 ->with('error', 'Gagal menghapus data: ' . $e->getMessage());
         }
     }
