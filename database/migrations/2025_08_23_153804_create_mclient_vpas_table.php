@@ -6,15 +6,12 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('mclient_vpas', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_upt')->nullable(); // Changed from 'lokasi' to 'nama_upt'
-            $table->string('kanwil')->nullable(); // Added kanwil column
+            $table->string('nama_upt')->nullable();
+            $table->string('kanwil')->nullable();
             $table->string('jenis_kendala')->nullable();
             $table->string('detail_kendala')->nullable();
             $table->string('tanggal_terlapor')->nullable();
@@ -27,9 +24,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('mclient_vpas');

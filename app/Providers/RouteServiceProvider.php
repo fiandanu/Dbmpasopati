@@ -51,6 +51,7 @@ class RouteServiceProvider extends ServiceProvider
                 require base_path('routes/mclient/reguller/reguller.php');
                 require base_path('routes/mclient/ponpes/vtren.php');
                 require base_path('routes/mclient/ponpes/reguller.php');
+                require base_path('routes/mclient/catatankartu/catatan.php');
 
                 // Route untuk Provider dan Vpn
                 require base_path('routes/provider/provider.php');

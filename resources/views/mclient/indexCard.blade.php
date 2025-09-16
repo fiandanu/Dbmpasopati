@@ -59,11 +59,6 @@
                                         <label class="form-check-label" for="exampleCheck1">Check me out</label>
                                     </div>
                                 </div>
-                                <!-- /.card-body -->
-
-                                <div class="card-footer">
-                                    <button type="submit" class="btn btn-primary">Submit</button>
-                                </div>
                             </form>
                         </div>
                         <!-- /.card -->
