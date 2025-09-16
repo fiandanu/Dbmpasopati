@@ -16,36 +16,246 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class RegullerController extends Controller
 {
+    private $optionalFields = [
+        'pic_upt',
+        'no_telpon',
+        'alamat',
+        'jumlah_wbp',
+        'jumlah_line',
+        'provider_internet',
+        'kecepatan_internet',
+        'tarif_wartel',
+        'status_wartel',
+        'akses_topup_pulsa',
+        'password_topup',
+        'akses_download_rekaman',
+        'password_download',
+        'internet_protocol',
+        'vpn_user',
+        'vpn_password',
+        'jenis_vpn',
+        'jumlah_extension',
+        'no_extension',
+        'extension_password',
+        'pin_tes'
+    ];
 
-    public function ListDataReguller(Request $request)
+    private function calculateStatus($dataOpsional)
     {
-        $query = Upt::with('dataOpsional'); // Add eager loading for related data
+        if (!$dataOpsional) {
+            return 'Belum di Update';
+        }
+        $filledFields = 0;
+        foreach ($this->optionalFields as $field) {
+            if (!empty($dataOpsional->$field)) {
+                $filledFields++;
+            }
+        }
+        $totalFields = count($this->optionalFields);
+        $percentage = $totalFields > 0 ? round(($filledFields / $totalFields) * 100) : 0;
 
-        $query->where('tipe', 'reguler');
-
-        // Cek apakah ada parameter pencarian
+        if ($filledFields == 0) {
+            return 'Belum di Update';
+        } elseif ($filledFields == $totalFields) {
+            return 'Sudah Update';
+        } else {
+            return "Sebagian ({$percentage}%)";
+        }
+    }
+    private function applyFilters($query, Request $request)
+    {
+        // Global search
         if ($request->has('table_search') && !empty($request->table_search)) {
             $searchTerm = $request->table_search;
-
-            // Lakukan pencarian berdasarkan beberapa kolom
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('namaupt', 'LIKE', '%' . $searchTerm . '%')
                     ->orWhere('kanwil', 'LIKE', '%' . $searchTerm . '%')
                     ->orWhere('tanggal', 'LIKE', '%' . $searchTerm . '%')
                     ->orWhereHas('dataOpsional', function ($subQuery) use ($searchTerm) {
                         $subQuery->where('pic_upt', 'LIKE', '%' . $searchTerm . '%')
-                                ->orWhere('alamat', 'LIKE', '%' . $searchTerm . '%')
-                                ->orWhere('provider_internet', 'LIKE', '%' . $searchTerm . '%');
+                            ->orWhere('alamat', 'LIKE', '%' . $searchTerm . '%')
+                            ->orWhere('provider_internet', 'LIKE', '%' . $searchTerm . '%');
                     });
             });
         }
 
+        // Column-specific searches
+        if ($request->has('search_namaupt') && !empty($request->search_namaupt)) {
+            $query->where('namaupt', 'LIKE', '%' . $request->search_namaupt . '%');
+        }
+        if ($request->has('search_kanwil') && !empty($request->search_kanwil)) {
+            $query->where('kanwil', 'LIKE', '%' . $request->search_kanwil . '%');
+        }
+        if ($request->has('search_tipe') && !empty($request->search_tipe)) {
+            $query->where('tipe', 'LIKE', '%' . $request->search_tipe . '%');
+        }
+        if ($request->has('search_tanggal') && !empty($request->search_tanggal)) {
+            $query->whereDate('tanggal', 'LIKE', '%' . $request->search_tanggal . '%');
+        }
+
+        return $query;
+    }
+
+
+
+    public function ListDataReguller(Request $request)
+    {
+        $query = Upt::with('dataOpsional')->where('tipe', 'reguler');
+        $query = $this->applyFilters($query, $request);
+
+        // For status filter, apply after fetching (PHP filter)
         $data = $query->get();
+        if ($request->has('search_status') && !empty($request->search_status)) {
+            $statusSearch = strtolower($request->search_status);
+            $data = $data->filter(function ($d) use ($statusSearch) {
+                $status = strtolower($this->calculateStatus($d->dataOpsional));
+                return strpos($status, $statusSearch) !== false;
+            });
+        }
+
         $providers = Provider::all();
         $vpns = Vpn::all();
 
         return view('db.upt.reguler.indexUpt', compact('data', 'providers', 'vpns'));
     }
+
+    // ... (ListUpdateReguller method unchanged)
+
+    public function exportListCsv(Request $request): StreamedResponse
+    {
+        $query = Upt::with('dataOpsional')->where('tipe', 'reguler');
+        $query = $this->applyFilters($query, $request);
+        $data = $query->get();
+
+        // Apply status filter
+        if ($request->has('search_status') && !empty($request->search_status)) {
+            $statusSearch = strtolower($request->search_status);
+            $data = $data->filter(function ($d) use ($statusSearch) {
+                $status = strtolower($this->calculateStatus($d->dataOpsional));
+                return strpos($status, $statusSearch) !== false;
+            });
+        }
+
+        $filename = 'list_upt_reguler_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
+
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+
+        $rows = [['No', 'Nama UPT', 'Kanwil', 'Tipe', 'Tanggal Dibuat', 'Status Update']];
+        $no = 1;
+        foreach ($data as $d) {
+            $status = $this->calculateStatus($d->dataOpsional);
+            $rows[] = [
+                $no++,
+                $d->namaupt,
+                $d->kanwil,
+                ucfirst($d->tipe),
+                \Carbon\Carbon::parse($d->tanggal)->format('d M Y'),
+                $status
+            ];
+        }
+
+        $callback = function () use ($rows) {
+            $file = fopen('php://output', 'w');
+            foreach ($rows as $row) {
+                fputcsv($file, $row);
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    public function exportListPdf(Request $request)
+    {
+        $query = Upt::with('dataOpsional')->where('tipe', 'reguler');
+        $query = $this->applyFilters($query, $request);
+        $data = $query->get();
+
+        // Apply status filter
+        if ($request->has('search_status') && !empty($request->search_status)) {
+            $statusSearch = strtolower($request->search_status);
+            $data = $data->filter(function ($d) use ($statusSearch) {
+                $status = strtolower($this->calculateStatus($d->dataOpsional));
+                return strpos($status, $statusSearch) !== false;
+            });
+        }
+
+        $dataArray = $data->toArray(); // Pass as array for view
+
+        $pdfData = [
+            'title' => 'List Data UPT Reguler',
+            'data' => $dataArray,
+            'optionalFields' => $this->optionalFields // For status calculation in view
+        ];
+
+        $pdf = Pdf::loadView('export.db.upt.uptReguller', $pdfData);
+        $filename = 'list_upt_reguler_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
+        return $pdf->download($filename);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // public function ListDataReguller(Request $request)
+    // {
+    //     $query = Upt::with('dataOpsional'); // Add eager loading for related data
+
+    //     $query->where('tipe', 'reguler');
+
+    //     // Cek apakah ada parameter pencarian
+    //     if ($request->has('table_search') && !empty($request->table_search)) {
+    //         $searchTerm = $request->table_search;
+
+    //         // Lakukan pencarian berdasarkan beberapa kolom
+    //         $query->where(function ($q) use ($searchTerm) {
+    //             $q->where('namaupt', 'LIKE', '%' . $searchTerm . '%')
+    //                 ->orWhere('kanwil', 'LIKE', '%' . $searchTerm . '%')
+    //                 ->orWhere('tanggal', 'LIKE', '%' . $searchTerm . '%')
+    //                 ->orWhereHas('dataOpsional', function ($subQuery) use ($searchTerm) {
+    //                     $subQuery->where('pic_upt', 'LIKE', '%' . $searchTerm . '%')
+    //                         ->orWhere('alamat', 'LIKE', '%' . $searchTerm . '%')
+    //                         ->orWhere('provider_internet', 'LIKE', '%' . $searchTerm . '%');
+    //                 });
+    //         });
+    //     }
+
+    //     $data = $query->get();
+    //     $providers = Provider::all();
+    //     $vpns = Vpn::all();
+
+    //     return view('db.upt.reguler.indexUpt', compact('data', 'providers', 'vpns'));
+    // }
+
+
+
+
+
+
+
+
+
 
     public function ListUpdateReguller(Request $request, $id)
     {
@@ -133,11 +343,11 @@ class RegullerController extends Controller
 
         // Mulai database transaction
         DB::beginTransaction();
-        
+
         try {
             // Find UPT data
             $upt = Upt::findOrFail($id);
-            
+
             // Prepare data for data_opsional_upt table
             $opsionalData = [
                 'pic_upt' => $request->pic_upt,
@@ -171,7 +381,6 @@ class RegullerController extends Controller
 
             DB::commit();
             return redirect()->back()->with('success', 'Data berhasil diupdate!');
-
         } catch (\Exception $e) {
             DB::rollback();
             return redirect()->back()->with('error', 'Gagal update data: ' . $e->getMessage());

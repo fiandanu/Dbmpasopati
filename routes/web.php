@@ -1,10 +1,12 @@
 <?php
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\login\LoginController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\DataBaseController;
 use App\Http\Controllers\MonitoringServerController;
 use App\Http\Controllers\user\PageUser;
+use App\Http\Controllers\user\upt\reguler\RegullerController;
 
 Route::get('/', [LoginController::class, 'login'])->name('login');
 Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
@@ -32,4 +34,5 @@ Route::get('/KomplainPonpes', [HomeController::class, 'KomplainPonpes'])->name('
 Route::get('/PencatatanKartu', [HomeController::class, 'PencatatanKartu'])->name('PencatatanKartu');
 
 
-
+// Route::get('/export-list-csv', [RegullerController::class, 'exportListCsv'])->name('export.list.csv');
+// Route::get('/export-list-pdf', [RegullerController::class, 'exportListPdf'])->name('export.list.pdf');

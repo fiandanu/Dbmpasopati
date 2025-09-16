@@ -1,8 +1,8 @@
 <?php
+
 use App\Http\Controllers\user\upt\reguler\RegullerController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\user\PageUser;
-
 
 // REGULLER
 
@@ -16,6 +16,9 @@ Route::put('/ListUpdateReguller/{id}', [RegullerController::class, 'ListUpdateRe
 Route::get('/export-upt-csv/{id}', [RegullerController::class, 'exportVerticalCsv'])->name('export.upt.csv');
 Route::get('/export-upt-pdf/{id}', [RegullerController::class, 'exportUptPdf'])->name('export.upt.pdf');
 
+// New list export routes
+Route::get('/export-list-csv', [RegullerController::class, 'exportListCsv'])->name('export.list.csv');
+Route::get('/export-list-pdf', [RegullerController::class, 'exportListPdf'])->name('export.list.pdf');
 
 Route::prefix('upt')->name('upt.')->group(function () {
     Route::get('/UserPage', [PageUser::class, 'UserPage'])->name('UserPage');
