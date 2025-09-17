@@ -532,199 +532,248 @@
 
     <!-- Updated Search and Pagination JavaScript -->
     <script>
-        
-        $(document).ready(function() {
-            const $rows = $("#Table tbody tr");
-            let limit = parseInt($("#row-limit").val());
-            let currentPage = 1;
-            let totalPages = Math.ceil($rows.length / limit);
+$(document).ready(function() {
+    const $rows = $("#Table tbody tr");
+    let limit = parseInt($("#row-limit").val());
+    let currentPage = 1;
+    let totalPages = Math.ceil($rows.length / limit);
 
-            function updateTable() {
-                $rows.hide();
-                let start = (currentPage - 1) * limit;
-                let end = start + limit;
-                $rows.slice(start, end).show();
-                $("#page-info").text(`Page ${currentPage} of ${totalPages}`);
-                $("#prev-page").prop("disabled", currentPage === 1);
-                $("#next-page").prop("disabled", currentPage === totalPages);
-            }
+    function updateTable() {
+        $rows.hide();
+        let start = (currentPage - 1) * limit;
+        let end = start + limit;
+        $rows.slice(start, end).show();
+        $("#page-info").text(`Page ${currentPage} of ${totalPages}`);
+        $("#prev-page").prop("disabled", currentPage === 1);
+        $("#next-page").prop("disabled", currentPage === totalPages);
+    }
 
+    updateTable();
+
+    $("#row-limit").on("change", function() {
+        limit = parseInt($(this).val());
+        currentPage = 1;
+        totalPages = Math.ceil($rows.length / limit);
+        updateTable();
+    });
+
+    $("#prev-page").on("click", function() {
+        if (currentPage > 1) {
+            currentPage--;
             updateTable();
+        }
+    });
 
-            $("#row-limit").on("change", function() {
-                limit = parseInt($(this).val());
-                currentPage = 1;
-                totalPages = Math.ceil($rows.length / limit);
-                updateTable();
-            });
+    $("#next-page").on("click", function() {
+        if (currentPage < totalPages) {
+            currentPage++;
+            updateTable();
+        }
+    });
 
-            $("#prev-page").on("click", function() {
-                if (currentPage > 1) {
-                    currentPage--;
-                    updateTable();
-                }
-            });
+    // FIXED: Function to get current filter values
+    function getFilters() {
+        return {
+            table_search: $('#btn-search').val().trim(),
+            search_namaupt: $('#search-namaupt').val().trim(),
+            search_kanwil: $('#search-kanwil').val().trim(),
+            search_tipe: $('#search-tipe').val().trim(),
+            search_tanggal: $('#search-tanggal').val().trim(),
+            search_status: $('#search-status').val().trim()
+        };
+    }
 
-            $("#next-page").on("click", function() {
-                if (currentPage < totalPages) {
-                    currentPage++;
-                    updateTable();
-                }
-            });
+    // FIXED: Function to download CSV with all filters
+    window.downloadCsv = function() {
+        let filters = getFilters();
+        let form = document.createElement('form');
+        form.method = 'GET';
+        form.action = '{{ route("export.list.csv") }}';
+        form.target = '_blank';
 
-            // Function to get current filter values
-            function getFilters() {
-                return {
-                    table_search: $('#btn-search').val(),
-                    search_namaupt: $('#search-namaupt').val(),
-                    search_kanwil: $('#search-kanwil').val(),
-                    search_tipe: $('#search-tipe').val(),
-                    search_tanggal: $('#search-tanggal').val(),
-                    search_status: $('#search-status').val()
-                };
+        Object.keys(filters).forEach(key => {
+            if (filters[key]) {
+                let input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = filters[key];
+                form.appendChild(input);
             }
-
-            // Function to download CSV
-            window.downloadCsv = function() {
-                let filters = getFilters();
-                let form = document.createElement('form');
-                form.method = 'GET'; // Use GET to match the route
-                form.action = '/export-list-csv';
-
-                Object.keys(filters).forEach(key => {
-                    if (filters[key]) {
-                        let input = document.createElement('input');
-                        input.type = 'hidden';
-                        input.name = key;
-                        input.value = filters[key];
-                        form.appendChild(input);
-                    }
-                });
-
-                document.body.appendChild(form);
-                form.submit();
-                document.body.removeChild(form);
-            };
-
-            // Function to download PDF
-            window.downloadPdf = function() {
-                let filters = getFilters();
-                let form = document.createElement('form');
-                form.method = 'GET';
-                form.action = '/export-list-pdf';
-
-                Object.keys(filters).forEach(key => {
-                    if (filters[key]) {
-                        let input = document.createElement('input');
-                        input.type = 'hidden';
-                        input.name = key;
-                        input.value = filters[key];
-                        form.appendChild(input);
-                    }
-                });
-
-                document.body.appendChild(form);
-                form.submit();
-                document.body.removeChild(form);
-            };
-
-            // Show/hide export buttons based on visible rows
-            function toggleExportButtons() {
-                const visibleRows = $("#Table tbody tr:visible").length;
-                if (visibleRows > 0) {
-                    $("#export-buttons").show();
-                } else {
-                    $("#export-buttons").hide();
-                }
-            }
-
-            // General Search
-            $("#btn-search").on("keyup", function() {
-                let value = $(this).val().toLowerCase();
-                $("#Table tbody tr").filter(function() {
-                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
-                });
-                const $visibleRows = $("#Table tbody tr:visible");
-                totalPages = Math.ceil($visibleRows.length / limit);
-                currentPage = 1;
-                if (value === '') {
-                    updateTable();
-                } else {
-                    $("#page-info").text(`Showing ${$visibleRows.length} results`);
-                    $("#prev-page").prop("disabled", true);
-                    $("#next-page").prop("disabled", true);
-                }
-                toggleExportButtons();
-            });
-
-            // Column-specific Search
-            $(".column-search").on("keyup", function() {
-                let $inputs = $(".column-search");
-                let filters = {
-                    namaupt: $("#search-namaupt").val().toLowerCase(),
-                    kanwil: $("#search-kanwil").val().toLowerCase(),
-                    tipe: $("#search-tipe").val().toLowerCase(),
-                    tanggal: $("#search-tanggal").val().toLowerCase(),
-                    status: $("#search-status").val().toLowerCase()
-                };
-
-                $("#Table tbody tr").filter(function() {
-                    let $cells = $(this).find("td");
-                    let matches = true;
-
-                    if (filters.namaupt) {
-                        matches = matches && $cells.eq(1).text().toLowerCase().indexOf(filters
-                            .namaupt) > -1;
-                    }
-                    if (filters.kanwil) {
-                        matches = matches && $cells.eq(2).text().toLowerCase().indexOf(filters
-                            .kanwil) > -1;
-                    }
-                    if (filters.tipe) {
-                        matches = matches && $cells.eq(3).text().toLowerCase().indexOf(filters
-                            .tipe) > -1;
-                    }
-                    if (filters.tanggal) {
-                        matches = matches && $cells.eq(4).text().toLowerCase().indexOf(filters
-                            .tanggal) > -1;
-                    }
-                    if (filters.status) {
-                        matches = matches && $cells.eq(5).text().toLowerCase().indexOf(filters
-                            .status) > -1;
-                    }
-
-                    $(this).toggle(matches);
-                });
-
-                const $visibleRows = $("#Table tbody tr:visible");
-                totalPages = Math.ceil($visibleRows.length / limit);
-                currentPage = 1;
-                if ($inputs.filter(function() {
-                        return $(this).val();
-                    }).length > 0) {
-                    $("#page-info").text(`Showing ${$visibleRows.length} results`);
-                    $("#prev-page").prop("disabled", true);
-                    $("#next-page").prop("disabled", true);
-                } else {
-                    updateTable();
-                }
-                toggleExportButtons();
-            });
-
-            // Initial toggle
-            toggleExportButtons();
-
-            // Handle modal events
-            $('.modal').on('show.bs.modal', function(e) {
-                console.log('Modal is opening');
-            });
-            $('.modal').on('shown.bs.modal', function(e) {
-                console.log('Modal is fully visible');
-            });
-            $('.modal').on('hide.bs.modal', function(e) {
-                console.log('Modal is closing');
-            });
         });
-    </script>
+
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
+    };
+
+    // FIXED: Function to download PDF with all filters
+    window.downloadPdf = function() {
+        let filters = getFilters();
+        let form = document.createElement('form');
+        form.method = 'GET';
+        form.action = '{{ route("export.list.pdf") }}';
+        form.target = '_blank';
+
+        Object.keys(filters).forEach(key => {
+            if (filters[key]) {
+                let input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = filters[key];
+                form.appendChild(input);
+            }
+        });
+
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
+    };
+
+    // Show/hide export buttons based on visible rows
+    function toggleExportButtons() {
+        const visibleRows = $("#Table tbody tr:visible").length;
+        const noDataRow = $("#Table tbody tr:visible").find('td[colspan="7"]').length;
+        
+        // Show export buttons only if there are data rows (not just "no data" message)
+        if (visibleRows > 0 && noDataRow === 0) {
+            $("#export-buttons").show();
+        } else {
+            $("#export-buttons").hide();
+        }
+    }
+
+    // FIXED: General Search with proper URL parameter handling
+    $("#btn-search").on("keyup", function() {
+        let value = $(this).val().toLowerCase().trim();
+        
+        $("#Table tbody tr").filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+        });
+        
+        const $visibleRows = $("#Table tbody tr:visible");
+        const noDataVisible = $visibleRows.find('td[colspan="7"]').length > 0;
+        
+        totalPages = Math.ceil($visibleRows.length / limit);
+        currentPage = 1;
+        
+        if (value === '') {
+            updateTable();
+        } else {
+            let resultCount = noDataVisible ? 0 : $visibleRows.length;
+            $("#page-info").text(`Showing ${resultCount} results`);
+            $("#prev-page").prop("disabled", true);
+            $("#next-page").prop("disabled", true);
+        }
+        toggleExportButtons();
+    });
+
+    // FIXED: Column-specific Search with better filtering
+    $(".column-search").on("keyup", function() {
+        let filters = {
+            namaupt: $("#search-namaupt").val().toLowerCase().trim(),
+            kanwil: $("#search-kanwil").val().toLowerCase().trim(),
+            tipe: $("#search-tipe").val().toLowerCase().trim(),
+            tanggal: $("#search-tanggal").val().toLowerCase().trim(),
+            status: $("#search-status").val().toLowerCase().trim()
+        };
+
+        $("#Table tbody tr").filter(function() {
+            let $cells = $(this).find("td");
+            
+            // Skip the "no data" row
+            if ($cells.eq(0).attr('colspan')) {
+                $(this).hide();
+                return false;
+            }
+            
+            let matches = true;
+
+            if (filters.namaupt) {
+                matches = matches && $cells.eq(1).text().toLowerCase().indexOf(filters.namaupt) > -1;
+            }
+            if (filters.kanwil) {
+                matches = matches && $cells.eq(2).text().toLowerCase().indexOf(filters.kanwil) > -1;
+            }
+            if (filters.tipe) {
+                matches = matches && $cells.eq(3).text().toLowerCase().indexOf(filters.tipe) > -1;
+            }
+            if (filters.tanggal) {
+                matches = matches && $cells.eq(4).text().toLowerCase().indexOf(filters.tanggal) > -1;
+            }
+            if (filters.status) {
+                matches = matches && $cells.eq(5).text().toLowerCase().indexOf(filters.status) > -1;
+            }
+
+            $(this).toggle(matches);
+        });
+
+        const $visibleRows = $("#Table tbody tr:visible");
+        const noDataVisible = $visibleRows.find('td[colspan="7"]').length > 0;
+        
+        totalPages = Math.ceil($visibleRows.length / limit);
+        currentPage = 1;
+        
+        // Check if any filters are active
+        let hasActiveFilters = Object.values(filters).some(filter => filter !== '');
+        
+        if (hasActiveFilters) {
+            let resultCount = noDataVisible ? 0 : $visibleRows.length;
+            $("#page-info").text(`Showing ${resultCount} results`);
+            $("#prev-page").prop("disabled", true);
+            $("#next-page").prop("disabled", true);
+        } else {
+            updateTable();
+        }
+        toggleExportButtons();
+    });
+
+    // Initial toggle
+    toggleExportButtons();
+
+    // Handle modal events
+    $('.modal').on('show.bs.modal', function(e) {
+        console.log('Modal is opening');
+    });
+    $('.modal').on('shown.bs.modal', function(e) {
+        console.log('Modal is fully visible');
+    });
+    $('.modal').on('hide.bs.modal', function(e) {
+        console.log('Modal is closing');
+    });
+
+    // FIXED: Preserve filter values from URL parameters on page load
+    $(window).on('load', function() {
+        // Set search values from URL parameters if they exist
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        if (urlParams.get('table_search')) {
+            $('#btn-search').val(urlParams.get('table_search'));
+        }
+        if (urlParams.get('search_namaupt')) {
+            $('#search-namaupt').val(urlParams.get('search_namaupt'));
+        }
+        if (urlParams.get('search_kanwil')) {
+            $('#search-kanwil').val(urlParams.get('search_kanwil'));
+        }
+        if (urlParams.get('search_tipe')) {
+            $('#search-tipe').val(urlParams.get('search_tipe'));
+        }
+        if (urlParams.get('search_tanggal')) {
+            $('#search-tanggal').val(urlParams.get('search_tanggal'));
+        }
+        if (urlParams.get('search_status')) {
+            $('#search-status').val(urlParams.get('search_status'));
+        }
+        
+        // Trigger search if there are parameters
+        if (urlParams.toString()) {
+            $('.column-search').trigger('keyup');
+        }
+        
+        // Initial export button state
+        toggleExportButtons();
+    });
+});
+</script>
 
 @endsection
