@@ -150,7 +150,7 @@
                                                 <td>{{ $d->nama_ponpes }}</td>
                                                 <td><span class="tag tag-success">{{ $d->nama_wilayah }}</span></td>
                                                 <td>{{ ucfirst($d->tipe) }}</td>
-                                                <td>{{ $d->tanggal }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($d->tanggal)->translatedFormat('d M Y') }}</td>
                                                 <td class="text-center">
                                                     @php
                                                         // Cek apakah data opsional sudah diisi

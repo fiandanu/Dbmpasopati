@@ -11,7 +11,7 @@
     <!-- ChartJS -->
     <script src="{{ asset('lte/plugins/chart.js/Chart.min.js') }}"></script>
     <!-- Sparkline -->
-    <script src="{{ asset('lte/plugins/sparklines/sparkline.js') }}"></script>
+    {{-- <script src="{{ asset('lte/plugins/sparklines/sparkline.js') }}"></script> --}}
     <!-- JQVMap -->
     <script src="{{ asset('lte/plugins/jqvmap/jquery.vmap.min.js') }}"></script>
     <script src="{{ asset('lte/plugins/jqvmap/maps/jquery.vmap.usa.js') }}"></script>

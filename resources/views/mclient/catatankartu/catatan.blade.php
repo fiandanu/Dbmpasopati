@@ -214,8 +214,7 @@
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
-                                                                <button type="submit"
-                                                                    class="btn-delete">Hapus</button>
+                                                                <button type="submit" class="btn-delete">Hapus</button>
                                                             </form>
                                                         </div>
                                                     </div>
@@ -246,7 +245,8 @@
                                 <div class="modal-dialog modal-lg">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <label class="modal-title" id="addModalLabel">Tambah Data Catatan Kartu</label>
+                                            <label class="modal-title" id="addModalLabel">Tambah Data Catatan
+                                                Kartu</label>
                                             <button type="button" class="btn-close-custom" data-bs-dismiss="modal"
                                                 aria-label="Close">
                                                 <i class="bi bi-x"></i>
@@ -261,13 +261,34 @@
                                                 </div>
                                                 <div class="column">
                                                     <div class="mb-3">
-                                                        <label for="nama_upt" class="form-label">Nama UPT <span class="text-danger">*</span></label>
-                                                        <select class="form-control" id="nama_upt" name="nama_upt" required>
-                                                            <option value="">-- Pilih UPT --</option>
-                                                            @foreach ($uptList as $upt)
-                                                                <option value="{{ $upt->namaupt }}">{{ $upt->namaupt }}</option>
-                                                            @endforeach
-                                                        </select>
+                                                        <label for="nama_upt" class="form-label">Nama UPT</label>
+                                                        <div class="dropdown">
+                                                            <div class="input-group">
+                                                                <input type="text" class="form-control"
+                                                                    id="upt_search" placeholder="Cari nama Upt"
+                                                                    autocomplete="off">
+                                                                <div class="input-group-append">
+                                                                    <button type="button"
+                                                                        class="btn btn-outline-secondary"
+                                                                        onclick="toggleUptDropdown()">
+                                                                        <i class="fas fa-chevron-down"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="dropdown-menu w-100" id="uptDropdownMenu"
+                                                                style="max-height: 200px; overflow-y: auto; display: none;">
+                                                                @foreach ($uptList as $upt)
+                                                                    <a href="#" class="dropdown-item upt-option"
+                                                                        data-value="{{ $upt->namaupt }}"
+                                                                        onclick="selectUpt('{{ $upt->namaupt }}')">
+                                                                        {{ $upt->namaupt }}
+                                                                    </a>
+                                                                @endforeach
+                                                            </div>
+                                                        </div>
+                                                        <input type="hidden" id="nama_upt" name="nama_upt" required>
+                                                        <small class="form-text text-muted">Ketik untuk mencari UPT</small>
                                                     </div>
                                                 </div>
                                             </div>
@@ -280,26 +301,29 @@
                                                 <div class="row">
                                                     <div class="col-md-4">
                                                         <div class="mb-3">
-                                                            <label for="spam_vpas_kartu_baru" class="form-label">Kartu Baru</label>
-                                                            <input type="text" class="form-control" id="spam_vpas_kartu_baru"
-                                                                name="spam_vpas_kartu_baru" value=""
-                                                                placeholder="Jumlah kartu baru">
+                                                            <label for="spam_vpas_kartu_baru" class="form-label">Kartu
+                                                                Baru</label>
+                                                            <input type="text" class="form-control"
+                                                                id="spam_vpas_kartu_baru" name="spam_vpas_kartu_baru"
+                                                                value="" placeholder="Jumlah kartu baru">
                                                         </div>
                                                     </div>
                                                     <div class="col-md-4">
                                                         <div class="mb-3">
-                                                            <label for="spam_vpas_kartu_bekas" class="form-label">Kartu Bekas</label>
-                                                            <input type="text" class="form-control" id="spam_vpas_kartu_bekas"
-                                                                name="spam_vpas_kartu_bekas" value=""
-                                                                placeholder="Jumlah kartu bekas">
+                                                            <label for="spam_vpas_kartu_bekas" class="form-label">Kartu
+                                                                Bekas</label>
+                                                            <input type="text" class="form-control"
+                                                                id="spam_vpas_kartu_bekas" name="spam_vpas_kartu_bekas"
+                                                                value="" placeholder="Jumlah kartu bekas">
                                                         </div>
                                                     </div>
                                                     <div class="col-md-4">
                                                         <div class="mb-3">
-                                                            <label for="spam_vpas_kartu_goip" class="form-label">Kartu GOIP</label>
-                                                            <input type="text" class="form-control" id="spam_vpas_kartu_goip"
-                                                                name="spam_vpas_kartu_goip" value=""
-                                                                placeholder="Jumlah kartu GOIP">
+                                                            <label for="spam_vpas_kartu_goip" class="form-label">Kartu
+                                                                GOIP</label>
+                                                            <input type="text" class="form-control"
+                                                                id="spam_vpas_kartu_goip" name="spam_vpas_kartu_goip"
+                                                                value="" placeholder="Jumlah kartu GOIP">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -313,16 +337,20 @@
                                                 <div class="row">
                                                     <div class="col-md-6">
                                                         <div class="mb-3">
-                                                            <label for="kartu_belum_teregister" class="form-label">Kartu Belum Teregister</label>
-                                                            <input type="text" class="form-control" id="kartu_belum_teregister"
-                                                                name="kartu_belum_teregister" value=""
+                                                            <label for="kartu_belum_teregister" class="form-label">Kartu
+                                                                Belum Teregister</label>
+                                                            <input type="text" class="form-control"
+                                                                id="kartu_belum_teregister" name="kartu_belum_teregister"
+                                                                value=""
                                                                 placeholder="Jumlah kartu belum teregister">
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="mb-3">
-                                                            <label for="whatsapp_telah_terpakai" class="form-label">WhatsApp Telah Terpakai</label>
-                                                            <input type="text" class="form-control" id="whatsapp_telah_terpakai"
+                                                            <label for="whatsapp_telah_terpakai"
+                                                                class="form-label">WhatsApp Telah Terpakai</label>
+                                                            <input type="text" class="form-control"
+                                                                id="whatsapp_telah_terpakai"
                                                                 name="whatsapp_telah_terpakai" value=""
                                                                 placeholder="Jumlah WhatsApp terpakai">
                                                         </div>
@@ -331,19 +359,24 @@
                                                 <div class="row">
                                                     <div class="col-md-6">
                                                         <div class="mb-3">
-                                                            <label for="card_supporting" class="form-label">Card Supporting</label>
-                                                            <select class="form-control" id="card_supporting" name="card_supporting">
+                                                            <label for="card_supporting" class="form-label">Card
+                                                                Supporting</label>
+                                                            <select class="form-control" id="card_supporting"
+                                                                name="card_supporting">
                                                                 <option value="">-- Pilih Card Supporting --</option>
                                                                 @foreach ($cardSupportingList as $cardSupporting)
-                                                                    <option value="{{ $cardSupporting }}">{{ $cardSupporting }}</option>
+                                                                    <option value="{{ $cardSupporting }}">
+                                                                        {{ $cardSupporting }}</option>
                                                                 @endforeach
                                                             </select>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="mb-3">
-                                                            <label for="jumlah_kartu_terpakai_perhari" class="form-label">Jumlah Kartu Terpakai Per Hari</label>
-                                                            <input type="text" class="form-control" id="jumlah_kartu_terpakai_perhari"
+                                                            <label for="jumlah_kartu_terpakai_perhari"
+                                                                class="form-label">Jumlah Kartu Terpakai Per Hari</label>
+                                                            <input type="text" class="form-control"
+                                                                id="jumlah_kartu_terpakai_perhari"
                                                                 name="jumlah_kartu_terpakai_perhari" value=""
                                                                 placeholder="Jumlah kartu terpakai per hari">
                                                         </div>
@@ -363,7 +396,8 @@
                                                             <select class="form-control" id="pic" name="pic">
                                                                 <option value="">-- Pilih PIC --</option>
                                                                 @foreach ($picList as $pic)
-                                                                    <option value="{{ $pic->nama_pic }}">{{ $pic->nama_pic }}</option>
+                                                                    <option value="{{ $pic->nama_pic }}">
+                                                                        {{ $pic->nama_pic }}</option>
                                                                 @endforeach
                                                             </select>
                                                         </div>
@@ -371,7 +405,8 @@
                                                     <div class="col-md-6">
                                                         <div class="mb-3">
                                                             <label for="tanggal" class="form-label">Tanggal</label>
-                                                            <input type="date" class="form-control" id="tanggal" name="tanggal">
+                                                            <input type="date" class="form-control" id="tanggal"
+                                                                name="tanggal">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -418,17 +453,39 @@
                                                     <div class="column">
                                                         <div class="mb-3">
                                                             <label for="nama_upt_edit_{{ $d->id }}"
-                                                                class="form-label">Nama UPT <span class="text-danger">*</span></label>
-                                                            <select class="form-control"
-                                                                id="nama_upt_edit_{{ $d->id }}" name="nama_upt" required>
-                                                                <option value="">-- Pilih UPT --</option>
-                                                                @foreach ($uptList as $upt)
-                                                                    <option value="{{ $upt->namaupt }}"
-                                                                        {{ $d->nama_upt == $upt->namaupt ? 'selected' : '' }}>
-                                                                        {{ $upt->namaupt }}
-                                                                    </option>
-                                                                @endforeach
-                                                            </select>
+                                                                class="form-label">Nama UPT <span
+                                                                    class="text-danger">*</span></label>
+                                                            <div class="dropdown">
+                                                                <div class="input-group">
+                                                                    <input type="text" class="form-control"
+                                                                        id="upt_search_edit_{{ $d->id }}"
+                                                                        placeholder="Cari UPT..." autocomplete="off"
+                                                                        value="{{ $d->nama_upt ?? '' }}">
+                                                                    <div class="input-group-append">
+                                                                        <button type="button"
+                                                                            class="btn btn-outline-secondary"
+                                                                            onclick="toggleUptDropdownEdit({{ $d->id }})">
+                                                                            <i class="fas fa-chevron-down"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="dropdown-menu w-100"
+                                                                    id="uptDropdownMenuEdit{{ $d->id }}"
+                                                                    style="max-height: 200px; overflow-y: auto; display: none;">
+                                                                    @foreach ($uptList as $upt)
+                                                                        <a class="dropdown-item upt-option" href="#"
+                                                                            data-value="{{ $upt->namaupt }}"
+                                                                            onclick="selectUptEdit('{{ $upt->namaupt }}', {{ $d->id }})">
+                                                                            {{ $upt->namaupt }}
+                                                                        </a>
+                                                                    @endforeach
+                                                                </div>
+                                                            </div>
+                                                            <input type="hidden" id="nama_upt_edit_{{ $d->id }}"
+                                                                name="nama_upt" value="{{ $d->nama_upt ?? '' }}"
+                                                                required>
+                                                            <small class="form-text text-muted">Ketik untuk mencari
+                                                                UPT</small>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -509,8 +566,11 @@
                                                             <div class="mb-3">
                                                                 <label for="card_supporting{{ $d->id }}"
                                                                     class="form-label">Card Supporting</label>
-                                                                <select class="form-control" id="card_supporting{{ $d->id }}" name="card_supporting">
-                                                                    <option value="">-- Pilih Card Supporting --</option>
+                                                                <select class="form-control"
+                                                                    id="card_supporting{{ $d->id }}"
+                                                                    name="card_supporting">
+                                                                    <option value="">-- Pilih Card Supporting --
+                                                                    </option>
                                                                     @foreach ($cardSupportingList as $cardSupporting)
                                                                         <option value="{{ $cardSupporting }}"
                                                                             {{ $d->card_supporting == $cardSupporting ? 'selected' : '' }}>
@@ -521,7 +581,8 @@
                                                                         $existingCardSupportings = $cardSupportingList->toArray();
                                                                     @endphp
                                                                     @if ($d->card_supporting && !in_array($d->card_supporting, $existingCardSupportings))
-                                                                        <option value="{{ $d->card_supporting }}" selected>
+                                                                        <option value="{{ $d->card_supporting }}"
+                                                                            selected>
                                                                             {{ $d->card_supporting }} (Custom)
                                                                         </option>
                                                                     @endif
@@ -530,8 +591,10 @@
                                                         </div>
                                                         <div class="col-md-6">
                                                             <div class="mb-3">
-                                                                <label for="jumlah_kartu_terpakai_perhari{{ $d->id }}"
-                                                                    class="form-label">Jumlah Kartu Terpakai Per Hari</label>
+                                                                <label
+                                                                    for="jumlah_kartu_terpakai_perhari{{ $d->id }}"
+                                                                    class="form-label">Jumlah Kartu Terpakai Per
+                                                                    Hari</label>
                                                                 <input type="text" class="form-control"
                                                                     id="jumlah_kartu_terpakai_perhari{{ $d->id }}"
                                                                     name="jumlah_kartu_terpakai_perhari"
@@ -550,8 +613,10 @@
                                                     <div class="row">
                                                         <div class="col-md-6">
                                                             <div class="mb-3">
-                                                                <label for="pic{{ $d->id }}" class="form-label">PIC</label>
-                                                                <select class="form-control" id="pic{{ $d->id }}" name="pic">
+                                                                <label for="pic{{ $d->id }}"
+                                                                    class="form-label">PIC</label>
+                                                                <select class="form-control" id="pic{{ $d->id }}"
+                                                                    name="pic">
                                                                     <option value="">-- Pilih PIC --</option>
                                                                     @foreach ($picList as $pic)
                                                                         <option value="{{ $pic->nama_pic }}"
@@ -560,7 +625,9 @@
                                                                         </option>
                                                                     @endforeach
                                                                     @php
-                                                                        $existingPics = $picList->pluck('nama_pic')->toArray();
+                                                                        $existingPics = $picList
+                                                                            ->pluck('nama_pic')
+                                                                            ->toArray();
                                                                     @endphp
                                                                     @if ($d->pic && !in_array($d->pic, $existingPics))
                                                                         <option value="{{ $d->pic }}" selected>
@@ -572,9 +639,11 @@
                                                         </div>
                                                         <div class="col-md-6">
                                                             <div class="mb-3">
-                                                                <label for="tanggal{{ $d->id }}" class="form-label">Tanggal</label>
-                                                                <input type="date" class="form-control" id="tanggal{{ $d->id }}"
-                                                                    name="tanggal" value="{{ $d->tanggal ? $d->tanggal->format('Y-m-d') : '' }}">
+                                                                <label for="tanggal{{ $d->id }}"
+                                                                    class="form-label">Tanggal</label>
+                                                                <input type="date" class="form-control"
+                                                                    id="tanggal{{ $d->id }}" name="tanggal"
+                                                                    value="{{ $d->tanggal ? $d->tanggal->format('Y-m-d') : '' }}">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -628,6 +697,328 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
         integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    {{-- Search UPT DROPDOWN UNTUK ADD MODAL --}}
+    <script>
+        // Start Add Modal JS
+        document.addEventListener('DOMContentLoaded', function() {
+            const uptSearch = document.getElementById('upt_search');
+            const uptDropdown = document.getElementById('uptDropdownMenu');
+            const uptOptions = document.querySelectorAll('.upt-option');
+
+            // Filter UPT options based on search input
+            uptSearch.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                let hasVisibleOption = false;
+
+                uptOptions.forEach(option => {
+                    const text = option.textContent.toLowerCase();
+                    if (text.includes(searchTerm)) {
+                        option.style.display = 'block';
+                        hasVisibleOption = true;
+                    } else {
+                        option.style.display = 'none';
+                    }
+                });
+
+                // Show dropdown if there are visible options and search term is not empty
+                if (searchTerm.length > 0 && hasVisibleOption) {
+                    uptDropdown.style.display = 'block';
+                } else if (searchTerm.length === 0) {
+                    uptDropdown.style.display = 'none';
+                }
+            });
+
+            // Show all options when clicking on search input
+            uptSearch.addEventListener('focus', function() {
+                if (this.value.length > 0) {
+                    const searchTerm = this.value.toLowerCase();
+                    let hasVisibleOption = false;
+
+                    uptOptions.forEach(option => {
+                        const text = option.textContent.toLowerCase();
+                        if (text.includes(searchTerm)) {
+                            option.style.display = 'block';
+                            hasVisibleOption = true;
+                        } else {
+                            option.style.display = 'none';
+                        }
+                    });
+
+                    if (hasVisibleOption) {
+                        uptDropdown.style.display = 'block';
+                    }
+                }
+            });
+
+            // Hide dropdown when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!event.target.closest('.dropdown')) {
+                    uptDropdown.style.display = 'none';
+                }
+            });
+        });
+
+        // Toggle dropdown visibility for Add Modal
+        function toggleUptDropdown() {
+            const uptDropdown = document.getElementById('uptDropdownMenu');
+            const uptOptions = document.querySelectorAll('.upt-option');
+
+            if (uptDropdown.style.display === 'none' || uptDropdown.style.display === '') {
+                uptOptions.forEach(option => {
+                    option.style.display = 'block';
+                });
+                uptDropdown.style.display = 'block';
+            } else {
+                uptDropdown.style.display = 'none';
+            }
+        }
+
+        // Select UPT option for Add Modal
+        function selectUpt(namaUpt) {
+            document.getElementById('upt_search').value = namaUpt;
+            document.getElementById('nama_upt').value = namaUpt;
+            document.getElementById('uptDropdownMenu').style.display = 'none';
+        }
+
+        // Clear UPT selection when search is cleared for Add Modal
+        document.getElementById('upt_search').addEventListener('input', function() {
+            if (this.value === '') {
+                document.getElementById('nama_upt').value = '';
+            }
+        });
+
+        // Reset form when modal is closed for Add Modal
+        $('#addModal').on('hidden.bs.modal', function() {
+            document.getElementById('upt_search').value = '';
+            document.getElementById('nama_upt').value = '';
+            document.getElementById('uptDropdownMenu').style.display = 'none';
+        });
+
+        // End Add Modal JS
+
+
+
+        // Start Edit Modal JS
+        document.addEventListener('DOMContentLoaded', function() {
+            @foreach ($data as $d)
+                const uptSearchEdit{{ $d->id }} = document.getElementById(
+                    'upt_search_edit_{{ $d->id }}');
+                const uptDropdownEdit{{ $d->id }} = document.getElementById(
+                    'uptDropdownMenuEdit{{ $d->id }}');
+                const uptOptionsEdit{{ $d->id }} = document.querySelectorAll(
+                    `#uptDropdownMenuEdit{{ $d->id }} .upt-option`);
+
+                if (uptSearchEdit{{ $d->id }}) {
+                    // Fillter Upt Berdasarkan Pencarian Input
+                    uptSearchEdit{{ $d->id }}.addEventListener('input', function() {
+                        const searchTerm = this.value.toLowerCase();
+                        let hasVisibleOption = false;
+
+                        uptOptionsEdit{{ $d->id }}.forEach(option => {
+                            const text = option.textContent.toLowerCase();
+                            if (text.includes(searchTerm)) {
+                                option.style.display = 'block';
+                                hsVisibleOption = true;
+                            } else {
+                                option.style.display = 'none';
+                            }
+                        });
+
+                        // Memunculkan Dropdown jika tidak kosong 
+                        if (searchTerm.length > 0 && hasVisibleOption) {
+                            uptDropdownEdit{{ $d->id }}.style.display = 'block';
+                        } else if (searchTerm.length === 0) {
+                            uptDropdownEdit{{ $d->id }}.style.display = 'none';
+                        }
+                    });
+
+                    // Menampilkan Semua UPT
+                    uptSearchEdit{{ $d->id }}.addEventListener('focus', function() {
+                        if (this.value.length > 0) {
+                            const searchTerm = this.value.toLowerCase();
+                            let hasVisibleOption = false;
+
+                            uptOptionsEdit{{ $d->id }}.forEach(option => {
+                                const text = option.textContent.toLowerCase();
+                                if (text.includes(searchTerm)) {
+                                    option.style.display = 'block';
+                                    hasVisibleOption = true;
+                                } else {
+                                    option.style.display = 'none';
+                                }
+                            });
+
+                            if (hasVisibleOption) {
+                                uptDropdownEdit{{ $d->id }}.style.display = 'block';
+                            }
+
+                        }
+                    });
+
+                    // Sembunyikan Ketika Klik diluar dropdown
+                    document.addEventListener('click', function(event) {
+                        if (!event.target.closest(`#editModal{{ $d->id }} .dropdown`)) {
+                            uptDropdownEdit{{ $d->id }}.style.display = 'none';
+                        }
+                    });
+                }
+            @endforeach
+        });
+
+        // Toggle dropdown visibility for Edit Modal
+        function toggleUptDropdownEdit(id) {
+            const uptDropdown = document.getElementById(`uptDropdownMenuEdit${id}`);
+            const uptOptions = document.querySelectorAll(`#uptDropdownMenuEdit${id} .upt-option`);
+
+            if (uptDropdown.style.display === 'none' || uptDropdown.style.display === '') {
+                uptOptions.forEach(option => {
+                    option.style.display = 'block';
+                });
+                uptDropdown.style.display = 'block';
+            } else {
+                uptDropdown.style.display = 'none';
+            }
+        }
+
+        // Select UPT option for Edit Modal
+        function selectUptEdit(namaUpt, id) {
+            document.getElementById(`upt_search_edit_${id}`).value = namaUpt;
+            document.getElementById(`nama_upt_edit_${id}`).value = namaUpt;
+            document.getElementById(`uptDropdownMenuEdit${id}`).style.display = 'none';
+        }
+
+        // Clear UPT selection when search is cleared for Edit Modal
+        @foreach ($data as $d)
+            document.getElementById(`upt_search_edit_{{ $d->id }}`).addEventListener('input', function() {
+                if (this.value === '') {
+                    document.getElementById(`nama_upt_edit_{{ $d->id }}`).value = '';
+                }
+            });
+        @endforeach
+
+        // Reset Ketika Edit Modal Ditutup
+        @foreach ($data as $d)
+            $(`#editModal{{ $d->id }}`).on('hidden.bs.modal', function() {
+                document.getElementById(`upt_search_edit_{{ $d->id }}`).value =
+                    '{{ $d->nama_upt ?? '' }}';
+                document.getElementById(`uptDropdownMenuEdit{{ $d->id }}`).style.display = 'none';
+            });
+        @endforeach
+        // End Edit Modal JS
+    </script>
+
+
+
+    {{-- Search Dropdown Edit Modal --}}
+    {{-- <script>
+        // Searchable UPT dropdown functionality for Edit Modals
+        document.addEventListener('DOMContentLoaded', function() {
+            @foreach ($data as $d)
+                const uptSearchEdit{{ $d->id }} = document.getElementById(
+                    'upt_search_edit_{{ $d->id }}');
+                const uptDropdownEdit{{ $d->id }} = document.getElementById(
+                    'uptDropdownMenuEdit{{ $d->id }}');
+                const uptOptionsEdit{{ $d->id }} = document.querySelectorAll(
+                    `#uptDropdownMenuEdit{{ $d->id }} .upt-option`);
+
+                if (uptSearchEdit{{ $d->id }}) {
+                    // Filter UPT options based on search input
+                    uptSearchEdit{{ $d->id }}.addEventListener('input', function() {
+                        const searchTerm = this.value.toLowerCase();
+                        let hasVisibleOption = false;
+
+                        uptOptionsEdit{{ $d->id }}.forEach(option => {
+                            const text = option.textContent.toLowerCase();
+                            if (text.includes(searchTerm)) {
+                                option.style.display = 'block';
+                                hasVisibleOption = true;
+                            } else {
+                                option.style.display = 'none';
+                            }
+                        });
+
+                        // Show dropdown if there are visible options and search term is not empty
+                        if (searchTerm.length > 0 && hasVisibleOption) {
+                            uptDropdownEdit{{ $d->id }}.style.display = 'block';
+                        } else if (searchTerm.length === 0) {
+                            uptDropdownEdit{{ $d->id }}.style.display = 'none';
+                        }
+                    });
+
+                    // Show all options when clicking on search input
+                    uptSearchEdit{{ $d->id }}.addEventListener('focus', function() {
+                        if (this.value.length > 0) {
+                            const searchTerm = this.value.toLowerCase();
+                            let hasVisibleOption = false;
+
+                            uptOptionsEdit{{ $d->id }}.forEach(option => {
+                                const text = option.textContent.toLowerCase();
+                                if (text.includes(searchTerm)) {
+                                    option.style.display = 'block';
+                                    hasVisibleOption = true;
+                                } else {
+                                    option.style.display = 'none';
+                                }
+                            });
+
+                            if (hasVisibleOption) {
+                                uptDropdownEdit{{ $d->id }}.style.display = 'block';
+                            }
+                        }
+                    });
+
+                    // Hide dropdown when clicking outside
+                    document.addEventListener('click', function(event) {
+                        if (!event.target.closest(`#editModal{{ $d->id }} .dropdown`)) {
+                            uptDropdownEdit{{ $d->id }}.style.display = 'none';
+                        }
+                    });
+                }
+            @endforeach
+        });
+
+        // Toggle dropdown visibility for Edit Modal
+        function toggleUptDropdownEdit(id) {
+            const uptDropdown = document.getElementById(`uptDropdownMenuEdit${id}`);
+            const uptOptions = document.querySelectorAll(`#uptDropdownMenuEdit${id} .upt-option`);
+
+            if (uptDropdown.style.display === 'none' || uptDropdown.style.display === '') {
+                uptOptions.forEach(option => {
+                    option.style.display = 'block';
+                });
+                uptDropdown.style.display = 'block';
+            } else {
+                uptDropdown.style.display = 'none';
+            }
+        }
+
+        // Select UPT option for Edit Modal
+        function selectUptEdit(namaUpt, id) {
+            document.getElementById(`upt_search_edit_${id}`).value = namaUpt;
+            document.getElementById(`nama_upt_edit_${id}`).value = namaUpt;
+            document.getElementById(`uptDropdownMenuEdit${id}`).style.display = 'none';
+        }
+
+        // Clear UPT selection when search is cleared for Edit Modal
+        @foreach ($data as $d)
+            document.getElementById(`upt_search_edit_{{ $d->id }}`).addEventListener('input', function() {
+                if (this.value === '') {
+                    document.getElementById(`nama_upt_edit_{{ $d->id }}`).value = '';
+                }
+            });
+        @endforeach
+
+        // Reset form when edit modal is closed
+        @foreach ($data as $d)
+            $(`#editModal{{ $d->id }}`).on('hidden.bs.modal', function() {
+                document.getElementById(`upt_search_edit_{{ $d->id }}`).value =
+                    '{{ $d->nama_upt ?? '' }}';
+                document.getElementById(`uptDropdownMenuEdit{{ $d->id }}`).style.display = 'none';
+            });
+        @endforeach
+    </script> --}}
+
 
     {{-- Search and Pagination JavaScript --}}
     <script>

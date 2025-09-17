@@ -3,12 +3,8 @@
 namespace App\Http\Controllers\user;
 
 use App\Http\Controllers\Controller;
-use App\Models\Upt;
-use App\Models\Ponpes;
-use App\Models\DataOpsionalUpt;
-use App\Models\DataOpsionalPonpes;
-use App\Models\UploadFolder;
-use App\Models\UploadFolderPonpes;
+use App\Models\user\Upt;
+use App\Models\user\Ponpes;
 
 class PageUser extends Controller
 {

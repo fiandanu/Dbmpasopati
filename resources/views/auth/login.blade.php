@@ -478,7 +478,7 @@
         <form action="/dashboard" method="post">
             <div class="mb-4 input-group">
                 <div class="relative">
-                    <input type="email" class="w-full" placeholder="Email" required>
+                    <input type="email" class="w-full" placeholder="Username" required>
                     <span class="absolute inset-y-0 right-0 flex items-center pr-3">
                         <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                             xmlns="http://www.w3.org/2000/svg">
@@ -500,14 +500,6 @@
                         </svg>
                     </span>
                 </div>
-            </div>
-            <div class="flex items-center justify-between mb-6">
-                <div class="flex items-center">
-                    <input type="checkbox" id="remember"
-                        class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
-                    <label for="remember" class="ml-2 text-sm text-gray-600">Remember Me</label>
-                </div>
-                <a href="/forgot-password" class="text-sm text-indigo-600 hover:underline">Forgot Password?</a>
             </div>
             <button type="submit" class="btn-purple title-medium-18">Log In</button>
         </form>

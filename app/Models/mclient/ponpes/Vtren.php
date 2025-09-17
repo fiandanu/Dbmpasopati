@@ -4,7 +4,7 @@ namespace App\Models\mclient\ponpes;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Ponpes;
+use App\Models\user\Ponpes;
 use Carbon\Carbon;
 
 class Vtren extends Model

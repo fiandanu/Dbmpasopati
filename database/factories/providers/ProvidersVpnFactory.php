@@ -2,7 +2,7 @@
 
 namespace Database\Factories\providers;
 
-use App\Models\Provider;
+use App\Models\user\Provider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ProvidersVpnFactory extends Factory

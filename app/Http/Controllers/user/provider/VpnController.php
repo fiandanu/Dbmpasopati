@@ -4,8 +4,8 @@ namespace App\Http\Controllers\user\provider;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Vpn;
-use App\Models\Provider;
+use App\Models\user\Vpn;
+use App\Models\user\Provider;
 use Illuminate\Support\Facades\Validator;
 
 class VpnController extends Controller

@@ -8,10 +8,9 @@ use App\Models\mclient\Reguller;
 use App\Models\user\Upt;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
-use App\Models\user\Kendala;
 use App\Models\user\Pic;
 
-class RegullerController extends Controller
+class KunjunganController extends Controller
 {
 
     public function ListDataMclientReguller(Request $request)
@@ -27,23 +26,20 @@ class RegullerController extends Controller
                     ->orWhere('jenis_kendala', 'LIKE', '%' . $searchTerm . '%')
                     ->orWhere('detail_kendala', 'LIKE', '%' . $searchTerm . '%')
                     ->orWhere('status', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('pic_1', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('pic_2', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('tanggal_terlapor', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('tanggal_selesai', 'LIKE', '%' . $searchTerm . '%');
+                    ->orWhere('pic_1', 'LIKE', '%' . $searchTerm . '%');
             });
         }
 
         $data = $query->orderBy('created_at', 'desc')->paginate(10);
 
-        $jenisKendala = Kendala::orderBy('jenis_kendala')->get();
+        // $jenisKendala = Kendala::orderBy('jenis_kendala')->get();
         $picList = Pic::orderBy('nama_pic')->get();
         $uptList = Upt::select('namaupt', 'kanwil')
             ->where('tipe', 'reguler')
             ->orderBy('namaupt')
             ->get();
 
-        return view('mclient.upt.indexReguller', compact('data', 'jenisKendala', 'picList', 'uptList'));
+        return view('mclient.upt.indexKunjungan', compact('data', 'picList', 'uptList'));
     }
 
     public function MclientRegullerStore(Request $request)
@@ -211,50 +207,5 @@ class RegullerController extends Controller
                 ->with('error', 'Gagal menghapus data: ' . $e->getMessage());
         }
     }
-
-    // {
-    //     $totalData = Reguller::count();
-    //     $statusPending = Reguller::where('status', 'pending')->count();
-    //     $statusProses = Reguller::where('status', 'proses')->count();
-    //     $statusSelesai = Reguller::where('status', 'selesai')->count();
-    //     $statusTerjadwal = Reguller::where('status', 'terjadwal')->count();
-
-
-    //     $bulanIni = Reguller::whereMonth('created_at', now()->month)
-    //         ->whereYear('created_at', now()->year)
-    //         ->count();
-
-    //     $avgDurasi = Reguller::where('status', 'selesai')
-    //         ->whereNotNull('durasi_hari')
-    //         ->avg('durasi_hari');
-
-    //     return [
-    //         'total' => $totalData,
-    //         'pending' => $statusPending,
-    //         'proses' => $statusProses,
-    //         'selesai' => $statusSelesai,
-    //         'terjadwal' => $statusTerjadwal,
-    //         'bulan_ini' => $bulanIni,
-    //         'avg_durasi' => round($avgDurasi, 1)
-    //     ];
-    // }
-
-    // public function getUptData(Request $request)
-    // {
-    //     $namaUpt = $request->input('nama_upt');
-    //     $upt = Upt::where('namaupt', $namaUpt)->first();
-
-    //     if ($upt) {
-    //         return response()->json([
-    //             'status' => 'success',
-    //             'kanwil' => $upt->kanwil
-    //         ]);
-    //     }
-
-    //     return response()->json([
-    //         'status' => 'error',
-    //         'message' => 'UPT not found'
-    //     ]);
-    // }
 
 }

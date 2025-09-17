@@ -1,21 +1,21 @@
 <?php
 
-namespace App\Models\mclient\ponpes;
+namespace App\Models\mclient;
 
+use App\Models\user\Upt;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\user\Ponpes;
-use Carbon\Carbon;
 
-class Reguller extends Model
+class Kunjungan extends Model
 {
     use HasFactory;
 
-    protected $table = 'mclient_ponpes_reguller';
+    protected $table = 'kunjungan_reguller';
 
     protected $fillable = [
-        'nama_ponpes',
-        'nama_wilayah',
+        'nama_upt',
+        'kanwil',
         'jenis_kendala',
         'detail_kendala',
         'tanggal_terlapor',
@@ -41,9 +41,9 @@ class Reguller extends Model
         'updated_at',
     ];
 
-    public function ponpes()
+    public function upt()
     {
-        return $this->belongsTo(Ponpes::class, 'nama_ponpes', 'nama_ponpes');
+        return $this->belongsTo(Upt::class, 'nama_upt', 'namaupt');
     }
 
     public function getFormattedTanggalTerlaporAttribute()
@@ -51,22 +51,23 @@ class Reguller extends Model
         return $this->tanggal_terlapor ? $this->tanggal_terlapor->format('Y-m-d') : null;
     }
 
-    public function getFormattedTanggalSelesaiAttribute()
-    {
-        return $this->tanggal_selesai ? $this->tanggal_selesai->format('Y-m-d') : null;
-    }
+public function getFormattedTanggalSelesaiAttribute()
+{
+    return $this->tanggal_selesai ? $this->tanggal_selesai->format('Y-m-d') : null;
+}
+
 
     public function getStatusBadgeClassAttribute()
     {
         switch (strtolower($this->status ?? '')) {
+            case 'terjadwal':
+                return 'badge-info';
             case 'selesai':
                 return 'badge-success';
             case 'proses':
                 return 'badge-warning';
             case 'pending':
                 return 'badge-danger';
-            case 'terjadwal':
-                return 'badge-info';
             default:
                 return 'badge-secondary';
         }
@@ -101,8 +102,8 @@ class Reguller extends Model
     public function scopeSearch($query, $term)
     {
         return $query->where(function ($q) use ($term) {
-            $q->where('nama_ponpes', 'LIKE', "%{$term}%")
-                ->orWhere('nama_wilayah', 'LIKE', "%{$term}%")
+            $q->where('nama_upt', 'LIKE', "%{$term}%")
+                ->orWhere('kanwil', 'LIKE', "%{$term}%")
                 ->orWhere('jenis_kendala', 'LIKE', "%{$term}%")
                 ->orWhere('status', 'LIKE', "%{$term}%")
                 ->orWhere('pic_1', 'LIKE', "%{$term}%")
@@ -158,11 +159,6 @@ class Reguller extends Model
         return strtolower($this->status ?? '') === 'pending';
     }
 
-    public function isScheduled()
-    {
-        return strtolower($this->status ?? '') === 'terjadwal';
-    }
-
     public function getDurationTextAttribute()
     {
         if (!$this->durasi_hari) {
@@ -171,4 +167,9 @@ class Reguller extends Model
 
         return $this->durasi_hari . ' hari';
     }
+        public function isScheduled()
+    {
+        return strtolower($this->status ?? '') === 'terjadwal';
+    }
+
 }

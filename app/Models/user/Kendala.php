@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\user;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Provider extends Model
+class Kendala extends Model
 {
     use HasFactory;
 
-    protected $table = 'providers';
+    protected $table = 'kendala';
 
     protected $fillable = [
-        'nama_provider',
+        'jenis_kendala',
     ];
 
     protected $dates = [

@@ -2,12 +2,12 @@
 
 namespace Database\Factories;
 
-use App\Models\DataOpsionalUpt;
-use App\Models\Upt;
+use App\Models\db\DataOpsionalUpt;
+use App\Models\user\Upt;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\DataOpsionalUpt>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\db\DataOpsionalUpt>
  */
 class DataOpsionalUptFactory extends Factory
 {

@@ -5,9 +5,9 @@ namespace App\Http\Controllers\user\upt\pks;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\Provider;
-use App\Models\Upt;
-use App\Models\UploadFolderUpt;
+use App\Models\user\Provider;
+use App\Models\user\Upt;
+use App\Models\db\UploadFolderUpt;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
 

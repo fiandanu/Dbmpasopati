@@ -4,11 +4,10 @@ namespace App\Http\Controllers\mclient\catatankartu;
 
 use App\Http\Controllers\Controller;
 use App\Models\mclient\catatankartu\Catatan;
-use App\Models\Upt;
+use App\Models\user\Upt;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Carbon\Carbon;
-use App\Models\Pic;
+use App\Models\user\Pic;
 
 class CatatanController extends Controller
 {

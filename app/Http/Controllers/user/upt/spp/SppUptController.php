@@ -4,9 +4,9 @@ namespace App\Http\Controllers\user\upt\spp;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Provider;
-use App\Models\Upt;
-use App\Models\UploadFolderUpt;
+use App\Models\user\Provider;
+use App\Models\user\Upt;
+use App\Models\db\UploadFolderUpt;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 

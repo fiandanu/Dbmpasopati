@@ -4,10 +4,10 @@ namespace App\Http\Controllers\user\upt\reguler;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Provider;
-use App\Models\Upt;
-use App\Models\DataOpsionalUpt; // Add this model import
-use App\Models\Vpn;
+use App\Models\user\Provider;
+use App\Models\user\Upt;
+use App\Models\db\DataOpsionalUpt; // Add this model import
+use App\Models\user\Vpn;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;

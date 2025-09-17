@@ -4,12 +4,12 @@ namespace App\Http\Controllers\mclient\ponpes;
 
 use App\Http\Controllers\Controller;
 use App\Models\mclient\ponpes\Reguller;
-use App\Models\Ponpes;
+use App\Models\user\Ponpes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
-use App\Models\Kendala;
-use App\Models\Pic;
+use App\Models\user\Kendala;
+use App\Models\user\Pic;
 
 class RegullerController extends Controller
 {

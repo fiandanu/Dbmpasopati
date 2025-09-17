@@ -57,7 +57,7 @@
                                 <span class="checkmark">✓</span>
                                 100 Data
                             </div>
-                            <a href="" class="list-button">List Data Kunjungan UPT</a>
+                            <a href="mclient-reguller-kunjungan" class="list-button">List Data Kunjungan UPT</a>
                         </div>
                     </div>
 

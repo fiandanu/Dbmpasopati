@@ -4,8 +4,8 @@ namespace App\Http\Controllers\user\kendalapic;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Kendala;
-use App\Models\Pic;
+use App\Models\user\Kendala;
+use App\Models\user\Pic;
 use Illuminate\Support\Facades\Validator;
 
 class KendalaController extends Controller

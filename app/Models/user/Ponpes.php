@@ -1,45 +1,38 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\user;
 
+use App\Models\db\DataOpsionalPonpes;
+use App\Models\db\UploadFolderPonpes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Upt extends Model
+class Ponpes extends Model
 {
     use HasFactory;
 
-    protected $table = 'data_upt';
+    protected $table = 'data_ponpes';
 
     protected $fillable = [
-        'namaupt',
-        'kanwil',   
+        'nama_ponpes',
+        'nama_wilayah',
         'tipe',
-        'tanggal'
+        'tanggal',
+
     ];
 
     protected $casts = [
         'tanggal' => 'date'
     ];
 
-    public function dataOpsional()
-    {
-        return $this->hasOne(DataOpsionalUpt::class, 'upt_id');
-    }
-
     public function uploadFolder()
     {
-        return $this->hasOne(UploadFolderUpt::class, 'upt_id');
+        return $this->hasOne(UploadFolderPonpes::class, 'ponpes_id');
     }
 
-    public function getUploadedPdfAttribute()
+    public function dataOpsional()
     {
-        return $this->uploadFolder ? $this->uploadFolder->uploaded_pdf : null;
-    }
-
-    public function getHasPdfAttribute()
-    {
-        return $this->uploadFolder && !empty($this->uploadFolder->uploaded_pdf);
+        return $this->hasOne(DataOpsionalPonpes::class, 'ponpes_id');
     }
 
     public function hasPdfInFolder($folderNumber)
@@ -81,5 +74,15 @@ class Upt extends Model
         }
 
         return $count;
+    }
+
+    public function getUploadedPdfAttribute()
+    {
+        return $this->uploadFolder ? $this->uploadFolder->uploaded_pdf : null;
+    }
+
+    public function getHasPdfAttribute()
+    {
+        return $this->uploadFolder && !empty($this->uploadFolder->uploaded_pdf);
     }
 }

@@ -4,9 +4,9 @@ namespace App\Http\Controllers\user\ponpes\pks;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Ponpes;
-use App\Models\Provider;
-use App\Models\UploadFolderPonpes;
+use App\Models\user\Ponpes;
+use App\Models\user\Provider;
+use App\Models\db\UploadFolderPonpes;
 use Illuminate\Support\Facades\Storage;
 
 class PksController extends Controller

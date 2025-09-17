@@ -4,10 +4,9 @@ namespace App\Http\Controllers\user\ponpes\vtren;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Provider;
-use App\Models\Ponpes;
-use App\Models\DataOpsionalPonpes;
-use App\Models\Vpn;
+use App\Models\user\Provider;
+use App\Models\user\Ponpes;
+use App\Models\user\Vpn;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Barryvdh\DomPDF\Facade\Pdf;

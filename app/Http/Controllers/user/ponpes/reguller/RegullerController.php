@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers\user\ponpes\reguller;
 
-use App\Models\Provider;
+use App\Models\user\Provider;
 use Carbon\Carbon;
 use App\Http\Controllers\Controller;
-use App\Models\Ponpes;
+use App\Models\user\Ponpes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Barryvdh\DomPDF\Facade\Pdf;
-use App\Models\Vpn;
+use App\Models\user\Vpn;
 
 class RegullerController extends Controller
 {
