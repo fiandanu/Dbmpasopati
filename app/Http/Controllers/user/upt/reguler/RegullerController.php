@@ -62,6 +62,7 @@ class RegullerController extends Controller
             return "Sebagian ({$percentage}%)";
         }
     }
+
     private function applyFilters($query, Request $request)
     {
         // Global search
@@ -89,14 +90,34 @@ class RegullerController extends Controller
         if ($request->has('search_tipe') && !empty($request->search_tipe)) {
             $query->where('tipe', 'LIKE', '%' . $request->search_tipe . '%');
         }
+
+        // FIXED: Proper date filtering
         if ($request->has('search_tanggal') && !empty($request->search_tanggal)) {
-            $query->whereDate('tanggal', 'LIKE', '%' . $request->search_tanggal . '%');
+            $tanggalSearch = $request->search_tanggal;
+            $query->where(function ($q) use ($tanggalSearch) {
+                // Try different date formats
+                $q->whereRaw("DATE_FORMAT(tanggal, '%d %b %Y') LIKE ?", ['%' . $tanggalSearch . '%'])
+                    ->orWhereRaw("DATE_FORMAT(tanggal, '%M %d %Y') LIKE ?", ['%' . $tanggalSearch . '%'])
+                    ->orWhereRaw("DATE_FORMAT(tanggal, '%Y-%m-%d') LIKE ?", ['%' . $tanggalSearch . '%'])
+                    ->orWhere('tanggal', 'LIKE', '%' . $tanggalSearch . '%');
+            });
         }
 
         return $query;
     }
 
 
+    private function applyStatusFilter($data, Request $request)
+    {
+        if ($request->has('search_status') && !empty($request->search_status)) {
+            $statusSearch = strtolower($request->search_status);
+            return $data->filter(function ($d) use ($statusSearch) {
+                $status = strtolower($this->calculateStatus($d->dataOpsional));
+                return strpos($status, $statusSearch) !== false;
+            });
+        }
+        return $data;
+    }
 
     public function ListDataReguller(Request $request)
     {
@@ -105,21 +126,13 @@ class RegullerController extends Controller
 
         // For status filter, apply after fetching (PHP filter)
         $data = $query->get();
-        if ($request->has('search_status') && !empty($request->search_status)) {
-            $statusSearch = strtolower($request->search_status);
-            $data = $data->filter(function ($d) use ($statusSearch) {
-                $status = strtolower($this->calculateStatus($d->dataOpsional));
-                return strpos($status, $statusSearch) !== false;
-            });
-        }
+        $data = $this->applyStatusFilter($data, $request);
 
         $providers = Provider::all();
         $vpns = Vpn::all();
 
         return view('db.upt.reguler.indexUpt', compact('data', 'providers', 'vpns'));
     }
-
-    // ... (ListUpdateReguller method unchanged)
 
     public function exportListCsv(Request $request): StreamedResponse
     {
@@ -128,13 +141,7 @@ class RegullerController extends Controller
         $data = $query->get();
 
         // Apply status filter
-        if ($request->has('search_status') && !empty($request->search_status)) {
-            $statusSearch = strtolower($request->search_status);
-            $data = $data->filter(function ($d) use ($statusSearch) {
-                $status = strtolower($this->calculateStatus($d->dataOpsional));
-                return strpos($status, $statusSearch) !== false;
-            });
-        }
+        $data = $this->applyStatusFilter($data, $request);
 
         $filename = 'list_upt_reguler_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
 
@@ -178,20 +185,21 @@ class RegullerController extends Controller
         $data = $query->get();
 
         // Apply status filter
-        if ($request->has('search_status') && !empty($request->search_status)) {
-            $statusSearch = strtolower($request->search_status);
-            $data = $data->filter(function ($d) use ($statusSearch) {
-                $status = strtolower($this->calculateStatus($d->dataOpsional));
-                return strpos($status, $statusSearch) !== false;
-            });
-        }
+        $data = $this->applyStatusFilter($data, $request);
 
-        $dataArray = $data->toArray(); // Pass as array for view
+        // FIXED: Convert collection to array with calculated status
+        $dataArray = [];
+        foreach ($data as $d) {
+            $dataItem = $d->toArray();
+            $dataItem['calculated_status'] = $this->calculateStatus($d->dataOpsional);
+            $dataArray[] = $dataItem;
+        }
 
         $pdfData = [
             'title' => 'List Data UPT Reguler',
             'data' => $dataArray,
-            'optionalFields' => $this->optionalFields // For status calculation in view
+            'optionalFields' => $this->optionalFields,
+            'generated_at' => Carbon::now()->format('d M Y H:i:s')
         ];
 
         $pdf = Pdf::loadView('export.db.upt.uptReguller', $pdfData);
@@ -199,64 +207,7 @@ class RegullerController extends Controller
         return $pdf->download($filename);
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // public function ListDataReguller(Request $request)
-    // {
-    //     $query = Upt::with('dataOpsional'); // Add eager loading for related data
-
-    //     $query->where('tipe', 'reguler');
-
-    //     // Cek apakah ada parameter pencarian
-    //     if ($request->has('table_search') && !empty($request->table_search)) {
-    //         $searchTerm = $request->table_search;
-
-    //         // Lakukan pencarian berdasarkan beberapa kolom
-    //         $query->where(function ($q) use ($searchTerm) {
-    //             $q->where('namaupt', 'LIKE', '%' . $searchTerm . '%')
-    //                 ->orWhere('kanwil', 'LIKE', '%' . $searchTerm . '%')
-    //                 ->orWhere('tanggal', 'LIKE', '%' . $searchTerm . '%')
-    //                 ->orWhereHas('dataOpsional', function ($subQuery) use ($searchTerm) {
-    //                     $subQuery->where('pic_upt', 'LIKE', '%' . $searchTerm . '%')
-    //                         ->orWhere('alamat', 'LIKE', '%' . $searchTerm . '%')
-    //                         ->orWhere('provider_internet', 'LIKE', '%' . $searchTerm . '%');
-    //                 });
-    //         });
-    //     }
-
-    //     $data = $query->get();
-    //     $providers = Provider::all();
-    //     $vpns = Vpn::all();
-
-    //     return view('db.upt.reguler.indexUpt', compact('data', 'providers', 'vpns'));
-    // }
-
-
-
-
-
-
-
-
-
-
+    // ... rest of the methods remain unchanged
     public function ListUpdateReguller(Request $request, $id)
     {
         $validator = Validator::make(
@@ -609,6 +560,7 @@ class RegullerController extends Controller
 
         return response()->stream($callback, 200, $headers);
     }
+
     public function exportUptPdf($id)
     {
         $user = Upt::with('dataOpsional')->findOrFail($id);
