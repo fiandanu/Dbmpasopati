@@ -52,12 +52,12 @@
                     <div class="col-md-3 mb-3">
                         <div class="card-kategori">
                             <h3>Kunjungan UPT</h3>
-                            <p class="text-kategori mb-2">Layanan Kunjungan UPT</p>
+                            <p class="text-kategori mb-2">Layanan Kunjungan Monitoring Client</p>
                             <div class="data-badge mb-3">
                                 <span class="checkmark">✓</span>
-                                100 Data
+                                {{ $totalKunjungan ?? 0 }} Data
                             </div>
-                            <a href="mclient-reguller-kunjungan" class="list-button">List Data Kunjungan UPT</a>
+                            <a href="{{ route('ListDataMclientKunjungan') }}" class="list-button">List Data Kunjungan</a>
                         </div>
                     </div>
 

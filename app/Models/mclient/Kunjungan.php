@@ -2,28 +2,27 @@
 
 namespace App\Models\mclient;
 
-use App\Models\user\Upt;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\user\Upt;
+use Carbon\Carbon;
 
 class Kunjungan extends Model
 {
     use HasFactory;
 
-    protected $table = 'kunjungan_reguller';
+    protected $table = 'mclient_kunjungan';
 
     protected $fillable = [
         'nama_upt',
-        'kanwil',
         'jenis_layanan',
         'keterangan',
         'jadwal',
         'tanggal_selesai',
         'durasi_hari',
-        'status',
         'pic_1',
         'pic_2',
+        'status',
     ];
 
     protected $casts = [
@@ -46,28 +45,27 @@ class Kunjungan extends Model
         return $this->belongsTo(Upt::class, 'nama_upt', 'namaupt');
     }
 
-    public function getFormattedTanggalTerlaporAttribute()
+    public function getFormattedJadwalAttribute()
     {
         return $this->jadwal ? $this->jadwal->format('Y-m-d') : null;
     }
 
-public function getFormattedTanggalSelesaiAttribute()
-{
-    return $this->tanggal_selesai ? $this->tanggal_selesai->format('Y-m-d') : null;
-}
-
+    public function getFormattedTanggalSelesaiAttribute()
+    {
+        return $this->tanggal_selesai ? $this->tanggal_selesai->format('Y-m-d') : null;
+    }
 
     public function getStatusBadgeClassAttribute()
     {
         switch (strtolower($this->status ?? '')) {
-            case 'terjadwal':
-                return 'badge-info';
             case 'selesai':
                 return 'badge-success';
             case 'proses':
                 return 'badge-warning';
             case 'pending':
                 return 'badge-danger';
+            case 'terjadwal':
+                return 'badge-info';
             default:
                 return 'badge-secondary';
         }
@@ -78,9 +76,42 @@ public function getFormattedTanggalSelesaiAttribute()
         return ucfirst($this->status ?? 'Belum ditentukan');
     }
 
+    public function getJenisLayananBadgeClassAttribute()
+    {
+        switch (strtolower($this->jenis_layanan ?? '')) {
+            case 'vpas':
+                return 'badge-primary';
+            case 'reguler':
+                return 'badge-secondary';
+            case 'vpasreg':
+                return 'badge-info';
+            default:
+                return 'badge-light';
+        }
+    }
+
+    public function getFormattedJenisLayananAttribute()
+    {
+        switch (strtolower($this->jenis_layanan ?? '')) {
+            case 'vpas':
+                return 'VPAS';
+            case 'reguler':
+                return 'Reguler';
+            case 'vpasreg':
+                return 'VPAS + Reguler';
+            default:
+                return 'Belum ditentukan';
+        }
+    }
+
     public function scopeByStatus($query, $status)
     {
         return $query->where('status', $status);
+    }
+
+    public function scopeByJenisLayanan($query, $jenisLayanan)
+    {
+        return $query->where('jenis_layanan', $jenisLayanan);
     }
 
     public function scopeByDateRange($query, $startDate, $endDate)
@@ -103,8 +134,8 @@ public function getFormattedTanggalSelesaiAttribute()
     {
         return $query->where(function ($q) use ($term) {
             $q->where('nama_upt', 'LIKE', "%{$term}%")
-                ->orWhere('kanwil', 'LIKE', "%{$term}%")
                 ->orWhere('jenis_layanan', 'LIKE', "%{$term}%")
+                ->orWhere('keterangan', 'LIKE', "%{$term}%")
                 ->orWhere('status', 'LIKE', "%{$term}%")
                 ->orWhere('pic_1', 'LIKE', "%{$term}%")
                 ->orWhere('pic_2', 'LIKE', "%{$term}%");
@@ -133,15 +164,15 @@ public function getFormattedTanggalSelesaiAttribute()
         });
     }
 
-    public function getKendalaSummaryAttribute()
+    public function getKeteranganSummaryAttribute()
     {
-        if (!$this->jenis_layanan) {
-            return 'Tidak ada kendala';
+        if (!$this->keterangan) {
+            return 'Tidak ada keterangan';
         }
 
-        return strlen($this->jenis_layanan) > 50
-            ? substr($this->jenis_layanan, 0, 50) . '...'
-            : $this->jenis_layanan;
+        return strlen($this->keterangan) > 50
+            ? substr($this->keterangan, 0, 50) . '...'
+            : $this->keterangan;
     }
 
     public function isResolved()
@@ -159,6 +190,11 @@ public function getFormattedTanggalSelesaiAttribute()
         return strtolower($this->status ?? '') === 'pending';
     }
 
+    public function isScheduled()
+    {
+        return strtolower($this->status ?? '') === 'terjadwal';
+    }
+
     public function getDurationTextAttribute()
     {
         if (!$this->durasi_hari) {
@@ -167,9 +203,19 @@ public function getFormattedTanggalSelesaiAttribute()
 
         return $this->durasi_hari . ' hari';
     }
-        public function isScheduled()
+
+    public function isVpasOnly()
     {
-        return strtolower($this->status ?? '') === 'terjadwal';
+        return strtolower($this->jenis_layanan ?? '') === 'vpas';
     }
 
+    public function isRegulerOnly()
+    {
+        return strtolower($this->jenis_layanan ?? '') === 'reguler';
+    }
+
+    public function isVpasReguler()
+    {
+        return strtolower($this->jenis_layanan ?? '') === 'vpasreg';
+    }
 }

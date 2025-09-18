@@ -3,29 +3,36 @@
 namespace App\Http\Controllers\mclient\reguler;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\mclient\Reguller;
+use App\Models\mclient\Kunjungan;
 use App\Models\user\Upt;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
-use App\Models\user\Kendala;
 use App\Models\user\Pic;
 
 class KunjunganController extends Controller
 {
-
-    public function ListDataMclientReguller(Request $request)
+    private function getJenisLayanan()
     {
-        $query = Reguller::query();
+        return [
+            'vpas' => 'VPAS',
+            'reguler' => 'Reguler', 
+            'vpasreg' => 'VPAS + Reguler'
+        ];
+    }
+
+    public function ListDataMclientKunjungan(Request $request)
+    {
+        $query = Kunjungan::query();
 
         if ($request->has('table_search') && !empty($request->table_search)) {
             $searchTerm = $request->table_search;
 
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('nama_upt', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('kanwil', 'LIKE', '%' . $searchTerm . '%')
                     ->orWhere('jenis_layanan', 'LIKE', '%' . $searchTerm . '%')
                     ->orWhere('keterangan', 'LIKE', '%' . $searchTerm . '%')
+                    ->orWhere('status', 'LIKE', '%' . $searchTerm . '%')
                     ->orWhere('pic_1', 'LIKE', '%' . $searchTerm . '%')
                     ->orWhere('pic_2', 'LIKE', '%' . $searchTerm . '%')
                     ->orWhere('jadwal', 'LIKE', '%' . $searchTerm . '%')
@@ -35,23 +42,41 @@ class KunjunganController extends Controller
 
         $data = $query->orderBy('created_at', 'desc')->paginate(10);
 
-        $tipe = Upt::orderBy('tipe')->get();
         $picList = Pic::orderBy('nama_pic')->get();
-        $uptList = Upt::select('namaupt', 'kanwil')
-            ->where('tipe', 'reguler', 'vpas')
+
+        // Get UPT list based on jenis layanan
+        $uptListVpas = Upt::select('namaupt', 'kanwil')
+            ->where('tipe', 'vpas')
             ->orderBy('namaupt')
             ->get();
-        return view('mclient.upt.indexKunjungan', compact('data', 'tipe', 'picList', 'uptList'));
+            
+        $uptListReguler = Upt::select('namaupt', 'kanwil')
+            ->where('tipe', 'reguler')
+            ->orderBy('namaupt')
+            ->get();
+
+        // Combine both lists for vpasreg
+        $uptListAll = $uptListVpas->merge($uptListReguler)->unique('namaupt')->sortBy('namaupt');
+
+        $jenisLayananOptions = $this->getJenisLayanan();
+
+        return view('mclient.upt.indexKunjungan', compact(
+            'data', 
+            'picList', 
+            'uptListVpas', 
+            'uptListReguler', 
+            'uptListAll',
+            'jenisLayananOptions'
+        ));
     }
 
-    public function MclientRegullerStore(Request $request)
+    public function MclientKunjunganStore(Request $request)
     {
         $validator = Validator::make(
             $request->all(),
             [
                 'nama_upt' => 'required|string|max:255',
-                'kanwil' => 'nullable|string|max:255',
-                'jenis_layanan' => 'nullable|string',
+                'jenis_layanan' => 'required|string|in:vpas,reguler,vpasreg',
                 'keterangan' => 'nullable|string',
                 'jadwal' => 'nullable|date',
                 'tanggal_selesai' => 'nullable|date|after_or_equal:jadwal',
@@ -64,13 +89,12 @@ class KunjunganController extends Controller
                 'nama_upt.required' => 'Nama UPT harus diisi.',
                 'nama_upt.string' => 'Nama UPT harus berupa teks.',
                 'nama_upt.max' => 'Nama UPT tidak boleh lebih dari 255 karakter.',
-                'kanwil.string' => 'Kanwil harus berupa teks.',
-                'kanwil.max' => 'Kanwil tidak boleh lebih dari 255 karakter.',
-                'jenis_layanan.string' => 'Kendala Reguller harus berupa teks.',
-                'keterangan.string' => 'Detail kendala Reguller harus berupa teks.',
-                'jadwal.date' => 'Format tanggal terlapor harus valid.',
+                'jenis_layanan.required' => 'Jenis layanan harus dipilih.',
+                'jenis_layanan.in' => 'Jenis layanan harus salah satu dari: VPAS, Reguler, atau VPAS + Reguler.',
+                'keterangan.string' => 'Keterangan harus berupa teks.',
+                'jadwal.date' => 'Format jadwal harus valid.',
                 'tanggal_selesai.date' => 'Format tanggal selesai harus valid.',
-                'tanggal_selesai.after_or_equal' => 'Tanggal selesai tidak boleh lebih awal dari tanggal terlapor.',
+                'tanggal_selesai.after_or_equal' => 'Tanggal selesai tidak boleh lebih awal dari jadwal.',
                 'durasi_hari.integer' => 'Durasi hari harus berupa angka.',
                 'durasi_hari.min' => 'Durasi hari tidak boleh negatif.',
                 'status.in' => 'Status harus salah satu dari: pending, proses, selesai, atau terjadwal.',
@@ -92,14 +116,14 @@ class KunjunganController extends Controller
             $data = $request->all();
 
             if ($request->jadwal && $request->tanggal_selesai) {
-                $tanggalTerlapor = Carbon::parse($request->jadwal);
+                $jadwal = Carbon::parse($request->jadwal);
                 $tanggalSelesai = Carbon::parse($request->tanggal_selesai);
-                $data['durasi_hari'] = $tanggalSelesai->diffInDays($tanggalTerlapor);
+                $data['durasi_hari'] = $tanggalSelesai->diffInDays($jadwal);
             }
 
-            Reguller::create($data);
+            Kunjungan::create($data);
 
-            return redirect()->back()->with('success', 'Data monitoring client Reguller berhasil ditambahkan!');
+            return redirect()->back()->with('success', 'Data kunjungan monitoring client berhasil ditambahkan!');
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
@@ -107,14 +131,13 @@ class KunjunganController extends Controller
         }
     }
 
-    public function MclientRegullerUpdate(Request $request, $id)
+    public function MclientKunjunganUpdate(Request $request, $id)
     {
         $validator = Validator::make(
             $request->all(),
             [
                 'nama_upt' => 'required|string|max:255',
-                'kanwil' => 'nullable|string|max:255',
-                'jenis_layanan' => 'nullable|string',
+                'jenis_layanan' => 'required|string|in:vpas,reguler,vpasreg',
                 'keterangan' => 'nullable|string',
                 'jadwal' => 'nullable|date',
                 'tanggal_selesai' => 'nullable|date|after_or_equal:jadwal',
@@ -127,13 +150,12 @@ class KunjunganController extends Controller
                 'nama_upt.required' => 'Nama UPT harus diisi.',
                 'nama_upt.string' => 'Nama UPT harus berupa teks.',
                 'nama_upt.max' => 'Nama UPT tidak boleh lebih dari 255 karakter.',
-                'kanwil.string' => 'Kanwil harus berupa teks.',
-                'kanwil.max' => 'Kanwil tidak boleh lebih dari 255 karakter.',
-                'jenis_layanan.string' => 'Kendala Reguller harus berupa teks.',
-                'keterangan.string' => 'Detail kendala Reguller harus berupa teks.',
-                'jadwal.date' => 'Format tanggal terlapor harus valid.',
+                'jenis_layanan.required' => 'Jenis layanan harus dipilih.',
+                'jenis_layanan.in' => 'Jenis layanan harus salah satu dari: VPAS, Reguler, atau VPAS + Reguler.',
+                'keterangan.string' => 'Keterangan harus berupa teks.',
+                'jadwal.date' => 'Format jadwal harus valid.',
                 'tanggal_selesai.date' => 'Format tanggal selesai harus valid.',
-                'tanggal_selesai.after_or_equal' => 'Tanggal selesai tidak boleh lebih awal dari tanggal terlapor.',
+                'tanggal_selesai.after_or_equal' => 'Tanggal selesai tidak boleh lebih awal dari jadwal.',
                 'durasi_hari.integer' => 'Durasi hari harus berupa angka.',
                 'durasi_hari.min' => 'Durasi hari tidak boleh negatif.',
                 'status.in' => 'Status harus salah satu dari: pending, proses, selesai, atau terjadwal.',
@@ -156,12 +178,12 @@ class KunjunganController extends Controller
 
             try {
                 if (!empty($validatedData)) {
-                    $data = Reguller::findOrFail($id);
+                    $data = Kunjungan::findOrFail($id);
 
                     if (isset($validatedData['jadwal']) && isset($validatedData['tanggal_selesai'])) {
-                        $tanggalTerlapor = Carbon::parse($validatedData['jadwal']);
+                        $jadwal = Carbon::parse($validatedData['jadwal']);
                         $tanggalSelesai = Carbon::parse($validatedData['tanggal_selesai']);
-                        $validatedData['durasi_hari'] = $tanggalSelesai->diffInDays($tanggalTerlapor);
+                        $validatedData['durasi_hari'] = $tanggalSelesai->diffInDays($jadwal);
                     }
 
                     $data->update($validatedData);
@@ -176,18 +198,18 @@ class KunjunganController extends Controller
         }
 
         try {
-            $data = Reguller::findOrFail($id);
+            $data = Kunjungan::findOrFail($id);
             $updateData = $request->all();
 
             if ($request->jadwal && $request->tanggal_selesai) {
-                $tanggalTerlapor = Carbon::parse($request->jadwal);
+                $jadwal = Carbon::parse($request->jadwal);
                 $tanggalSelesai = Carbon::parse($request->tanggal_selesai);
-                $updateData['durasi_hari'] = $tanggalSelesai->diffInDays($tanggalTerlapor);
+                $updateData['durasi_hari'] = $tanggalSelesai->diffInDays($jadwal);
             }
 
             $data->update($updateData);
 
-            return redirect()->back()->with('success', 'Data monitoring client Reguller berhasil diupdate!');
+            return redirect()->back()->with('success', 'Data kunjungan monitoring client berhasil diupdate!');
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
@@ -195,20 +217,152 @@ class KunjunganController extends Controller
         }
     }
 
-    public function MclientRegullerDestroy($id)
+    public function MclientKunjunganDestroy($id)
     {
         try {
-            $data = Reguller::findOrFail($id);
+            $data = Kunjungan::findOrFail($id);
             $namaUpt = $data->nama_upt;
+            $jenisLayanan = $data->formatted_jenis_layanan;
             $data->delete();
 
             return redirect()->back()
-                ->with('success', "Data monitoring client Reguller di UPT '{$namaUpt}' berhasil dihapus!");
+                ->with('success', "Data kunjungan monitoring client '{$jenisLayanan}' di UPT '{$namaUpt}' berhasil dihapus!");
         } catch (\Exception $e) {
             return redirect()->back()
                 ->with('error', 'Gagal menghapus data: ' . $e->getMessage());
         }
     }
 
+    public function exportCsv()
+    {
+        $data = Kunjungan::orderBy('created_at', 'desc')->get();
 
+        $filename = 'monitoring_client_kunjungan_' . date('Y-m-d_H-i-s') . '.csv';
+
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+
+        $callback = function () use ($data) {
+            $file = fopen('php://output', 'w');
+
+            fputcsv($file, [
+                'Nama UPT',
+                'Jenis Layanan',
+                'Keterangan',
+                'Jadwal',
+                'Tanggal Selesai',
+                'Durasi (Hari)',
+                'Status',
+                'PIC 1',
+                'PIC 2',
+                'Dibuat Pada',
+                'Diupdate Pada'
+            ]);
+
+            foreach ($data as $row) {
+                fputcsv($file, [
+                    $row->nama_upt,
+                    $row->formatted_jenis_layanan,
+                    $row->keterangan,
+                    $row->jadwal ? $row->jadwal->format('Y-m-d') : '',
+                    $row->tanggal_selesai ? $row->tanggal_selesai->format('Y-m-d') : '',
+                    $row->durasi_hari,
+                    $row->status,
+                    $row->pic_1,
+                    $row->pic_2,
+                    $row->created_at ? $row->created_at->format('Y-m-d H:i:s') : '',
+                    $row->updated_at ? $row->updated_at->format('Y-m-d H:i:s') : ''
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    public function getDashboardStats()
+    {
+        $totalData = Kunjungan::count();
+        $statusPending = Kunjungan::where('status', 'pending')->count();
+        $statusProses = Kunjungan::where('status', 'proses')->count();
+        $statusSelesai = Kunjungan::where('status', 'selesai')->count();
+        $statusTerjadwal = Kunjungan::where('status', 'terjadwal')->count();
+
+        $jenisVpas = Kunjungan::where('jenis_layanan', 'vpas')->count();
+        $jenisReguler = Kunjungan::where('jenis_layanan', 'reguler')->count();
+        $jenisVpasReg = Kunjungan::where('jenis_layanan', 'vpasreg')->count();
+
+        $bulanIni = Kunjungan::whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->count();
+
+        $avgDurasi = Kunjungan::where('status', 'selesai')
+            ->whereNotNull('durasi_hari')
+            ->avg('durasi_hari');
+
+        return [
+            'total' => $totalData,
+            'pending' => $statusPending,
+            'proses' => $statusProses,
+            'selesai' => $statusSelesai,
+            'terjadwal' => $statusTerjadwal,
+            'vpas' => $jenisVpas,
+            'reguler' => $jenisReguler,
+            'vpasreg' => $jenisVpasReg,
+            'bulan_ini' => $bulanIni,
+            'avg_durasi' => round($avgDurasi, 1)
+        ];
+    }
+
+    public function getUptData(Request $request)
+    {
+        $namaUpt = $request->input('nama_upt');
+        $jenisLayanan = $request->input('jenis_layanan');
+
+        // Determine which UPT table to query based on jenis layanan
+        $tipeUpt = '';
+        switch ($jenisLayanan) {
+            case 'vpas':
+                $tipeUpt = 'vpas';
+                break;
+            case 'reguler':
+                $tipeUpt = 'reguler';
+                break;
+            case 'vpasreg':
+                // For vpasreg, check both vpas and reguler
+                $upt = Upt::where('namaupt', $namaUpt)
+                    ->whereIn('tipe', ['vpas', 'reguler'])
+                    ->first();
+                break;
+            default:
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Jenis layanan tidak valid'
+                ]);
+        }
+
+        if ($jenisLayanan !== 'vpasreg') {
+            $upt = Upt::where('namaupt', $namaUpt)
+                ->where('tipe', $tipeUpt)
+                ->first();
+        }
+
+        if (isset($upt) && $upt) {
+            return response()->json([
+                'status' => 'success',
+                'kanwil' => $upt->kanwil
+            ]);
+        }
+
+        return response()->json([
+            'status' => 'error',
+            'message' => 'UPT not found untuk jenis layanan tersebut'
+        ]);
+    }
 }
