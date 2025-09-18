@@ -62,6 +62,18 @@
                         </div>
                     </div>
 
+                    <div class="col-md-3">
+                        <div class="card-kategori">
+                            <h3>Setting Ponpes</h3>
+                            <p class="text-kategori mb-2">Layanan Setting Ponpes</p>
+                            <div class="data-badge mb-3">
+                                <span class="checkmark">✓</span>
+                                {{ $ponpesSettingCount ?? 0 }} Data
+                            </div>
+                            <a href="" class="list-button">Setting Ponpes</a>
+                        </div>
+                    </div>
+                    
                     <!-- Kategori Pengiriman Alat Ponpes -->
                     <div class="col-md-3">
                         <div class="card-kategori">
@@ -71,7 +83,7 @@
                                 <span class="checkmark">✓</span>
                                 100 Data
                             </div>
-                            <a href="" class="list-button">Pengiriman Alat Ponpes</a>
+                            <a href="{{ route('ListDataMclientPonpesPengiriman') }}" class="list-button">Pengiriman Alat Ponpes</a>
                         </div>
                     </div>
                 </div>
