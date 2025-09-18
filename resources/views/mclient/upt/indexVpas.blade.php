@@ -153,7 +153,7 @@
                                                 <td>{{ $d->nama_upt ?? '-' }}</td>
                                                 <td>{{ $d->kanwil ?? '-' }}</td>
                                                 <td class="text-center">
-                                                    <span class="badge badge-warning">
+                                                    <span class="Tipereguller">
                                                         {{ Str::limit($d->jenis_kendala ?? 'Belum ditentukan', 30) }}
                                                     </span>
                                                 </td>
@@ -265,7 +265,7 @@
                                 <div class="modal-dialog modal-lg">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <label class="modal-title" id="addModalLabel">Tambah Data Keluhan Client
+                                            <label class="modal-title" id="addModalLabel">Tambah Data
                                                 VPAS</label>
                                             <button type="button" class="btn-close-custom" data-bs-dismiss="modal"
                                                 aria-label="Close">
@@ -277,7 +277,7 @@
                                             <!-- Informasi UPT Section -->
                                             <div class="mb-4">
                                                 <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                    <h5>Informasi UPT</h5>
+                                                    <label>Informasi UPT</label>
                                                 </div>
                                                 <div class="column">
                                                     <div class="mb-3">
@@ -322,7 +322,7 @@
                                             <!-- Detail Kendala Section -->
                                             <div class="mb-4">
                                                 <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                    <h5>Detail Kendala</h5>
+                                                    <label>Detail Kendala</label>
                                                 </div>
                                                 <div class="column">
                                                     <div class="mb-3">
@@ -350,7 +350,7 @@
                                             <!-- Tanggal & Status Section -->
                                             <div class="mb-4">
                                                 <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                    <h5>Tanggal & Status</h5>
+                                                    <label>Tanggal & Status</label>
                                                 </div>
                                                 <div class="column">
                                                     <div class="mb-3">
@@ -387,7 +387,7 @@
                                             <!-- PIC Section -->
                                             <div class="mb-4">
                                                 <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                    <h5>PIC</h5>
+                                                    <label>PIC</label>
                                                 </div>
                                                 <div class="column">
                                                     <div class="mb-3">
@@ -438,7 +438,7 @@
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <label class="modal-title" id="editModalLabel{{ $d->id }}">Edit
-                                                    Data Kendala</label>
+                                                    Data</label>
                                                 <button type="button" class="btn-close-custom" data-bs-dismiss="modal"
                                                     aria-label="Close">
                                                     <i class="bi bi-x"></i>
@@ -451,7 +451,7 @@
                                                 <!-- Informasi UPT Section -->
                                                 <div class="mb-4">
                                                     <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                        <h5>Informasi UPT</h5>
+                                                        <label>Informasi UPT</label>
                                                     </div>
                                                     <div class="column">
                                                         <div class="mb-3">
@@ -485,7 +485,7 @@
                                                 <!-- Detail Kendala Section -->
                                                 <div class="mb-4">
                                                     <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                        <h5>Detail Kendala</h5>
+                                                        <label>Detail Kendala</label>
                                                     </div>
                                                     <div class="row">
                                                         <div class="col">
@@ -528,7 +528,7 @@
                                                 <!-- Tanggal & Status Section -->
                                                 <div class="mb-4">
                                                     <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                        <h5>Tanggal & Status</h5>
+                                                        <label>Tanggal & Status</label>
                                                     </div>
 
                                                     <div class="">
@@ -585,7 +585,7 @@
                                                 <!-- PIC Section -->
                                                 <div class="mb-4">
                                                     <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                        <h5>PIC</h5>
+                                                        <label>PIC</label>
                                                     </div>
                                                     <div class="">
                                                         <div class="mb-3">

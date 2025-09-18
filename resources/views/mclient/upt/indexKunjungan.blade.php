@@ -121,7 +121,7 @@
                                 <div class="alert alert-info">
                                     <i class="fas fa-info-circle"></i>
                                     Hasil pencarian untuk: "<strong>{{ request('table_search') }}</strong>"
-                                    <a href="{{ route('ListDataMclientReguller') }}" class="btn btn-sm btn-secondary ml-2">
+                                    <a href="{{ route('mclient-reguller-kunjungan.ListDataMclientReguller') }}" class="btn btn-sm btn-secondary ml-2">
                                         <i class="fas fa-times"></i> Clear
                                     </a>
                                 </div>

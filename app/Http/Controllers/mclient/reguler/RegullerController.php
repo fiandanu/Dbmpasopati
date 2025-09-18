@@ -13,6 +13,36 @@ use App\Models\user\Pic;
 
 class RegullerController extends Controller
 {
+    private function getJenisKendala()
+    {
+        return [
+            'Tidak ada sinyal',
+            'Suara tidak jelas',
+            'Aplikasi error',
+            'Layar rusak',
+            'Internet lambat',
+            'Tidak bisa login',
+            'Kamera bermasalah',
+            'Data tidak sinkron',
+            'Server down',
+            'Update gagal',
+            'Mikrofon rusak',
+            'VPN terputus',
+            'Memory penuh',
+            'Android tidak support',
+            'Jaringan bermasalah',
+            'Aplikasi hang',
+            'Video tidak jalan',
+            'Koneksi timeout',
+            'Database error',
+            'Firewall block',
+            'Maintenance rutin',
+            'Aplikasi lambat',
+            'SSL expired',
+            'Recording error',
+            'Notifikasi tidak masuk'
+        ];
+    }
 
     public function ListDataMclientReguller(Request $request)
     {
@@ -212,49 +242,106 @@ class RegullerController extends Controller
         }
     }
 
-    // {
-    //     $totalData = Reguller::count();
-    //     $statusPending = Reguller::where('status', 'pending')->count();
-    //     $statusProses = Reguller::where('status', 'proses')->count();
-    //     $statusSelesai = Reguller::where('status', 'selesai')->count();
-    //     $statusTerjadwal = Reguller::where('status', 'terjadwal')->count();
+    public function exportCsv()
+    {
+        $data = Reguller::orderBy('created_at', 'desc')->get();
+
+        $filename = 'monitoring_client_reguller_' . date('Y-m-d_H-i-s') . '.csv';
+
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+
+        $callback = function () use ($data) {
+            $file = fopen('php://output', 'w');
+
+            fputcsv($file, [
+                'Nama UPT',
+                'Kanwil',
+                'Kendala Reguller',
+                'Detail Kendala',
+                'Tanggal Terlapor',
+                'Tanggal Selesai',
+                'Durasi (Hari)',
+                'Status',
+                'PIC 1',
+                'PIC 2',
+                'Dibuat Pada',
+                'Diupdate Pada'
+            ]);
+
+            $no = 1;
+            foreach ($data as $row) {
+                fputcsv($file, [
+                    $no++,
+                    $row->nama_upt,
+                    $row->kanwil,
+                    $row->jenis_kendala,
+                    $row->detail_kendala,
+                    $row->tanggal_terlapor ? $row->tanggal_terlapor->format('Y-m-d') : '',
+                    $row->tanggal_selesai ? $row->tanggal_selesai->format('Y-m-d') : '',
+                    $row->durasi_hari,
+                    $row->status,
+                    $row->pic_1,
+                    $row->pic_2,
+                    $row->created_at ? $row->created_at->format('Y-m-d H:i:s') : '',
+                    $row->updated_at ? $row->updated_at->format('Y-m-d H:i:s') : ''
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    public function getDashboardStats()
+    {
+        $totalData = Reguller::count();
+        $statusPending = Reguller::where('status', 'pending')->count();
+        $statusProses = Reguller::where('status', 'proses')->count();
+        $statusSelesai = Reguller::where('status', 'selesai')->count();
+        $statusTerjadwal = Reguller::where('status', 'terjadwal')->count();
 
 
-    //     $bulanIni = Reguller::whereMonth('created_at', now()->month)
-    //         ->whereYear('created_at', now()->year)
-    //         ->count();
+        $bulanIni = Reguller::whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->count();
 
-    //     $avgDurasi = Reguller::where('status', 'selesai')
-    //         ->whereNotNull('durasi_hari')
-    //         ->avg('durasi_hari');
+        $avgDurasi = Reguller::where('status', 'selesai')
+            ->whereNotNull('durasi_hari')
+            ->avg('durasi_hari');
 
-    //     return [
-    //         'total' => $totalData,
-    //         'pending' => $statusPending,
-    //         'proses' => $statusProses,
-    //         'selesai' => $statusSelesai,
-    //         'terjadwal' => $statusTerjadwal,
-    //         'bulan_ini' => $bulanIni,
-    //         'avg_durasi' => round($avgDurasi, 1)
-    //     ];
-    // }
+        return [
+            'total' => $totalData,
+            'pending' => $statusPending,
+            'proses' => $statusProses,
+            'selesai' => $statusSelesai,
+            'terjadwal' => $statusTerjadwal,
+            'bulan_ini' => $bulanIni,
+            'avg_durasi' => round($avgDurasi, 1)
+        ];
+    }
 
-    // public function getUptData(Request $request)
-    // {
-    //     $namaUpt = $request->input('nama_upt');
-    //     $upt = Upt::where('namaupt', $namaUpt)->first();
+    public function getUptData(Request $request)
+    {
+        $namaUpt = $request->input('nama_upt');
+        $upt = Upt::where('namaupt', $namaUpt)->first();
 
-    //     if ($upt) {
-    //         return response()->json([
-    //             'status' => 'success',
-    //             'kanwil' => $upt->kanwil
-    //         ]);
-    //     }
+        if ($upt) {
+            return response()->json([
+                'status' => 'success',
+                'kanwil' => $upt->kanwil
+            ]);
+        }
 
-    //     return response()->json([
-    //         'status' => 'error',
-    //         'message' => 'UPT not found'
-    //     ]);
-    // }
-
+        return response()->json([
+            'status' => 'error',
+            'message' => 'UPT not found'
+        ]);
+    }
 }

@@ -10,7 +10,7 @@
                             <button class="btn-pushmenu" data-widget="pushmenu" role="button">
                                 <i class="fas fa-bars"></i>
                             </button>
-                            <h1 class="headline-large-32 mb-0">Kunjungan UPT</h1>
+                            <h1 class="headline-large-32 mb-0">Keluhan Reguller</h1>
                         </div>
 
                         <div class="d-flex align-items-center gap-2 flex-wrap">
@@ -40,7 +40,7 @@
                         <i class="fas fa-check-circle text-success"></i>
                     </div>
                     <div class="flex-grow-1 ml-3">
-                        <div class="alert-heading h5 mb-2">Berhasil!</div>
+                        <div class="alert-heading label mb-2">Berhasil!</div>
                         <div class="small">{{ session('success') }}</div>
                     </div>
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -58,7 +58,7 @@
                         <i class="fas fa-info-circle text-warning"></i>
                     </div>
                     <div class="flex-grow-1 ml-3">
-                        <div class="alert-heading h5 mb-2">Sebagian Data Tersimpan</div>
+                        <div class="alert-heading label mb-2">Sebagian Data Tersimpan</div>
                         <div class="small">{{ session('partial_success') }}</div>
                     </div>
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -76,7 +76,7 @@
                         <i class="fas fa-exclamation-circle text-danger"></i>
                     </div>
                     <div class="flex-grow-1 ml-3">
-                        <div class="alert-heading h5 mb-2">Periksa kembali Data yang dimasukkan</div>
+                        <div class="alert-heading label mb-2">Periksa kembali Data yang dimasukkan</div>
                         <div class="small">
                             @foreach ($errors->all() as $error)
                                 <div class="mb-1">• {{ $error }}</div>
@@ -98,7 +98,7 @@
                         <i class="fas fa-times-circle text-danger"></i>
                     </div>
                     <div class="flex-grow-1 ml-3">
-                        <div class="alert-heading h5 mb-2">Error!</div>
+                        <div class="alert-heading label mb-2">Error!</div>
                         <div class="small">{{ session('error') }}</div>
                     </div>
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -133,14 +133,13 @@
                                         <tr>
                                             <th>Nama UPT</th>
                                             <th>Kanwil</th>
-                                            <th>Jenis Layanan</th>
-                                            <th>Keterangan</th>
-                                            <th>Jadwal</th>
+                                            <th>Jenis Kendala</th>
+                                            <th>Tanggal Terlapor</th>
                                             <th>Tanggal Selesai</th>
-                                            <th class="text-center">Durasi Hari</th>
+                                            <th>Durasi (Hari)</th>
+                                            <th class="text-center">Status</th>
                                             <th>PIC 1</th>
                                             <th>PIC 2</th>
-                                            <th class="text-center">Status</th>
                                             <th class="text-center">Action</th>
                                         </tr>
                                     </thead>
@@ -150,8 +149,8 @@
                                                 <td>{{ $d->nama_upt ?? '-' }}</td>
                                                 <td>{{ $d->kanwil ?? '-' }}</td>
                                                 <td class="text-center">
-                                                    <span class="badge badge-warning">
-                                                        {{ Str::limit($d->jenis_kendala ?? 'Belum ditentukan', 30) }}
+                                                    <span class="Tipereguller">
+                                                        {{ Str::limit($d->jenis_kendala ?? 'Belum ditentukan') }}
                                                     </span>
                                                 </td>
                                                 <td class="text-center">
@@ -225,8 +224,7 @@
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
-                                                                <button type="submit"
-                                                                    class="btn-delete">Hapus</button>
+                                                                <button type="submit" class="btn-delete">Hapus</button>
                                                             </form>
                                                         </div>
                                                     </div>
@@ -268,7 +266,7 @@
                                             <!-- Informasi UPT Section -->
                                             <div class="mb-4">
                                                 <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                    <h5>Informasi UPT</h5>
+                                                    <label>Informasi UPT</label>
                                                 </div>
                                                 <div class="column">
                                                     <div class="mb-3">
@@ -313,7 +311,7 @@
                                             <!-- Detail Kendala Section -->
                                             <div class="mb-4">
                                                 <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                    <h5>Detail Kendala</h5>
+                                                    <label>Detail Kendala</label>
                                                 </div>
                                                 <div class="column">
                                                     <div class="mb-3">
@@ -341,7 +339,7 @@
                                             <!-- Tanggal & Status Section -->
                                             <div class="mb-4">
                                                 <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                    <h5>Tanggal & Status</h5>
+                                                    <label>Tanggal & Status</label>
                                                 </div>
                                                 <div class="column">
                                                     <div class="mb-3">
@@ -378,7 +376,7 @@
                                             <!-- PIC Section -->
                                             <div class="mb-4">
                                                 <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                    <h5>PIC</h5>
+                                                    <label>PIC</label>
                                                 </div>
                                                 <div class="column">
                                                     <div class="mb-3">
@@ -442,7 +440,7 @@
                                                 <!-- Informasi UPT Section -->
                                                 <div class="mb-4">
                                                     <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                        <h5>Informasi UPT</h5>
+                                                        <label>Informasi UPT</label>
                                                     </div>
                                                     <div class="column">
                                                         <div class="mb-3">
@@ -476,7 +474,7 @@
                                                 <!-- Detail Kendala Section -->
                                                 <div class="mb-4">
                                                     <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                        <h5>Detail Kendala</h5>
+                                                        <label>Detail Kendala</label>
                                                     </div>
                                                     <div class="column">
                                                         <div class="mb-3">
@@ -516,7 +514,7 @@
                                                 <!-- Tanggal & Status Section -->
                                                 <div class="mb-4">
                                                     <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                        <h5>Tanggal & Status</h5>
+                                                        <label>Tanggal & Status</label>
                                                     </div>
                                                     <div class="column">
                                                         <div class="mb-3">
@@ -569,7 +567,7 @@
                                                 <!-- PIC Section -->
                                                 <div class="mb-4">
                                                     <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                        <h5>PIC</h5>
+                                                        <label>PIC</label>
                                                     </div>
                                                     <div class="column">
                                                         <div class="mb-3">

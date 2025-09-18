@@ -308,7 +308,7 @@
                                                     <!-- Data Wajib Section -->
                                                     <div class="mb-4">
                                                         <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                            <h5>Data Wajib</h5>
+                                                            <label>Data Wajib</label>
                                                         </div>
 
                                                         <div class="mb-3">
@@ -339,7 +339,7 @@
                                                     <!-- Data Opsional Section -->
                                                     <div class="mb-4">
                                                         <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                            <h5>Data Opsional</h5>
+                                                            <label>Data Opsional</label>
                                                         </div>
 
                                                         <div class="mb-3">
@@ -449,7 +449,7 @@
                                                     <!-- IMC PAS Section -->
                                                     <div class="mb-4">
                                                         <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                            <h5>IMC PAS</h5>
+                                                            <label>IMC PAS</label>
                                                         </div>
 
                                                         <div class="mb-3">
@@ -503,7 +503,7 @@
                                                     <!-- Akses VPN Section -->
                                                     <div class="mb-4">
                                                         <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                            <h5>Akses VPN</h5>
+                                                            <label>Akses VPN</label>
                                                         </div>
 
                                                         <div class="mb-3">
@@ -559,7 +559,7 @@
 
                                                     <div class="mb-4">
                                                         <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                            <h5>Extension VPAS</h5>
+                                                            <label>Extension VPAS</label>
                                                         </div>
 
                                                         <div class="mb-3">

@@ -151,7 +151,6 @@
 
                                             <div class="modal-body">
                                                 {{-- Input Nama Ponpes --}}
-                                                <h5 class="headline-modal">Data Wajib</h5>
                                                 <div class="mb-3">
                                                     <label for="nama_ponpes" class="form-label">Nama Ponpes</label>
                                                     <input type="text" class="form-control" id="nama_ponpes"
@@ -226,7 +225,7 @@
                                         <div class="modal-dialog">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="editModalLabel">Edit Data</h5>
+                                                    <label class="modal-title" id="editModalLabel">Edit Data</label>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                         aria-label="Close"></button>
                                                 </div>

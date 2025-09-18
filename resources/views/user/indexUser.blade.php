@@ -96,8 +96,9 @@
                                                         <div class="modal-body text-center align-items-center">
                                                             <ion-icon name="alert-circle-outline"
                                                                 class="text-9xl text-[var(--yellow-04)]"></ion-icon>
-                                                            <p class="headline-large-32">Anda Yakin? <br></p>
-                                                            <b>{{ $d->namaupt }}</b> ingin dihapus?
+                                                            <p class="headline-large-32">Anda Yakin?</p>
+                                                            <label>Apakah Data <b> {{ $d->namaupt }} </b> ingin
+                                                                dihapus?</label>
 
                                                             @if (str_contains($d->namaupt, '(VpasReg)'))
                                                                 <div class="alert alert-warning">
