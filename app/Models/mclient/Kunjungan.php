@@ -16,9 +16,9 @@ class Kunjungan extends Model
     protected $fillable = [
         'nama_upt',
         'kanwil',
-        'jenis_kendala',
-        'detail_kendala',
-        'tanggal_terlapor',
+        'jenis_layanan',
+        'keterangan',
+        'jadwal',
         'tanggal_selesai',
         'durasi_hari',
         'status',
@@ -27,7 +27,7 @@ class Kunjungan extends Model
     ];
 
     protected $casts = [
-        'tanggal_terlapor' => 'date',
+        'jadwal' => 'date',
         'tanggal_selesai' => 'date',
         'durasi_hari' => 'integer',
         'created_at' => 'datetime',
@@ -35,7 +35,7 @@ class Kunjungan extends Model
     ];
 
     protected $dates = [
-        'tanggal_terlapor',
+        'jadwal',
         'tanggal_selesai',
         'created_at',
         'updated_at',
@@ -48,7 +48,7 @@ class Kunjungan extends Model
 
     public function getFormattedTanggalTerlaporAttribute()
     {
-        return $this->tanggal_terlapor ? $this->tanggal_terlapor->format('Y-m-d') : null;
+        return $this->jadwal ? $this->jadwal->format('Y-m-d') : null;
     }
 
 public function getFormattedTanggalSelesaiAttribute()
@@ -85,7 +85,7 @@ public function getFormattedTanggalSelesaiAttribute()
 
     public function scopeByDateRange($query, $startDate, $endDate)
     {
-        return $query->whereBetween('tanggal_terlapor', [$startDate, $endDate]);
+        return $query->whereBetween('jadwal', [$startDate, $endDate]);
     }
 
     public function scopeThisMonth($query)
@@ -104,7 +104,7 @@ public function getFormattedTanggalSelesaiAttribute()
         return $query->where(function ($q) use ($term) {
             $q->where('nama_upt', 'LIKE', "%{$term}%")
                 ->orWhere('kanwil', 'LIKE', "%{$term}%")
-                ->orWhere('jenis_kendala', 'LIKE', "%{$term}%")
+                ->orWhere('jenis_layanan', 'LIKE', "%{$term}%")
                 ->orWhere('status', 'LIKE', "%{$term}%")
                 ->orWhere('pic_1', 'LIKE', "%{$term}%")
                 ->orWhere('pic_2', 'LIKE', "%{$term}%");
@@ -113,8 +113,8 @@ public function getFormattedTanggalSelesaiAttribute()
 
     public function calculateDuration()
     {
-        if ($this->tanggal_terlapor && $this->tanggal_selesai) {
-            $startDate = Carbon::parse($this->tanggal_terlapor);
+        if ($this->jadwal && $this->tanggal_selesai) {
+            $startDate = Carbon::parse($this->jadwal);
             $endDate = Carbon::parse($this->tanggal_selesai);
             return $endDate->diffInDays($startDate);
         }
@@ -127,7 +127,7 @@ public function getFormattedTanggalSelesaiAttribute()
         parent::boot();
 
         static::saving(function ($model) {
-            if ($model->tanggal_terlapor && $model->tanggal_selesai) {
+            if ($model->jadwal && $model->tanggal_selesai) {
                 $model->durasi_hari = $model->calculateDuration();
             }
         });
@@ -135,13 +135,13 @@ public function getFormattedTanggalSelesaiAttribute()
 
     public function getKendalaSummaryAttribute()
     {
-        if (!$this->jenis_kendala) {
+        if (!$this->jenis_layanan) {
             return 'Tidak ada kendala';
         }
 
-        return strlen($this->jenis_kendala) > 50
-            ? substr($this->jenis_kendala, 0, 50) . '...'
-            : $this->jenis_kendala;
+        return strlen($this->jenis_layanan) > 50
+            ? substr($this->jenis_layanan, 0, 50) . '...'
+            : $this->jenis_layanan;
     }
 
     public function isResolved()

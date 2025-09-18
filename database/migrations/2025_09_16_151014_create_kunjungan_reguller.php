@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('nama_upt')->nullable();
             $table->string('kanwil')->nullable();
-            $table->string('jenis_kendala')->nullable();
-            $table->string('detail_kendala')->nullable();
-            $table->string('tanggal_terlapor')->nullable();
+            $table->string('jenis_layanan')->nullable();
+            $table->string('keterangan')->nullable();
+            $table->string('jadwal')->nullable();
             $table->string('tanggal_selesai')->nullable();
             $table->string('durasi_hari')->nullable();
             $table->string('status')->nullable();

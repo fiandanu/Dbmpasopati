@@ -10,7 +10,7 @@
                             <button class="btn-pushmenu" data-widget="pushmenu" role="button">
                                 <i class="fas fa-bars"></i>
                             </button>
-                            <h1 class="headline-large-32 mb-0">Keluhan Reguller</h1>
+                            <h1 class="headline-large-32 mb-0">Kunjungan UPT</h1>
                         </div>
 
                         <div class="d-flex align-items-center gap-2 flex-wrap">
@@ -133,13 +133,14 @@
                                         <tr>
                                             <th>Nama UPT</th>
                                             <th>Kanwil</th>
-                                            <th>Jenis Kendala</th>
-                                            <th>Tanggal Terlapor</th>
+                                            <th>Jenis Layanan</th>
+                                            <th>Keterangan</th>
+                                            <th>Jadwal</th>
                                             <th>Tanggal Selesai</th>
-                                            <th>Durasi (Hari)</th>
-                                            <th class="text-center">Status</th>
+                                            <th class="text-center">Durasi Hari</th>
                                             <th>PIC 1</th>
                                             <th>PIC 2</th>
+                                            <th class="text-center">Status</th>
                                             <th class="text-center">Action</th>
                                         </tr>
                                     </thead>

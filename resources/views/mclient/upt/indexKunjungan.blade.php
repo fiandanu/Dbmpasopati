@@ -1,5 +1,7 @@
 @extends('layout.sidebar')
 @section('content')
+
+
     <div class="content-wrapper">
         <section class="content">
             <div class="container-fluid">
@@ -10,7 +12,7 @@
                             <button class="btn-pushmenu" data-widget="pushmenu" role="button">
                                 <i class="fas fa-bars"></i>
                             </button>
-                            <h1 class="headline-large-32 mb-0">Kunjungan UPT</h1>
+                            <h1 class="headline-large-32 mb-0">Kunjungan Reguller</h1>
                         </div>
 
                         <div class="d-flex align-items-center gap-2 flex-wrap">
@@ -133,10 +135,13 @@
                                         <tr>
                                             <th>Nama UPT</th>
                                             <th>Kanwil</th>
-                                            <th>Pengerjaan</th>
-                                            <th>Jadwal</th>
-                                            <th>Status Prosses</th>
-                                            <th>Teknisi</th>
+                                            <th>Jenis Kendala</th>
+                                            <th>Tanggal Terlapor</th>
+                                            <th>Tanggal Selesai</th>
+                                            <th>Durasi (Hari)</th>
+                                            <th class="text-center">Status</th>
+                                            <th>PIC 1</th>
+                                            <th>PIC 2</th>
                                             <th class="text-center">Action</th>
                                         </tr>
                                     </thead>
@@ -146,15 +151,22 @@
                                                 <td>{{ $d->nama_upt ?? '-' }}</td>
                                                 <td>{{ $d->kanwil ?? '-' }}</td>
                                                 <td class="text-center">
+                                                    <span class="badge badge-warning">
+                                                        {{ Str::limit($d->tipe ?? 'Belum ditentukan', 30) }}
+                                                    </span>
+                                                </td>
+                                                <td class="text-center">
                                                     {{ $d->tanggal_terlapor ? \Carbon\Carbon::parse($d->tanggal_terlapor)->translatedFormat('d M Y') : '-' }}
                                                 </td>
                                                 <td class="text-center">
-                                                    <span
-                                                        class="
-                                                        @if ($d->tipe == 'reguler') Tipereguller 
-                                                        @elseif($d->tipe == 'vpas') Tipevpas @endif">
-                                                        {{ ucfirst($d->tipe) }}
-                                                    </span>
+                                                    {{ $d->tanggal_selesai ? \Carbon\Carbon::parse($d->tanggal_selesai)->translatedFormat('d M Y') : '-' }}
+                                                </td>
+                                                <td class="text-center">
+                                                    @if ($d->durasi_hari)
+                                                        <span class="Tipereguller">{{ $d->durasi_hari }} hari</span>
+                                                    @else
+                                                        -
+                                                    @endif
                                                 </td>
                                                 <td class="text-center">
                                                     @php
@@ -181,6 +193,7 @@
                                                     </span>
                                                 </td>
                                                 <td>{{ $d->pic_1 ?? '-' }}</td>
+                                                <td>{{ $d->pic_2 ?? '-' }}</td>
                                                 <td>
                                                     <a href="#editModal{{ $d->id }}" data-bs-toggle="modal"
                                                         data-bs-target="#editModal{{ $d->id }}">
@@ -195,7 +208,6 @@
                                                         </button>
                                                     </a>
                                                 </td>
-
                                             </tr>
                                             <div class="modal fade" id="modal-default{{ $d->id }}">
                                                 <div class="modal-dialog">
@@ -254,6 +266,10 @@
 
                                         <div class="modal-body">
                                             <!-- Informasi UPT Section -->
+                                            <div class="mb-4">
+                                                <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
+                                                    <h5>Informasi UPT</h5>
+                                                </div>
                                                 <div class="column">
                                                     <div class="mb-3">
                                                         <label for="nama_upt" class="form-label">Nama UPT <span
@@ -292,42 +308,91 @@
                                                             name="kanwil" readonly placeholder="Kantor Wilayah">
                                                     </div>
                                                 </div>
-                                            
+                                            </div>
 
-                                            <!-- Pengerjaan -->
-                                            <div class="column">
-                                                <div class="mb-3">
-                                                    <label for="jenis_kendala" class="form-label">Pengerjaan</label>
-                                                    <option value="">
-                                                        <select class="form-control" id="jenis_kendala"
-                                                            name="jenis_kendala">
+                                            <!-- Jenis Layanan Section -->
+                                            <div class="mb-4">
+                                                <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
+                                                    <h5>Detail Kendala</h5>
+                                                </div>
+                                                <div class="column">
+                                                    <div class="mb-3">
+                                                        <label for="tipe" class="form-label">Jenis Layanan</label>
+                                                        <select class="form-control" id="tipe"
+                                                            name="tipe">
+                                                            <option value="">-- Pilih Jenis Layanan --</option>
+                                                            <option value="reguler">reguler</option>
+                                                            <option value="vpas">vpas</option>
+                                                            <option value="vpasreg">vpasreg</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="detail_kendala" class="form-label">Detail
+                                                            Kendala</label>
+                                                        <textarea class="form-control" id="detail_kendala" name="detail_kendala" rows="3"
+                                                            placeholder="Jelaskan detail kendala lebih spesifik (opsional)"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Tanggal & Status Section -->
+                                            <div class="mb-4">
+                                                <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
+                                                    <h5>Tanggal & Status</h5>
+                                                </div>
+                                                <div class="column">
+                                                    <div class="mb-3">
+                                                        <label for="tanggal_terlapor" class="form-label">Tanggal
+                                                            Terlapor</label>
+                                                        <input type="date" class="form-control" id="tanggal_terlapor"
+                                                            name="tanggal_terlapor">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="tanggal_selesai" class="form-label">Tanggal
+                                                            Selesai</label>
+                                                        <input type="date" class="form-control" id="tanggal_selesai"
+                                                            name="tanggal_selesai">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="durasi_hari" class="form-label">Durasi (Hari)</label>
+                                                        <input type="number" class="form-control" id="durasi_hari"
+                                                            name="durasi_hari" min="0"
+                                                            placeholder="Masukkan durasi dalam hari">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="status" class="form-label">Status</label>
+                                                        <select class="form-control" id="status" name="status">
+                                                            <option value="">-- Pilih Status --</option>
                                                             <option value="pending">Pending</option>
                                                             <option value="proses">Proses</option>
                                                             <option value="selesai">Selesai</option>
                                                             <option value="terjadwal">Terjadwal</option>
                                                         </select>
-                                                    </option>
-                                                </div>
-
-                                                <div class="mb-3">
-                                                    <label for="detail_kendala" class="form-label">Jadwal</label>
-                                                    <input type="date" class="form-control">
+                                                    </div>
                                                 </div>
                                             </div>
 
-                                            <!-- Tanggal & Status Section -->
-                                            <div class="column">
-                                                <div class="mb-3">
-                                                    <label for="tanggal_terlapor" class="form-label">Status
-                                                        Prosses</label>
-                                                    <input type="date" class="form-control" id="tanggal_terlapor"
-                                                        name="tanggal_terlapor">
+                                            <!-- PIC Section -->
+                                            <div class="mb-4">
+                                                <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
+                                                    <h5>PIC</h5>
                                                 </div>
-                                                <div class="mb-3">
+                                                <div class="column">
                                                     <div class="mb-3">
-                                                        <label for="pic_1" class="form-label">Teknisi</label>
+                                                        <label for="pic_1" class="form-label">PIC 1</label>
                                                         <select class="form-control" id="pic_1" name="pic_1">
-                                                            <option value="">-- Pilih Teknisi --</option>
+                                                            <option value="">-- Pilih PIC 1 --</option>
+                                                            @foreach ($picList as $pic)
+                                                                <option value="{{ $pic->nama_pic }}">
+                                                                    {{ $pic->nama_pic }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="pic_2" class="form-label">PIC 2</label>
+                                                        <select class="form-control" id="pic_2" name="pic_2">
+                                                            <option value="">-- Pilih PIC 2 --</option>
                                                             @foreach ($picList as $pic)
                                                                 <option value="{{ $pic->nama_pic }}">
                                                                     {{ $pic->nama_pic }}
@@ -337,7 +402,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-
                                         </div>
 
                                         <div class="modal-footer">
@@ -411,7 +475,39 @@
                                                     <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
                                                         <h5>Detail Kendala</h5>
                                                     </div>
-
+                                                    <div class="column">
+                                                        <div class="mb-3">
+                                                            <label for="tipe{{ $d->id }}"
+                                                                class="form-label">Jenis Layanan</label>
+                                                            <select class="form-control"
+                                                                id="tipe{{ $d->id }}"
+                                                                name="tipe">
+                                                                <option value="">-- Pilih Jenis Layanan --</option>
+                                                                @foreach ($tipe as $d)
+                                                                    <option value="{{ $d->tipe }}"
+                                                                        {{ $d->tipe == $d->tipe ? 'selected' : '' }}>
+                                                                        {{ $d->tipe }}
+                                                                    </option>
+                                                                @endforeach
+                                                                @php
+                                                                    $existingKendala = $tipe
+                                                                        ->pluck('tipe')
+                                                                        ->toArray();
+                                                                @endphp
+                                                                @if ($d->tipe && !in_array($d->tipe, $existingKendala) && $d->tipe != 'lainnya')
+                                                                    <option value="{{ $d->tipe }}" selected>
+                                                                        {{ $d->tipe }} (Custom)
+                                                                    </option>
+                                                                @endif
+                                                            </select>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="detail_kendala{{ $d->id }}"
+                                                                class="form-label">Detail Kendala</label>
+                                                            <textarea class="form-control" id="detail_kendala{{ $d->id }}" name="detail_kendala" rows="3"
+                                                                placeholder="Jelaskan detail kendala lebih spesifik (opsional)">{{ $d->detail_kendala ?? '' }}</textarea>
+                                                        </div>
+                                                    </div>
                                                 </div>
 
                                                 <!-- Tanggal & Status Section -->
@@ -420,6 +516,22 @@
                                                         <h5>Tanggal & Status</h5>
                                                     </div>
                                                     <div class="column">
+                                                        <div class="mb-3">
+                                                            <label for="tanggal_terlapor{{ $d->id }}"
+                                                                class="form-label">Tanggal Terlapor</label>
+                                                            <input type="date" class="form-control"
+                                                                id="tanggal_terlapor{{ $d->id }}"
+                                                                name="tanggal_terlapor"
+                                                                value="{{ $d->tanggal_terlapor ? $d->tanggal_terlapor->format('Y-m-d') : '' }}">
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="tanggal_selesai{{ $d->id }}"
+                                                                class="form-label">Tanggal Selesai</label>
+                                                            <input type="date" class="form-control"
+                                                                id="tanggal_selesai{{ $d->id }}"
+                                                                name="tanggal_selesai"
+                                                                value="{{ $d->tanggal_selesai ? $d->tanggal_selesai->format('Y-m-d') : '' }}">
+                                                        </div>
                                                         <div class="mb-3">
                                                             <label for="durasi_hari{{ $d->id }}"
                                                                 class="form-label">Durasi (Hari)</label>
@@ -545,6 +657,8 @@
         <!-- /.content -->
     </div>
     <!-- /.content-wrapper -->
+
+
 
     {{-- jQuery Library --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"

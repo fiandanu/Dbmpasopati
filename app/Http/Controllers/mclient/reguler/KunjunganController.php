@@ -8,6 +8,7 @@ use App\Models\mclient\Reguller;
 use App\Models\user\Upt;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
+use App\Models\user\Kendala;
 use App\Models\user\Pic;
 
 class KunjunganController extends Controller
@@ -23,23 +24,24 @@ class KunjunganController extends Controller
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('nama_upt', 'LIKE', '%' . $searchTerm . '%')
                     ->orWhere('kanwil', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('jenis_kendala', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('detail_kendala', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('status', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('pic_1', 'LIKE', '%' . $searchTerm . '%');
+                    ->orWhere('jenis_layanan', 'LIKE', '%' . $searchTerm . '%')
+                    ->orWhere('keterangan', 'LIKE', '%' . $searchTerm . '%')
+                    ->orWhere('pic_1', 'LIKE', '%' . $searchTerm . '%')
+                    ->orWhere('pic_2', 'LIKE', '%' . $searchTerm . '%')
+                    ->orWhere('jadwal', 'LIKE', '%' . $searchTerm . '%')
+                    ->orWhere('tanggal_selesai', 'LIKE', '%' . $searchTerm . '%');
             });
         }
 
         $data = $query->orderBy('created_at', 'desc')->paginate(10);
 
-        // $jenisKendala = Kendala::orderBy('jenis_kendala')->get();
+        $tipe = Upt::orderBy('tipe')->get();
         $picList = Pic::orderBy('nama_pic')->get();
         $uptList = Upt::select('namaupt', 'kanwil')
-            ->where('tipe', 'reguler')
+            ->where('tipe', 'reguler', 'vpas')
             ->orderBy('namaupt')
             ->get();
-
-        return view('mclient.upt.indexKunjungan', compact('data', 'picList', 'uptList'));
+        return view('mclient.upt.indexKunjungan', compact('data', 'tipe', 'picList', 'uptList'));
     }
 
     public function MclientRegullerStore(Request $request)
@@ -49,10 +51,10 @@ class KunjunganController extends Controller
             [
                 'nama_upt' => 'required|string|max:255',
                 'kanwil' => 'nullable|string|max:255',
-                'jenis_kendala' => 'nullable|string',
-                'detail_kendala' => 'nullable|string',
-                'tanggal_terlapor' => 'nullable|date',
-                'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_terlapor',
+                'jenis_layanan' => 'nullable|string',
+                'keterangan' => 'nullable|string',
+                'jadwal' => 'nullable|date',
+                'tanggal_selesai' => 'nullable|date|after_or_equal:jadwal',
                 'durasi_hari' => 'nullable|integer|min:0',
                 'status' => 'nullable|string|in:pending,proses,selesai,terjadwal',
                 'pic_1' => 'nullable|string|max:255',
@@ -64,9 +66,9 @@ class KunjunganController extends Controller
                 'nama_upt.max' => 'Nama UPT tidak boleh lebih dari 255 karakter.',
                 'kanwil.string' => 'Kanwil harus berupa teks.',
                 'kanwil.max' => 'Kanwil tidak boleh lebih dari 255 karakter.',
-                'jenis_kendala.string' => 'Kendala Reguller harus berupa teks.',
-                'detail_kendala.string' => 'Detail kendala Reguller harus berupa teks.',
-                'tanggal_terlapor.date' => 'Format tanggal terlapor harus valid.',
+                'jenis_layanan.string' => 'Kendala Reguller harus berupa teks.',
+                'keterangan.string' => 'Detail kendala Reguller harus berupa teks.',
+                'jadwal.date' => 'Format tanggal terlapor harus valid.',
                 'tanggal_selesai.date' => 'Format tanggal selesai harus valid.',
                 'tanggal_selesai.after_or_equal' => 'Tanggal selesai tidak boleh lebih awal dari tanggal terlapor.',
                 'durasi_hari.integer' => 'Durasi hari harus berupa angka.',
@@ -89,8 +91,8 @@ class KunjunganController extends Controller
         try {
             $data = $request->all();
 
-            if ($request->tanggal_terlapor && $request->tanggal_selesai) {
-                $tanggalTerlapor = Carbon::parse($request->tanggal_terlapor);
+            if ($request->jadwal && $request->tanggal_selesai) {
+                $tanggalTerlapor = Carbon::parse($request->jadwal);
                 $tanggalSelesai = Carbon::parse($request->tanggal_selesai);
                 $data['durasi_hari'] = $tanggalSelesai->diffInDays($tanggalTerlapor);
             }
@@ -112,10 +114,10 @@ class KunjunganController extends Controller
             [
                 'nama_upt' => 'required|string|max:255',
                 'kanwil' => 'nullable|string|max:255',
-                'jenis_kendala' => 'nullable|string',
-                'detail_kendala' => 'nullable|string',
-                'tanggal_terlapor' => 'nullable|date',
-                'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_terlapor',
+                'jenis_layanan' => 'nullable|string',
+                'keterangan' => 'nullable|string',
+                'jadwal' => 'nullable|date',
+                'tanggal_selesai' => 'nullable|date|after_or_equal:jadwal',
                 'durasi_hari' => 'nullable|integer|min:0',
                 'status' => 'nullable|string|in:pending,proses,selesai,terjadwal',
                 'pic_1' => 'nullable|string|max:255',
@@ -127,9 +129,9 @@ class KunjunganController extends Controller
                 'nama_upt.max' => 'Nama UPT tidak boleh lebih dari 255 karakter.',
                 'kanwil.string' => 'Kanwil harus berupa teks.',
                 'kanwil.max' => 'Kanwil tidak boleh lebih dari 255 karakter.',
-                'jenis_kendala.string' => 'Kendala Reguller harus berupa teks.',
-                'detail_kendala.string' => 'Detail kendala Reguller harus berupa teks.',
-                'tanggal_terlapor.date' => 'Format tanggal terlapor harus valid.',
+                'jenis_layanan.string' => 'Kendala Reguller harus berupa teks.',
+                'keterangan.string' => 'Detail kendala Reguller harus berupa teks.',
+                'jadwal.date' => 'Format tanggal terlapor harus valid.',
                 'tanggal_selesai.date' => 'Format tanggal selesai harus valid.',
                 'tanggal_selesai.after_or_equal' => 'Tanggal selesai tidak boleh lebih awal dari tanggal terlapor.',
                 'durasi_hari.integer' => 'Durasi hari harus berupa angka.',
@@ -156,8 +158,8 @@ class KunjunganController extends Controller
                 if (!empty($validatedData)) {
                     $data = Reguller::findOrFail($id);
 
-                    if (isset($validatedData['tanggal_terlapor']) && isset($validatedData['tanggal_selesai'])) {
-                        $tanggalTerlapor = Carbon::parse($validatedData['tanggal_terlapor']);
+                    if (isset($validatedData['jadwal']) && isset($validatedData['tanggal_selesai'])) {
+                        $tanggalTerlapor = Carbon::parse($validatedData['jadwal']);
                         $tanggalSelesai = Carbon::parse($validatedData['tanggal_selesai']);
                         $validatedData['durasi_hari'] = $tanggalSelesai->diffInDays($tanggalTerlapor);
                     }
@@ -177,8 +179,8 @@ class KunjunganController extends Controller
             $data = Reguller::findOrFail($id);
             $updateData = $request->all();
 
-            if ($request->tanggal_terlapor && $request->tanggal_selesai) {
-                $tanggalTerlapor = Carbon::parse($request->tanggal_terlapor);
+            if ($request->jadwal && $request->tanggal_selesai) {
+                $tanggalTerlapor = Carbon::parse($request->jadwal);
                 $tanggalSelesai = Carbon::parse($request->tanggal_selesai);
                 $updateData['durasi_hari'] = $tanggalSelesai->diffInDays($tanggalTerlapor);
             }
@@ -207,5 +209,6 @@ class KunjunganController extends Controller
                 ->with('error', 'Gagal menghapus data: ' . $e->getMessage());
         }
     }
+
 
 }
