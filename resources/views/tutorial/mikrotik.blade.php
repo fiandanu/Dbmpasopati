@@ -434,7 +434,7 @@
                                                     <div class="modal-body">
                                                         {{-- Input Judul --}}
                                                         <div class="mb-3">
-                                                            <label for="tutor_mikrotik" class="form-label">Judul
+                                                            <label for="tutor_mikrotik">Judul
                                                                 Tutorial</label>
                                                             <input type="text" class="form-control"
                                                                 id="tutor_mikrotik" name="tutor_mikrotik" required

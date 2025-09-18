@@ -17,7 +17,6 @@ class VtrenController extends Controller
     public function ListDataVtrend(Request $request)
     {
         $query = Ponpes::with('dataOpsional');
-
         $query->where('tipe', 'vtren');
 
         if ($request->has('table_search') && !empty($request->table_search)) {
@@ -34,9 +33,24 @@ class VtrenController extends Controller
             });
         }
 
-        $data = $query->get();
+        // Dapatkan per_page dari request, default 10
+        $perPage = $request->get('per_page', 10);
+
+        // Validasi per_page agar tidak sembarangan
+        if (!in_array($perPage, [10, 15, 20, 'all'])) {
+            $perPage = 20;
+        }
+
+        // Jika pilih "semua", gunakan angka besar
+        if ($perPage == 'all') {
+            $data = $query->orderBy('tanggal', 'desc')->paginate(9999);
+        } else {
+            $data = $query->orderBy('tanggal', 'desc')->paginate($perPage);
+        }
+
         $providers = Provider::all();
         $vpns = Vpn::all();
+
         return view('db.ponpes.vtren.indexVtren', compact('data', 'providers', 'vpns'));
     }
 

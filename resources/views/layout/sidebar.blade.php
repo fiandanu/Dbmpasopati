@@ -260,7 +260,13 @@
                                 <li class="nav-item">
                                     <a href="{{ route('ListDataMclientCatatan') }}" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
-                                        <p>Pencatatan kartu</p>
+                                        <p>Pencatatan kartu Vpas</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('ListDataMclientCatatanVtren') }}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Pencatatan kartu Vtren</p>
                                     </a>
                                 </li>
                             </ul>

@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\mclient\catatankartu\CatatanController;
 
 Route::prefix('mclient-catatan')->group(function () {
-    
     Route::get('/', [CatatanController::class, 'ListDataMclientCatatan'])->name('ListDataMclientCatatan');
     Route::post('/store', [CatatanController::class, 'MclientCatatanStore'])->name('MclientCatatanStore');
     Route::put('/update/{id}', [CatatanController::class, 'MclientCatatanUpdate'])->name('MclientCatatanUpdate');

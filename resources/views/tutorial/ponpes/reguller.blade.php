@@ -435,7 +435,7 @@
                                                     <div class="modal-body">
                                                         {{-- Input Judul --}}
                                                         <div class="mb-3">
-                                                            <label for="tutor_ponpes_reguller" class="form-label">Judul
+                                                            <label for="tutor_ponpes_reguller">Judul
                                                                 Tutorial</label>
                                                             <input type="text" class="form-control"
                                                                 id="tutor_ponpes_reguller" name="tutor_ponpes_reguller"

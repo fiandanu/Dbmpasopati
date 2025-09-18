@@ -212,7 +212,7 @@
                             <!-- Provider Form -->
                             <div id="provider_form" class="data-form">
                                 <div class="mb-3">
-                                    <label for="nama_provider" class="form-label">Nama Provider</label>
+                                    <label for="nama_provider">Nama Provider</label>
                                     <input type="text" class="form-control" id="nama_provider" name="nama_provider"
                                         placeholder="Masukkan nama provider">
                                 </div>
@@ -221,7 +221,7 @@
                             <!-- VPN Form -->
                             <div id="vpn_form" class="data-form" style="display: none;">
                                 <div class="mb-3">
-                                    <label for="jenis_vpn" class="form-label">Jenis VPN</label>
+                                    <label for="jenis_vpn">Jenis VPN</label>
                                     <input type="text" class="form-control" id="jenis_vpn" name="jenis_vpn"
                                         placeholder="Masukkan jenis VPN">
                                 </div>
@@ -229,7 +229,7 @@
                         </div>
                         <!-- Data Type Selection - Changed to Radio Buttons -->
                         <div class="mb-3">
-                            <label class="form-label">Pilih Jenis Data</label>
+                            <label>Pilih Jenis Data</label>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" name="data_type" id="provider_type"
                                     value="provider" checked>
@@ -302,7 +302,7 @@
                             </div>
                             <div class="modal-body">
                                 <div class="mb-3">
-                                    <label for="jenis_vpn" class="form-label">Jenis VPN</label>
+                                    <label for="jenis_vpn">Jenis VPN</label>
                                     <input type="text" class="form-control" id="jenis_vpn" name="jenis_vpn"
                                         value="{{ $v->jenis_vpn }}">
                                 </div>

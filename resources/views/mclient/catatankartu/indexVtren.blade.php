@@ -11,7 +11,7 @@
                             <button class="btn-pushmenu" data-widget="pushmenu" role="button">
                                 <i class="fas fa-bars"></i>
                             </button>
-                            <h1 class="headline-large-32 mb-0">Catatan Kartu Vpas</h1>
+                            <h1 class="headline-large-32 mb-0">Catatan Kartu Vtren</h1>
                         </div>
 
                         <div class="d-flex align-items-center gap-2 flex-wrap">
@@ -122,7 +122,7 @@
                                 <div class="alert alert-info">
                                     <i class="fas fa-info-circle"></i>
                                     Hasil pencarian untuk: "<strong>{{ request('table_search') }}</strong>"
-                                    <a href="{{ route('ListDataMclientCatatan') }}" class="btn btn-sm btn-secondary ml-2">
+                                    <a href="{{ route('ListDataMclientCatatanVtren') }}" class="btn btn-sm btn-secondary ml-2">
                                         <i class="fas fa-times"></i> Clear
                                     </a>
                                 </div>
@@ -135,7 +135,7 @@
                                 <table class="table table-hover text-nowrap" id="Table">
                                     <thead>
                                         <tr>
-                                            <th>Nama UPT</th>
+                                            <th>Nama Ponpes</th>
                                             <th>Kartu (Baru)</th>
                                             <th>Kartu (Bekas)</th>
                                             <th>Kartu (GOIP)</th>
@@ -153,13 +153,13 @@
                                             <tr>
                                                 <td>{{ $d->nama_upt ?? '-' }}</td>
                                                 <td class="text-center">
-                                                    {{ $d->spam_vpas_kartu_baru ?? '0' }}
+                                                    {{ $d->spam_vtren_kartu_baru ?? '0' }}
                                                 </td>
                                                 <td class="text-center">
-                                                    {{ $d->spam_vpas_kartu_bekas ?? '0' }}
+                                                    {{ $d->spam_vtren_kartu_bekas ?? '0' }}
                                                 </td>
                                                 <td class="text-center">
-                                                    {{ $d->spam_vpas_kartu_goip ?? '0' }}
+                                                    {{ $d->spam_vtren_kartu_goip ?? '0' }}
                                                 </td>
                                                 <td class="text-center">
                                                     {{ $d->kartu_belum_teregister ?? '0' }}
@@ -256,15 +256,15 @@
                                             <!-- Informasi UPT Section -->
                                             <div class="mb-4">
                                                 <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                    <label>Informasi UPT</label>
+                                                    <label>Informasi Ponpes</label>
                                                 </div>
                                                 <div class="column">
                                                     <div class="mb-3">
-                                                        <label for="nama_upt" class="form-label">Nama UPT</label>
+                                                        <label for="nama_upt" class="form-label">Nama Ponpes</label>
                                                         <div class="dropdown">
                                                             <div class="input-group">
                                                                 <input type="text" class="form-control"
-                                                                    id="upt_search" placeholder="Cari nama Upt"
+                                                                    id="upt_search" placeholder="Cari nama Ponpes"
                                                                     autocomplete="off">
                                                                 <div class="input-group-append">
                                                                     <button type="button"
@@ -279,15 +279,15 @@
                                                                 style="max-height: 200px; overflow-y: auto; display: none;">
                                                                 @foreach ($uptList as $upt)
                                                                     <a href="#" class="dropdown-item upt-option"
-                                                                        data-value="{{ $upt->namaupt }}"
-                                                                        onclick="selectUpt('{{ $upt->namaupt }}')">
-                                                                        {{ $upt->namaupt }}
+                                                                        data-value="{{ $upt->nama_ponpes }}"
+                                                                        onclick="selectUpt('{{ $upt->nama_ponpes }}')">
+                                                                        {{ $upt->nama_ponpes }}
                                                                     </a>
                                                                 @endforeach
                                                             </div>
                                                         </div>
                                                         <input type="hidden" id="nama_upt" name="nama_upt" required>
-                                                        <small class="form-text text-muted">Ketik untuk mencari UPT</small>
+                                                        <small class="form-text text-muted">Ketik untuk mencari Ponpes</small>
                                                     </div>
                                                 </div>
                                             </div>
@@ -295,33 +295,33 @@
                                             <!-- Data Spam VPAS Section -->
                                             <div class="mb-4">
                                                 <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                    <label>Data Spam VPAS Tertangani</label>
+                                                    <label>Data Spam Vtren Tertangani</label>
                                                 </div>
                                                 <div class="">
                                                     <div class="column">
                                                         <div class="mb-3">
-                                                            <label for="spam_vpas_kartu_baru" class="form-label">Kartu
+                                                            <label for="spam_vtren_kartu_baru" class="form-label">Kartu
                                                                 Baru</label>
                                                             <input type="text" class="form-control"
-                                                                id="spam_vpas_kartu_baru" name="spam_vpas_kartu_baru"
+                                                                id="spam_vtren_kartu_baru" name="spam_vtren_kartu_baru"
                                                                 value="" placeholder="Jumlah kartu baru">
                                                         </div>
                                                     </div>
                                                     <div class="column">
                                                         <div class="mb-3">
-                                                            <label for="spam_vpas_kartu_bekas" class="form-label">Kartu
+                                                            <label for="spam_vtren_kartu_bekas" class="form-label">Kartu
                                                                 Bekas</label>
                                                             <input type="text" class="form-control"
-                                                                id="spam_vpas_kartu_bekas" name="spam_vpas_kartu_bekas"
+                                                                id="spam_vtren_kartu_bekas" name="spam_vtren_kartu_bekas"
                                                                 value="" placeholder="Jumlah kartu bekas">
                                                         </div>
                                                     </div>
                                                     <div class="column">
                                                         <div class="mb-3">
-                                                            <label for="spam_vpas_kartu_goip" class="form-label">Kartu
+                                                            <label for="spam_vtren_kartu_goip" class="form-label">Kartu
                                                                 GOIP</label>
                                                             <input type="text" class="form-control"
-                                                                id="spam_vpas_kartu_goip" name="spam_vpas_kartu_goip"
+                                                                id="spam_vtren_kartu_goip" name="spam_vtren_kartu_goip"
                                                                 value="" placeholder="Jumlah kartu GOIP">
                                                         </div>
                                                     </div>
@@ -469,9 +469,9 @@
                                                                     style="max-height: 200px; overflow-y: auto; display: none;">
                                                                     @foreach ($uptList as $upt)
                                                                         <a class="dropdown-item upt-option" href="#"
-                                                                            data-value="{{ $upt->namaupt }}"
-                                                                            onclick="selectUptEdit('{{ $upt->namaupt }}', {{ $d->id }})">
-                                                                            {{ $upt->namaupt }}
+                                                                            data-value="{{ $upt->nama_ponpes }}"
+                                                                            onclick="selectUptEdit('{{ $upt->nama_ponpes }}', {{ $d->id }})">
+                                                                            {{ $upt->nama_ponpes }}
                                                                         </a>
                                                                     @endforeach
                                                                 </div>
@@ -480,7 +480,7 @@
                                                                 name="nama_upt" value="{{ $d->nama_upt ?? '' }}"
                                                                 required>
                                                             <small class="form-text text-muted">Ketik untuk mencari
-                                                                UPT</small>
+                                                                Ponpes</small>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -488,38 +488,38 @@
                                                 <!-- Data Spam VPAS Section -->
                                                 <div class="mb-4">
                                                     <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                        <label>Data Spam VPAS Tertangani</label>
+                                                        <label>Data Spam Vtren Tertangani</label>
                                                     </div>
                                                     <div class="column">
                                                         <div class="mb-3">
-                                                            <label for="spam_vpas_kartu_baru{{ $d->id }}"
+                                                            <label for="spam_vtren_kartu_baru{{ $d->id }}"
                                                                 class="form-label">Kartu Baru</label>
                                                             <input type="text" class="form-control"
-                                                                id="spam_vpas_kartu_baru{{ $d->id }}"
-                                                                name="spam_vpas_kartu_baru"
-                                                                value="{{ $d->spam_vpas_kartu_baru ?? '' }}"
+                                                                id="spam_vtren_kartu_baru{{ $d->id }}"
+                                                                name="spam_vtren_kartu_baru"
+                                                                value="{{ $d->spam_vtren_kartu_baru ?? '' }}"
                                                                 placeholder="Jumlah kartu baru">
                                                         </div>
                                                     </div>
                                                     <div class="column">
                                                         <div class="mb-3">
-                                                            <label for="spam_vpas_kartu_bekas{{ $d->id }}"
+                                                            <label for="spam_vtren_kartu_bekas{{ $d->id }}"
                                                                 class="form-label">Kartu Bekas</label>
                                                             <input type="text" class="form-control"
-                                                                id="spam_vpas_kartu_bekas{{ $d->id }}"
-                                                                name="spam_vpas_kartu_bekas"
-                                                                value="{{ $d->spam_vpas_kartu_bekas ?? '' }}"
+                                                                id="spam_vtren_kartu_bekas{{ $d->id }}"
+                                                                name="spam_vtren_kartu_bekas"
+                                                                value="{{ $d->spam_vtren_kartu_bekas ?? '' }}"
                                                                 placeholder="Jumlah kartu bekas">
                                                         </div>
                                                     </div>
                                                     <div class="column">
                                                         <div class="mb-3">
-                                                            <label for="spam_vpas_kartu_goip{{ $d->id }}"
+                                                            <label for="spam_vtren_kartu_goip{{ $d->id }}"
                                                                 class="form-label">Kartu GOIP</label>
                                                             <input type="text" class="form-control"
-                                                                id="spam_vpas_kartu_goip{{ $d->id }}"
-                                                                name="spam_vpas_kartu_goip"
-                                                                value="{{ $d->spam_vpas_kartu_goip ?? '' }}"
+                                                                id="spam_vtren_kartu_goip{{ $d->id }}"
+                                                                name="spam_vtren_kartu_goip"
+                                                                value="{{ $d->spam_vtren_kartu_goip ?? '' }}"
                                                                 placeholder="Jumlah kartu GOIP">
                                                         </div>
                                                     </div>
@@ -764,9 +764,9 @@
         }
 
         // Select UPT option for Add Modal
-        function selectUpt(namaUpt) {
-            document.getElementById('upt_search').value = namaUpt;
-            document.getElementById('nama_upt').value = namaUpt;
+        function selectUpt(nama_ponpes) {
+            document.getElementById('upt_search').value = nama_ponpes;
+            document.getElementById('nama_upt').value = nama_ponpes;
             document.getElementById('uptDropdownMenu').style.display = 'none';
         }
 
@@ -871,9 +871,9 @@
         }
 
         // Select UPT option for Edit Modal
-        function selectUptEdit(namaUpt, id) {
-            document.getElementById(`upt_search_edit_${id}`).value = namaUpt;
-            document.getElementById(`nama_upt_edit_${id}`).value = namaUpt;
+        function selectUptEdit(nama_ponpes, id) {
+            document.getElementById(`upt_search_edit_${id}`).value = nama_ponpes;
+            document.getElementById(`nama_upt_edit_${id}`).value = nama_ponpes;
             document.getElementById(`uptDropdownMenuEdit${id}`).style.display = 'none';
         }
 
@@ -896,118 +896,6 @@
         @endforeach
         // End Edit Modal JS
     </script>
-
-
-
-    {{-- Search Dropdown Edit Modal --}}
-    {{-- <script>
-        // Searchable UPT dropdown functionality for Edit Modals
-        document.addEventListener('DOMContentLoaded', function() {
-            @foreach ($data as $d)
-                const uptSearchEdit{{ $d->id }} = document.getElementById(
-                    'upt_search_edit_{{ $d->id }}');
-                const uptDropdownEdit{{ $d->id }} = document.getElementById(
-                    'uptDropdownMenuEdit{{ $d->id }}');
-                const uptOptionsEdit{{ $d->id }} = document.querySelectorAll(
-                    `#uptDropdownMenuEdit{{ $d->id }} .upt-option`);
-
-                if (uptSearchEdit{{ $d->id }}) {
-                    // Filter UPT options based on search input
-                    uptSearchEdit{{ $d->id }}.addEventListener('input', function() {
-                        const searchTerm = this.value.toLowerCase();
-                        let hasVisibleOption = false;
-
-                        uptOptionsEdit{{ $d->id }}.forEach(option => {
-                            const text = option.textContent.toLowerCase();
-                            if (text.includes(searchTerm)) {
-                                option.style.display = 'block';
-                                hasVisibleOption = true;
-                            } else {
-                                option.style.display = 'none';
-                            }
-                        });
-
-                        // Show dropdown if there are visible options and search term is not empty
-                        if (searchTerm.length > 0 && hasVisibleOption) {
-                            uptDropdownEdit{{ $d->id }}.style.display = 'block';
-                        } else if (searchTerm.length === 0) {
-                            uptDropdownEdit{{ $d->id }}.style.display = 'none';
-                        }
-                    });
-
-                    // Show all options when clicking on search input
-                    uptSearchEdit{{ $d->id }}.addEventListener('focus', function() {
-                        if (this.value.length > 0) {
-                            const searchTerm = this.value.toLowerCase();
-                            let hasVisibleOption = false;
-
-                            uptOptionsEdit{{ $d->id }}.forEach(option => {
-                                const text = option.textContent.toLowerCase();
-                                if (text.includes(searchTerm)) {
-                                    option.style.display = 'block';
-                                    hasVisibleOption = true;
-                                } else {
-                                    option.style.display = 'none';
-                                }
-                            });
-
-                            if (hasVisibleOption) {
-                                uptDropdownEdit{{ $d->id }}.style.display = 'block';
-                            }
-                        }
-                    });
-
-                    // Hide dropdown when clicking outside
-                    document.addEventListener('click', function(event) {
-                        if (!event.target.closest(`#editModal{{ $d->id }} .dropdown`)) {
-                            uptDropdownEdit{{ $d->id }}.style.display = 'none';
-                        }
-                    });
-                }
-            @endforeach
-        });
-
-        // Toggle dropdown visibility for Edit Modal
-        function toggleUptDropdownEdit(id) {
-            const uptDropdown = document.getElementById(`uptDropdownMenuEdit${id}`);
-            const uptOptions = document.querySelectorAll(`#uptDropdownMenuEdit${id} .upt-option`);
-
-            if (uptDropdown.style.display === 'none' || uptDropdown.style.display === '') {
-                uptOptions.forEach(option => {
-                    option.style.display = 'block';
-                });
-                uptDropdown.style.display = 'block';
-            } else {
-                uptDropdown.style.display = 'none';
-            }
-        }
-
-        // Select UPT option for Edit Modal
-        function selectUptEdit(namaUpt, id) {
-            document.getElementById(`upt_search_edit_${id}`).value = namaUpt;
-            document.getElementById(`nama_upt_edit_${id}`).value = namaUpt;
-            document.getElementById(`uptDropdownMenuEdit${id}`).style.display = 'none';
-        }
-
-        // Clear UPT selection when search is cleared for Edit Modal
-        @foreach ($data as $d)
-            document.getElementById(`upt_search_edit_{{ $d->id }}`).addEventListener('input', function() {
-                if (this.value === '') {
-                    document.getElementById(`nama_upt_edit_{{ $d->id }}`).value = '';
-                }
-            });
-        @endforeach
-
-        // Reset form when edit modal is closed
-        @foreach ($data as $d)
-            $(`#editModal{{ $d->id }}`).on('hidden.bs.modal', function() {
-                document.getElementById(`upt_search_edit_{{ $d->id }}`).value =
-                    '{{ $d->nama_upt ?? '' }}';
-                document.getElementById(`uptDropdownMenuEdit{{ $d->id }}`).style.display = 'none';
-            });
-        @endforeach
-    </script> --}}
-
 
     {{-- Search and Pagination JavaScript --}}
     <script>

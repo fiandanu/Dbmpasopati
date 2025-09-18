@@ -432,7 +432,7 @@
                                                     <div class="modal-body">
                                                         {{-- Input Judul --}}
                                                         <div class="mb-3">
-                                                            <label for="tutor_reguller" class="form-label">Judul
+                                                            <label for="tutor_reguller">Judul
                                                                 Tutorial</label>
                                                             <input type="text" class="form-control"
                                                                 id="tutor_reguller" name="tutor_reguller" required

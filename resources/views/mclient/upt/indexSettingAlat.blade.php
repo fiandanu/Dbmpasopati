@@ -11,7 +11,7 @@
                             <button class="btn-pushmenu" data-widget="pushmenu" role="button">
                                 <i class="fas fa-bars"></i>
                             </button>
-                            <h1 class="headline-large-32 mb-0">Kunjungan UPT</h1>
+                            <h1 class="headline-large-32 mb-0">Setting Alat UPT</h1>
                         </div>
 
                         <div class="d-flex align-items-center gap-2 flex-wrap">
@@ -115,7 +115,8 @@
                                 <div class="alert alert-info">
                                     <i class="fas fa-info-circle"></i>
                                     Hasil pencarian untuk: "<strong>{{ request('table_search') }}</strong>"
-                                    <a href="{{ route('ListDataMclientKunjungan') }}" class="btn btn-sm btn-secondary ml-2">
+                                    <a href="{{ route('ListDataMclientSettingAlat') }}"
+                                        class="btn btn-sm btn-secondary ml-2">
                                         <i class="fas fa-times"></i> Clear
                                     </a>
                                 </div>
@@ -130,7 +131,7 @@
                                             <th>Nama UPT</th>
                                             <th>Jenis Layanan</th>
                                             <th class="text-center">Keterangan</th>
-                                            <th>Jadwal</th>
+                                            <th>tanggal Terlapor</th>
                                             <th>Tanggal Selesai</th>
                                             <th>Durasi (Hari)</th>
                                             <th class="text-center">Status</th>
@@ -148,8 +149,7 @@
                                                         $layananClass = match (strtolower($d->jenis_layanan ?? '')) {
                                                             'vpas' => 'Tipevpas',
                                                             'reguler' => 'Tipereguller',
-                                                            'vpasreg' => 'badge-prosses',
-                                                            // default => '',
+                                                            'vpasreg' => 'badge-prosses', // default => '',
                                                         };
                                                     @endphp
                                                     <span class="{{ $layananClass }}">
@@ -162,7 +162,7 @@
                                                     </span>
                                                 </td>
                                                 <td class="text-center">
-                                                    {{ $d->jadwal ? \Carbon\Carbon::parse($d->jadwal)->translatedFormat('d M Y') : '-' }}
+                                                    {{ $d->tanggal_terlapor ? \Carbon\Carbon::parse($d->tanggal_terlapor)->translatedFormat('d M Y') : '-' }}
                                                 </td>
                                                 <td class="text-center">
                                                     {{ $d->tanggal_selesai ? \Carbon\Carbon::parse($d->tanggal_selesai)->translatedFormat('d M Y') : '-' }}
@@ -223,7 +223,7 @@
                                                         <div class="modal-footer flex-row-reverse justify-content-between">
                                                             <button type="button" class="btn-cancel-modal"
                                                                 data-dismiss="modal">Tutup</button>
-                                                            <form action="{{ route('MclientKunjunganDestroy', $d->id) }}"
+                                                            <form action="{{ route('MclientSettingAlatDestroy', $d->id) }}"
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
@@ -252,7 +252,7 @@
                         {{-- Add Modal --}}
                         <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel"
                             aria-hidden="true">
-                            <form id="addForm" action="{{ route('MclientKunjunganStore') }}" method="POST">
+                            <form id="addForm" action="{{ route('MclientSettingAlatStore') }}" method="POST">
                                 @csrf
                                 <div class="modal-dialog modal-lg">
                                     <div class="modal-content">
@@ -330,15 +330,14 @@
                                                 </div>
                                                 <div class="column">
                                                     <div class="mb-3">
-                                                        <label for="jadwal">Jadwal</label>
-                                                        <input type="date" class="form-control" id="jadwal"
-                                                            name="jadwal">
+                                                        <label for="tanggal_terlapor">Tanggal Terlapor</label>
+                                                        <input type="date" class="form-control"
+                                                            id="tanggal_terlapor" name="tanggal_terlapor">
                                                     </div>
                                                 </div>
                                                 <div class="column">
                                                     <div class="mb-3">
-                                                        <label for="tanggal_selesai">Tanggal
-                                                            Selesai</label>
+                                                        <label for="tanggal_selesai">Tanggal Selesai</label>
                                                         <input type="date" class="form-control" id="tanggal_selesai"
                                                             name="tanggal_selesai">
                                                     </div>
@@ -415,7 +414,7 @@
                             <div class="modal fade" id="editModal{{ $d->id }}" tabindex="-1"
                                 aria-labelledby="editModalLabel{{ $d->id }}" aria-hidden="true">
                                 <form id="editForm{{ $d->id }}"
-                                    action="{{ route('MclientKunjunganUpdate', ['id' => $d->id]) }}" method="POST">
+                                    action="{{ route('MclientSettingAlatUpdate', ['id' => $d->id]) }}" method="POST">
                                     @csrf
                                     @method('PUT')
                                     <div class="modal-dialog modal-lg">
@@ -486,16 +485,16 @@
                                                     </div>
                                                     <div class="column">
                                                         <div class="mb-3">
-                                                            <label for="jadwal{{ $d->id }}">Jadwal</label>
+                                                            <label for="tanggal_terlapor{{ $d->id }}">Tanggal Terlapor</label>
                                                             <input type="date" class="form-control"
-                                                                id="jadwal{{ $d->id }}" name="jadwal"
-                                                                value="{{ $d->jadwal ? $d->jadwal->format('Y-m-d') : '' }}">
+                                                                id="tanggal_terlapor{{ $d->id }}"
+                                                                name="tanggal_terlapor"
+                                                                value="{{ $d->tanggal_terlapor ? $d->tanggal_terlapor->format('Y-m-d') : '' }}">
                                                         </div>
                                                     </div>
                                                     <div class="column">
                                                         <div class="mb-3">
-                                                            <label for="tanggal_selesai{{ $d->id }}">Tanggal
-                                                                Selesai</label>
+                                                            <label for="tanggal_selesai{{ $d->id }}">Tanggal Selesai</label>
                                                             <input type="date" class="form-control"
                                                                 id="tanggal_selesai{{ $d->id }}"
                                                                 name="tanggal_selesai"

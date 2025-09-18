@@ -433,7 +433,7 @@
                                                     <div class="modal-body">
                                                         {{-- Input Judul --}}
                                                         <div class="mb-3">
-                                                            <label for="tutor_vpas" class="form-label">Judul
+                                                            <label for="tutor_vpas">Judul
                                                                 Tutorial</label>
                                                             <input type="text" class="form-control" id="tutor_vpas"
                                                                 name="tutor_vpas" required placeholder="Masukan Judul">

@@ -205,7 +205,7 @@
                             <!-- Kendala Form -->
                             <div id="kendala_form" class="data-form">
                                 <div class="mb-3">
-                                    <label for="jenis_kendala" class="form-label">Jenis Kendala</label>
+                                    <label for="jenis_kendala">Jenis Kendala</label>
                                     <input type="text" class="form-control" id="jenis_kendala" name="jenis_kendala"
                                         placeholder="Masukkan jenis kendala">
                                 </div>
@@ -214,7 +214,7 @@
                             <!-- PIC Form -->
                             <div id="pic_form" class="data-form" style="display: none;">
                                 <div class="mb-3">
-                                    <label for="nama_pic" class="form-label">Nama PIC</label>
+                                    <label for="nama_pic">Nama PIC</label>
                                     <input type="text" class="form-control" id="nama_pic" name="nama_pic"
                                         placeholder="Masukkan nama PIC">
                                 </div>
@@ -260,7 +260,7 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="editKendalaModalLabel">Edit Data Kendala</h5>
+                                <label class="modal-title" id="editKendalaModalLabel">Edit Data Kendala</label>
                                 <button type="button" class="btn-close-custom" data-bs-dismiss="modal"
                                     aria-label="Close">
                                     <i class="bi bi-x"></i>
@@ -268,14 +268,14 @@
                             </div>
                             <div class="modal-body">
                                 <div class="mb-3">
-                                    <label for="jenis_kendala" class="form-label">Jenis Kendala</label>
+                                    <label for="jenis_kendala">Jenis Kendala</label>
                                     <input type="text" class="form-control" id="jenis_kendala" name="jenis_kendala"
                                         value="{{ $k->jenis_kendala }}">
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                <button type="submit" class="btn btn-primary">Update</button>
+                                <button type="button" class="btn-cancel-modal" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn-purple">Update</button>
                             </div>
                         </div>
                     </div>
@@ -293,7 +293,7 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="editPicModalLabel">Edit Data PIC</h5>
+                                <label class="modal-title" id="editPicModalLabel">Edit Data PIC</label>
                                 <button type="button" class="btn-close-custom" data-bs-dismiss="modal"
                                     aria-label="Close">
                                     <i class="bi bi-x"></i>
@@ -307,8 +307,8 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                <button type="submit" class="btn btn-primary">Update</button>
+                                <button type="button" class="btn-cancel-modal" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn-purple">Update</button>
                             </div>
                         </div>
                     </div>

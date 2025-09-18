@@ -11,7 +11,7 @@
                         <div class="d-flex justify-center align-items-center gap-12">
                             <button class="btn-pushmenu" data-widget="pushmenu" role="button">
                                 <i class="fas fa-bars"></i></button>
-                            <h1 class="headline-large-32 mb-0">List Data Ponpes</h1>
+                            <h1 class="headline-large-32 mb-0">List Data Vtren</h1>
                         </div>
 
                         <div class="d-flex align-items-center gap-2 flex-wrap">
@@ -117,6 +117,7 @@
                                 <div class="alert alert-info">
                                     <i class="fas fa-info-circle"></i>
                                     Hasil pencarian untuk: "<strong>{{ request('table_search') }}</strong>"
+                                    <span class="ml-2">({{ $data->total() }} hasil ditemukan)</span>
                                     <a href="{{ route('ListDataVtrend') }}" class="btn btn-sm btn-secondary ml-2">
                                         <i class="fas fa-times"></i> Clear
                                     </a>
@@ -133,9 +134,9 @@
                                         <tr>
                                             <th>No</th>
                                             <th>Nama Ponpes</th>
-                                            <th>nama_wilayah</th>
-                                            <th>Tipe</th>
-                                            <th>Tanggal Dibuat</th>
+                                            <th>nama wilayah</th>
+                                            <th class="text-center">Tipe</th>
+                                            <th class="text-center">Tanggal Dibuat</th>
                                             <th class="text-center">Status Update</th>
                                             <th class="text-center">Action</th>
                                         </tr>
@@ -149,8 +150,13 @@
                                                 <td>{{ $no++ }}</td>
                                                 <td>{{ $d->nama_ponpes }}</td>
                                                 <td><span class="tag tag-success">{{ $d->nama_wilayah }}</span></td>
-                                                <td>{{ ucfirst($d->tipe) }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($d->tanggal)->translatedFormat('d M Y') }}</td>
+                                                <td>
+                                                    <span class="Tipevpas">
+                                                        {{ ucfirst($d->tipe) }}
+                                                    </span>
+                                                </td>
+                                                <td>{{ \Carbon\Carbon::parse($d->tanggal)->translatedFormat('d M Y') }}
+                                                </td>
                                                 <td class="text-center">
                                                     @php
                                                         // Cek apakah data opsional sudah diisi
@@ -294,24 +300,24 @@
                                                     <!-- Data Wajib Section -->
                                                     <div class="mb-4">
                                                         <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                            <h5>Data Wajib</h5>
+                                                            <label>Data Wajib</label>
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label for="nama_ponpes" class="form-label">Nama
+                                                            <label for="nama_ponpes">Nama
                                                                 Ponpes</label>
                                                             <input type="text" class="form-control" id="nama_ponpes"
                                                                 name="nama_ponpes" value="{{ $d->nama_ponpes }}"
                                                                 readonly>
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label for="nama_wilayah" class="form-label">Nama
+                                                            <label for="nama_wilayah">Nama
                                                                 Daerah</label>
                                                             <input type="text" class="form-control" id="nama_wilayah"
                                                                 name="nama_wilayah" value="{{ $d->nama_wilayah }}"
                                                                 readonly>
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label for="tipe" class="form-label">Tipe</label>
+                                                            <label for="tipe">Tipe</label>
                                                             <input type="text" class="form-control" id="tipe"
                                                                 name="tipe" value="{{ ucfirst($d->tipe) }}" readonly>
                                                         </div>
@@ -320,31 +326,31 @@
                                                     <!-- Data Opsional Section -->
                                                     <div class="mb-4">
                                                         <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                            <h5>Data Opsional</h5>
+                                                            <label>Data Opsional</label>
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label for="pic_ponpes" class="form-label">PIC Ponpes</label>
+                                                            <label for="pic_ponpes">PIC Ponpes</label>
                                                             <input type="text" class="form-control" id="pic_ponpes"
                                                                 name="pic_ponpes"
                                                                 value="{{ old('pic_ponpes', $d->dataOpsional->pic_ponpes ?? '') }}"
                                                                 placeholder="Masukkan nama PIC Ponpes">
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label for="no_telpon" class="form-label">No Telepon</label>
+                                                            <label for="no_telpon">No Telepon</label>
                                                             <input type="tel" class="form-control" id="no_telpon"
                                                                 name="no_telpon"
                                                                 value="{{ old('no_telpon', $d->dataOpsional->no_telpon ?? '') }}"
                                                                 placeholder="Masukkan nomor telepon">
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label for="alamat" class="form-label">Alamat</label>
+                                                            <label for="alamat">Alamat</label>
                                                             <input type="text" class="form-control" id="alamat"
                                                                 name="alamat"
                                                                 value="{{ old('alamat', $d->dataOpsional->alamat ?? '') }}"
                                                                 placeholder="Masukkan alamat lengkap">
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label for="jumlah_wbp" class="form-label">Jumlah
+                                                            <label for="jumlah_wbp">Jumlah
                                                                 Santri</label>
                                                             <input type="number" class="form-control" id="jumlah_wbp"
                                                                 name="jumlah_wbp"
@@ -352,7 +358,7 @@
                                                                 placeholder="Masukkan Jumlah Santri">
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label for="jumlah_line" class="form-label">Jumlah Line
+                                                            <label for="jumlah_line">Jumlah Line
                                                                 Reguler Terpasang</label>
                                                             <input type="number" class="form-control" id="jumlah_line"
                                                                 name="jumlah_line"
@@ -361,7 +367,7 @@
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="provider_internet" class="form-label">Provider
+                                                            <label for="provider_internet">Provider
                                                                 Internet</label>
                                                             <select class="form-control" id="provider_internet"
                                                                 name="provider_internet">
@@ -376,7 +382,7 @@
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="kecepatan_internet" class="form-label">Kecepatan
+                                                            <label for="kecepatan_internet">Kecepatan
                                                                 Internet (Mbps)</label>
                                                             <input type="text" class="form-control"
                                                                 id="kecepatan_internet" name="kecepatan_internet"
@@ -384,7 +390,7 @@
                                                                 placeholder="Contoh: 20">
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label for="tarif_wartel" class="form-label">Tarif Wartel
+                                                            <label for="tarif_wartel">Tarif Wartel
                                                                 Reguler</label>
                                                             <input type="text" class="form-control" id="tarif_wartel"
                                                                 name="tarif_wartel"
@@ -392,7 +398,7 @@
                                                                 placeholder="Contoh: Rp 2.000 / menit">
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label for="status_wartel" class="form-label">Status
+                                                            <label for="status_wartel">Status
                                                                 Wartel</label>
                                                             <select class="form-control" id="status_wartel"
                                                                 name="status_wartel">
@@ -410,10 +416,10 @@
                                                     <!-- IMC PAS Section -->
                                                     <div class="mb-4">
                                                         <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                            <h5>IMC PAS</h5>
+                                                            <label>IMC PAS</label>
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label for="akses_topup_pulsa" class="form-label">Akses Top Up
+                                                            <label for="akses_topup_pulsa">Akses Top Up
                                                                 Pulsa</label>
                                                             <input type="text" class="form-control"
                                                                 id="akses_topup_pulsa" name="akses_topup_pulsa"
@@ -421,7 +427,7 @@
                                                                 placeholder="Masukkan akses top up pulsa">
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label for="password_topup" class="form-label">Password Top Up
+                                                            <label for="password_topup">Password Top Up
                                                                 Pulsa</label>
                                                             <input type="text" class="form-control"
                                                                 id="password_topup" name="password_topup"
@@ -429,7 +435,7 @@
                                                                 placeholder="Masukkan password top up">
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label for="akses_download_rekaman" class="form-label">Akses
+                                                            <label for="akses_download_rekaman">Akses
                                                                 Download Rekaman</label>
                                                             <input type="text" class="form-control"
                                                                 id="akses_download_rekaman" name="akses_download_rekaman"
@@ -437,7 +443,7 @@
                                                                 placeholder="Masukkan akses download rekaman">
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label for="password_download" class="form-label">Password
+                                                            <label for="password_download">Password
                                                                 Download
                                                                 Rekaman</label>
                                                             <input type="text" class="form-control"
@@ -450,10 +456,10 @@
                                                     <!-- Akses VPN Section -->
                                                     <div class="mb-4">
                                                         <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                            <h5ses VPN</h5>
+                                                            <label> VPN</label>
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label for="internet_protocol" class="form-label">Internet
+                                                            <label for="internet_protocol">Internet
                                                                 Protocol</label>
                                                             <input type="text" class="form-control"
                                                                 id="internet_protocol" name="internet_protocol"
@@ -461,14 +467,14 @@
                                                                 placeholder="Masukkan alamat IP atau domain">
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label for="vpn_user" class="form-label">User</label>
+                                                            <label for="vpn_user">User</label>
                                                             <input type="text" class="form-control" id="vpn_user"
                                                                 name="vpn_user"
                                                                 value="{{ old('vpn_user', $d->dataOpsional->vpn_user ?? '') }}"
                                                                 placeholder="Masukkan username VPN">
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label for="vpn_password" class="form-label">Password</label>
+                                                            <label for="vpn_password">Password</label>
                                                             <input type="text" class="form-control" id="vpn_password"
                                                                 name="vpn_password"
                                                                 value="{{ old('vpn_password', $d->dataOpsional->vpn_password ?? '') }}"
@@ -476,7 +482,7 @@
                                                         </div>
 
                                                         <div class="mb-3">
-                                                            <label for="jenis_vpn" class="form-label">Jenis VPN</label>
+                                                            <label for="jenis_vpn">Jenis VPN</label>
                                                             <select class="form-control" id="jenis_vpn" name="jenis_vpn">
                                                                 <option value="">-- Pilih Jenis VPN --</option>
                                                                 @if (isset($vpns) && $vpns->count() > 0)
@@ -497,10 +503,10 @@
                                                     <!-- Ekstension Reguler Section -->
                                                     <div class="mb-4">
                                                         <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                            <h5stension Reguler</h5>
+                                                            <label> Reguler</label>
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label for="jumlah_extension" class="form-label">Jumlah
+                                                            <label for="jumlah_extension">Jumlah
                                                                 Extension</label>
                                                             <input type="number" class="form-control"
                                                                 id="jumlah_extension" name="jumlah_extension"
@@ -508,14 +514,14 @@
                                                                 placeholder="Masukkan jumlah">
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label for="pin_tes" class="form-label">Pin Test</label>
+                                                            <label for="pin_tes">Pin Test</label>
                                                             <input type="text" class="form-control" id="pin_tes"
                                                                 name="pin_tes"
                                                                 value="{{ old('pin_tes', $d->dataOpsional->pin_tes ?? '') }}"
                                                                 placeholder="Masukkan Pin Tes">
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label for="no_extension" class="form-label">No
+                                                            <label for="no_extension">No
                                                                 Extension</label>
                                                             <small class="text-muted d-block mb-2">Masukkan setiap nomor
                                                                 extension pada baris terpisah</small>
@@ -526,7 +532,7 @@
                                 No Extension;">{{ old('no_extension', $d->dataOpsional->no_extension ?? '') }}</textarea>
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label for="extension_password" class="form-label">Password
+                                                            <label for="extension_password">Password
                                                                 Extension</label>
                                                             <small class="text-muted d-block mb-2">Masukkan setiap password
                                                                 extension pada baris terpisah (sesuai urutan nomor extension
@@ -558,31 +564,61 @@
                 <!-- /.row -->
 
 
-                <!-- Pagination Controls - Same as Ponpes -->
+                <!-- Custom Pagination dengan Dropdown -->
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <!-- Row limit -->
-                    <div class="btn-datakolom">
-                        <button class="btn-select d-flex align-items-center">
-                            <select id="row-limit">
-                                <option value="10">10</option>
-                                <option value="15">15</option>
-                                <option value="20">20</option>
-                                <option value="9999">Semua</option>
-                            </select>
-                            Kolom
-                        </button>
+                    <!-- Left: Data info + Dropdown per page -->
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="btn-datakolom">
+                            <form method="GET" class="d-flex align-items-center">
+                                <!-- Preserve search parameter -->
+                                @if (request('table_search'))
+                                    <input type="hidden" name="table_search" value="{{ request('table_search') }}">
+                                @endif
+
+                                <select name="per_page" class="form-control form-control-sm" style="width: auto;"
+                                    onchange="this.form.submit()">
+                                    <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
+                                    <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>15</option>
+                                    <option value="20" {{ request('per_page', 20) == 20 ? 'selected' : '' }}>20
+                                    </option>
+                                    <option value="all" {{ request('per_page') == 'all' ? 'selected' : '' }}>Semua
+                                    </option>
+                                </select>
+                                <span class="ml-2">data per halaman</span>
+                            </form>
+                        </div>
+
+                        <div class="text-muted">
+                            @if (request('per_page') != 'all')
+                                Menampilkan {{ $data->firstItem() }} sampai {{ $data->lastItem() }}
+                                dari {{ $data->total() }} data
+                            @else
+                                Menampilkan semua {{ $data->total() }} data
+                            @endif
+                        </div>
                     </div>
 
-                    <!-- Pagination -->
-                    <div class="pagination-controls d-flex align-items-center gap-12">
-                        <button class="btn-page" id="prev-page" disabled>&laquo; Previous</button>
-                        <span id="page-info">Page 1 of 5</span>
-                        <button class="btn-page" id="next-page">Next &raquo;</button>
-                    </div>
+                    <!-- Right: Navigation (hanya tampil jika tidak pilih "Semua") -->
+                    @if (request('per_page') != 'all' && $data->lastPage() > 1)
+                        <div class="pagination-controls d-flex align-items-center gap-12">
+                            @if ($data->onFirstPage())
+                                <button class="btn-page" disabled>&laquo; Previous</button>
+                            @else
+                                <a href="{{ $data->appends(request()->query())->previousPageUrl() }}"
+                                    class="btn-page">&laquo; Previous</a>
+                            @endif
+
+                            <span id="page-info">Page {{ $data->currentPage() }} of {{ $data->lastPage() }}</span>
+
+                            @if ($data->hasMorePages())
+                                <a href="{{ $data->appends(request()->query())->nextPageUrl() }}" class="btn-page">Next
+                                    &raquo;</a>
+                            @else
+                                <button class="btn-page" disabled>Next &raquo;</button>
+                            @endif
+                        </div>
+                    @endif
                 </div>
-
-
-
 
             </div><!-- /.container-fluid -->
         </section>
@@ -599,93 +635,73 @@
     {{-- Search and Pagination JavaScript - Same as Ponpes --}}
     <script>
         $(document).ready(function() {
-            const $rows = $("#Table tbody tr");
-            let limit = parseInt($("#row-limit").val());
-            let currentPage = 1;
-            let totalPages = Math.ceil($rows.length / limit);
-
-            function updateTable() {
-                $rows.hide();
-
-                let start = (currentPage - 1) * limit;
-                let end = start + limit;
-
-                $rows.slice(start, end).show();
-
-                // update info halaman
-                $("#page-info").text(`Page ${currentPage} of ${totalPages}`);
-
-                // disable prev/next sesuai kondisi
-                $("#prev-page").prop("disabled", currentPage === 1);
-                $("#next-page").prop("disabled", currentPage === totalPages);
-            }
-
-            // apply awal
-            updateTable();
-
-            // kalau ganti jumlah data
-            $("#row-limit").on("change", function() {
-                limit = parseInt($(this).val());
-                currentPage = 1;
-                totalPages = Math.ceil($rows.length / limit);
-                updateTable();
-            });
-
-            // tombol prev
-            $("#prev-page").on("click", function() {
-                if (currentPage > 1) {
-                    currentPage--;
-                    updateTable();
-                }
-            });
-
-            // tombol next
-            $("#next-page").on("click", function() {
-                if (currentPage < totalPages) {
-                    currentPage++;
-                    updateTable();
-                }
-            });
-
-            // Filter Data By Search
+            // Hanya handle search dengan server-side
             $("#btn-search").on("keyup", function() {
-                let value = $(this).val().toLowerCase();
-                $("#Table tbody tr").filter(function() {
-                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-                });
-
-                // Update pagination after search
-                const $visibleRows = $("#Table tbody tr:visible");
-                totalPages = Math.ceil($visibleRows.length / limit);
-                currentPage = 1;
+                let value = $(this).val();
 
                 if (value === '') {
-                    // If search is cleared, show all rows with pagination
-                    updateTable();
-                } else {
-                    // If searching, hide pagination info
-                    $("#page-info").text(`Showing ${$visibleRows.length} results`);
-                    $("#prev-page").prop("disabled", true);
-                    $("#next-page").prop("disabled", true);
+                    // Clear search, redirect ke halaman utama
+                    let url = new URL(window.location.href);
+                    url.searchParams.delete('table_search');
+                    window.location.href = url.toString();
                 }
+                // Untuk search akan dihandle oleh form submit atau AJAX
             });
 
             // Handle modal events
             $('.modal').on('show.bs.modal', function(e) {
                 console.log('Modal is opening');
             });
-
-            $('.modal').on('shown.bs.modal', function(e) {
-                console.log('Modal is fully visible');
-            });
-
-            $('.modal').on('hide.bs.modal', function(e) {
-                console.log('Modal is closing');
-            });
         });
     </script>
 
+    {{-- Search JS --}}
+    <script>
+        $(document).ready(function() {
+            // Search dengan Enter key
+            $("#btn-search").on("keypress", function(e) {
+                if (e.which === 13) { // Enter key
+                    performSearch();
+                }
+            });
 
+            // Clear search ketika input kosong
+            $("#btn-search").on("keyup", function() {
+                if ($(this).val() === '') {
+                    clearSearch();
+                }
+            });
+
+            // Function untuk perform search
+            function performSearch() {
+                let searchValue = $("#btn-search").val();
+                let url = new URL(window.location.href);
+
+                if (searchValue && searchValue.length > 0) {
+                    url.searchParams.set('table_search', searchValue);
+                } else {
+                    url.searchParams.delete('table_search');
+                }
+
+                // Reset ke halaman 1
+                url.searchParams.delete('page');
+                window.location.href = url.toString();
+            }
+
+            // Function untuk clear search
+            function clearSearch() {
+                let url = new URL(window.location.href);
+                url.searchParams.delete('table_search');
+                url.searchParams.delete('page');
+                window.location.href = url.toString();
+            }
+
+            // Handle modal events
+            $('.modal').on('show.bs.modal', function(e) {
+                console.log('Modal is opening');
+            });
+        });
+    </script>
 
 
 @endsection
