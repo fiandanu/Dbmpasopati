@@ -56,9 +56,9 @@
                             <p class="text-kategori mb-2">Layanan Kunjungan Ponpes</p>
                             <div class="data-badge mb-3">
                                 <span class="checkmark">✓</span>
-                                100 Data
+                                {{ $ponpesKunjunganCount ?? 0 }} Data
                             </div>
-                            <a href="" class="list-button"> Kunjungan Ponpes</a>
+                            <a href="{{ route('ListDataMclientPonpesKunjungan') }}" class="list-button">Kunjungan Ponpes</a>
                         </div>
                     </div>
 

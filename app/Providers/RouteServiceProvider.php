@@ -48,6 +48,7 @@ class RouteServiceProvider extends ServiceProvider
 
                 // Route Monitoring Client
                 require base_path('routes/mclient/upt/kunjungan.php');
+                require base_path('routes/mclient/ponpes/kunjungan.php');
                 require base_path('routes/mclient/upt/vpas.php');
                 require base_path('routes/mclient/upt/reguller.php');
                 require base_path('routes/mclient/ponpes/vtren.php');
