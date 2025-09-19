@@ -132,30 +132,33 @@
                                 <tr>
                                     <th>No</th>
                                     <th>Nama UPT
-                                        <input type="text" class="form-control column-search" id="search-namaupt"
-                                            name="search_namaupt" placeholder="Search Nama UPT">
+                                        <div class="btn-searchbar column-search">
+                                            <span>
+                                                <i class="fas fa-search"></i>
+                                            </span>
+                                            <input type="text" id="search-namaupt" name="search_namaupt">
+                                        </div>
                                     </th>
                                     <th>Kanwil
-                                        <input type="text" class="form-control column-search" id="search-kanwil"
-                                            name="search_kanwil" placeholder="Search Kanwil">
+                                        <input type="text" class="btn-searchbar column-search" id="search-kanwil"
+                                            name="search_kanwil">
                                     </th>
                                     <th class="text-center">Tipe
-                                        <input type="text" class="form-control column-search" id="search-tipe"
-                                            name="search_tipe" placeholder="Search Tipe">
+                                        <input type="text" class="btn-searchbar column-search" id="search-tipe"
+                                            name="search_tipe">
                                     </th>
                                     <th class="text-center">Tanggal Dibuat
                                         <div class="d-flex gap-1">
-                                            <input type="date" class="form-control column-search"
-                                                id="search-tanggal-dari" name="search_tanggal_dari" placeholder="Dari"
-                                                title="Tanggal Dari">
-                                            <input type="date" class="form-control column-search"
+                                            <input type="date" class="btn-searchbar column-search"
+                                                id="search-tanggal-dari" name="search_tanggal_dari" title="Tanggal Dari">
+                                            <input type="date" class="btn-searchbar column-search"
                                                 id="search-tanggal-sampai" name="search_tanggal_sampai"
-                                                placeholder="Sampai" title="Tanggal Sampai">
+                                                title="Tanggal Sampai">
                                         </div>
                                     </th>
                                     <th class="text-center">Status Update
-                                        <input type="text" class="form-control column-search" id="search-status"
-                                            name="search_status" placeholder="Search Status">
+                                        <input type="text" class="btn-searchbar column-search" id="search-status"
+                                            name="search_status">
                                     </th>
                                     <th class="text-center">Action</th>
                                 </tr>

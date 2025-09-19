@@ -134,10 +134,21 @@ class RegullerController extends Controller
     {
         $query = Upt::with('dataOpsional')->where('tipe', 'reguler');
         $query = $this->applyFilters($query, $request);
+
+        // FIXED: Add date sorting when date filters are applied
+        if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
+            $query = $query->orderBy('tanggal', 'asc');
+        }
+
         $data = $query->get();
 
         // Apply status filter
         $data = $this->applyStatusFilter($data, $request);
+
+        // FIXED: Additional sorting if date filter is applied
+        if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
+            $data = $data->sortBy('tanggal')->values(); // Re-sort collection by tanggal
+        }
 
         $filename = 'list_upt_reguler_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
 
