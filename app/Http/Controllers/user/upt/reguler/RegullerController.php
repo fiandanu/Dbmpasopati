@@ -178,6 +178,12 @@ class RegullerController extends Controller
     {
         $query = Upt::with('dataOpsional')->where('tipe', 'reguler');
         $query = $this->applyFilters($query, $request);
+
+        // FIXED: Add date sorting when date filters are applied - using correct field 'tanggal'
+        if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
+            $query = $query->orderBy('tanggal', 'asc'); // Changed from 'created_at' to 'tanggal'
+        }
+
         $data = $query->get();
 
         // Apply status filter
@@ -191,6 +197,16 @@ class RegullerController extends Controller
             $dataArray[] = $dataItem;
         }
 
+        // FIXED: Additional sorting using correct field name
+        if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
+            usort($dataArray, function ($a, $b) {
+                // Using 'tanggal' field instead of 'created_at'
+                $dateA = strtotime($a['tanggal']);
+                $dateB = strtotime($b['tanggal']);
+                return $dateA - $dateB; // Ascending order (oldest first)
+            });
+        }
+
         $pdfData = [
             'title' => 'List Data UPT Reguler',
             'data' => $dataArray,
@@ -200,6 +216,7 @@ class RegullerController extends Controller
 
         $pdf = Pdf::loadView('export.db.upt.uptReguller', $pdfData);
         $filename = 'list_upt_reguler_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
+
         return $pdf->download($filename);
     }
 
