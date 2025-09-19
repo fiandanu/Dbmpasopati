@@ -11,7 +11,7 @@
                             <button class="btn-pushmenu" data-widget="pushmenu" role="button">
                                 <i class="fas fa-bars"></i>
                             </button>
-                            <h1 class="headline-large-32 mb-0">Pengiriman Monitoring Client Ponpes</h1>
+                            <h1 class="headline-large-32 mb-0">Pengiriman Alat Ponpes</h1>
                         </div>
 
                         <div class="d-flex align-items-center gap-2 flex-wrap">
@@ -130,7 +130,7 @@
                                             <th>Nama Ponpes</th>
                                             <th>Jenis Layanan</th>
                                             <th>Keterangan</th>
-                                            <th>Jadwal</th>
+                                            <th>Tanggal Pengiriman</th>
                                             <th>Tanggal Selesai</th>
                                             <th>Durasi (Hari)</th>
                                             <th class="text-center">Status</th>
@@ -162,10 +162,10 @@
                                                     </span>
                                                 </td>
                                                 <td class="text-center">
-                                                    {{ $d->jadwal ? \Carbon\Carbon::parse($d->jadwal)->translatedFormat('d M Y') : '-' }}
+                                                    {{ $d->tanggal_pengiriman ? \Carbon\Carbon::parse($d->tanggal_pengiriman)->translatedFormat('d M Y') : '-' }}
                                                 </td>
                                                 <td class="text-center">
-                                                    {{ $d->tanggal_selesai ? \Carbon\Carbon::parse($d->tanggal_selesai)->translatedFormat('d M Y') : '-' }}
+                                                    {{ $d->tanggal_sampai ? \Carbon\Carbon::parse($d->tanggal_sampai)->translatedFormat('d M Y') : '-' }}
                                                 </td>
                                                 <td class="text-center">
                                                     @if ($d->durasi_hari)
@@ -218,7 +218,7 @@
                                                         </div>
                                                         <div class="modal-footer flex-row-reverse justify-content-between">
                                                             <button type="button" class="btn-cancel-modal" data-dismiss="modal">Tutup</button>
-                                                            <form action="{{ route('ListDataMclientPonpesPengiriman', $d->id) }}" method="POST">
+                                                            <form action="{{ route('MclientPonpesPengirimanDestroyPonpes', $d->id) }}" method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="submit" class="btn-delete">Hapus</button>
@@ -317,14 +317,14 @@
                                                 <div class="row">
                                                     <div class="col-md-6">
                                                         <div class="mb-3">
-                                                            <label for="jadwal" class="form-label">Jadwal</label>
-                                                            <input type="date" class="form-control" id="jadwal" name="jadwal">
+                                                            <label for="tanggal_pengiriman" class="form-label">Tanggal Pengiriman </label>
+                                                            <input type="date" class="form-control" id="tanggal_pengiriman" name="tanggal_pengiriman">
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="mb-3">
-                                                            <label for="tanggal_selesai" class="form-label">Tanggal Selesai</label>
-                                                            <input type="date" class="form-control" id="tanggal_selesai" name="tanggal_selesai">
+                                                            <label for="tanggal_sampai" class="form-label">Tanggal Selesai</label>
+                                                            <input type="date" class="form-control" id="tanggal_sampai" name="tanggal_sampai">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -345,7 +345,7 @@
                                                                 <option value="pending">Pending</option>
                                                                 <option value="proses">Proses</option>
                                                                 <option value="selesai">Selesai</option>
-                                                                <option value="terjadwal">Terjadwal</option>
+                                                                <option value="tertanggal_pengiriman">Terjadwal</option>
                                                             </select>
                                                         </div>
                                                     </div>
@@ -397,7 +397,7 @@
                         {{-- Edit Modals --}}
                         @foreach ($data as $d)
                             <div class="modal fade" id="editModal{{ $d->id }}" tabindex="-1" aria-labelledby="editModalLabel{{ $d->id }}" aria-hidden="true">
-                                <form id="editForm{{ $d->id }}" action="{{ route('MclientPonpesPengirimanUpdate', ['id' => $d->id]) }}" method="POST">
+                                <form id="editForm{{ $d->id }}" action="{{ route('MclientPonpesPengirimanUpdatePonpes', ['id' => $d->id]) }}" method="POST">
                                     @csrf
                                     @method('PUT')
                                     <div class="modal-dialog modal-lg">
@@ -461,16 +461,16 @@
                                                     <div class="row">
                                                         <div class="col-md-6">
                                                             <div class="mb-3">
-                                                                <label for="jadwal{{ $d->id }}" class="form-label">Jadwal</label>
-                                                                <input type="date" class="form-control" id="jadwal{{ $d->id }}" name="jadwal"
-                                                                       value="{{ $d->jadwal ? $d->jadwal->format('Y-m-d') : '' }}">
+                                                                <label for="tanggal_pengiriman{{ $d->id }}" class="form-label">tanggal_pengiriman</label>
+                                                                <input type="date" class="form-control" id="tanggal_pengiriman{{ $d->id }}" name="tanggal_pengiriman"
+                                                                       value="{{ $d->tanggal_pengiriman ? $d->tanggal_pengiriman->format('Y-m-d') : '' }}">
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6">
                                                             <div class="mb-3">
-                                                                <label for="tanggal_selesai{{ $d->id }}" class="form-label">Tanggal Selesai</label>
-                                                                <input type="date" class="form-control" id="tanggal_selesai{{ $d->id }}" name="tanggal_selesai"
-                                                                       value="{{ $d->tanggal_selesai ? $d->tanggal_selesai->format('Y-m-d') : '' }}">
+                                                                <label for="tanggal_sampai{{ $d->id }}" class="form-label">Tanggal Selesai</label>
+                                                                <input type="date" class="form-control" id="tanggal_sampai{{ $d->id }}" name="tanggal_sampai"
+                                                                       value="{{ $d->tanggal_sampai ? $d->tanggal_sampai->format('Y-m-d') : '' }}">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -491,7 +491,7 @@
                                                                     <option value="pending" {{ $d->status == 'pending' ? 'selected' : '' }}>Pending</option>
                                                                     <option value="proses" {{ $d->status == 'proses' ? 'selected' : '' }}>Proses</option>
                                                                     <option value="selesai" {{ $d->status == 'selesai' ? 'selected' : '' }}>Selesai</option>
-                                                                    <option value="terjadwal" {{ $d->status == 'terjadwal' ? 'selected' : '' }}>Terjadwal</option>
+                                                                    <option value="tertanggal_pengiriman" {{ $d->status == 'terjadwal' ? 'selected' : '' }}>Terjadwal</option>
                                                                 </select>
                                                             </div>
                                                         </div>

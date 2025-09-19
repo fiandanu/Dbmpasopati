@@ -21,7 +21,7 @@ class PengirimanController extends Controller
         ];
     }
 
-    public function ListDataMclientPengiriman(Request $request)
+    public function ListDataMclientPengirimanUpt(Request $request)
     {
         $query = Pengiriman::query();
 
@@ -70,7 +70,7 @@ class PengirimanController extends Controller
         ));
     }
 
-    public function MclientKunjunganStore(Request $request)
+    public function MclientPengirimanStoreUpt(Request $request)
     {
         $validator = Validator::make(
             $request->all(),
@@ -131,7 +131,7 @@ class PengirimanController extends Controller
         }
     }
 
-    public function MclientKunjunganUpdate(Request $request, $id)
+    public function MclientPengirimanUpdateUpt(Request $request, $id)
     {
         $validator = Validator::make(
             $request->all(),
@@ -217,7 +217,7 @@ class PengirimanController extends Controller
         }
     }
 
-    public function MclientKunjunganDestroy($id)
+    public function MclientKunjunganDestroyUpt($id)
     {
         try {
             $data = Pengiriman::findOrFail($id);

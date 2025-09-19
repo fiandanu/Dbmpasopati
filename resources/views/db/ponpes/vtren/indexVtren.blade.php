@@ -137,7 +137,7 @@
                                             <th>nama wilayah</th>
                                             <th class="text-center">Tipe</th>
                                             <th class="text-center">Tanggal Dibuat</th>
-                                            <th class="text-center">Status Update</th>
+                                            <th>Status Update</th>
                                             <th class="text-center">Action</th>
                                         </tr>
                                     </thead>
@@ -150,14 +150,14 @@
                                                 <td>{{ $no++ }}</td>
                                                 <td>{{ $d->nama_ponpes }}</td>
                                                 <td><span class="tag tag-success">{{ $d->nama_wilayah }}</span></td>
-                                                <td>
+                                                <td class="text-center">
                                                     <span class="Tipevpas">
                                                         {{ ucfirst($d->tipe) }}
                                                     </span>
                                                 </td>
-                                                <td>{{ \Carbon\Carbon::parse($d->tanggal)->translatedFormat('d M Y') }}
+                                                <td class="text-center">{{ \Carbon\Carbon::parse($d->tanggal)->translatedFormat('d M Y') }}
                                                 </td>
-                                                <td class="text-center">
+                                                <td>
                                                     @php
                                                         // Cek apakah data opsional sudah diisi
                                                         $optionalFields = [

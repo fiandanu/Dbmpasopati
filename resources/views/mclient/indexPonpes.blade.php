@@ -70,7 +70,7 @@
                                 <span class="checkmark">✓</span>
                                 {{ $ponpesSettingCount ?? 0 }} Data
                             </div>
-                            <a href="" class="list-button">Setting Ponpes</a>
+                            <a href="{{ route('ListDataMclientPonpesSetting')}}" class="list-button">Setting Ponpes</a>
                         </div>
                     </div>
                     

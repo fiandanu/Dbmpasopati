@@ -3,8 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\mclient\reguler\KunjunganController;
 
-Route::prefix('mclient-kunjungan')->group(function () {
-    
+Route::prefix('mclient-kunjungan-upt')->group(function () {
     Route::get('/', [KunjunganController::class, 'ListDataMclientKunjungan'])->name('ListDataMclientKunjungan');
     Route::post('/store', [KunjunganController::class, 'MclientKunjunganStore'])->name('MclientKunjunganStore');
     Route::put('/update/{id}', [KunjunganController::class, 'MclientKunjunganUpdate'])->name('MclientKunjunganUpdate');

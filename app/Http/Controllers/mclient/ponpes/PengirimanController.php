@@ -131,7 +131,7 @@ class PengirimanController extends Controller
         }
     }
 
-    public function MclientPonpesPengirimanUpdate(Request $request, $id)
+    public function MclientPonpesPengirimanUpdatePonpes(Request $request, $id)
     {
         $validator = Validator::make(
             $request->all(),
@@ -217,7 +217,7 @@ class PengirimanController extends Controller
         }
     }
 
-    public function MclientPonpesPengirimanDestroy($id)
+    public function MclientPonpesPengirimanDestroyPonpes($id)
     {
         try {
             $data = Pengiriman::findOrFail($id);
