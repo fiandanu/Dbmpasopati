@@ -15,9 +15,9 @@ class Vtren extends Model
 
     protected $fillable = [
         'nama_ponpes',
-        'spam_vpas_kartu_baru',
-        'spam_vpas_kartu_bekas',
-        'spam_vpas_kartu_goip',
+        'spam_vtren_kartu_baru',
+        'spam_vtren_kartu_bekas',
+        'spam_vtren_kartu_goip',
         'kartu_belum_teregister',
         'whatsapp_telah_terpakai',
         'card_supporting',
@@ -41,7 +41,7 @@ class Vtren extends Model
 
     public function upt()
     {
-        return $this->belongsTo(Ponpes::class, 'nama_upt', 'namaupt');
+        return $this->belongsTo(Ponpes::class, 'nama_ponpes', 'nama_ponpes');
     }
 
     public function getFormattedTanggalAttribute()
@@ -49,16 +49,16 @@ class Vtren extends Model
         return $this->tanggal ? $this->tanggal->format('Y-m-d') : null;
     }
 
-    public function getTotalSpamVpasAttribute()
+    public function getTotalSpamVtrenAttribute()
     {
-        return (intval($this->spam_vpas_kartu_baru ?? '0')) + 
-               (intval($this->spam_vpas_kartu_bekas ?? '0')) + 
-               (intval($this->spam_vpas_kartu_goip ?? '0'));
+        return (intval($this->spam_vtren_kartu_baru ?? '0')) + 
+               (intval($this->spam_vtren_kartu_bekas ?? '0')) + 
+               (intval($this->spam_vtren_kartu_goip ?? '0'));
     }
 
     public function getTotalKartuTertanganiAttribute()
     {
-        return $this->getTotalSpamVpasAttribute();
+        return $this->getTotalSpamVtrenAttribute();
     }
 
     public function scopeByDateRange($query, $startDate, $endDate)
@@ -80,7 +80,7 @@ class Vtren extends Model
     public function scopeSearch($query, $term)
     {
         return $query->where(function ($q) use ($term) {
-            $q->where('nama_upt', 'LIKE', "%{$term}%")
+            $q->where('nama_ponpes', 'LIKE', "%{$term}%")
                 ->orWhere('pic', 'LIKE', "%{$term}%");
         });
     }
@@ -99,7 +99,7 @@ class Vtren extends Model
 
     public function getSummaryTextAttribute()
     {
-        $total = $this->getTotalSpamVpasAttribute();
+        $total = $this->getTotalSpamVtrenAttribute();
         return "Total {$total} spam tertangani pada " . ($this->tanggal ? $this->tanggal->format('d/m/Y') : 'tanggal tidak diset');
     }
 }

@@ -59,12 +59,12 @@ class VtrenController extends Controller
                 'status' => 'nullable|string|in:aktif,nonaktif,proses,pending',
             ],
             [
-                'nama_ponpes.required' => 'Nama UPT harus diisi.',
-                'nama_ponpes.string' => 'Nama UPT harus berupa teks.',
-                'nama_ponpes.max' => 'Nama UPT tidak boleh lebih dari 255 karakter.',
-                'spam_vtren_kartu_baru.string' => 'Spam VPAS kartu baru harus berupa teks.',
-                'spam_vtren_kartu_bekas.string' => 'Spam VPAS kartu bekas harus berupa teks.',
-                'spam_vtren_kartu_goip.string' => 'Spam VPAS kartu GOIP harus berupa teks.',
+                'nama_ponpes.required' => 'Nama Ponpes harus diisi.',
+                'nama_ponpes.string' => 'Nama Ponpes harus berupa teks.',
+                'nama_ponpes.max' => 'Nama Ponpes tidak boleh lebih dari 255 karakter.',
+                'spam_vtren_kartu_baru.string' => 'Spam Vtren kartu baru harus berupa teks.',
+                'spam_vtren_kartu_bekas.string' => 'Spam Vtren kartu bekas harus berupa teks.',
+                'spam_vtren_kartu_goip.string' => 'Spam Vtren kartu GOIP harus berupa teks.',
                 'kartu_belum_teregister.string' => 'Kartu belum teregister harus berupa teks.',
                 'whatsapp_telah_terpakai.string' => 'WhatsApp telah terpakai harus berupa teks.',
                 'card_supporting.string' => 'Card supporting harus berupa teks.',
@@ -99,7 +99,7 @@ class VtrenController extends Controller
 
             foreach ($stringFields as $field) {
                 if (empty($data[$field])) {
-                    $data[$field] = '0';
+                    $data[$field];
                 }
             }
 
@@ -131,12 +131,12 @@ class VtrenController extends Controller
                 'status' => 'nullable|string|in:aktif,nonaktif,proses,pending',
             ],
             [
-                'nama_ponpes.required' => 'Nama UPT harus diisi.',
-                'nama_ponpes.string' => 'Nama UPT harus berupa teks.',
-                'nama_ponpes.max' => 'Nama UPT tidak boleh lebih dari 255 karakter.',
-                'spam_vtren_kartu_baru.string' => 'Spam VPAS kartu baru harus berupa teks.',
-                'spam_vtren_kartu_bekas.string' => 'Spam VPAS kartu bekas harus berupa teks.',
-                'spam_vtren_kartu_goip.string' => 'Spam VPAS kartu GOIP harus berupa teks.',
+                'nama_ponpes.required' => 'Nama Ponpes harus diisi.',
+                'nama_ponpes.string' => 'Nama Ponpes harus berupa teks.',
+                'nama_ponpes.max' => 'Nama Ponpes tidak boleh lebih dari 255 karakter.',
+                'spam_vtren_kartu_baru.string' => 'Spam Vtren kartu baru harus berupa teks.',
+                'spam_vtren_kartu_bekas.string' => 'Spam Vtren kartu bekas harus berupa teks.',
+                'spam_vtren_kartu_goip.string' => 'Spam Vtren kartu GOIP harus berupa teks.',
                 'kartu_belum_teregister.string' => 'Kartu belum teregister harus berupa teks.',
                 'whatsapp_telah_terpakai.string' => 'WhatsApp telah terpakai harus berupa teks.',
                 'card_supporting.string' => 'Card supporting harus berupa teks.',
@@ -175,7 +175,7 @@ class VtrenController extends Controller
 
                     foreach ($stringFields as $field) {
                         if (isset($validatedData[$field]) && empty($validatedData[$field])) {
-                            $validatedData[$field] = '0';
+                            $validatedData[$field];
                         }
                     }
 
@@ -206,7 +206,7 @@ class VtrenController extends Controller
 
             foreach ($stringFields as $field) {
                 if (empty($updateData[$field])) {
-                    $updateData[$field] = '0';
+                    $updateData[$field] = '-';
                 }
             }
 
@@ -228,7 +228,7 @@ class VtrenController extends Controller
             $data->delete();
 
             return redirect()->back()
-                ->with('success', "Data catatan kartu di UPT '{$nama_ponpes}' berhasil dihapus!");
+                ->with('success', "Data catatan kartu di Ponpes '{$nama_ponpes}' berhasil dihapus!");
         } catch (\Exception $e) {
             return redirect()->back()
                 ->with('error', 'Gagal menghapus data: ' . $e->getMessage());
@@ -239,7 +239,7 @@ class VtrenController extends Controller
     {
         $data = Vtren::orderBy('created_at', 'desc')->get();
 
-        $filename = 'catatan_kartu_' . date('Y-m-d_H-i-s') . '.csv';
+        $filename = 'catatan_kartu_vtren_' . date('Y-m-d_H-i-s') . '.csv';
 
         $headers = [
             "Content-type" => "text/csv",
@@ -253,10 +253,10 @@ class VtrenController extends Controller
             $file = fopen('php://output', 'w');
 
             fputcsv($file, [
-                'Nama UPT',
-                'Spam VPAS Kartu Baru',
-                'Spam VPAS Kartu Bekas',
-                'Spam VPAS Kartu GOIP',
+                'Nama Ponpes',
+                'Spam Vtren Kartu Baru',
+                'Spam Vtren Kartu Bekas',
+                'Spam Vtren Kartu GOIP',
                 'Kartu Belum Teregister',
                 'WhatsApp Telah Terpakai',
                 'Card Supporting',
@@ -340,7 +340,7 @@ class VtrenController extends Controller
 
         return response()->json([
             'status' => 'error',
-            'message' => 'UPT not found'
+            'message' => 'Ponpes not found'
         ]);
     }
 }
