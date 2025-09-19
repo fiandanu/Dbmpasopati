@@ -11,14 +11,14 @@ return new class extends Migration
         Schema::create('mclient_catatan', function (Blueprint $table) {
             $table->id();
             $table->string('nama_upt')->nullable();
-            $table->string('spam_vpas_kartu_baru')->nullable()->default('0');
-            $table->string('spam_vpas_kartu_bekas')->nullable()->default('0');
-            $table->string('spam_vpas_kartu_goip')->nullable()->default('0');
-            $table->string('kartu_belum_teregister')->nullable()->default('0');
-            $table->string('whatsapp_telah_terpakai')->nullable()->default('0');
+            $table->string('spam_vpas_kartu_baru')->nullable();
+            $table->string('spam_vpas_kartu_bekas')->nullable();
+            $table->string('spam_vpas_kartu_goip')->nullable();
+            $table->string('kartu_belum_teregister')->nullable();
+            $table->string('whatsapp_telah_terpakai')->nullable();
             $table->string('card_supporting')->nullable();
             $table->string('pic')->nullable();
-            $table->string('jumlah_kartu_terpakai_perhari')->nullable()->default('0');
+            $table->string('jumlah_kartu_terpakai_perhari')->nullable();
             $table->date('tanggal')->nullable();
             $table->string('status')->nullable();
             $table->timestamps();

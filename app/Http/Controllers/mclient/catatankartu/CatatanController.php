@@ -11,7 +11,7 @@ use App\Models\user\Pic;
 
 class CatatanController extends Controller
 {
-    public function ListDataMclientCatatan(Request $request)
+    public function ListDataMclientCatatanVpas(Request $request)
     {
         $query = Catatan::query();
 
@@ -41,7 +41,7 @@ class CatatanController extends Controller
         return view('mclient.catatankartu.catatan', compact('data', 'picList', 'cardSupportingList', 'uptList'));
     }
 
-    public function MclientCatatanStore(Request $request)
+    public function MclientCatatanStoreVpas(Request $request)
     {
         $validator = Validator::make(
             $request->all(),
@@ -110,7 +110,7 @@ class CatatanController extends Controller
         }
     }
 
-    public function MclientCatatanUpdate(Request $request, $id)
+    public function MclientCatatanUpdateVpas(Request $request, $id)
     {
         $validator = Validator::make(
             $request->all(),
@@ -211,7 +211,7 @@ class CatatanController extends Controller
         }
     }
 
-    public function MclientCatatanDestroy($id)
+    public function MclientCatatanDestroyVpas($id)
     {
         try {
             $data = Catatan::findOrFail($id);

@@ -80,7 +80,7 @@
                         <div class="alert-heading label mb-2">Periksa kembali Data yang dimasukkan</div>
                         <div class="small">
                             @foreach ($errors->all() as $error)
-                                <div class="mb-1">ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ {{ $error }}</div>
+                                <div class="mb-1">{{ $error }}</div>
                             @endforeach
                         </div>
                     </div>
@@ -122,7 +122,7 @@
                                 <div class="alert alert-info">
                                     <i class="fas fa-info-circle"></i>
                                     Hasil pencarian untuk: "<strong>{{ request('table_search') }}</strong>"
-                                    <a href="{{ route('ListDataMclientCatatan') }}" class="btn btn-sm btn-secondary ml-2">
+                                    <a href="{{ route('ListDataMclientCatatanVpas') }}" class="btn btn-sm btn-secondary ml-2">
                                         <i class="fas fa-times"></i> Clear
                                     </a>
                                 </div>
@@ -210,7 +210,7 @@
                                                         <div class="modal-footer flex-row-reverse justify-content-between">
                                                             <button type="button" class="btn-cancel-modal"
                                                                 data-dismiss="modal">Tutup</button>
-                                                            <form action="{{ route('MclientCatatanDestroy', $d->id) }}"
+                                                            <form action="{{ route('MclientCatatanDestroyVpas', $d->id) }}"
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
@@ -240,7 +240,7 @@
                         {{-- Add Modal --}}
                         <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel"
                             aria-hidden="true">
-                            <form id="addForm" action="{{ route('MclientCatatanStore') }}" method="POST">
+                            <form id="addForm" action="{{ route('MclientCatatanStoreVpas') }}" method="POST">
                                 @csrf
                                 <div class="modal-dialog modal-lg">
                                     <div class="modal-content">
@@ -423,7 +423,7 @@
                             <div class="modal fade" id="editModal{{ $d->id }}" tabindex="-1"
                                 aria-labelledby="editModalLabel{{ $d->id }}" aria-hidden="true">
                                 <form id="editForm{{ $d->id }}"
-                                    action="{{ route('MclientCatatanUpdate', ['id' => $d->id]) }}" method="POST">
+                                    action="{{ route('MclientCatatanUpdateVpas', ['id' => $d->id]) }}" method="POST">
                                     @csrf
                                     @method('PUT')
                                     <div class="modal-dialog modal-lg">
@@ -808,7 +808,7 @@
                             const text = option.textContent.toLowerCase();
                             if (text.includes(searchTerm)) {
                                 option.style.display = 'block';
-                                hsVisibleOption = true;
+                                hasVisibleOption = true;
                             } else {
                                 option.style.display = 'none';
                             }
@@ -1011,7 +1011,7 @@
 
     {{-- Search and Pagination JavaScript --}}
     <script>
-        $(document).ready(function() {
+        
             const $rows = $("#Table tbody tr");
             let limit = parseInt($("#row-limit").val());
             let currentPage = 1;

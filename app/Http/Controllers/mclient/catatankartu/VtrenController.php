@@ -41,7 +41,7 @@ class VtrenController extends Controller
         return view('mclient.catatankartu.indexVtren', compact('data', 'picList', 'cardSupportingList', 'uptList'));
     }
 
-    public function MclientCatatanStore(Request $request)
+    public function MclientCatatanStoreVtren(Request $request)
     {
         $validator = Validator::make(
             $request->all(),
@@ -113,7 +113,7 @@ class VtrenController extends Controller
         }
     }
 
-    public function MclientCatatanUpdate(Request $request, $id)
+    public function MclientCatatanUpdateVtren(Request $request, $id)
     {
         $validator = Validator::make(
             $request->all(),
@@ -220,7 +220,7 @@ class VtrenController extends Controller
         }
     }
 
-    public function MclientCatatanDestroy($id)
+    public function MclientCatatanDestroyVtren($id)
     {
         try {
             $data = Vtren::findOrFail($id);

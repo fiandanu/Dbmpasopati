@@ -115,7 +115,8 @@
                                 <div class="alert alert-info">
                                     <i class="fas fa-info-circle"></i>
                                     Hasil pencarian untuk: "<strong>{{ request('table_search') }}</strong>"
-                                    <a href="{{ route('ListDataMclientPonpesPengiriman') }}" class="btn btn-sm btn-secondary ml-2">
+                                    <a href="{{ route('ListDataMclientPonpesPengiriman') }}"
+                                        class="btn btn-sm btn-secondary ml-2">
                                         <i class="fas fa-times"></i> Clear
                                     </a>
                                 </div>
@@ -128,14 +129,14 @@
                                     <thead>
                                         <tr>
                                             <th>Nama Ponpes</th>
-                                            <th>Jenis Layanan</th>
-                                            <th>Keterangan</th>
-                                            <th>Tanggal Pengiriman</th>
-                                            <th>Tanggal Selesai</th>
-                                            <th>Durasi (Hari)</th>
+                                            <th class="text-center">Jenis Layanan</th>
+                                            <th class="text-center">Keterangan</th>
+                                            <th class="text-center">Tanggal Pengiriman</th>
+                                            <th class="text-center">Tanggal Selesai</th>
+                                            <th class="text-center">Durasi (Hari)</th>
                                             <th class="text-center">Status</th>
-                                            <th>PIC 1</th>
-                                            <th>PIC 2</th>
+                                            <th class="text-center">PIC 1</th>
+                                            <th class="text-center">PIC 2</th>
                                             <th class="text-center">Action</th>
                                         </tr>
                                     </thead>
@@ -145,18 +146,17 @@
                                                 <td>{{ $d->nama_ponpes ?? '-' }}</td>
                                                 <td class="text-center">
                                                     @php
-                                                        $layananClass = match(strtolower($d->jenis_layanan ?? '')) {
-                                                            'vtren' => 'badge-primary',
-                                                            'reguler' => 'badge-secondary',
-                                                            'vtrenreg' => 'badge-info',
-                                                            default => 'badge-light'
+                                                        $layananClass = match (strtolower($d->jenis_layanan ?? '')) {
+                                                            'vtren' => 'Tipevpas',
+                                                            'reguler' => 'Tipereguller',
+                                                            'vtrenreg' => 'badge-prosses',
                                                         };
                                                     @endphp
-                                                    <span class="badge {{ $layananClass }}">
+                                                    <span class="{{ $layananClass }}">
                                                         {{ $d->formatted_jenis_layanan }}
                                                     </span>
                                                 </td>
-                                                <td>
+                                                <td class="text-center">
                                                     <span class="Tipereguller">
                                                         {{ Str::limit($d->keterangan ?? 'Tidak ada keterangan', 40) }}
                                                     </span>
@@ -176,30 +176,31 @@
                                                 </td>
                                                 <td class="text-center">
                                                     @php
-                                                        $statusClass = match(strtolower($d->status ?? '')) {
+                                                        $statusClass = match (strtolower($d->status ?? '')) {
                                                             'selesai' => 'badge-succes',
                                                             'proses' => 'badge-prosses',
                                                             'pending' => 'badge-danger',
                                                             'terjadwal' => 'badge-prosses',
-                                                            default => 'badge-secondary'
+                                                            default => 'badge-secondary',
                                                         };
                                                     @endphp
                                                     <span class="badge {{ $statusClass }}">
                                                         {{ ucfirst($d->status ?? 'Belum ditentukan') }}
                                                     </span>
                                                 </td>
-                                                <td>{{ $d->pic_1 ?? '-' }}</td>
-                                                <td>{{ $d->pic_2 ?? '-' }}</td>
+                                                <td class="text-center">{{ $d->pic_1 ?? '-' }}</td>
+                                                <td class="text-center">{{ $d->pic_2 ?? '-' }}</td>
                                                 <td class="text-center">
                                                     <a href="#editModal{{ $d->id }}" data-bs-toggle="modal"
-                                                        data-bs-target="#editModal{{ $d->id }}">
-                                                        <button class="btn btn-sm btn-outline-primary">
+                                                        data-bs-target="#editModal{{ $d->id }}" title="Edit">
+                                                        <button>
                                                             <ion-icon name="pencil-outline"></ion-icon>
                                                         </button>
                                                     </a>
 
-                                                    <a data-toggle="modal" data-target="#modal-default{{ $d->id }}">
-                                                        <button class="btn btn-sm btn-outline-danger ml-1">
+                                                    <a data-toggle="modal"
+                                                        data-target="#modal-default{{ $d->id }}" title="Hapus">
+                                                        <button>
                                                             <ion-icon name="trash-outline"></ion-icon>
                                                         </button>
                                                     </a>
@@ -214,11 +215,17 @@
                                                             <ion-icon name="alert-circle-outline"
                                                                 class="text-9xl text-[var(--yellow-04)]"></ion-icon>
                                                             <p class="headline-large-32">Anda Yakin?</p>
-                                                            <label>Apakah Data pengiriman <b>{{ $d->nama_ponpes }} ({{ $d->formatted_jenis_layanan }})</b> ingin dihapus?</label>
+                                                            <label>Apakah Data pengiriman <b>{{ $d->nama_ponpes }}
+                                                                    ({{ $d->formatted_jenis_layanan }})
+                                                                </b> ingin
+                                                                dihapus?</label>
                                                         </div>
                                                         <div class="modal-footer flex-row-reverse justify-content-between">
-                                                            <button type="button" class="btn-cancel-modal" data-dismiss="modal">Tutup</button>
-                                                            <form action="{{ route('MclientPonpesPengirimanDestroyPonpes', $d->id) }}" method="POST">
+                                                            <button type="button" class="btn-cancel-modal"
+                                                                data-dismiss="modal">Tutup</button>
+                                                            <form
+                                                                action="{{ route('MclientPonpesPengirimanDestroyPonpes', $d->id) }}"
+                                                                method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="submit" class="btn-delete">Hapus</button>
@@ -244,14 +251,16 @@
                         </div>
 
                         {{-- Add Modal --}}
-                        <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+                        <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel"
+                            aria-hidden="true">
                             <form id="addForm" action="{{ route('MclientPonpesPengirimanStore') }}" method="POST">
                                 @csrf
                                 <div class="modal-dialog modal-lg">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <label class="modal-title" id="addModalLabel">Tambah Data Pengiriman Ponpes</label>
-                                            <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close">
+                                            <label class="modal-title" id="addModalLabel">Tambah Data</label>
+                                            <button type="button" class="btn-close-custom" data-bs-dismiss="modal"
+                                                aria-label="Close">
                                                 <i class="bi bi-x"></i>
                                             </button>
                                         </div>
@@ -260,38 +269,45 @@
                                             <!-- Jenis Layanan & Ponpes -->
                                             <div class="mb-4">
                                                 <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                    <label class="fw-bold">Informasi Ponpes & Layanan</label>
+                                                    <label class="fw-bold">Informasi Ponpes</label>
                                                 </div>
-                                                
+
                                                 <div class="mb-3">
-                                                    <label for="jenis_layanan" class="form-label">Jenis Layanan <span class="text-danger">*</span></label>
-                                                    <select class="form-control" id="jenis_layanan" name="jenis_layanan" required onchange="updatePonpesOptions()">
+                                                    <label for="jenis_layanan">Jenis Layanan <span
+                                                            class="text-danger">*</span></label>
+                                                    <select class="form-control" id="jenis_layanan" name="jenis_layanan"
+                                                        required onchange="updatePonpesOptions()">
                                                         <option value="">-- Pilih Jenis Layanan --</option>
                                                         @foreach ($jenisLayananOptions as $key => $value)
-                                                            <option value="{{ $key }}">{{ $value }}</option>
+                                                            <option value="{{ $key }}">{{ $value }}
+                                                            </option>
                                                         @endforeach
                                                     </select>
                                                 </div>
-                                                
+
                                                 <div class="mb-3">
-                                                    <label for="nama_ponpes" class="form-label">Nama Ponpes <span class="text-danger">*</span></label>
+                                                    <label for="nama_ponpes">Nama Ponpes <span
+                                                            class="text-danger">*</span></label>
                                                     <div class="dropdown">
                                                         <div class="input-group">
-                                                            <input type="text" class="form-control" id="ponpes_search" 
-                                                                   placeholder="Pilih jenis layanan dulu..." autocomplete="off" disabled>
+                                                            <input type="text" class="form-control" id="ponpes_search"
+                                                                placeholder="Pilih jenis layanan dulu..."
+                                                                autocomplete="off" disabled>
                                                             <div class="input-group-append">
-                                                                <button type="button" class="btn btn-outline-secondary" 
-                                                                        onclick="togglePonpesDropdown()" disabled id="dropdown-btn">
+                                                                <button type="button" class="btn btn-outline-secondary"
+                                                                    onclick="togglePonpesDropdown()" disabled
+                                                                    id="dropdown-btn">
                                                                     <i class="fas fa-chevron-down"></i>
                                                                 </button>
                                                             </div>
                                                         </div>
-                                                        <div class="dropdown-menu w-100" id="ponpesDropdownMenu" 
-                                                             style="max-height: 200px; overflow-y: auto; display: none;">
+                                                        <div class="dropdown-menu w-100" id="ponpesDropdownMenu"
+                                                            style="max-height: 200px; overflow-y: auto; display: none;">
                                                         </div>
                                                     </div>
                                                     <input type="hidden" id="nama_ponpes" name="nama_ponpes" required>
-                                                    <small class="form-text text-muted">Pilih jenis layanan terlebih dahulu</small>
+                                                    <small class="form-text text-muted">Pilih jenis layanan terlebih
+                                                        dahulu</small>
                                                 </div>
                                             </div>
 
@@ -300,11 +316,11 @@
                                                 <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
                                                     <label class="fw-bold">Detail Pengiriman</label>
                                                 </div>
-                                                
+
                                                 <div class="mb-3">
-                                                    <label for="keterangan" class="form-label">Keterangan</label>
-                                                    <textarea class="form-control" id="keterangan" name="keterangan" rows="3" 
-                                                              placeholder="Masukkan keterangan pengiriman (opsional)"></textarea>
+                                                    <label for="keterangan">Keterangan</label>
+                                                    <textarea class="form-control" id="keterangan" name="keterangan" rows="3"
+                                                        placeholder="Masukkan keterangan pengiriman (opsional)"></textarea>
                                                 </div>
                                             </div>
 
@@ -313,43 +329,46 @@
                                                 <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
                                                     <label class="fw-bold">Jadwal & Status</label>
                                                 </div>
-                                                
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="mb-3">
-                                                            <label for="tanggal_pengiriman" class="form-label">Tanggal Pengiriman </label>
-                                                            <input type="date" class="form-control" id="tanggal_pengiriman" name="tanggal_pengiriman">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="mb-3">
-                                                            <label for="tanggal_sampai" class="form-label">Tanggal Selesai</label>
-                                                            <input type="date" class="form-control" id="tanggal_sampai" name="tanggal_sampai">
-                                                        </div>
+
+
+                                                <div class="column">
+                                                    <div class="mb-3">
+                                                        <label for="tanggal_pengiriman">Tanggal Pengiriman </label>
+                                                        <input type="date" class="form-control"
+                                                            id="tanggal_pengiriman" name="tanggal_pengiriman">
                                                     </div>
                                                 </div>
-                                                
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="mb-3">
-                                                            <label for="durasi_hari" class="form-label">Durasi (Hari)</label>
-                                                            <input type="number" class="form-control" id="durasi_hari" name="durasi_hari" 
-                                                                   min="0" placeholder="Masukkan durasi dalam hari">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="mb-3">
-                                                            <label for="status" class="form-label">Status</label>
-                                                            <select class="form-control" id="status" name="status">
-                                                                <option value="">-- Pilih Status --</option>
-                                                                <option value="pending">Pending</option>
-                                                                <option value="proses">Proses</option>
-                                                                <option value="selesai">Selesai</option>
-                                                                <option value="tertanggal_pengiriman">Terjadwal</option>
-                                                            </select>
-                                                        </div>
+                                                <div class="column">
+                                                    <div class="mb-3">
+                                                        <label for="tanggal_sampai">Tanggal Selesai</label>
+                                                        <input type="date" class="form-control" id="tanggal_sampai"
+                                                            name="tanggal_sampai">
                                                     </div>
                                                 </div>
+
+
+
+                                                <div class="column">
+                                                    <div class="mb-3">
+                                                        <label for="durasi_hari">Durasi (Hari)</label>
+                                                        <input type="number" class="form-control" id="durasi_hari"
+                                                            name="durasi_hari" min="0"
+                                                            placeholder="Masukkan durasi dalam hari">
+                                                    </div>
+                                                </div>
+                                                <div class="column">
+                                                    <div class="mb-3">
+                                                        <label for="status">Status</label>
+                                                        <select class="form-control" id="status" name="status">
+                                                            <option value="">-- Pilih Status --</option>
+                                                            <option value="pending">Pending</option>
+                                                            <option value="proses">Proses</option>
+                                                            <option value="selesai">Selesai</option>
+                                                            <option value="tertanggal_pengiriman">Terjadwal</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
                                             </div>
 
                                             <!-- PIC -->
@@ -357,36 +376,39 @@
                                                 <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
                                                     <label class="fw-bold">PIC</label>
                                                 </div>
-                                                
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="mb-3">
-                                                            <label for="pic_1" class="form-label">PIC 1</label>
-                                                            <select class="form-control" id="pic_1" name="pic_1">
-                                                                <option value="">-- Pilih PIC 1 --</option>
-                                                                @foreach ($picList as $pic)
-                                                                    <option value="{{ $pic->nama_pic }}">{{ $pic->nama_pic }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="mb-3">
-                                                            <label for="pic_2" class="form-label">PIC 2</label>
-                                                            <select class="form-control" id="pic_2" name="pic_2">
-                                                                <option value="">-- Pilih PIC 2 --</option>
-                                                                @foreach ($picList as $pic)
-                                                                    <option value="{{ $pic->nama_pic }}">{{ $pic->nama_pic }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
+
+
+                                                <div class="column">
+                                                    <div class="mb-3">
+                                                        <label for="pic_1">PIC 1</label>
+                                                        <select class="form-control" id="pic_1" name="pic_1">
+                                                            <option value="">-- Pilih PIC 1 --</option>
+                                                            @foreach ($picList as $pic)
+                                                                <option value="{{ $pic->nama_pic }}">
+                                                                    {{ $pic->nama_pic }}</option>
+                                                            @endforeach
+                                                        </select>
                                                     </div>
                                                 </div>
+                                                <div class="column">
+                                                    <div class="mb-3">
+                                                        <label for="pic_2">PIC 2</label>
+                                                        <select class="form-control" id="pic_2" name="pic_2">
+                                                            <option value="">-- Pilih PIC 2 --</option>
+                                                            @foreach ($picList as $pic)
+                                                                <option value="{{ $pic->nama_pic }}">
+                                                                    {{ $pic->nama_pic }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+
                                             </div>
                                         </div>
 
                                         <div class="modal-footer">
-                                            <button type="button" class="btn-cancel-modal" data-bs-dismiss="modal">Cancel</button>
+                                            <button type="button" class="btn-cancel-modal"
+                                                data-bs-dismiss="modal">Cancel</button>
                                             <button type="submit" class="btn-purple">Simpan</button>
                                         </div>
                                     </div>
@@ -396,15 +418,20 @@
 
                         {{-- Edit Modals --}}
                         @foreach ($data as $d)
-                            <div class="modal fade" id="editModal{{ $d->id }}" tabindex="-1" aria-labelledby="editModalLabel{{ $d->id }}" aria-hidden="true">
-                                <form id="editForm{{ $d->id }}" action="{{ route('MclientPonpesPengirimanUpdatePonpes', ['id' => $d->id]) }}" method="POST">
+                            <div class="modal fade" id="editModal{{ $d->id }}" tabindex="-1"
+                                aria-labelledby="editModalLabel{{ $d->id }}" aria-hidden="true">
+                                <form id="editForm{{ $d->id }}"
+                                    action="{{ route('MclientPonpesPengirimanUpdatePonpes', ['id' => $d->id]) }}"
+                                    method="POST">
                                     @csrf
                                     @method('PUT')
                                     <div class="modal-dialog modal-lg">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <label class="modal-title" id="editModalLabel{{ $d->id }}">Edit Data Pengiriman Ponpes</label>
-                                                <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close">
+                                                <label class="modal-title" id="editModalLabel{{ $d->id }}">Edit
+                                                    Data</label>
+                                                <button type="button" class="btn-close-custom" data-bs-dismiss="modal"
+                                                    aria-label="Close">
                                                     <i class="bi bi-x"></i>
                                                 </button>
                                             </div>
@@ -415,25 +442,32 @@
                                                 <!-- Jenis Layanan & Ponpes -->
                                                 <div class="mb-4">
                                                     <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                        <label class="fw-bold">Informasi Ponpes & Layanan</label>
+                                                        <label class="fw-bold">Informasi Ponpes</label>
                                                     </div>
-                                                    
+
                                                     <div class="mb-3">
-                                                        <label for="jenis_layanan_edit_{{ $d->id }}" class="form-label">Jenis Layanan <span class="text-danger">*</span></label>
-                                                        <select class="form-control" id="jenis_layanan_edit_{{ $d->id }}" name="jenis_layanan" 
-                                                                required onchange="updatePonpesOptionsEdit({{ $d->id }})">
+                                                        <label for="jenis_layanan_edit_{{ $d->id }}">Jenis Layanan
+                                                            <span class="text-danger">*</span></label>
+                                                        <select class="form-control"
+                                                            id="jenis_layanan_edit_{{ $d->id }}"
+                                                            name="jenis_layanan" required
+                                                            onchange="updatePonpesOptionsEdit({{ $d->id }})">
                                                             <option value="">-- Pilih Jenis Layanan --</option>
                                                             @foreach ($jenisLayananOptions as $key => $value)
-                                                                <option value="{{ $key }}" {{ $d->jenis_layanan == $key ? 'selected' : '' }}>
+                                                                <option value="{{ $key }}"
+                                                                    {{ $d->jenis_layanan == $key ? 'selected' : '' }}>
                                                                     {{ $value }}
                                                                 </option>
                                                             @endforeach
                                                         </select>
                                                     </div>
-                                                    
+
                                                     <div class="mb-3">
-                                                        <label for="nama_ponpes_edit_{{ $d->id }}" class="form-label">Nama Ponpes <span class="text-danger">*</span></label>
-                                                        <select class="form-control" id="nama_ponpes_edit_{{ $d->id }}" name="nama_ponpes" required>
+                                                        <label for="nama_ponpes_edit_{{ $d->id }}">Nama Ponpes
+                                                            <span class="text-danger">*</span></label>
+                                                        <select class="form-control"
+                                                            id="nama_ponpes_edit_{{ $d->id }}" name="nama_ponpes"
+                                                            required>
                                                             <option value="">-- Pilih Ponpes --</option>
                                                         </select>
                                                     </div>
@@ -444,11 +478,11 @@
                                                     <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
                                                         <label class="fw-bold">Detail Pengiriman</label>
                                                     </div>
-                                                    
+
                                                     <div class="mb-3">
-                                                        <label for="keterangan{{ $d->id }}" class="form-label">Keterangan</label>
-                                                        <textarea class="form-control" id="keterangan{{ $d->id }}" name="keterangan" rows="3" 
-                                                                  placeholder="Masukkan keterangan pengiriman (opsional)">{{ $d->keterangan ?? '' }}</textarea>
+                                                        <label for="keterangan{{ $d->id }}">Keterangan</label>
+                                                        <textarea class="form-control" id="keterangan{{ $d->id }}" name="keterangan" rows="3"
+                                                            placeholder="Masukkan keterangan pengiriman (opsional)">{{ $d->keterangan ?? '' }}</textarea>
                                                     </div>
                                                 </div>
 
@@ -457,45 +491,64 @@
                                                     <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
                                                         <label class="fw-bold">Jadwal & Status</label>
                                                     </div>
-                                                    
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <div class="mb-3">
-                                                                <label for="tanggal_pengiriman{{ $d->id }}" class="form-label">tanggal_pengiriman</label>
-                                                                <input type="date" class="form-control" id="tanggal_pengiriman{{ $d->id }}" name="tanggal_pengiriman"
-                                                                       value="{{ $d->tanggal_pengiriman ? $d->tanggal_pengiriman->format('Y-m-d') : '' }}">
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="mb-3">
-                                                                <label for="tanggal_sampai{{ $d->id }}" class="form-label">Tanggal Selesai</label>
-                                                                <input type="date" class="form-control" id="tanggal_sampai{{ $d->id }}" name="tanggal_sampai"
-                                                                       value="{{ $d->tanggal_sampai ? $d->tanggal_sampai->format('Y-m-d') : '' }}">
-                                                            </div>
+
+
+                                                    <div class="column">
+                                                        <div class="mb-3">
+                                                            <label
+                                                                for="tanggal_pengiriman{{ $d->id }}">tanggal_pengiriman</label>
+                                                            <input type="date" class="form-control"
+                                                                id="tanggal_pengiriman{{ $d->id }}"
+                                                                name="tanggal_pengiriman"
+                                                                value="{{ $d->tanggal_pengiriman ? $d->tanggal_pengiriman->format('Y-m-d') : '' }}">
                                                         </div>
                                                     </div>
-                                                    
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <div class="mb-3">
-                                                                <label for="durasi_hari{{ $d->id }}" class="form-label">Durasi (Hari)</label>
-                                                                <input type="number" class="form-control" id="durasi_hari{{ $d->id }}" name="durasi_hari" 
-                                                                       min="0" value="{{ $d->durasi_hari }}" placeholder="Masukkan durasi dalam hari">
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="mb-3">
-                                                                <label for="status{{ $d->id }}" class="form-label">Status</label>
-                                                                <select class="form-control" id="status{{ $d->id }}" name="status">
-                                                                    <option value="">-- Pilih Status --</option>
-                                                                    <option value="pending" {{ $d->status == 'pending' ? 'selected' : '' }}>Pending</option>
-                                                                    <option value="proses" {{ $d->status == 'proses' ? 'selected' : '' }}>Proses</option>
-                                                                    <option value="selesai" {{ $d->status == 'selesai' ? 'selected' : '' }}>Selesai</option>
-                                                                    <option value="tertanggal_pengiriman" {{ $d->status == 'terjadwal' ? 'selected' : '' }}>Terjadwal</option>
-                                                                </select>
-                                                            </div>
+                                                    <div class="column">
+                                                        <div class="mb-3">
+                                                            <label for="tanggal_sampai{{ $d->id }}">Tanggal
+                                                                Selesai</label>
+                                                            <input type="date" class="form-control"
+                                                                id="tanggal_sampai{{ $d->id }}"
+                                                                name="tanggal_sampai"
+                                                                value="{{ $d->tanggal_sampai ? $d->tanggal_sampai->format('Y-m-d') : '' }}">
                                                         </div>
                                                     </div>
+
+
+
+                                                    <div class="column">
+                                                        <div class="mb-3">
+                                                            <label for="durasi_hari{{ $d->id }}">Durasi
+                                                                (Hari)
+                                                            </label>
+                                                            <input type="number" class="form-control"
+                                                                id="durasi_hari{{ $d->id }}" name="durasi_hari"
+                                                                min="0" value="{{ $d->durasi_hari }}"
+                                                                placeholder="Masukkan durasi dalam hari">
+                                                        </div>
+                                                    </div>
+                                                    <div class="column">
+                                                        <div class="mb-3">
+                                                            <label for="status{{ $d->id }}">Status</label>
+                                                            <select class="form-control" id="status{{ $d->id }}"
+                                                                name="status">
+                                                                <option value="">-- Pilih Status --</option>
+                                                                <option value="pending"
+                                                                    {{ $d->status == 'pending' ? 'selected' : '' }}>
+                                                                    Pending</option>
+                                                                <option value="proses"
+                                                                    {{ $d->status == 'proses' ? 'selected' : '' }}>
+                                                                    Proses</option>
+                                                                <option value="selesai"
+                                                                    {{ $d->status == 'selesai' ? 'selected' : '' }}>
+                                                                    Selesai</option>
+                                                                <option value="tertanggal_pengiriman"
+                                                                    {{ $d->status == 'terjadwal' ? 'selected' : '' }}>
+                                                                    Terjadwal</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
                                                 </div>
 
                                                 <!-- PIC -->
@@ -503,49 +556,57 @@
                                                     <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
                                                         <label class="fw-bold">PIC</label>
                                                     </div>
-                                                    
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <div class="mb-3">
-                                                                <label for="pic_1{{ $d->id }}" class="form-label">PIC 1</label>
-                                                                <select class="form-control" id="pic_1{{ $d->id }}" name="pic_1">
-                                                                    <option value="">-- Pilih PIC 1 --</option>
-                                                                    @foreach ($picList as $pic)
-                                                                        <option value="{{ $pic->nama_pic }}" {{ $d->pic_1 == $pic->nama_pic ? 'selected' : '' }}>
-                                                                            {{ $pic->nama_pic }}
-                                                                        </option>
-                                                                    @endforeach
-                                                                    @php
-                                                                        $existingPics = $picList->pluck('nama_pic')->toArray();
-                                                                    @endphp
-                                                                    @if ($d->pic_1 && !in_array($d->pic_1, $existingPics))
-                                                                        <option value="{{ $d->pic_1 }}" selected>{{ $d->pic_1 }} (Custom)</option>
-                                                                    @endif
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="mb-3">
-                                                                <label for="pic_2{{ $d->id }}" class="form-label">PIC 2</label>
-                                                                <select class="form-control" id="pic_2{{ $d->id }}" name="pic_2">
-                                                                    <option value="">-- Pilih PIC 2 --</option>
-                                                                    @foreach ($picList as $pic)
-                                                                        <option value="{{ $pic->nama_pic }}" {{ $d->pic_2 == $pic->nama_pic ? 'selected' : '' }}>
-                                                                            {{ $pic->nama_pic }}
-                                                                        </option>
-                                                                    @endforeach
-                                                                    @if ($d->pic_2 && !in_array($d->pic_2, $existingPics))
-                                                                        <option value="{{ $d->pic_2 }}" selected>{{ $d->pic_2 }} (Custom)</option>
-                                                                    @endif
-                                                                </select>
-                                                            </div>
+
+                                                    <div class="column">
+                                                        <div class="mb-3">
+                                                            <label for="pic_1{{ $d->id }}">PIC 1</label>
+                                                            <select class="form-control" id="pic_1{{ $d->id }}"
+                                                                name="pic_1">
+                                                                <option value="">-- Pilih PIC 1 --</option>
+                                                                @foreach ($picList as $pic)
+                                                                    <option value="{{ $pic->nama_pic }}"
+                                                                        {{ $d->pic_1 == $pic->nama_pic ? 'selected' : '' }}>
+                                                                        {{ $pic->nama_pic }}
+                                                                    </option>
+                                                                @endforeach
+                                                                @php
+                                                                    $existingPics = $picList
+                                                                        ->pluck('nama_pic')
+                                                                        ->toArray();
+                                                                @endphp
+                                                                @if ($d->pic_1 && !in_array($d->pic_1, $existingPics))
+                                                                    <option value="{{ $d->pic_1 }}" selected>
+                                                                        {{ $d->pic_1 }} (Custom)</option>
+                                                                @endif
+                                                            </select>
                                                         </div>
                                                     </div>
+                                                    <div class="column">
+                                                        <div class="mb-3">
+                                                            <label for="pic_2{{ $d->id }}">PIC 2</label>
+                                                            <select class="form-control" id="pic_2{{ $d->id }}"
+                                                                name="pic_2">
+                                                                <option value="">-- Pilih PIC 2 --</option>
+                                                                @foreach ($picList as $pic)
+                                                                    <option value="{{ $pic->nama_pic }}"
+                                                                        {{ $d->pic_2 == $pic->nama_pic ? 'selected' : '' }}>
+                                                                        {{ $pic->nama_pic }}
+                                                                    </option>
+                                                                @endforeach
+                                                                @if ($d->pic_2 && !in_array($d->pic_2, $existingPics))
+                                                                    <option value="{{ $d->pic_2 }}" selected>
+                                                                        {{ $d->pic_2 }} (Custom)</option>
+                                                                @endif
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
                                                 </div>
                                             </div>
 
                                             <div class="modal-footer">
-                                                <button type="button" class="btn-cancel-modal" data-bs-dismiss="modal">Cancel</button>
+                                                <button type="button" class="btn-cancel-modal"
+                                                    data-bs-dismiss="modal">Cancel</button>
                                                 <button type="submit" class="btn-purple">Update</button>
                                             </div>
                                         </div>
@@ -706,7 +767,8 @@
                 updatePonpesOptionsEdit({{ $d->id }});
                 // Set current value
                 const currentPonpes{{ $d->id }} = '{{ $d->nama_ponpes }}';
-                const selectElement{{ $d->id }} = document.getElementById('nama_ponpes_edit_{{ $d->id }}');
+                const selectElement{{ $d->id }} = document.getElementById(
+                    'nama_ponpes_edit_{{ $d->id }}');
                 if (selectElement{{ $d->id }} && currentPonpes{{ $d->id }}) {
                     selectElement{{ $d->id }}.value = currentPonpes{{ $d->id }};
                 }
@@ -800,7 +862,7 @@
                 let start = (currentPage - 1) * limit;
                 let end = start + limit;
                 $rows.slice(start, end).show();
-                
+
                 $("#page-info").text(`Page ${currentPage} of ${totalPages}`);
                 $("#prev-page").prop("disabled", currentPage === 1);
                 $("#next-page").prop("disabled", currentPage === totalPages);

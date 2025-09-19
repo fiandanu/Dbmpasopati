@@ -11,7 +11,7 @@
                             <button class="btn-pushmenu" data-widget="pushmenu" role="button">
                                 <i class="fas fa-bars"></i>
                             </button>
-                            <h1 class="headline-large-32 mb-0">Kunjungan Monitoring Client Ponpes</h1>
+                            <h1 class="headline-large-32 mb-0">Kunjungan Ponpes</h1>
                         </div>
 
                         <div class="d-flex align-items-center gap-2 flex-wrap">

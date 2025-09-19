@@ -70,7 +70,8 @@
                                 <span class="checkmark">✓</span>
                                 100 Data
                             </div>
-                            <a href="{{ route('ListDataMclientPengiriman')}}" class="list-button">List Data Pengiriman Alat UPT</a>
+                            <a href="{{ route('ListDataMclientPengirimanUpt') }}" class="list-button">List Data Pengiriman
+                                Alat UPT</a>
                         </div>
                     </div>
 
@@ -83,7 +84,8 @@
                                 <span class="checkmark">✓</span>
                                 100 Data
                             </div>
-                            <a href="{{ route('ListDataMclientSettingAlat')}}" class="list-button">List Data Setting Alat UPT</a>
+                            <a href="{{ route('ListDataMclientSettingAlat') }}" class="list-button">List Data Setting Alat
+                                UPT</a>
                         </div>
                     </div>
                 </div>
