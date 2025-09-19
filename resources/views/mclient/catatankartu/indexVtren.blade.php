@@ -151,28 +151,28 @@
                                     <tbody>
                                         @forelse ($data as $d)
                                             <tr>
-                                                <td>{{ $d->nama_upt ?? '-' }}</td>
+                                                <td>{{ $d->nama_ponpes ?? '-' }}</td>
                                                 <td class="text-center">
-                                                    {{ $d->spam_vtren_kartu_baru ?? '0' }}
+                                                    {{ $d->spam_vtren_kartu_baru ?? '-' }}
                                                 </td>
                                                 <td class="text-center">
-                                                    {{ $d->spam_vtren_kartu_bekas ?? '0' }}
+                                                    {{ $d->spam_vtren_kartu_bekas ?? '-' }}
                                                 </td>
                                                 <td class="text-center">
-                                                    {{ $d->spam_vtren_kartu_goip ?? '0' }}
+                                                    {{ $d->spam_vtren_kartu_goip ?? '-' }}
                                                 </td>
                                                 <td class="text-center">
-                                                    {{ $d->kartu_belum_teregister ?? '0' }}
+                                                    {{ $d->kartu_belum_teregister ?? '-' }}
                                                 </td>
                                                 <td class="text-center">
-                                                    {{ $d->whatsapp_telah_terpakai ?? '0' }}
+                                                    {{ $d->whatsapp_telah_terpakai ?? '-' }}
                                                 </td>
                                                 <td class="text-center">
                                                     {{ $d->card_supporting ?? '-' }}
                                                 </td>
                                                 <td>{{ $d->pic ?? '-' }}</td>
                                                 <td class="text-center">
-                                                    {{ $d->jumlah_kartu_terpakai_perhari ?? '0' }}
+                                                    {{ $d->jumlah_kartu_terpakai_perhari ?? '-' }}
                                                 </td>
                                                 <td class="text-center">
                                                     {{ $d->tanggal ? \Carbon\Carbon::parse($d->tanggal)->translatedFormat('d M Y') : '-' }}
@@ -204,7 +204,7 @@
                                                             <ion-icon name="alert-circle-outline"
                                                                 class="text-9xl text-[var(--yellow-04)]"></ion-icon>
                                                             <p class="headline-large-32">Anda Yakin?</p>
-                                                            <label>Apakah Data Catatan <b> {{ $d->nama_upt }} </b> ingin
+                                                            <label>Apakah Data Catatan <b> {{ $d->nama_ponpes }} </b> ingin
                                                                 dihapus?</label>
                                                         </div>
                                                         <div class="modal-footer flex-row-reverse justify-content-between">
@@ -253,14 +253,14 @@
                                         </div>
 
                                         <div class="modal-body">
-                                            <!-- Informasi UPT Section -->
+                                            <!-- Informasi Ponpes Section -->
                                             <div class="mb-4">
                                                 <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
                                                     <label>Informasi Ponpes</label>
                                                 </div>
                                                 <div class="column">
                                                     <div class="mb-3">
-                                                        <label for="nama_upt" class="form-label">Nama Ponpes</label>
+                                                        <label for="nama_ponpes" class="form-label">Nama Ponpes</label>
                                                         <div class="dropdown">
                                                             <div class="input-group">
                                                                 <input type="text" class="form-control"
@@ -286,13 +286,13 @@
                                                                 @endforeach
                                                             </div>
                                                         </div>
-                                                        <input type="hidden" id="nama_upt" name="nama_upt" required>
+                                                        <input type="hidden" id="nama_ponpes" name="nama_ponpes" required>
                                                         <small class="form-text text-muted">Ketik untuk mencari Ponpes</small>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <!-- Data Spam VPAS Section -->
+                                            <!-- Data Spam Vtren Section -->
                                             <div class="mb-4">
                                                 <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
                                                     <label>Data Spam Vtren Tertangani</label>
@@ -339,7 +339,8 @@
                                                             <label for="kartu_belum_teregister" class="form-label">Kartu
                                                                 Belum Teregister</label>
                                                             <input type="text" class="form-control"
-                                                                id="kartu_belum_teregister" name="kartu_belum_teregister"
+                                                                id="kartu_belum_teregister" 
+                                                                name="kartu_belum_teregister"
                                                                 value=""
                                                                 placeholder="Jumlah kartu belum teregister">
                                                         </div>
@@ -350,7 +351,8 @@
                                                                 class="form-label">WhatsApp Telah Terpakai</label>
                                                             <input type="text" class="form-control"
                                                                 id="whatsapp_telah_terpakai"
-                                                                name="whatsapp_telah_terpakai" value=""
+                                                                name="whatsapp_telah_terpakai" 
+                                                                value=""
                                                                 placeholder="Jumlah WhatsApp terpakai">
                                                         </div>
                                                     </div>
@@ -440,22 +442,22 @@
                                             <div class="modal-body">
                                                 <input type="hidden" name="id" value="{{ $d->id }}">
 
-                                                <!-- Informasi UPT Section -->
+                                                <!-- Informasi Ponpes Section -->
                                                 <div class="mb-4">
                                                     <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                        <label>Informasi UPT</label>
+                                                        <label>Informasi Ponpes</label>
                                                     </div>
                                                     <div class="column">
                                                         <div class="mb-3">
-                                                            <label for="nama_upt_edit_{{ $d->id }}"
-                                                                class="form-label">Nama UPT <span
+                                                            <label for="nama_ponpes_edit_{{ $d->id }}"
+                                                                class="form-label">Nama Ponpes <span
                                                                     class="text-danger">*</span></label>
                                                             <div class="dropdown">
                                                                 <div class="input-group">
                                                                     <input type="text" class="form-control"
                                                                         id="upt_search_edit_{{ $d->id }}"
-                                                                        placeholder="Cari UPT..." autocomplete="off"
-                                                                        value="{{ $d->nama_upt ?? '' }}">
+                                                                        placeholder="Cari Ponpes..." autocomplete="off"
+                                                                        value="{{ $d->nama_ponpes ?? '' }}">
                                                                     <div class="input-group-append">
                                                                         <button type="button"
                                                                             class="btn btn-outline-secondary"
@@ -476,8 +478,8 @@
                                                                     @endforeach
                                                                 </div>
                                                             </div>
-                                                            <input type="hidden" id="nama_upt_edit_{{ $d->id }}"
-                                                                name="nama_upt" value="{{ $d->nama_upt ?? '' }}"
+                                                            <input type="hidden" id="nama_ponpes_edit_{{ $d->id }}"
+                                                                name="nama_ponpes" value="{{ $d->nama_ponpes ?? '' }}"
                                                                 required>
                                                             <small class="form-text text-muted">Ketik untuk mencari
                                                                 Ponpes</small>
@@ -485,7 +487,7 @@
                                                     </div>
                                                 </div>
 
-                                                <!-- Data Spam VPAS Section -->
+                                                <!-- Data Spam Vtren Section -->
                                                 <div class="mb-4">
                                                     <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
                                                         <label>Data Spam Vtren Tertangani</label>
@@ -538,7 +540,7 @@
                                                             <input type="text" class="form-control"
                                                                 id="kartu_belum_teregister{{ $d->id }}"
                                                                 name="kartu_belum_teregister"
-                                                                value="{{ $d->kartu_belum_teregister ?? '0' }}"
+                                                                value="{{ $d->kartu_belum_teregister ?? '' }}"
                                                                 placeholder="Jumlah kartu belum teregister">
                                                         </div>
                                                     </div>
@@ -549,7 +551,7 @@
                                                             <input type="text" class="form-control"
                                                                 id="whatsapp_telah_terpakai{{ $d->id }}"
                                                                 name="whatsapp_telah_terpakai"
-                                                                value="{{ $d->whatsapp_telah_terpakai ?? '0' }}"
+                                                                value="{{ $d->whatsapp_telah_terpakai ?? '' }}"
                                                                 placeholder="Jumlah WhatsApp terpakai">
                                                         </div>
                                                     </div>
@@ -589,7 +591,7 @@
                                                             <input type="text" class="form-control"
                                                                 id="jumlah_kartu_terpakai_perhari{{ $d->id }}"
                                                                 name="jumlah_kartu_terpakai_perhari"
-                                                                value="{{ $d->jumlah_kartu_terpakai_perhari ?? '0' }}"
+                                                                value="{{ $d->jumlah_kartu_terpakai_perhari ?? '' }}"
                                                                 placeholder="Jumlah kartu terpakai per hari">
                                                         </div>
                                                     </div>
@@ -766,21 +768,21 @@
         // Select UPT option for Add Modal
         function selectUpt(nama_ponpes) {
             document.getElementById('upt_search').value = nama_ponpes;
-            document.getElementById('nama_upt').value = nama_ponpes;
+            document.getElementById('nama_ponpes').value = nama_ponpes;
             document.getElementById('uptDropdownMenu').style.display = 'none';
         }
 
         // Clear UPT selection when search is cleared for Add Modal
         document.getElementById('upt_search').addEventListener('input', function() {
             if (this.value === '') {
-                document.getElementById('nama_upt').value = '';
+                document.getElementById('nama_ponpes').value = '';
             }
         });
 
         // Reset form when modal is closed for Add Modal
         $('#addModal').on('hidden.bs.modal', function() {
             document.getElementById('upt_search').value = '';
-            document.getElementById('nama_upt').value = '';
+            document.getElementById('nama_ponpes').value = '';
             document.getElementById('uptDropdownMenu').style.display = 'none';
         });
 
@@ -799,7 +801,7 @@
                     `#uptDropdownMenuEdit{{ $d->id }} .upt-option`);
 
                 if (uptSearchEdit{{ $d->id }}) {
-                    // Fillter Upt Berdasarkan Pencarian Input
+                    // Filter Upt Berdasarkan Pencarian Input
                     uptSearchEdit{{ $d->id }}.addEventListener('input', function() {
                         const searchTerm = this.value.toLowerCase();
                         let hasVisibleOption = false;
@@ -808,7 +810,7 @@
                             const text = option.textContent.toLowerCase();
                             if (text.includes(searchTerm)) {
                                 option.style.display = 'block';
-                                hsVisibleOption = true;
+                                hasVisibleOption = true;
                             } else {
                                 option.style.display = 'none';
                             }
@@ -873,7 +875,7 @@
         // Select UPT option for Edit Modal
         function selectUptEdit(nama_ponpes, id) {
             document.getElementById(`upt_search_edit_${id}`).value = nama_ponpes;
-            document.getElementById(`nama_upt_edit_${id}`).value = nama_ponpes;
+            document.getElementById(`nama_ponpes_edit_${id}`).value = nama_ponpes;
             document.getElementById(`uptDropdownMenuEdit${id}`).style.display = 'none';
         }
 
@@ -881,7 +883,7 @@
         @foreach ($data as $d)
             document.getElementById(`upt_search_edit_{{ $d->id }}`).addEventListener('input', function() {
                 if (this.value === '') {
-                    document.getElementById(`nama_upt_edit_{{ $d->id }}`).value = '';
+                    document.getElementById(`nama_ponpes_edit_{{ $d->id }}`).value = '';
                 }
             });
         @endforeach
@@ -890,7 +892,7 @@
         @foreach ($data as $d)
             $(`#editModal{{ $d->id }}`).on('hidden.bs.modal', function() {
                 document.getElementById(`upt_search_edit_{{ $d->id }}`).value =
-                    '{{ $d->nama_upt ?? '' }}';
+                    '{{ $d->nama_ponpes ?? '' }}';
                 document.getElementById(`uptDropdownMenuEdit{{ $d->id }}`).style.display = 'none';
             });
         @endforeach

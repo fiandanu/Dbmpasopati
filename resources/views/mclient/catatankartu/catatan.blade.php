@@ -153,26 +153,26 @@
                                             <tr>
                                                 <td>{{ $d->nama_upt ?? '-' }}</td>
                                                 <td class="text-center">
-                                                    {{ $d->spam_vpas_kartu_baru ?? '0' }}
+                                                    {{ $d->spam_vpas_kartu_baru ?? '-' }}
                                                 </td>
                                                 <td class="text-center">
-                                                    {{ $d->spam_vpas_kartu_bekas ?? '0' }}
+                                                    {{ $d->spam_vpas_kartu_bekas ?? '-' }}
                                                 </td>
                                                 <td class="text-center">
-                                                    {{ $d->spam_vpas_kartu_goip ?? '0' }}
+                                                    {{ $d->spam_vpas_kartu_goip ?? '-' }}
                                                 </td>
                                                 <td class="text-center">
-                                                    {{ $d->kartu_belum_teregister ?? '0' }}
+                                                    {{ $d->kartu_belum_teregister ?? '-' }}
                                                 </td>
                                                 <td class="text-center">
-                                                    {{ $d->whatsapp_telah_terpakai ?? '0' }}
+                                                    {{ $d->whatsapp_telah_terpakai ?? '-' }}
                                                 </td>
                                                 <td class="text-center">
                                                     {{ $d->card_supporting ?? '-' }}
                                                 </td>
                                                 <td>{{ $d->pic ?? '-' }}</td>
                                                 <td class="text-center">
-                                                    {{ $d->jumlah_kartu_terpakai_perhari ?? '0' }}
+                                                    {{ $d->jumlah_kartu_terpakai_perhari ?? '-' }}
                                                 </td>
                                                 <td class="text-center">
                                                     {{ $d->tanggal ? \Carbon\Carbon::parse($d->tanggal)->translatedFormat('d M Y') : '-' }}
@@ -339,7 +339,8 @@
                                                             <label for="kartu_belum_teregister" class="form-label">Kartu
                                                                 Belum Teregister</label>
                                                             <input type="text" class="form-control"
-                                                                id="kartu_belum_teregister" name="kartu_belum_teregister"
+                                                                id="kartu_belum_teregister" 
+                                                                name="kartu_belum_teregister"
                                                                 value=""
                                                                 placeholder="Jumlah kartu belum teregister">
                                                         </div>
@@ -350,7 +351,8 @@
                                                                 class="form-label">WhatsApp Telah Terpakai</label>
                                                             <input type="text" class="form-control"
                                                                 id="whatsapp_telah_terpakai"
-                                                                name="whatsapp_telah_terpakai" value=""
+                                                                name="whatsapp_telah_terpakai" 
+                                                                value=""
                                                                 placeholder="Jumlah WhatsApp terpakai">
                                                         </div>
                                                     </div>
@@ -538,7 +540,7 @@
                                                             <input type="text" class="form-control"
                                                                 id="kartu_belum_teregister{{ $d->id }}"
                                                                 name="kartu_belum_teregister"
-                                                                value="{{ $d->kartu_belum_teregister ?? '0' }}"
+                                                                value="{{ $d->kartu_belum_teregister ?? '' }}"
                                                                 placeholder="Jumlah kartu belum teregister">
                                                         </div>
                                                     </div>
@@ -549,7 +551,7 @@
                                                             <input type="text" class="form-control"
                                                                 id="whatsapp_telah_terpakai{{ $d->id }}"
                                                                 name="whatsapp_telah_terpakai"
-                                                                value="{{ $d->whatsapp_telah_terpakai ?? '0' }}"
+                                                                value="{{ $d->whatsapp_telah_terpakai ?? '' }}"
                                                                 placeholder="Jumlah WhatsApp terpakai">
                                                         </div>
                                                     </div>
@@ -589,7 +591,7 @@
                                                             <input type="text" class="form-control"
                                                                 id="jumlah_kartu_terpakai_perhari{{ $d->id }}"
                                                                 name="jumlah_kartu_terpakai_perhari"
-                                                                value="{{ $d->jumlah_kartu_terpakai_perhari ?? '0' }}"
+                                                                value="{{ $d->jumlah_kartu_terpakai_perhari ?? '' }}"
                                                                 placeholder="Jumlah kartu terpakai per hari">
                                                         </div>
                                                     </div>

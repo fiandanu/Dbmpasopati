@@ -87,7 +87,7 @@ class CatatanController extends Controller
         try {
             $data = $request->all();
 
-            // Set default values for string fields
+            // Remove empty string fields to allow null values
             $stringFields = [
                 'spam_vpas_kartu_baru', 'spam_vpas_kartu_bekas', 'spam_vpas_kartu_goip',
                 'kartu_belum_teregister', 'whatsapp_telah_terpakai',
@@ -95,8 +95,8 @@ class CatatanController extends Controller
             ];
 
             foreach ($stringFields as $field) {
-                if (empty($data[$field])) {
-                    $data[$field] = '0';
+                if (isset($data[$field]) && trim($data[$field]) === '') {
+                    unset($data[$field]); // Remove empty fields to allow null
                 }
             }
 
@@ -160,7 +160,7 @@ class CatatanController extends Controller
                 if (!empty($validatedData)) {
                     $data = Catatan::findOrFail($id);
 
-                    // Set default values for string fields
+                    // Remove empty string fields to allow null values
                     $stringFields = [
                         'spam_vpas_kartu_baru', 'spam_vpas_kartu_bekas', 'spam_vpas_kartu_goip',
                         'kartu_belum_teregister', 'whatsapp_telah_terpakai',
@@ -168,8 +168,8 @@ class CatatanController extends Controller
                     ];
 
                     foreach ($stringFields as $field) {
-                        if (isset($validatedData[$field]) && empty($validatedData[$field])) {
-                            $validatedData[$field] = '0';
+                        if (isset($validatedData[$field]) && trim($validatedData[$field]) === '') {
+                            unset($validatedData[$field]); // Remove empty fields to allow null
                         }
                     }
 
@@ -188,7 +188,7 @@ class CatatanController extends Controller
             $data = Catatan::findOrFail($id);
             $updateData = $request->all();
 
-            // Set default values for string fields
+            // Remove empty string fields to allow null values
             $stringFields = [
                 'spam_vpas_kartu_baru', 'spam_vpas_kartu_bekas', 'spam_vpas_kartu_goip',
                 'kartu_belum_teregister', 'whatsapp_telah_terpakai',
@@ -196,8 +196,8 @@ class CatatanController extends Controller
             ];
 
             foreach ($stringFields as $field) {
-                if (empty($updateData[$field])) {
-                    $updateData[$field] = '0';
+                if (isset($updateData[$field]) && trim($updateData[$field]) === '') {
+                    unset($updateData[$field]); // Remove empty fields to allow null
                 }
             }
 
