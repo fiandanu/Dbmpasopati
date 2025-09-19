@@ -91,16 +91,12 @@ class RegullerController extends Controller
             $query->where('tipe', 'LIKE', '%' . $request->search_tipe . '%');
         }
 
-        // FIXED: Proper date filtering
-        if ($request->has('search_tanggal') && !empty($request->search_tanggal)) {
-            $tanggalSearch = $request->search_tanggal;
-            $query->where(function ($q) use ($tanggalSearch) {
-                // Try different date formats
-                $q->whereRaw("DATE_FORMAT(tanggal, '%d %b %Y') LIKE ?", ['%' . $tanggalSearch . '%'])
-                    ->orWhereRaw("DATE_FORMAT(tanggal, '%M %d %Y') LIKE ?", ['%' . $tanggalSearch . '%'])
-                    ->orWhereRaw("DATE_FORMAT(tanggal, '%Y-%m-%d') LIKE ?", ['%' . $tanggalSearch . '%'])
-                    ->orWhere('tanggal', 'LIKE', '%' . $tanggalSearch . '%');
-            });
+        // FIXED: Date range filtering
+        if ($request->has('search_tanggal_dari') && !empty($request->search_tanggal_dari)) {
+            $query->whereDate('tanggal', '>=', $request->search_tanggal_dari);
+        }
+        if ($request->has('search_tanggal_sampai') && !empty($request->search_tanggal_sampai)) {
+            $query->whereDate('tanggal', '<=', $request->search_tanggal_sampai);
         }
 
         return $query;

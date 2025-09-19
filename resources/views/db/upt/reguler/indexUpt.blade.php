@@ -144,8 +144,12 @@
                                             name="search_tipe" placeholder="Search Tipe">
                                     </th>
                                     <th class="text-center">Tanggal Dibuat
-                                        <input type="text" class="form-control column-search" id="search-tanggal"
-                                            name="search_tanggal" placeholder="Search Tanggal">
+                                        <div class="d-flex gap-1">
+                                            <input type="date" class="form-control column-search" id="search-tanggal-dari"
+                                                name="search_tanggal_dari" placeholder="Dari" title="Tanggal Dari">
+                                            <input type="date" class="form-control column-search" id="search-tanggal-sampai"
+                                                name="search_tanggal_sampai" placeholder="Sampai" title="Tanggal Sampai">
+                                        </div>
                                     </th>
                                     <th class="text-center">Status Update
                                         <input type="text" class="form-control column-search" id="search-status"
@@ -577,7 +581,8 @@ $(document).ready(function() {
             search_namaupt: $('#search-namaupt').val().trim(),
             search_kanwil: $('#search-kanwil').val().trim(),
             search_tipe: $('#search-tipe').val().trim(),
-            search_tanggal: $('#search-tanggal').val().trim(),
+            search_tanggal_dari: $('#search-tanggal-dari').val().trim(),
+            search_tanggal_sampai: $('#search-tanggal-sampai').val().trim(),
             search_status: $('#search-status').val().trim()
         };
     }
@@ -667,64 +672,80 @@ $(document).ready(function() {
     });
 
     // FIXED: Column-specific Search with better filtering
-    $(".column-search").on("keyup", function() {
-        let filters = {
-            namaupt: $("#search-namaupt").val().toLowerCase().trim(),
-            kanwil: $("#search-kanwil").val().toLowerCase().trim(),
-            tipe: $("#search-tipe").val().toLowerCase().trim(),
-            tanggal: $("#search-tanggal").val().toLowerCase().trim(),
-            status: $("#search-status").val().toLowerCase().trim()
-        };
+    $(".column-search").on("keyup change", function() {
+    let filters = {
+        namaupt: $("#search-namaupt").val().toLowerCase().trim(),
+        kanwil: $("#search-kanwil").val().toLowerCase().trim(),
+        tipe: $("#search-tipe").val().toLowerCase().trim(),
+        tanggal_dari: $("#search-tanggal-dari").val().trim(),
+        tanggal_sampai: $("#search-tanggal-sampai").val().trim(),
+        status: $("#search-status").val().toLowerCase().trim()
+    };
 
-        $("#Table tbody tr").filter(function() {
-            let $cells = $(this).find("td");
-            
-            // Skip the "no data" row
-            if ($cells.eq(0).attr('colspan')) {
-                $(this).hide();
-                return false;
-            }
-            
-            let matches = true;
-
-            if (filters.namaupt) {
-                matches = matches && $cells.eq(1).text().toLowerCase().indexOf(filters.namaupt) > -1;
-            }
-            if (filters.kanwil) {
-                matches = matches && $cells.eq(2).text().toLowerCase().indexOf(filters.kanwil) > -1;
-            }
-            if (filters.tipe) {
-                matches = matches && $cells.eq(3).text().toLowerCase().indexOf(filters.tipe) > -1;
-            }
-            if (filters.tanggal) {
-                matches = matches && $cells.eq(4).text().toLowerCase().indexOf(filters.tanggal) > -1;
-            }
-            if (filters.status) {
-                matches = matches && $cells.eq(5).text().toLowerCase().indexOf(filters.status) > -1;
-            }
-
-            $(this).toggle(matches);
-        });
-
-        const $visibleRows = $("#Table tbody tr:visible");
-        const noDataVisible = $visibleRows.find('td[colspan="7"]').length > 0;
+    $("#Table tbody tr").filter(function() {
+        let $cells = $(this).find("td");
         
-        totalPages = Math.ceil($visibleRows.length / limit);
-        currentPage = 1;
-        
-        // Check if any filters are active
-        let hasActiveFilters = Object.values(filters).some(filter => filter !== '');
-        
-        if (hasActiveFilters) {
-            let resultCount = noDataVisible ? 0 : $visibleRows.length;
-            $("#page-info").text(`Showing ${resultCount} results`);
-            $("#prev-page").prop("disabled", true);
-            $("#next-page").prop("disabled", true);
-        } else {
-            updateTable();
+        // Skip the "no data" row
+        if ($cells.eq(0).attr('colspan')) {
+            $(this).hide();
+            return false;
         }
-        toggleExportButtons();
+        
+        let matches = true;
+
+        if (filters.namaupt) {
+            matches = matches && $cells.eq(1).text().toLowerCase().indexOf(filters.namaupt) > -1;
+        }
+        if (filters.kanwil) {
+            matches = matches && $cells.eq(2).text().toLowerCase().indexOf(filters.kanwil) > -1;
+        }
+        if (filters.tipe) {
+            matches = matches && $cells.eq(3).text().toLowerCase().indexOf(filters.tipe) > -1;
+        }
+        
+        // Date range filter
+        if (filters.tanggal_dari || filters.tanggal_sampai) {
+            let cellDateText = $cells.eq(4).text().trim();
+            // Parse tanggal dari format "Sep 19 2025" ke Date object
+            let cellDate = new Date(cellDateText);
+            
+            if (filters.tanggal_dari) {
+                let fromDate = new Date(filters.tanggal_dari);
+                matches = matches && cellDate >= fromDate;
+            }
+            if (filters.tanggal_sampai) {
+                let toDate = new Date(filters.tanggal_sampai);
+                toDate.setHours(23, 59, 59, 999); // Set ke akhir hari
+                matches = matches && cellDate <= toDate;
+            }
+        }
+        
+        if (filters.status) {
+            matches = matches && $cells.eq(5).text().toLowerCase().indexOf(filters.status) > -1;
+        }
+
+        $(this).toggle(matches);
     });
+
+    const $visibleRows = $("#Table tbody tr:visible");
+    const noDataVisible = $visibleRows.find('td[colspan="7"]').length > 0;
+    
+    totalPages = Math.ceil($visibleRows.length / limit);
+    currentPage = 1;
+    
+    // Check if any filters are active
+    let hasActiveFilters = Object.values(filters).some(filter => filter !== '');
+    
+    if (hasActiveFilters) {
+        let resultCount = noDataVisible ? 0 : $visibleRows.length;
+        $("#page-info").text(`Showing ${resultCount} results`);
+        $("#prev-page").prop("disabled", true);
+        $("#next-page").prop("disabled", true);
+    } else {
+        updateTable();
+    }
+    toggleExportButtons();
+});
 
     // Initial toggle
     toggleExportButtons();
@@ -741,34 +762,38 @@ $(document).ready(function() {
     });
 
     // FIXED: Preserve filter values from URL parameters on page load
-    $(window).on('load', function() {
-        // Set search values from URL parameters if they exist
-        const urlParams = new URLSearchParams(window.location.search);
-        
-        if (urlParams.get('table_search')) {
-            $('#btn-search').val(urlParams.get('table_search'));
-        }
-        if (urlParams.get('search_namaupt')) {
-            $('#search-namaupt').val(urlParams.get('search_namaupt'));
-        }
-        if (urlParams.get('search_kanwil')) {
-            $('#search-kanwil').val(urlParams.get('search_kanwil'));
-        }
-        if (urlParams.get('search_tipe')) {
-            $('#search-tipe').val(urlParams.get('search_tipe'));
-        }
-        if (urlParams.get('search_tanggal')) {
-            $('#search-tanggal').val(urlParams.get('search_tanggal'));
-        }
-        if (urlParams.get('search_status')) {
-            $('#search-status').val(urlParams.get('search_status'));
-        }
-        
-        // Trigger search if there are parameters
-        if (urlParams.toString()) {
-            $('.column-search').trigger('keyup');
-        }
-        
+    // FIXED: Preserve filter values from URL parameters on page load
+$(window).on('load', function() {
+    // Set search values from URL parameters if they exist
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    if (urlParams.get('table_search')) {
+        $('#btn-search').val(urlParams.get('table_search'));
+    }
+    if (urlParams.get('search_namaupt')) {
+        $('#search-namaupt').val(urlParams.get('search_namaupt'));
+    }
+    if (urlParams.get('search_kanwil')) {
+        $('#search-kanwil').val(urlParams.get('search_kanwil'));
+    }
+    if (urlParams.get('search_tipe')) {
+        $('#search-tipe').val(urlParams.get('search_tipe'));
+    }
+    if (urlParams.get('search_tanggal_dari')) {
+        $('#search-tanggal-dari').val(urlParams.get('search_tanggal_dari'));
+    }
+    if (urlParams.get('search_tanggal_sampai')) {
+        $('#search-tanggal-sampai').val(urlParams.get('search_tanggal_sampai'));
+    }
+    if (urlParams.get('search_status')) {
+        $('#search-status').val(urlParams.get('search_status'));
+    }
+    
+    // Trigger search if there are parameters
+    if (urlParams.toString()) {
+        $('.column-search').trigger('keyup');
+    }
+    
         // Initial export button state
         toggleExportButtons();
     });
