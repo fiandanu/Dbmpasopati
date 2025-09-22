@@ -28,8 +28,6 @@
             </div>
         </section>
 
-
-
         {{-- Tampilkan pesan sukses total --}}
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mx-4" role="alert">
@@ -106,24 +104,26 @@
             </div>
         @endif
 
+        {{-- Tampilkan hasil pencarian Jika tidak ada data --}}
+        @if (request('table_search'))
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    Hasil pencarian untuk: "<strong>{{ request('table_search') }}</strong>"
+                    <span class="ml-2">({{ $data->total() }} hasil ditemukan)</span>
+                    <a href="{{ route('ListDataVtrend') }}" class="btn btn-sm btn-secondary ml-2">
+                        <i class="fas fa-times"></i> Clear
+                    </a>
+                </div>
+            </div>
+        @endif
+
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
                 <!-- /.row -->
                 <div class="row">
                     <div class="col-12">
-                        @if (request('table_search'))
-                            <div class="card-body">
-                                <div class="alert alert-info">
-                                    <i class="fas fa-info-circle"></i>
-                                    Hasil pencarian untuk: "<strong>{{ request('table_search') }}</strong>"
-                                    <span class="ml-2">({{ $data->total() }} hasil ditemukan)</span>
-                                    <a href="{{ route('ListDataVtrend') }}" class="btn btn-sm btn-secondary ml-2">
-                                        <i class="fas fa-times"></i> Clear
-                                    </a>
-                                </div>
-                            </div>
-                        @endif
                         <div class="card">
                             {{-- Index Form Html --}}
 
@@ -155,7 +155,8 @@
                                                         {{ ucfirst($d->tipe) }}
                                                     </span>
                                                 </td>
-                                                <td class="text-center">{{ \Carbon\Carbon::parse($d->tanggal)->translatedFormat('d M Y') }}
+                                                <td class="text-center">
+                                                    {{ \Carbon\Carbon::parse($d->tanggal)->translatedFormat('d M Y') }}
                                                 </td>
                                                 <td>
                                                     @php
@@ -225,40 +226,8 @@
                                                             <ion-icon name="document-text-outline"></ion-icon>
                                                         </button>
                                                     </a>
-
-                                                    {{-- Delete Button --}}
-                                                    {{-- <button data-toggle="modal"
-                                                        data-target="#modal-default{{ $d->id }}" title="Hapus">
-                                                        <ion-icon name="trash-outline"></ion-icon></button> --}}
                                                 </td>
                                             </tr>
-
-                                            {{-- Delete Modal --}}
-                                            {{-- <div class="modal fade" id="modal-default{{ $d->id }}">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-
-                                                        <div class="modal-body text-center align-items-center">
-                                                            <ion-icon name="alert-circle-outline"
-                                                                class="text-9xl text-[var(--yellow-04)]"></ion-icon>
-                                                            <p class="headline-large-32">Anda Yakin?</p>
-                                                            <p>Apakah <b>{{ $d->nama_ponpes }}</b> ingin dihapus?</p>
-                                                        </div>
-                                                        <div class="modal-footer flex-row-reverse justify-content-between">
-                                                            <button type="button" class="btn-cancel-modal"
-                                                                data-dismiss="modal">Tutup</button>
-                                                            <form action="{{ route('PonpesPageDestroy', $d->id) }}"
-                                                                method="POST">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button type="submit" class="btn-delete">Hapus</button>
-                                                            </form>
-                                                        </div>
-                                                        <!-- /.modal-content -->
-                                                    </div>
-                                                    <!-- /.modal-dialog -->
-                                                </div>
-                                            </div> --}}
                                         @endforeach
 
                                         {{-- Tampilkan pesan jika tidak ada data VPAS --}}
@@ -557,12 +526,10 @@
                                 </div>
                             @endforeach
                             {{-- User Edit Modal --}}
-
                         </div>
                     </div>
                 </div>
                 <!-- /.row -->
-
 
                 <!-- Custom Pagination dengan Dropdown -->
                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -571,9 +538,9 @@
                         <div class="btn-datakolom">
                             <form method="GET" class="d-flex align-items-center">
                                 <!-- Preserve search parameter -->
-                                @if (request('table_search'))
+                                {{-- @if (request('table_search'))
                                     <input type="hidden" name="table_search" value="{{ request('table_search') }}">
-                                @endif
+                                @endif --}}
 
                                 <select name="per_page" class="form-control form-control-sm" style="width: auto;"
                                     onchange="this.form.submit()">

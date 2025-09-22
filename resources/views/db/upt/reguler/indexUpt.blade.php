@@ -256,28 +256,64 @@
                         </table>
                     </div>
                 </div>
-                <!-- Pagination Controls - Same as Ponpes -->
+
+                <!-- Custom Pagination dengan Dropdown -->
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <!-- Row limit -->
-                    <div class="btn-datakolom">
-                        <button class="btn-select d-flex align-items-center">
-                            <select id="row-limit">
-                                <option value="10">10</option>
-                                <option value="15">15</option>
-                                <option value="20">20</option>
-                                <option value="9999">Semua</option>
-                            </select>
-                            Kolom
-                        </button>
+                    <!-- Left: Data info + Dropdown per page -->
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="btn-datakolom">
+                            <form method="GET" class="d-flex align-items-center">
+                                <!-- Preserve search parameter -->
+                                {{-- @if (request('table_search'))
+                                    <input type="hidden" name="table_search" value="{{ request('table_search') }}">
+                                @endif --}}
+
+                                <select name="per_page" class="form-control form-control-sm" style="width: auto;"
+                                    onchange="this.form.submit()">
+                                    <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
+                                    <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>15</option>
+                                    <option value="20" {{ request('per_page', 20) == 20 ? 'selected' : '' }}>20
+                                    </option>
+                                    <option value="all" {{ request('per_page') == 'all' ? 'selected' : '' }}>Semua
+                                    </option>
+                                </select>
+                                <span class="ml-2">data per halaman</span>
+                            </form>
+                        </div>
+
+                        <div class="text-muted">
+                            @if (request('per_page') != 'all')
+                                Menampilkan {{ $data->firstItem() }} sampai {{ $data->lastItem() }}
+                                dari {{ $data->total() }} data
+                            @else
+                                Menampilkan semua {{ $data->total() }} data
+                            @endif
+                        </div>
                     </div>
 
-                    <!-- Pagination -->
-                    <div class="pagination-controls d-flex align-items-center gap-12">
-                        <button class="btn-page" id="prev-page" disabled>&laquo; Previous</button>
-                        <span id="page-info">Page 1 of 5</span>
-                        <button class="btn-page" id="next-page">Next &raquo;</button>
-                    </div>
+                    <!-- Right: Navigation (hanya tampil jika tidak pilih "Semua") -->
+                    @if (request('per_page') != 'all' && $data->lastPage() > 1)
+                        <div class="pagination-controls d-flex align-items-center gap-12">
+                            @if ($data->onFirstPage())
+                                <button class="btn-page" disabled>&laquo; Previous</button>
+                            @else
+                                <a href="{{ $data->appends(request()->query())->previousPageUrl() }}"
+                                    class="btn-page">&laquo; Previous</a>
+                            @endif
+
+                            <span id="page-info">Page {{ $data->currentPage() }} of {{ $data->lastPage() }}</span>
+
+                            @if ($data->hasMorePages())
+                                <a href="{{ $data->appends(request()->query())->nextPageUrl() }}" class="btn-page">Next
+                                    &raquo;</a>
+                            @else
+                                <button class="btn-page" disabled>Next &raquo;</button>
+                            @endif
+                        </div>
+                    @endif
                 </div>
+
+
             </div>
         </section>
 
@@ -538,50 +574,78 @@
         integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-    {{-- JS Pagination  --}}
+    {{-- Search and Pagination JavaScript - Same as Ponpes --}}
     <script>
         $(document).ready(function() {
-            const $rows = $("#Table tbody tr");
-            let limit = parseInt($("#row-limit").val());
-            let currentPage = 1;
-            let totalPages = Math.ceil($rows.length / limit);
+            // Hanya handle search dengan server-side
+            $("#btn-search").on("keyup", function() {
+                let value = $(this).val();
 
-            function updateTable() {
-                $rows.hide();
-                let start = (currentPage - 1) * limit;
-                let end = start + limit;
-                $rows.slice(start, end).show();
-                $("#page-info").text(`Page ${currentPage} of ${totalPages}`);
-                $("#prev-page").prop("disabled", currentPage === 1);
-                $("#next-page").prop("disabled", currentPage === totalPages);
-            }
-
-            updateTable();
-
-            $("#row-limit").on("change", function() {
-                limit = parseInt($(this).val());
-                currentPage = 1;
-                totalPages = Math.ceil($rows.length / limit);
-                updateTable();
-            });
-
-            $("#prev-page").on("click", function() {
-                if (currentPage > 1) {
-                    currentPage--;
-                    updateTable();
+                if (value === '') {
+                    // Clear search, redirect ke halaman utama
+                    let url = new URL(window.location.href);
+                    url.searchParams.delete('table_search');
+                    window.location.href = url.toString();
                 }
+                // Untuk search akan dihandle oleh form submit atau AJAX
             });
 
-            $("#next-page").on("click", function() {
-                if (currentPage < totalPages) {
-                    currentPage++;
-                    updateTable();
-                }
+            // Handle modal events
+            $('.modal').on('show.bs.modal', function(e) {
+                console.log('Modal is opening');
             });
-        })
+        });
     </script>
 
-    <!-- Updated Search and Pagination JavaScript -->
+    {{-- Search JS --}}
+    <script>
+        $(document).ready(function() {
+            // Search dengan Enter key
+            $("#btn-search").on("keypress", function(e) {
+                if (e.which === 13) { // Enter key
+                    performSearch();
+                }
+            });
+
+            // Clear search ketika input kosong
+            $("#btn-search").on("keyup", function() {
+                if ($(this).val() === '') {
+                    clearSearch();
+                }
+            });
+
+            // Function untuk perform search
+            function performSearch() {
+                let searchValue = $("#btn-search").val();
+                let url = new URL(window.location.href);
+
+                if (searchValue && searchValue.length > 0) {
+                    url.searchParams.set('table_search', searchValue);
+                } else {
+                    url.searchParams.delete('table_search');
+                }
+
+                // Reset ke halaman 1
+                url.searchParams.delete('page');
+                window.location.href = url.toString();
+            }
+
+            // Function untuk clear search
+            function clearSearch() {
+                let url = new URL(window.location.href);
+                url.searchParams.delete('table_search');
+                url.searchParams.delete('page');
+                window.location.href = url.toString();
+            }
+
+            // Handle modal events
+            $('.modal').on('show.bs.modal', function(e) {
+                console.log('Modal is opening');
+            });
+        });
+    </script>
+
+    <!-- Search By Kolom JavaScript -->
     <script>
         $(document).ready(function() {
             // FIXED: Function to get current filter values

@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 
 class VtrenController extends Controller
 {
+    
     public function ListDataVtrend(Request $request)
     {
         $query = Ponpes::with('dataOpsional');
@@ -43,7 +44,7 @@ class VtrenController extends Controller
 
         // Jika pilih "semua", gunakan angka besar
         if ($perPage == 'all') {
-            $data = $query->orderBy('tanggal', 'desc')->paginate(9999);
+            $data = $query->orderBy('tanggal', 'desc')->paginate(99999);
         } else {
             $data = $query->orderBy('tanggal', 'desc')->paginate($perPage);
         }
