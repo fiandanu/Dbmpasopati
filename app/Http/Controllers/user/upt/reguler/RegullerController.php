@@ -118,34 +118,64 @@ class RegullerController extends Controller
     public function ListDataReguller(Request $request)
     {
         $query = Upt::with('dataOpsional')->where('tipe', 'reguler');
+
+        // Apply database filters
         $query = $this->applyFilters($query, $request);
 
-        // For status filter, apply after fetching (PHP filter)
-        $data = $query->get();
-        $data = $this->applyStatusFilter($data, $request);
-
-        // Dapatkan per_page dari request, default 10
+        // Get per_page from request, default 10
         $perPage = $request->get('per_page', 10);
 
-        // Validasi per_page agar tidak sembarangan
+        // Validate per_page
         if (!in_array($perPage, [10, 15, 20, 'all'])) {
             $perPage = 20;
         }
 
-        // Jika pilih "semua", gunakan angka besar
+        // Handle pagination
         if ($perPage == 'all') {
-            $data = $query->orderBy('tanggal', 'desc')->paginate(99999);
+            $data = $query->orderBy('tanggal', 'desc')->get();
+
+            // Apply status filter to collection
+            $data = $this->applyStatusFilter(collect($data), $request);
+
+            // Create a mock paginator for "all" option
+            $data = new \Illuminate\Pagination\LengthAwarePaginator(
+                $data,
+                $data->count(),
+                99999,
+                1,
+                ['path' => $request->url(), 'query' => $request->query()]
+            );
         } else {
-            $data = $query->orderBy('tanggal', 'desc')->paginate($perPage);
+            // For paginated results, we need to get all data first, apply status filter, then paginate
+            $allData = $query->orderBy('tanggal', 'desc')->get();
+            $filteredData = $this->applyStatusFilter($allData, $request);
+
+            // Manual pagination of filtered data
+            $currentPage = \Illuminate\Pagination\Paginator::resolveCurrentPage('page');
+            $offset = ($currentPage - 1) * $perPage;
+            $itemsForCurrentPage = $filteredData->slice($offset, $perPage)->values();
+
+            $data = new \Illuminate\Pagination\LengthAwarePaginator(
+                $itemsForCurrentPage,
+                $filteredData->count(),
+                $perPage,
+                $currentPage,
+                [
+                    'path' => $request->url(),
+                    'query' => $request->query(),
+                    'pageName' => 'page'
+                ]
+            );
         }
-
-
 
         $providers = Provider::all();
         $vpns = Vpn::all();
 
         return view('db.upt.reguler.indexUpt', compact('data', 'providers', 'vpns'));
     }
+
+
+
 
     public function exportListCsv(Request $request): StreamedResponse
     {
