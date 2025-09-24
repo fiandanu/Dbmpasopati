@@ -101,8 +101,6 @@ class RegullerController extends Controller
 
         return $query;
     }
-
-
     private function applyStatusFilter($data, Request $request)
     {
         if ($request->has('search_status') && !empty($request->search_status)) {
@@ -173,9 +171,6 @@ class RegullerController extends Controller
 
         return view('db.upt.reguler.indexUpt', compact('data', 'providers', 'vpns'));
     }
-
-
-
 
     public function exportListCsv(Request $request): StreamedResponse
     {
@@ -276,6 +271,13 @@ class RegullerController extends Controller
         $filename = 'list_upt_reguler_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
 
         return $pdf->download($filename);
+    }
+
+    public function UserPage(Request $request)
+    {
+        $dataupt = Upt::with(['dataOpsional', 'uploadFolder'])->get();
+        
+        return view('user.indexUser', compact('dataupt'));
     }
 
     // ... rest of the methods remain unchanged
@@ -643,25 +645,5 @@ class RegullerController extends Controller
 
         $pdf = Pdf::loadView('export.uptReguler_pdf', $data);
         return $pdf->download('data_upt_' . $user->namaupt . '.pdf');
-    }
-
-    public function DatabasePageDestroy($id)
-    {
-        $dataupt = Upt::find($id);
-
-        if (!$dataupt) {
-            return redirect()->route('ListDataReguller')->with('error', 'Data tidak ditemukan!');
-        }
-
-        // Ambil nama UPT tanpa suffix (VpasReg) untuk pengecekan
-        $namaUptBase = $this->removeVpasRegSuffix($dataupt->namaupt);
-
-        // Hapus data yang dipilih
-        $dataupt->delete();
-
-        // Update nama UPT yang tersisa berdasarkan jumlah data
-        $this->updateUptNamesBySuffix($namaUptBase);
-
-        return redirect()->route('ListDataReguller')->with('success', 'Data berhasil dihapus!');
     }
 }

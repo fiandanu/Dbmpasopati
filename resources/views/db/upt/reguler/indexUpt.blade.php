@@ -14,23 +14,17 @@
                         </div>
 
                         <div class="d-flex align-items-center gap-2 flex-wrap">
-                            <!-- Search bar -->
-                            <div class="btn-searchbar">
-                                <span>
-                                    <i class="fas fa-search"></i>
-                                </span>
-                                <input type="text" id="btn-search" name="table_search" placeholder="Search All">
-                            </div>
                             <!-- Export Buttons -->
-                            <div class="d-flex gap-2" id="export-buttons" style="display: none;">
-                                <a href="#" onclick="downloadCsv()" class="btn btn-success btn-sm"
-                                    title="Download CSV">
-                                    <i class="fas fa-file-csv"></i> CSV
-                                </a>
-                                <a href="#" onclick="downloadPdf()" class="btn btn-primary btn-sm"
+                            <div class="d-flex gap-2" id="export-buttons">
+                                <button onclick="downloadCsv()"
+                                    class="btn-page d-flex justify-content-center align-items-center" title="Download CSV">
+                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export CSV
+                                </button>
+                                <button onclick="downloadPdf()"
+                                    class="btn-page d-flex justify-content-center align-items-center" title="Download PDF"
                                     title="Download PDF">
-                                    <i class="fas fa-file-pdf"></i> PDF
-                                </a>
+                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PDF
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -119,7 +113,7 @@
                         <div class="alert alert-info">
                             <i class="fas fa-info-circle"></i>
                             Hasil pencarian untuk: "<strong>{{ request('table_search') }}</strong>"
-                            <a href="{{ route('ListDataReguller') }}" class="btn btn-sm btn-secondary ml-2">
+                            <a href="{{ route('upt.ListDataReguller') }}" class="btn btn-sm btn-secondary ml-2">
                                 <i class="fas fa-times"></i> Clear
                             </a>
                         </div>
@@ -130,46 +124,85 @@
                         <table class="table table-hover text-nowrap" id="Table">
                             <thead>
                                 <tr>
-                                    <th>No</th>
-                                    <th>Nama UPT
-                                        <div class="btn-searchbar column-search">
-                                            <span>
-                                                <i class="fas fa-search"></i>
-                                            </span>
-                                            <input type="text" id="search-namaupt" name="search_namaupt">
+                                    <th class=" text-center align-top">
+                                        <div class="d-flex flex-column gap-12">
+                                            <span>No</span>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <button type="button" class="btn-purple w-auto"
+                                                    onclick="applyFilters()" title="Cari Semua Filter">
+                                                    <i class="fas fa-search"></i> Cari
+                                                </button>
+                                            </div>
                                         </div>
                                     </th>
-                                    <th>Kanwil
-                                        <input type="text" class="btn-searchbar column-search" id="search-kanwil"
-                                            name="search_kanwil">
-                                    </th>
-                                    <th class="text-center">Tipe
-                                        <input type="text" class="btn-searchbar column-search" id="search-tipe"
-                                            name="search_tipe">
-                                    </th>
-                                    <th class="text-center">Tanggal Dibuat
-                                        <div class="d-flex gap-1">
-                                            <input type="date" class="btn-searchbar column-search"
-                                                id="search-tanggal-dari" name="search_tanggal_dari" title="Tanggal Dari">
-                                            <input type="date" class="btn-searchbar column-search"
-                                                id="search-tanggal-sampai" name="search_tanggal_sampai"
-                                                title="Tanggal Sampai">
+                                    <th>
+                                        <div class="d-flex flex-column gap-12">
+                                            <span>Nama upt</span>
+                                            <div class="btn-searchbar column-search">
+                                                <span>
+                                                    <i class="fas fa-search"></i>
+                                                </span>
+                                                <input type="text" id="search-namaupt" name="search_namaupt">
+                                            </div>
                                         </div>
                                     </th>
-                                    <th class="text-center">Status Update
-                                        <input type="text" class="btn-searchbar column-search" id="search-status"
-                                            name="search_status">
+                                    <th>
+                                        <div class="d-flex flex-column gap-12">
+                                            <span>Nama Kanwil</span>
+                                            <div class="btn-searchbar column-search">
+                                                <span>
+                                                    <i class="fas fa-search"></i>
+                                                </span>
+                                                <input type="text" id="search-kanwil" name="search_kanwil">
+                                            </div>
+                                        </div>
                                     </th>
-                                    <th class="text-center">Action</th>
+                                    <th class="text-center align-top">
+                                        <div class="d-flex justify-content-center align-items-center flex-column gap-12">
+                                            <span>Tipe</span>
+                                        </div>
+                                    </th>
+                                    <th class="text-center">
+                                        <div class="d-flex flex-column gap-12 ">
+                                            <span>Tanggal</span>
+                                            <div class="d-flex justify-content-center align-items-center gap-12">
+                                                <div class="btn-searchbar column-search">
+                                                    <input type="date" id="search-tanggal-dari"
+                                                        name="search_tanggal_dari" title="Tanggal Dari">
+                                                </div>
+                                                <div class="btn-searchbar column-search">
+                                                    <input type="date" id="search-tanggal-sampai"
+                                                        name="search_tanggal_sampai" title="Tanggal Sampai">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th class="text-center">
+                                        <div class="d-flex justify-content-center align-items-center flex-column gap-12">
+                                            <span>Status Update</span>
+                                            <div class="btn-searchbar column-search">
+                                                <span>
+                                                    <i class="fas fa-search"></i>
+                                                </span>
+                                                <input type="text" id="search-status" name="search_status">
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th class="text-center align-top">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @php
-                                    $no = 1;
+                                    // Ubah dari $no = 1; menjadi:
+                                    if (request('per_page') == 'all') {
+                                        $no = 1;
+                                    } else {
+                                        $no = ($data->currentPage() - 1) * $data->perPage() + 1;
+                                    }
                                 @endphp
                                 @foreach ($data as $d)
                                     <tr>
-                                        <td>{{ $no++ }}</td>
+                                        <td class="text-center">{{ $no++ }}</td>
                                         <td>{{ $d->namaupt }}</td>
                                         <td><span class="tag tag-success">{{ $d->kanwil }}</span></td>
                                         <td class="text-center">
@@ -229,12 +262,12 @@
                                                 data-target="#editModal{{ $d->id }}" title="Edit">
                                                 <ion-icon name="pencil-outline"></ion-icon>
                                             </button>
-                                            <a href="{{ route('export.upt.pdf', $d->id) }}" title="Unduh PDF">
+                                            <a href="{{ route('upt.export.upt.pdf', $d->id) }}" title="Unduh PDF">
                                                 <button>
                                                     <ion-icon name="document-outline"></ion-icon>
                                                 </button>
                                             </a>
-                                            <a href="{{ route('export.upt.csv', $d->id) }}" title="Unduh CSV">
+                                            <a href="{{ route('upt.export.upt.csv', $d->id) }}" title="Unduh CSV">
                                                 <button>
                                                     <ion-icon name="document-text-outline"></ion-icon>
                                                 </button>
@@ -255,6 +288,306 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <!-- Modal edit tetap sama -->
+                    @foreach ($data as $d)
+                        <div class="modal fade" id="editModal{{ $d->id }}" tabindex="-1"
+                            aria-labelledby="editModalLabel{{ $d->id }}" aria-hidden="true">
+                            <form id="editForm{{ $d->id }}"
+                                action="{{ route('upt.ListUpdateReguller', ['id' => $d->id]) }}" method="POST">
+                                @csrf
+                                @method('PUT')
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <label class="modal-title" id="editModalLabel{{ $d->id }}">Edit
+                                                Data</label>
+                                            <button type="button" class="btn-close-custom" data-dismiss="modal"
+                                                aria-label="Close">
+                                                <i class="bi bi-x"></i>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <input type="hidden" name="id" value="{{ $d->id }}">
+                                            @php
+                                                $dataOpsional = $d->dataOpsional;
+                                            @endphp
+                                            <!-- Data Wajib Section -->
+                                            <div class="mb-4">
+                                                <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
+                                                    <label>Data Wajib</label>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="namaupt{{ $d->id }}" class="form-label">Nama
+                                                        UPT</label>
+                                                    <input type="text" class="form-control"
+                                                        id="namaupt{{ $d->id }}" name="namaupt"
+                                                        value="{{ $d->namaupt }}" readonly>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="kanwil{{ $d->id }}"
+                                                        class="form-label">Kanwil</label>
+                                                    <input type="text" class="form-control"
+                                                        id="kanwil{{ $d->id }}" name="kanwil"
+                                                        value="{{ $d->kanwil }}" readonly>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="tipe{{ $d->id }}" class="form-label">Tipe</label>
+                                                    <input type="text" class="form-control"
+                                                        id="tipe{{ $d->id }}" name="tipe"
+                                                        value="{{ ucfirst($d->tipe) }}" readonly>
+                                                </div>
+                                            </div>
+                                            <!-- Data Opsional Section -->
+                                            <div class="mb-4">
+                                                <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
+                                                    <label>Data Opsional</label>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="pic_upt{{ $d->id }}" class="form-label">PIC
+                                                        UPT</label>
+                                                    <input type="text" class="form-control"
+                                                        id="pic_upt{{ $d->id }}" name="pic_upt"
+                                                        value="{{ $dataOpsional->pic_upt ?? '' }}"
+                                                        placeholder="Masukkan nama PIC UPT">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="no_telpon{{ $d->id }}" class="form-label">No
+                                                        Telepon</label>
+                                                    <input type="text" class="form-control"
+                                                        id="no_telpon{{ $d->id }}" name="no_telpon"
+                                                        value="{{ $dataOpsional->no_telpon ?? '' }}"
+                                                        placeholder="Masukkan nomor telepon">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="alamat{{ $d->id }}"
+                                                        class="form-label">Alamat</label>
+                                                    <input type="text" class="form-control"
+                                                        id="alamat{{ $d->id }}" name="alamat"
+                                                        value="{{ $dataOpsional->alamat ?? '' }}"
+                                                        placeholder="Masukkan alamat lengkap">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="jumlah_wbp{{ $d->id }}" class="form-label">Jumlah
+                                                        WBP</label>
+                                                    <input type="number" class="form-control"
+                                                        id="jumlah_wbp{{ $d->id }}" name="jumlah_wbp"
+                                                        value="{{ $dataOpsional->jumlah_wbp ?? '' }}"
+                                                        placeholder="Masukkan jumlah WBP">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="jumlah_line{{ $d->id }}" class="form-label">Jumlah
+                                                        Line
+                                                        Reguler Terpasang</label>
+                                                    <input type="number" class="form-control"
+                                                        id="jumlah_line{{ $d->id }}" name="jumlah_line"
+                                                        value="{{ $dataOpsional->jumlah_line ?? '' }}"
+                                                        placeholder="Masukkan jumlah line reguler">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="provider_internet{{ $d->id }}"
+                                                        class="form-label">Provider
+                                                        Internet</label>
+                                                    <select class="form-control"
+                                                        id="provider_internet{{ $d->id }}"
+                                                        name="provider_internet">
+                                                        <option value="">-- Pilih Provider --</option>
+                                                        @foreach ($providers as $p)
+                                                            <option value="{{ $p->nama_provider }}"
+                                                                {{ ($dataOpsional->provider_internet ?? '') == $p->nama_provider ? 'selected' : '' }}>
+                                                                {{ $p->nama_provider }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="kecepatan_internet{{ $d->id }}"
+                                                        class="form-label">Kecepatan
+                                                        Internet (Mbps)</label>
+                                                    <input type="text" class="form-control"
+                                                        id="kecepatan_internet{{ $d->id }}"
+                                                        name="kecepatan_internet"
+                                                        value="{{ $dataOpsional->kecepatan_internet ?? '' }}"
+                                                        placeholder="Contoh: 20 Mbps">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="tarif_wartel{{ $d->id }}" class="form-label">Tarif
+                                                        Wartel
+                                                        Reguler</label>
+                                                    <input type="text" class="form-control"
+                                                        id="tarif_wartel{{ $d->id }}" name="tarif_wartel"
+                                                        value="{{ $dataOpsional->tarif_wartel ?? '' }}"
+                                                        placeholder="Contoh: 2000">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="status_wartel{{ $d->id }}"
+                                                        class="form-label">Status
+                                                        Wartel</label>
+                                                    <select class="form-control" id="status_wartel{{ $d->id }}"
+                                                        name="status_wartel">
+                                                        <option value="">-- Pilih Status --</option>
+                                                        <option value="1"
+                                                            {{ ($dataOpsional->status_wartel ?? 0) == 1 ? 'selected' : '' }}>
+                                                            Aktif
+                                                        </option>
+                                                        <option value="0"
+                                                            {{ ($dataOpsional->status_wartel ?? 0) == 0 ? 'selected' : '' }}>
+                                                            Tidak
+                                                            Aktif</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <!-- IMC PAS Section -->
+                                            <div class="mb-4">
+                                                <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
+                                                    <label>IMC PAS</label>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="akses_topup_pulsa{{ $d->id }}"
+                                                        class="form-label">Akses Top Up
+                                                        Pulsa</label>
+                                                    <input type="text" class="form-control"
+                                                        id="akses_topup_pulsa{{ $d->id }}"
+                                                        name="akses_topup_pulsa"
+                                                        value="{{ $dataOpsional->akses_topup_pulsa ?? '' }}"
+                                                        placeholder="Masukkan akses top up pulsa">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="password_topup{{ $d->id }}"
+                                                        class="form-label">Password Top Up
+                                                        Pulsa</label>
+                                                    <input type="text" class="form-control"
+                                                        id="password_topup{{ $d->id }}" name="password_topup"
+                                                        value="{{ $dataOpsional->password_topup ?? '' }}"
+                                                        placeholder="Masukkan password top up">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="akses_download_rekaman{{ $d->id }}"
+                                                        class="form-label">Akses
+                                                        Download Rekaman</label>
+                                                    <input type="text" class="form-control"
+                                                        id="akses_download_rekaman{{ $d->id }}"
+                                                        name="akses_download_rekaman"
+                                                        value="{{ $dataOpsional->akses_download_rekaman ?? '' }}"
+                                                        placeholder="Masukkan akses download rekaman">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="password_download{{ $d->id }}"
+                                                        class="form-label">Password
+                                                        Download Rekaman</label>
+                                                    <input type="text" class="form-control"
+                                                        id="password_download{{ $d->id }}"
+                                                        name="password_download"
+                                                        value="{{ $dataOpsional->password_download ?? '' }}"
+                                                        placeholder="Masukkan password download">
+                                                </div>
+                                            </div>
+                                            <!-- Akses VPN Section -->
+                                            <div class="mb-4">
+                                                <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
+                                                    <label>Akses VPN</label>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="internet_protocol{{ $d->id }}"
+                                                        class="form-label">Internet
+                                                        Protocol</label>
+                                                    <input type="text" class="form-control"
+                                                        id="internet_protocol{{ $d->id }}"
+                                                        name="internet_protocol"
+                                                        value="{{ $dataOpsional->internet_protocol ?? '' }}"
+                                                        placeholder="Masukkan alamat IP atau domain">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="vpn_user{{ $d->id }}" class="form-label">User
+                                                        VPN</label>
+                                                    <input type="text" class="form-control"
+                                                        id="vpn_user{{ $d->id }}" name="vpn_user"
+                                                        value="{{ $dataOpsional->vpn_user ?? '' }}"
+                                                        placeholder="Masukkan username VPN">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="vpn_password{{ $d->id }}"
+                                                        class="form-label">Password
+                                                        VPN</label>
+                                                    <input type="text" class="form-control"
+                                                        id="vpn_password{{ $d->id }}" name="vpn_password"
+                                                        value="{{ $dataOpsional->vpn_password ?? '' }}"
+                                                        placeholder="Masukkan password VPN">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="jenis_vpn{{ $d->id }}" class="form-label">Jenis
+                                                        VPN</label>
+                                                    <select class="form-control" id="jenis_vpn{{ $d->id }}"
+                                                        name="jenis_vpn">
+                                                        <option value="">-- Pilih Jenis VPN --</option>
+                                                        @if (isset($vpns) && $vpns->count() > 0)
+                                                            @foreach ($vpns as $p)
+                                                                <option value="{{ $p->jenis_vpn }}"
+                                                                    {{ ($dataOpsional->jenis_vpn ?? '') == $p->jenis_vpn ? 'selected' : '' }}>
+                                                                    {{ $p->jenis_vpn }}
+                                                                </option>
+                                                            @endforeach
+                                                        @else
+                                                            <option value="" disabled>Tidak ada data VPN tersedia
+                                                            </option>
+                                                        @endif
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <!-- Extension Reguler -->
+                                            <div class="mb-4">
+                                                <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
+                                                    <label>Extension Reguler</label>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="jumlah_extension{{ $d->id }}"
+                                                        class="form-label">Jumlah
+                                                        Extension</label>
+                                                    <input type="number" class="form-control"
+                                                        id="jumlah_extension{{ $d->id }}" name="jumlah_extension"
+                                                        value="{{ $dataOpsional->jumlah_extension ?? '' }}"
+                                                        placeholder="Masukkan jumlah">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="pin_tes{{ $d->id }}" class="form-label">Pin
+                                                        Test</label>
+                                                    <input type="text" class="form-control"
+                                                        id="pin_tes{{ $d->id }}" name="pin_tes"
+                                                        value="{{ $dataOpsional->pin_tes ?? '' }}"
+                                                        placeholder="Masukkan Pin Test">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="no_extension{{ $d->id }}" class="form-label">No
+                                                        Extension</label>
+                                                    <small class="text-muted d-block mb-2">Masukkan setiap nomor extension
+                                                        pada baris
+                                                        terpisah</small>
+                                                    <textarea class="form-control" id="no_extension{{ $d->id }}" name="no_extension" rows="6"
+                                                        placeholder="Contoh:&#10;101&#10;102&#10;103">{{ $dataOpsional->no_extension ?? '' }}</textarea>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="extension_password{{ $d->id }}"
+                                                        class="form-label">Password
+                                                        Extension</label>
+                                                    <small class="text-muted d-block mb-2">Masukkan setiap password
+                                                        extension pada
+                                                        baris terpisah (sesuai urutan nomor extension di atas)</small>
+                                                    <textarea class="form-control" id="extension_password{{ $d->id }}" name="extension_password" rows="6"
+                                                        placeholder="Contoh:&#10;password1&#10;password2&#10;password3">{{ $dataOpsional->extension_password ?? '' }}</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn-cancel-modal"
+                                                data-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn-purple">Update</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    @endforeach
+
                 </div>
 
                 <!-- Custom Pagination dengan Dropdown -->
@@ -268,7 +601,8 @@
                                     <input type="hidden" name="table_search" value="{{ request('table_search') }}">
                                 @endif
                                 @if (request('search_namaupt'))
-                                    <input type="hidden" name="search_namaupt" value="{{ request('search_namaupt') }}">
+                                    <input type="hidden" name="search_namaupt"
+                                        value="{{ request('search_namaupt') }}">
                                 @endif
                                 @if (request('search_kanwil'))
                                     <input type="hidden" name="search_kanwil" value="{{ request('search_kanwil') }}">
@@ -288,16 +622,20 @@
                                     <input type="hidden" name="search_status" value="{{ request('search_status') }}">
                                 @endif
 
-                                <select name="per_page" class="form-control form-control-sm" style="width: auto;"
-                                    onchange="this.form.submit()">
-                                    <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
-                                    <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>15</option>
-                                    <option value="20" {{ request('per_page', 20) == 20 ? 'selected' : '' }}>20
-                                    </option>
-                                    <option value="all" {{ request('per_page') == 'all' ? 'selected' : '' }}>Semua
-                                    </option>
-                                </select>
-                                <span class="ml-2">data per halaman</span>
+                                <div class="d-flex align-items-center">
+                                    <select name="per_page" class="form-control form-control-sm pr-2"
+                                        style="width: auto;" onchange="this.form.submit()">
+                                        <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10
+                                        </option>
+                                        <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>15
+                                        </option>
+                                        <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20
+                                        </option>
+                                        <option value="all" {{ request('per_page') == 'all' ? 'selected' : '' }}>Semua
+                                        </option>
+                                    </select>
+                                    <span>Rows</span>
+                                </div>
                             </form>
                         </div>
 
@@ -317,15 +655,18 @@
                             @if ($data->onFirstPage())
                                 <button class="btn-page" disabled>&laquo; Previous</button>
                             @else
-                                <a href="{{ $data->appends(request()->query())->previousPageUrl() }}"
-                                    class="btn-page">&laquo; Previous</a>
+                                <button class="btn-datakolom w-auto p-3">
+                                    <a href="{{ $data->appends(request()->query())->previousPageUrl() }}">&laquo;
+                                        Previous</a>
+                                </button>
                             @endif
 
                             <span id="page-info">Page {{ $data->currentPage() }} of {{ $data->lastPage() }}</span>
 
                             @if ($data->hasMorePages())
-                                <a href="{{ $data->appends(request()->query())->nextPageUrl() }}" class="btn-page">Next
-                                    &raquo;</a>
+                                <button class="btn-datakolom w-auto p-3">
+                                    <a href="{{ $data->appends(request()->query())->nextPageUrl() }}">Next&raquo;</a>
+                                </button>
                             @else
                                 <button class="btn-page" disabled>Next &raquo;</button>
                             @endif
@@ -333,261 +674,8 @@
                     @endif
                 </div>
 
-
             </div>
         </section>
-
-        <!-- Modal edit tetap sama -->
-        @foreach ($data as $d)
-            <div class="modal fade" id="editModal{{ $d->id }}" tabindex="-1"
-                aria-labelledby="editModalLabel{{ $d->id }}" aria-hidden="true">
-                <form id="editForm{{ $d->id }}" action="{{ route('ListUpdateReguller', ['id' => $d->id]) }}"
-                    method="POST">
-                    @csrf
-                    @method('PUT')
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <label class="modal-title" id="editModalLabel{{ $d->id }}">Edit Data</label>
-                                <button type="button" class="btn-close-custom" data-dismiss="modal" aria-label="Close">
-                                    <i class="bi bi-x"></i>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <input type="hidden" name="id" value="{{ $d->id }}">
-                                @php
-                                    $dataOpsional = $d->dataOpsional;
-                                @endphp
-                                <!-- Data Wajib Section -->
-                                <div class="mb-4">
-                                    <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                        <label>Data Wajib</label>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="namaupt{{ $d->id }}" class="form-label">Nama UPT</label>
-                                        <input type="text" class="form-control" id="namaupt{{ $d->id }}"
-                                            name="namaupt" value="{{ $d->namaupt }}" readonly>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="kanwil{{ $d->id }}" class="form-label">Kanwil</label>
-                                        <input type="text" class="form-control" id="kanwil{{ $d->id }}"
-                                            name="kanwil" value="{{ $d->kanwil }}" readonly>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="tipe{{ $d->id }}" class="form-label">Tipe</label>
-                                        <input type="text" class="form-control" id="tipe{{ $d->id }}"
-                                            name="tipe" value="{{ ucfirst($d->tipe) }}" readonly>
-                                    </div>
-                                </div>
-                                <!-- Data Opsional Section -->
-                                <div class="mb-4">
-                                    <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                        <label>Data Opsional</label>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="pic_upt{{ $d->id }}" class="form-label">PIC UPT</label>
-                                        <input type="text" class="form-control" id="pic_upt{{ $d->id }}"
-                                            name="pic_upt" value="{{ $dataOpsional->pic_upt ?? '' }}"
-                                            placeholder="Masukkan nama PIC UPT">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="no_telpon{{ $d->id }}" class="form-label">No Telepon</label>
-                                        <input type="text" class="form-control" id="no_telpon{{ $d->id }}"
-                                            name="no_telpon" value="{{ $dataOpsional->no_telpon ?? '' }}"
-                                            placeholder="Masukkan nomor telepon">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="alamat{{ $d->id }}" class="form-label">Alamat</label>
-                                        <input type="text" class="form-control" id="alamat{{ $d->id }}"
-                                            name="alamat" value="{{ $dataOpsional->alamat ?? '' }}"
-                                            placeholder="Masukkan alamat lengkap">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="jumlah_wbp{{ $d->id }}" class="form-label">Jumlah WBP</label>
-                                        <input type="number" class="form-control" id="jumlah_wbp{{ $d->id }}"
-                                            name="jumlah_wbp" value="{{ $dataOpsional->jumlah_wbp ?? '' }}"
-                                            placeholder="Masukkan jumlah WBP">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="jumlah_line{{ $d->id }}" class="form-label">Jumlah Line
-                                            Reguler Terpasang</label>
-                                        <input type="number" class="form-control" id="jumlah_line{{ $d->id }}"
-                                            name="jumlah_line" value="{{ $dataOpsional->jumlah_line ?? '' }}"
-                                            placeholder="Masukkan jumlah line reguler">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="provider_internet{{ $d->id }}" class="form-label">Provider
-                                            Internet</label>
-                                        <select class="form-control" id="provider_internet{{ $d->id }}"
-                                            name="provider_internet">
-                                            <option value="">-- Pilih Provider --</option>
-                                            @foreach ($providers as $p)
-                                                <option value="{{ $p->nama_provider }}"
-                                                    {{ ($dataOpsional->provider_internet ?? '') == $p->nama_provider ? 'selected' : '' }}>
-                                                    {{ $p->nama_provider }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="kecepatan_internet{{ $d->id }}" class="form-label">Kecepatan
-                                            Internet (Mbps)</label>
-                                        <input type="text" class="form-control"
-                                            id="kecepatan_internet{{ $d->id }}" name="kecepatan_internet"
-                                            value="{{ $dataOpsional->kecepatan_internet ?? '' }}"
-                                            placeholder="Contoh: 20 Mbps">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="tarif_wartel{{ $d->id }}" class="form-label">Tarif Wartel
-                                            Reguler</label>
-                                        <input type="text" class="form-control" id="tarif_wartel{{ $d->id }}"
-                                            name="tarif_wartel" value="{{ $dataOpsional->tarif_wartel ?? '' }}"
-                                            placeholder="Contoh: 2000">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="status_wartel{{ $d->id }}" class="form-label">Status
-                                            Wartel</label>
-                                        <select class="form-control" id="status_wartel{{ $d->id }}"
-                                            name="status_wartel">
-                                            <option value="">-- Pilih Status --</option>
-                                            <option value="1"
-                                                {{ ($dataOpsional->status_wartel ?? 0) == 1 ? 'selected' : '' }}>Aktif
-                                            </option>
-                                            <option value="0"
-                                                {{ ($dataOpsional->status_wartel ?? 0) == 0 ? 'selected' : '' }}>Tidak
-                                                Aktif</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <!-- IMC PAS Section -->
-                                <div class="mb-4">
-                                    <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                        <label>IMC PAS</label>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="akses_topup_pulsa{{ $d->id }}" class="form-label">Akses Top Up
-                                            Pulsa</label>
-                                        <input type="text" class="form-control"
-                                            id="akses_topup_pulsa{{ $d->id }}" name="akses_topup_pulsa"
-                                            value="{{ $dataOpsional->akses_topup_pulsa ?? '' }}"
-                                            placeholder="Masukkan akses top up pulsa">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="password_topup{{ $d->id }}" class="form-label">Password Top Up
-                                            Pulsa</label>
-                                        <input type="text" class="form-control"
-                                            id="password_topup{{ $d->id }}" name="password_topup"
-                                            value="{{ $dataOpsional->password_topup ?? '' }}"
-                                            placeholder="Masukkan password top up">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="akses_download_rekaman{{ $d->id }}" class="form-label">Akses
-                                            Download Rekaman</label>
-                                        <input type="text" class="form-control"
-                                            id="akses_download_rekaman{{ $d->id }}" name="akses_download_rekaman"
-                                            value="{{ $dataOpsional->akses_download_rekaman ?? '' }}"
-                                            placeholder="Masukkan akses download rekaman">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="password_download{{ $d->id }}" class="form-label">Password
-                                            Download Rekaman</label>
-                                        <input type="text" class="form-control"
-                                            id="password_download{{ $d->id }}" name="password_download"
-                                            value="{{ $dataOpsional->password_download ?? '' }}"
-                                            placeholder="Masukkan password download">
-                                    </div>
-                                </div>
-                                <!-- Akses VPN Section -->
-                                <div class="mb-4">
-                                    <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                        <label>Akses VPN</label>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="internet_protocol{{ $d->id }}" class="form-label">Internet
-                                            Protocol</label>
-                                        <input type="text" class="form-control"
-                                            id="internet_protocol{{ $d->id }}" name="internet_protocol"
-                                            value="{{ $dataOpsional->internet_protocol ?? '' }}"
-                                            placeholder="Masukkan alamat IP atau domain">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="vpn_user{{ $d->id }}" class="form-label">User VPN</label>
-                                        <input type="text" class="form-control" id="vpn_user{{ $d->id }}"
-                                            name="vpn_user" value="{{ $dataOpsional->vpn_user ?? '' }}"
-                                            placeholder="Masukkan username VPN">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="vpn_password{{ $d->id }}" class="form-label">Password
-                                            VPN</label>
-                                        <input type="text" class="form-control" id="vpn_password{{ $d->id }}"
-                                            name="vpn_password" value="{{ $dataOpsional->vpn_password ?? '' }}"
-                                            placeholder="Masukkan password VPN">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="jenis_vpn{{ $d->id }}" class="form-label">Jenis VPN</label>
-                                        <select class="form-control" id="jenis_vpn{{ $d->id }}"
-                                            name="jenis_vpn">
-                                            <option value="">-- Pilih Jenis VPN --</option>
-                                            @if (isset($vpns) && $vpns->count() > 0)
-                                                @foreach ($vpns as $p)
-                                                    <option value="{{ $p->jenis_vpn }}"
-                                                        {{ ($dataOpsional->jenis_vpn ?? '') == $p->jenis_vpn ? 'selected' : '' }}>
-                                                        {{ $p->jenis_vpn }}
-                                                    </option>
-                                                @endforeach
-                                            @else
-                                                <option value="" disabled>Tidak ada data VPN tersedia</option>
-                                            @endif
-                                        </select>
-                                    </div>
-                                </div>
-                                <!-- Extension Reguler -->
-                                <div class="mb-4">
-                                    <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                        <label>Extension Reguler</label>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="jumlah_extension{{ $d->id }}" class="form-label">Jumlah
-                                            Extension</label>
-                                        <input type="number" class="form-control"
-                                            id="jumlah_extension{{ $d->id }}" name="jumlah_extension"
-                                            value="{{ $dataOpsional->jumlah_extension ?? '' }}"
-                                            placeholder="Masukkan jumlah">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="pin_tes{{ $d->id }}" class="form-label">Pin Test</label>
-                                        <input type="text" class="form-control" id="pin_tes{{ $d->id }}"
-                                            name="pin_tes" value="{{ $dataOpsional->pin_tes ?? '' }}"
-                                            placeholder="Masukkan Pin Test">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="no_extension{{ $d->id }}" class="form-label">No
-                                            Extension</label>
-                                        <small class="text-muted d-block mb-2">Masukkan setiap nomor extension pada baris
-                                            terpisah</small>
-                                        <textarea class="form-control" id="no_extension{{ $d->id }}" name="no_extension" rows="6"
-                                            placeholder="Contoh:&#10;101&#10;102&#10;103">{{ $dataOpsional->no_extension ?? '' }}</textarea>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="extension_password{{ $d->id }}" class="form-label">Password
-                                            Extension</label>
-                                        <small class="text-muted d-block mb-2">Masukkan setiap password extension pada
-                                            baris terpisah (sesuai urutan nomor extension di atas)</small>
-                                        <textarea class="form-control" id="extension_password{{ $d->id }}" name="extension_password" rows="6"
-                                            placeholder="Contoh:&#10;password1&#10;password2&#10;password3">{{ $dataOpsional->extension_password ?? '' }}</textarea>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn-cancel-modal" data-dismiss="modal">Cancel</button>
-                                <button type="submit" class="btn-purple">Update</button>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        @endforeach
-
     </div>
 
     <!-- jQuery Library -->
@@ -595,87 +683,14 @@
         integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-    {{-- Search and Pagination JavaScript - Same as Ponpes --}}
-    <script>
-        $(document).ready(function() {
-            // Hanya handle search dengan server-side
-            $("#btn-search").on("keyup", function() {
-                let value = $(this).val();
-
-                if (value === '') {
-                    // Clear search, redirect ke halaman utama
-                    let url = new URL(window.location.href);
-                    url.searchParams.delete('table_search');
-                    window.location.href = url.toString();
-                }
-                // Untuk search akan dihandle oleh form submit atau AJAX
-            });
-
-            // Handle modal events
-            $('.modal').on('show.bs.modal', function(e) {
-                console.log('Modal is opening');
-            });
-        });
-    </script>
-
-    {{-- Search JS --}}
-    <script>
-        $(document).ready(function() {
-            // Search dengan Enter key
-            $("#btn-search").on("keypress", function(e) {
-                if (e.which === 13) { // Enter key
-                    performSearch();
-                }
-            });
-
-            // Clear search ketika input kosong
-            $("#btn-search").on("keyup", function() {
-                if ($(this).val() === '') {
-                    clearSearch();
-                }
-            });
-
-            // Function untuk perform search
-            function performSearch() {
-                let searchValue = $("#btn-search").val();
-                let url = new URL(window.location.href);
-
-                if (searchValue && searchValue.length > 0) {
-                    url.searchParams.set('table_search', searchValue);
-                } else {
-                    url.searchParams.delete('table_search');
-                }
-
-                // Reset ke halaman 1
-                url.searchParams.delete('page');
-                window.location.href = url.toString();
-            }
-
-            // Function untuk clear search
-            function clearSearch() {
-                let url = new URL(window.location.href);
-                url.searchParams.delete('table_search');
-                url.searchParams.delete('page');
-                window.location.href = url.toString();
-            }
-
-            // Handle modal events
-            $('.modal').on('show.bs.modal', function(e) {
-                console.log('Modal is opening');
-            });
-        });
-    </script>
-
-    <!-- Search By Kolom JavaScript -->
+    <!-- Search By Column JavaScript -->
     <script>
         $(document).ready(function() {
             // Function to get current filter values
             function getFilters() {
                 return {
-                    table_search: $('#btn-search').val().trim(),
                     search_namaupt: $('#search-namaupt').val().trim(),
                     search_kanwil: $('#search-kanwil').val().trim(),
-                    search_tipe: $('#search-tipe').val().trim(),
                     search_tanggal_dari: $('#search-tanggal-dari').val().trim(),
                     search_tanggal_sampai: $('#search-tanggal-sampai').val().trim(),
                     search_status: $('#search-status').val().trim(),
@@ -683,16 +698,14 @@
                 };
             }
 
-            // Function to apply filters and redirect
-            function applyFilters() {
+            // Function to apply filters and redirect (GLOBAL - bisa dipanggil dari tombol)
+            window.applyFilters = function() {
                 let filters = getFilters();
                 let url = new URL(window.location.href);
 
                 // Remove existing filter parameters
-                url.searchParams.delete('table_search');
                 url.searchParams.delete('search_namaupt');
                 url.searchParams.delete('search_kanwil');
-                url.searchParams.delete('search_tipe');
                 url.searchParams.delete('search_tanggal_dari');
                 url.searchParams.delete('search_tanggal_sampai');
                 url.searchParams.delete('search_status');
@@ -700,32 +713,49 @@
 
                 // Add non-empty filters
                 Object.keys(filters).forEach(key => {
-                    if (filters[key] && filters[key] !== '') {
+                    if (filters[key] && filters[key].trim() !== '' && key !== 'per_page') {
                         url.searchParams.set(key, filters[key]);
                     }
                 });
 
                 window.location.href = url.toString();
-            }
+            };
 
-            // Main search (Enter key)
-            $("#btn-search").on("keypress", function(e) {
+            // Function to clear all search filters (GLOBAL - bisa dipanggil dari tombol Reset)
+            window.clearAllFilters = function() {
+                // Clear semua input field dulu
+                $('#search-namaupt').val('');
+                $('#search-kanwil').val('');
+                $('#search-tanggal-dari').val('');
+                $('#search-tanggal-sampai').val('');
+                $('#search-status').val('');
+
+                let url = new URL(window.location.href);
+
+                // Remove all search parameters
+                url.searchParams.delete('table_search');
+                url.searchParams.delete('search_namaupt');
+                url.searchParams.delete('search_kanwil');
+                url.searchParams.delete('search_tipe');
+                url.searchParams.delete('search_tanggal_dari');
+                url.searchParams.delete('search_tanggal_sampai');
+                url.searchParams.delete('search_status');
+                url.searchParams.delete('page');
+
+                window.location.href = url.toString();
+            };
+
+            // Bind keypress event to all search input fields (Enter masih berfungsi)
+            $('.column-search input').on('keypress', function(e) {
                 if (e.which === 13) { // Enter key
                     applyFilters();
                 }
             });
 
-            // Column-specific search (Enter key)
-            $(".column-search").on("keypress", function(e) {
-                if (e.which === 13) { // Enter key
-                    applyFilters();
-                }
-            });
-
-            // Clear search when input is empty and Enter is pressed
-            $("#btn-search").on("keyup", function(e) {
-                if (e.which === 13 && $(this).val() === '') {
-                    applyFilters();
+            // Clear individual column search when input is emptied
+            $('.column-search input').on('keyup', function(e) {
+                if (e.which === 13 && $(this).val().trim() === '') {
+                    applyFilters(); // Apply filters to update URL (removing empty filter)
                 }
             });
 
@@ -734,7 +764,7 @@
                 let filters = getFilters();
                 let form = document.createElement('form');
                 form.method = 'GET';
-                form.action = '{{ route('export.list.csv') }}';
+                form.action = '{{ route('upt.export.list.csv') }}';
                 form.target = '_blank';
 
                 Object.keys(filters).forEach(key => {
@@ -756,7 +786,7 @@
                 let filters = getFilters();
                 let form = document.createElement('form');
                 form.method = 'GET';
-                form.action = '{{ route('export.list.pdf') }}';
+                form.action = '{{ route('upt.export.list.pdf') }}';
                 form.target = '_blank';
 
                 Object.keys(filters).forEach(key => {
@@ -775,31 +805,25 @@
             };
 
             // Load filter values from URL on page load
-            $(window).on('load', function() {
-                const urlParams = new URLSearchParams(window.location.search);
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('search_namaupt')) {
+                $('#search-namaupt').val(urlParams.get('search_namaupt'));
+            }
+            if (urlParams.get('search_kanwil')) {
+                $('#search-kanwil').val(urlParams.get('search_kanwil'));
+            }
+            if (urlParams.get('search_tanggal_dari')) {
+                $('#search-tanggal-dari').val(urlParams.get('search_tanggal_dari'));
+            }
+            if (urlParams.get('search_tanggal_sampai')) {
+                $('#search-tanggal-sampai').val(urlParams.get('search_tanggal_sampai'));
+            }
+            if (urlParams.get('search_status')) {
+                $('#search-status').val(urlParams.get('search_status'));
+            }
 
-                if (urlParams.get('table_search')) {
-                    $('#btn-search').val(urlParams.get('table_search'));
-                }
-                if (urlParams.get('search_namaupt')) {
-                    $('#search-namaupt').val(urlParams.get('search_namaupt'));
-                }
-                if (urlParams.get('search_kanwil')) {
-                    $('#search-kanwil').val(urlParams.get('search_kanwil'));
-                }
-                if (urlParams.get('search_tipe')) {
-                    $('#search-tipe').val(urlParams.get('search_tipe'));
-                }
-                if (urlParams.get('search_tanggal_dari')) {
-                    $('#search-tanggal-dari').val(urlParams.get('search_tanggal_dari'));
-                }
-                if (urlParams.get('search_tanggal_sampai')) {
-                    $('#search-tanggal-sampai').val(urlParams.get('search_tanggal_sampai'));
-                }
-                if (urlParams.get('search_status')) {
-                    $('#search-status').val(urlParams.get('search_status'));
-                }
-            });
+            // Update button states saat halaman dimuat
+            updateButtonStates();
 
             // Show export buttons if there's data
             if ($("#Table tbody tr").length > 0 && !$("#Table tbody tr").find('td[colspan="7"]').length) {

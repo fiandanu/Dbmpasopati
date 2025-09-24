@@ -72,7 +72,7 @@
                                 <span class="checkmark">✓</span>
                                 100 Data
                             </div>
-                            <a href="{{ route('ListDataReguller') }}" class="list-button">List Data
+                            <a href="{{ route('upt.ListDataReguller') }}" class="list-button">List Data
                                 Customer</a>
                         </div>
                     </div>

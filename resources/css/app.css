@@ -688,11 +688,6 @@ label {
     letter-spacing: var(--title-medium-letter-spacing);
 }
 
-/* .form-control {
-    border-radius: 12px;
-    border: solid 1px var(--Netral-7);
-} */
-
 .form-control {
     height: 43px;
     border: 1px solid var(--Netral-7);

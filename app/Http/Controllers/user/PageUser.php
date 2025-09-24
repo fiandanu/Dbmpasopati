@@ -8,11 +8,11 @@ use App\Models\user\Ponpes;
 
 class PageUser extends Controller
 {
-    public function UserPage()
-    {
-        $dataupt = Upt::with(['dataOpsional', 'uploadFolder'])->get();
-        return view('user.indexUser', compact('dataupt'));
-    }
+    // public function UserPage()
+    // {
+    //     $dataupt = Upt::with(['dataOpsional', 'uploadFolder'])->get();
+    //     return view('user.indexUser', compact('dataupt'));
+    // }
 
     public function DbUpt()
     {
