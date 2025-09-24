@@ -1,7 +1,7 @@
 @extends('layout.sidebar')
 @section('content')
     <div class="content-wrapper">
-
+        <!-- Content Header (Page header) -->
         <section class="content">
             <div class="container-fluid">
                 <div class="row py-3 align-items-center">
@@ -9,20 +9,23 @@
                         <!-- Left navbar links -->
                         <div class="d-flex justify-center align-items-center gap-12">
                             <button class="btn-pushmenu" data-widget="pushmenu" role="button">
-                                <i class="fas fa-bars"></i>
-                            </button>
+                                <i class="fas fa-bars"></i></button>
                             <h1 class="headline-large-32 mb-0">List Data PKS</h1>
                         </div>
 
                         <div class="d-flex align-items-center gap-2 flex-wrap">
-                            <div class="btn-searchbar">
-                                <span>
-                                    <i class="fas fa-search"></i>
-                                </span>
-                                <input type="text" id="btn-search" name="table_search" placeholder="Search">
+                            <!-- Export Buttons -->
+                            <div class="d-flex gap-2" id="export-buttons">
+                                <button onclick="downloadCsv()"
+                                    class="btn-page d-flex justify-content-center align-items-center" title="Download CSV">
+                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export CSV
+                                </button>
+                                <button onclick="downloadPdf()"
+                                    class="btn-page d-flex justify-content-center align-items-center" title="Download PDF">
+                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PDF
+                                </button>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -107,412 +110,559 @@
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
-                <!-- /.row -->
-                <div class="row">
-                    <div class="col-12">
-                        @if (request('table_search'))
-                            <div class="card-body">
-                                <div class="alert alert-info">
-                                    <i class="fas fa-info-circle"></i>
-                                    Hasil pencarian untuk: "<strong>{{ request('table_search') }}</strong>"
-                                    <a href="{{ route('pks.ListDataPks') }}" class="btn btn-sm btn-secondary ml-2">
-                                        <i class="fas fa-times"></i> Clear
-                                    </a>
-                                </div>
-                            </div>
-                        @endif
-                        <div class="card">
-                            <!-- /.card-header -->
-                            <div class="card-body table-responsive p-0">
-                                <table class="table table-hover text-nowrap" id="Table">
-                                    <thead>
-                                        <tr>
-                                            <th>No</th>
-                                            <th>Nama UPT</th>
-                                            <th>Kanwil</th>
-                                            <th class="text-center">Tipe</th>
-                                            <th class="text-center">Tanggal Dibuat</th>
-                                            <th class="text-center">Status PDF</th>
-                                            <th class="text-center">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @forelse ($data as $d)
-                                            <tr>
-                                                <td>{{ $loop->iteration }}</td>
-                                                <td>{{ $d->namaupt }}</td>
-                                                <td><span class="tag tag-success">{{ $d->kanwil }}</span></td>
-                                                <td class="text-center"> <span
-                                                        class=" 
-                                                    @if ($d->tipe == 'reguler') Tipereguller 
-                                                    @elseif($d->tipe == 'vpas') Tipevpas @endif">
-                                                        {{ ucfirst($d->tipe) }}</td>
-                                                </span>
-                                                <td class="text-center">
-                                                    {{ \Carbon\Carbon::parse($d->tanggal)->translatedFormat('M d Y') }}
-                                                </td>
-                                                <td class="text-center">
-                                                    @if (!$d->uploadFolder || empty($d->uploadFolder->uploaded_pdf))
-                                                        <span class="badge">
-                                                            Belum Upload
-                                                        </span>
-                                                    @else
-                                                        <span class="badge-succes">
-                                                            Sudah di Update
-                                                        </span>
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    <div class="btn-group gap-2" role="group">
-                                                        {{-- Upload PDF Button --}}
-                                                        <form action="{{ route('uploadFilePDFPks', $d->id) }}"
-                                                            method="POST" enctype="multipart/form-data"
-                                                            id="uploadForm{{ $d->id }}" class="d-none">
-                                                            @csrf
-                                                            <input type="file" name="uploaded_pdf"
-                                                                id="uploadInput{{ $d->id }}" accept=".pdf"
-                                                                class="d-none" required>
-                                                        </form>
-                                                        <button onclick="triggerUpload({{ $d->id }})"
-                                                            title="Upload PDF">
-                                                            <ion-icon name="cloud-upload-outline"
-                                                                class="w-6 h-6"></ion-icon>
-                                                        </button>
-
-                                                        {{-- View PDF Button --}}
-                                                        @if ($d->uploadFolder && !empty($d->uploadFolder->uploaded_pdf))
-                                                            <button>
-                                                                <a href="{{ route('viewpdf.upt', $d->id) }}"
-                                                                    target="_blank" title="Lihat PDF">
-                                                                    <ion-icon name="eye-outline"></ion-icon>
-                                                                </a>
-                                                            </button>
-                                                        @else
-                                                            <button disabled title="Belum ada PDF yang diupload">
-                                                                <ion-icon name="eye-off-outline"
-                                                                    class="w-6 h-6"></ion-icon>
-                                                            </button>
-                                                        @endif
-
-                                                        {{-- Delete PDF Button --}}
-                                                        @if ($d->uploadFolder && !empty($d->uploadFolder->uploaded_pdf))
-                                                            <button data-toggle="modal"
-                                                                data-target="#deletePdfModal{{ $d->id }}"
-                                                                title="Hapus File PDF">
-                                                                <ion-icon name="backspace-outline"></ion-icon>
-                                                            </button>
-                                                        @endif
-
-                                                        {{-- <button data-toggle="modal"
-                                                            data-target="#modal-default{{ $d->id }}"
-                                                            class="">
-                                                            <ion-icon name="trash-outline"></ion-icon></button> --}}
-                                                    </div>
-                                                </td>
-                                            </tr>
-
-                                            {{-- Delete PDF Modal --}}
-                                            <div class="modal fade" id="deletePdfModal{{ $d->id }}">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <div class="modal-body text-center align-items-center">
-                                                            <ion-icon name="alert-circle-outline"
-                                                                class="text-9xl text-[var(--yellow-04)]"></ion-icon>
-                                                            <p class="headline-large-32">Anda Yakin?</p>
-                                                            <label>Folder PKS Dari<b> {{ $d->namaupt }} </b> ingin
-                                                                dihapus?</label>
-                                                        </div>
-                                                        <div class="modal-footer flex-row-reverse justify-content-between">
-                                                            <button type="button" class="btn-cancel-modal"
-                                                                data-dismiss="modal">Batal</button>
-                                                            <form action="{{ route('deleteFilePDF.upt', $d->id) }}"
-                                                                method="POST">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button type="submit" class="btn-delete">
-                                                                    Hapus PDF
-                                                                </button>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                @if (request('table_search'))
+                    <div>
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            Hasil pencarian untuk: "<strong>{{ request('table_search') }}</strong>"
+                            <a href="{{ route('dbpks.ListDataPks') }}" class="btn btn-sm btn-secondary ml-2">
+                                <i class="fas fa-times"></i> Clear
+                            </a>
+                        </div>
+                    </div>
+                @endif
+                <div class="card">
+                    <div class="card-body table-responsive p-0">
+                        <table class="table table-hover text-nowrap" id="Table">
+                            <thead>
+                                <tr>
+                                    <th class="text-center align-top">
+                                        <div class="d-flex flex-column gap-12">
+                                            <span>No</span>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <button type="button" class="btn-purple w-auto" onclick="applyFilters()"
+                                                    title="Cari Semua Filter">
+                                                    <i class="fas fa-search"></i> Cari
+                                                </button>
                                             </div>
-
-                                            {{-- Delete Data Modal --}}
-                                            {{-- <div class="modal fade" id="modal-default{{ $d->id }}">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <div class="modal-body text-center align-items-center">
-                                                            <ion-icon name="alert-circle-outline"
-                                                                class="text-9xl text-[var(--yellow-04)]"></ion-icon>
-                                                            <p class="headline-large-32">Anda Yakin?</p>
-                                                            <p>Apakah <b>{{ $d->namaupt }} </b>ingin dihapus?</p>
-                                                        </div>
-                                                        <div class="modal-footer flex-row-reverse justify-content-between">
-                                                            <button type="button" class="btn-cancel-modal"
-                                                                data-dismiss="modal">Batal</button>
-                                                            <form action="{{ route('pks.DataBasePageDestroy', $d->id) }}"
-                                                                method="POST">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button type="submit" class="btn-delete">
-                                                                    <i class="fas fa-trash-alt"></i> Hapus
-                                                                </button>
-                                                            </form>
-                                                        </div>
-                                                    </div>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="d-flex flex-column gap-12">
+                                            <span>Nama UPT</span>
+                                            <div class="btn-searchbar column-search">
+                                                <span>
+                                                    <i class="fas fa-search"></i>
+                                                </span>
+                                                <input type="text" id="search-namaupt" name="search_namaupt">
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="d-flex flex-column gap-12">
+                                            <span>Nama Kanwil</span>
+                                            <div class="btn-searchbar column-search">
+                                                <span>
+                                                    <i class="fas fa-search"></i>
+                                                </span>
+                                                <input type="text" id="search-kanwil" name="search_kanwil">
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th class="text-center align-top">
+                                        <div class="d-flex justify-content-center align-items-center flex-column gap-12">
+                                            <span>Tipe</span>
+                                        </div>
+                                    </th>
+                                    <th class="text-center">
+                                        <div class="d-flex flex-column gap-12">
+                                            <span>Tanggal</span>
+                                            <div class="d-flex justify-content-center align-items-center gap-12">
+                                                <div class="btn-searchbar column-search">
+                                                    <input type="date" id="search-tanggal-dari" name="search_tanggal_dari"
+                                                        title="Tanggal Dari">
                                                 </div>
-                                            </div> --}}
-                                        @empty
-                                            <tr>
-                                                <td colspan="7" class="text-center">
-                                                    <div class="py-4">
-                                                        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-                                                        <p class="text-muted">Tidak ada data yang ditemukan</p>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @endforelse
-                                    </tbody>
-                                </table>
-                            </div>
-                            {{-- Index Form Html --}}
-
-                            {{-- User Edit Modal --}}
-                            @foreach ($data as $d)
-                                {{-- User Edit Modal --}}
-                                <div class="modal fade" id="editModal{{ $d->id }}" tabindex="-1"
-                                    aria-labelledby="editModalLabel" aria-hidden="true">
-                                    <form id="editForm" action="{{ route('pks.ListDataPks', ['id' => $d->id]) }}"
-                                        method="POST">
-                                        @csrf
-                                        @method('PUT')
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="editModalLabel">Edit Data</h5>
-                                                    <button type="button" class="btn-close-custom"
-                                                        data-bs-dismiss="modal" aria-label="Close">
-                                                        <i class="bi bi-x"></i>
-                                                    </button>
-                                                </div>
-
-                                                <div class="modal-body">
-                                                    <input type="hidden" id="editId" name="id">
-                                                    <!-- Tampilkan pesan kesalahan jika ada -->
-
-                                                    <!-- Data Wajib Section -->
-                                                    <div class="mb-4">
-                                                        <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                            <h5 class="fw-semibold text-primary">Data Wajib</h5>
-                                                        </div>
-
-                                                        <div class="mb-3">
-                                                            <label for="namaupt" class="form-label">Nama UPT</label>
-                                                            <input type="text" class="form-control" id="namaupt"
-                                                                name="namaupt" value="{{ $d->namaupt }}" readonly>
-                                                        </div>
-
-                                                        <div class="mb-3">
-                                                            <label for="kanwil" class="form-label">Kanwil</label>
-                                                            <input type="text" class="form-control" id="kanwil"
-                                                                name="kanwil" value="{{ $d->kanwil }}" readonly>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary"
-                                                        data-bs-dismiss="modal">Cancel</button>
-                                                    <button type="submit" class="btn btn-primary">Update</button>
+                                                <div class="btn-searchbar column-search">
+                                                    <input type="date" id="search-tanggal-sampai"
+                                                        name="search_tanggal_sampai" title="Tanggal Sampai">
                                                 </div>
                                             </div>
                                         </div>
-                                    </form>
-                                </div>
-                            @endforeach
-                            {{-- User Edit Modal --}}
+                                    </th>
+                                    <th class="text-center">
+                                        <div class="d-flex justify-content-center align-items-center flex-column gap-12">
+                                            <span>Status Upload PDF</span>
+                                            <div class="btn-searchbar column-search">
+                                                <span>
+                                                    <i class="fas fa-search"></i>
+                                                </span>
+                                                <input type="text" id="search-status" name="search_status">
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th class="text-center align-top">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @php
+                                    // Calculate starting number for pagination
+                                    if (request('per_page') == 'all') {
+                                        $no = 1;
+                                    } else {
+                                        $no = ($data->currentPage() - 1) * $data->perPage() + 1;
+                                    }
+                                @endphp
+                                @forelse ($data as $d)
+                                    <tr>
+                                        <td class="text-center">{{ $no++ }}</td>
+                                        <td>{{ $d->namaupt }}</td>
+                                        <td><span class="tag tag-success">{{ $d->kanwil }}</span></td>
+                                        <td class="text-center">
+                                            <span
+                                                class="@if ($d->tipe == 'reguler') Tipereguller
+                                                @elseif($d->tipe == 'vpas') Tipevpas
+                                                @elseif($d->tipe == 'spp') Tipespp @endif">
+                                                {{ ucfirst($d->tipe) }}
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
+                                            {{ \Carbon\Carbon::parse($d->tanggal)->translatedFormat('M d Y') }}
+                                        </td>
+                                        <td class="text-center-status">
+                                            @if (!$d->uploadFolder || empty($d->uploadFolder->uploaded_pdf))
+                                                <span class="badge body-small-12">Belum Upload</span>
+                                            @else
+                                                <span class="badge-succes">
+                                                    Sudah Upload
+                                                </span>
+                                            @endif
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="btn-group" role="group">
+                                                <button data-toggle="modal"
+                                                    data-target="#uploadModal{{ $d->id }}"
+                                                    title="Upload PDF">
+                                                    <ion-icon name="cloud-upload-outline"></ion-icon>
+                                                </button>
+                                                <a href="{{ route('dbpks.export.pks.pdf', $d->id) }}" title="Unduh PDF">
+                                                    <button>
+                                                        <ion-icon name="document-outline"></ion-icon>
+                                                    </button>
+                                                </a>
+                                                <a href="{{ route('dbpks.export.pks.csv', $d->id) }}" title="Unduh CSV">
+                                                    <button>
+                                                        <ion-icon name="document-text-outline"></ion-icon>
+                                                    </button>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
 
+                                    <!-- Upload Modal -->
+                                    <div class="modal fade" id="uploadModal{{ $d->id }}" tabindex="-1"
+                                        aria-labelledby="uploadModalLabel{{ $d->id }}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <form action="{{ route('dbpks.uploadFilePDFPks', $d->id) }}"
+                                                    method="POST" enctype="multipart/form-data"
+                                                    id="uploadForm{{ $d->id }}">
+                                                    @csrf
+                                                    <div class="modal-header">
+                                                        <label id="uploadModalLabel{{ $d->id }}">Upload PDF PKS
+                                                        </label>
+                                                        <button type="button" class="btn-close-custom"
+                                                            data-dismiss="modal" aria-label="Close">
+                                                            <i class="bi bi-x"></i>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <!-- PDF Status and Actions -->
+                                                        <div class="card">
+                                                            <div class="card-header">
+                                                                <div class="label-medium-14">
+                                                                    Status PDF - {{ $d->namaupt }}
+                                                                </div>
+                                                            </div>
+                                                            <div class="card-body">
+                                                                <div id="pdfActions{{ $d->id }}">
+                                                                    @php
+                                                                        $hasFile = false;
+                                                                        if ($d->uploadFolder && !empty($d->uploadFolder->uploaded_pdf)) {
+                                                                            $hasFile = true;
+                                                                        }
+                                                                    @endphp
+
+                                                                    @if ($hasFile)
+                                                                        <div class="badge-succes mb-3 text-center">
+                                                                            <i class="fas fa-check-circle"></i>
+                                                                            PDF sudah tersedia
+                                                                        </div>
+                                                                        <div class="btn-group mb-3 gap-3" role="group">
+                                                                            <a href="{{ route('dbpks.viewpdf', $d->id) }}"
+                                                                                target="_blank" class="view-btn-pdf"
+                                                                                title="Lihat PDF">
+                                                                                <i class="fas fa-eye"></i>
+                                                                                View PDF
+                                                                            </a>
+                                                                            <button type="button" class="delete-btn-pdf"
+                                                                                data-toggle="modal"
+                                                                                data-target="#deletePdfModal{{ $d->id }}"
+                                                                                title="Hapus File PDF">
+                                                                                <i class="fas fa-trash"></i>
+                                                                                Delete
+                                                                            </button>
+                                                                        </div>
+                                                                    @else
+                                                                        <div class="badge-prosses text-center">
+                                                                            <i class="fas fa-exclamation-triangle"></i>
+                                                                            Belum Upload PDF
+                                                                        </div>
+                                                                    @endif
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div>
+                                                            <label for="uploaded_pdf{{ $d->id }}"
+                                                                class="btn-upload">
+                                                                Upload PDF
+                                                            </label>
+                                                            <input type="file"
+                                                                id="uploaded_pdf{{ $d->id }}"
+                                                                name="uploaded_pdf" accept=".pdf"
+                                                                style="display: none;">
+                                                            <span id="fileNameDisplay{{ $d->id }}"
+                                                                class="text-muted"></span>
+                                                            <small class="form-text text-muted">Max Upload
+                                                                10MB</small>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn-cancel-modal"
+                                                            data-dismiss="modal">Tutup</button>
+                                                        <button type="submit" class="btn-purple">Upload
+                                                            PDF</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {{-- Delete PDF Modal --}}
+                                    <div class="modal fade" id="deletePdfModal{{ $d->id }}" tabindex="-1" role="dialog"
+                                        aria-labelledby="deletePdfModalLabel{{ $d->id }}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-body text-center align-items-center">
+                                                    <ion-icon name="alert-circle-outline"
+                                                        class="text-9xl text-[var(--yellow-04)]"></ion-icon>
+                                                    <p class="headline-large-32">Anda Yakin?</p>
+                                                    <label>Apakah PDF dari <b> {{ $d->namaupt }} </b>
+                                                        ingin
+                                                        dihapus?</label>
+                                                </div>
+                                                <div
+                                                    class="modal-footer flex-row-reverse justify-content-between">
+                                                    <button type="button" class="btn-cancel-modal"
+                                                        data-dismiss="modal">Batal</button>
+                                                    <form
+                                                        action="{{ route('dbpks.deleteFilePDF', $d->id) }}"
+                                                        method="POST" style="display: inline;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn-delete">
+                                                            Hapus 
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @empty
+                                    <tr>
+                                        <td colspan="7" class="text-center">
+                                            <div class="py-4">
+                                                <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                                                <p class="text-muted">Tidak ada data yang ditemukan</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Custom Pagination dengan Dropdown -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <!-- Left: Data info + Dropdown per page -->
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="btn-datakolom">
+                            <form method="GET" class="d-flex align-items-center">
+                                <!-- Preserve all search parameters -->
+                                @if (request('table_search'))
+                                    <input type="hidden" name="table_search" value="{{ request('table_search') }}">
+                                @endif
+                                @if (request('search_namaupt'))
+                                    <input type="hidden" name="search_namaupt" value="{{ request('search_namaupt') }}">
+                                @endif
+                                @if (request('search_kanwil'))
+                                    <input type="hidden" name="search_kanwil" value="{{ request('search_kanwil') }}">
+                                @endif
+                                @if (request('search_tipe'))
+                                    <input type="hidden" name="search_tipe" value="{{ request('search_tipe') }}">
+                                @endif
+                                @if (request('search_tanggal_dari'))
+                                    <input type="hidden" name="search_tanggal_dari"
+                                        value="{{ request('search_tanggal_dari') }}">
+                                @endif
+                                @if (request('search_tanggal_sampai'))
+                                    <input type="hidden" name="search_tanggal_sampai"
+                                        value="{{ request('search_tanggal_sampai') }}">
+                                @endif
+                                @if (request('search_status'))
+                                    <input type="hidden" name="search_status" value="{{ request('search_status') }}">
+                                @endif
+
+                                <div class="d-flex align-items-center">
+                                    <select name="per_page" class="form-control form-control-sm pr-2" style="width: auto;"
+                                        onchange="this.form.submit()">
+                                        <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10
+                                        </option>
+                                        <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>15
+                                        </option>
+                                        <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20
+                                        </option>
+                                        <option value="all" {{ request('per_page') == 'all' ? 'selected' : '' }}>Semua
+                                        </option>
+                                    </select>
+                                    <span>Rows</span>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="text-muted">
+                            @if (request('per_page') != 'all')
+                                Menampilkan {{ $data->firstItem() }} sampai {{ $data->lastItem() }}
+                                dari {{ $data->total() }} data
+                            @else
+                                Menampilkan semua {{ $data->total() }} data
+                            @endif
                         </div>
                     </div>
-                </div>
-                <!-- /.row -->
 
-                {{-- Pagination Control --}}
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    {{-- Row Limit --}}
-                    <div class="btn-datakolom">
-                        <button class="btn-select d-flex align-items-center">
-                            <select id="row-limit">
-                                <option value="10">10</option>
-                                <option value="15">15</option>
-                                <option value="20">20</option>
-                                <option value="9999">semua</option>
-                            </select>
-                            Kolom
-                        </button>
-                    </div>
+                    <!-- Right: Navigation (hanya tampil jika tidak pilih "Semua") -->
+                    @if (request('per_page') != 'all' && $data->lastPage() > 1)
+                        <div class="pagination-controls d-flex align-items-center gap-12">
+                            @if ($data->onFirstPage())
+                                <button class="btn-page" disabled>&laquo; Previous</button>
+                            @else
+                                <button class="btn-datakolom w-auto p-3">
+                                    <a href="{{ $data->appends(request()->query())->previousPageUrl() }}">&laquo;
+                                        Previous</a>
+                                </button>
+                            @endif
 
-                    {{-- Pagination --}}
-                    <div class="pagination-controls d-flex align-items-center gap-12">
-                        <button class="btn-page" id="prev-page" disabled>&laquo; Previous</button>
-                        <span id="page-info">Page 1 of 5</span>
-                        <button class="btn-page" id="next-page">Next &raquo;</button>
-                    </div>
+                            <span id="page-info">Page {{ $data->currentPage() }} of {{ $data->lastPage() }}</span>
+
+                            @if ($data->hasMorePages())
+                                <button class="btn-datakolom w-auto p-3">
+                                    <a href="{{ $data->appends(request()->query())->nextPageUrl() }}">Next&raquo;</a>
+                                </button>
+                            @else
+                                <button class="btn-page" disabled>Next &raquo;</button>
+                            @endif
+                        </div>
+                    @endif
                 </div>
+
             </div><!-- /.container-fluid -->
         </section>
         <!-- /.content -->
     </div>
     <!-- /.content-wrapper -->
 
-    {{-- Jquery Library --}}
+    {{-- jQuery Library --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
         integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-    {{-- Upload File --}}
+    {{-- Search By Column JavaScript --}}
     <script>
-        function triggerUpload(id) {
-            const input = document.getElementById('uploadInput' + id);
-            const form = document.getElementById('uploadForm' + id);
+        $(document).ready(function () {
+            // Function to get current filter values
+            function getFilters() {
+                return {
+                    search_namaupt: $('#search-namaupt').val().trim(),
+                    search_kanwil: $('#search-kanwil').val().trim(),
+                    search_tanggal_dari: $('#search-tanggal-dari').val().trim(),
+                    search_tanggal_sampai: $('#search-tanggal-sampai').val().trim(),
+                    search_status: $('#search-status').val().trim(),
+                    per_page: $('select[name="per_page"]').val()
+                };
+            }
 
-            // Reset input
-            input.value = '';
+            // Function to apply filters and redirect (GLOBAL - bisa dipanggil dari tombol)
+            window.applyFilters = function () {
+                let filters = getFilters();
+                let url = new URL(window.location.href);
 
-            // Trigger file selection
-            input.click();
+                // Remove existing filter parameters
+                url.searchParams.delete('search_namaupt');
+                url.searchParams.delete('search_kanwil');
+                url.searchParams.delete('search_tanggal_dari');
+                url.searchParams.delete('search_tanggal_sampai');
+                url.searchParams.delete('search_status');
+                url.searchParams.delete('page'); // Reset to page 1
 
-            // Handle file selection
-            input.onchange = function() {
-                if (this.files.length > 0) {
-                    const file = this.files[0];
-
-                    // Validate file type
-                    if (file.type !== 'application/pdf') {
-                        alert('Hanya file PDF yang diperbolehkan!');
-                        this.value = '';
-                        return;
-                    }
-
-                    // Validate file size (5MB = 5 * 1024 * 1024 bytes)
-                    if (file.size > 5 * 1024 * 1024) {
-                        alert('Ukuran file tidak boleh lebih dari 5MB!');
-                        this.value = '';
-                        return;
-                    }
-
-                    // Show loading state
-                    const uploadBtn = document.querySelector(`button[onclick="triggerUpload(${id})"]`);
-                    const originalText = uploadBtn.innerHTML;
-                    uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
-                    uploadBtn.disabled = true;
-
-                    // Submit form
-                    form.submit();
-                }
-            };
-        }
-
-        // Auto-hide alerts after 5 seconds
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(function() {
-                const alerts = document.querySelectorAll('.alert');
-                alerts.forEach(function(alert) {
-                    if (alert.classList.contains('show')) {
-                        alert.classList.remove('show');
-                        setTimeout(() => alert.remove(), 150);
+                // Add non-empty filters
+                Object.keys(filters).forEach(key => {
+                    if (filters[key] && filters[key].trim() !== '' && key !== 'per_page') {
+                        url.searchParams.set(key, filters[key]);
                     }
                 });
-            }, 5000);
+
+                window.location.href = url.toString();
+            };
+
+            // Function to clear all search filters (GLOBAL - bisa dipanggil dari tombol Reset)
+            window.clearAllFilters = function () {
+                // Clear semua input field dulu
+                $('#search-namaupt').val('');
+                $('#search-kanwil').val('');
+                $('#search-tanggal-dari').val('');
+                $('#search-tanggal-sampai').val('');
+                $('#search-status').val('');
+
+                let url = new URL(window.location.href);
+
+                // Remove all search parameters
+                url.searchParams.delete('table_search');
+                url.searchParams.delete('search_namaupt');
+                url.searchParams.delete('search_kanwil');
+                url.searchParams.delete('search_tipe');
+                url.searchParams.delete('search_tanggal_dari');
+                url.searchParams.delete('search_tanggal_sampai');
+                url.searchParams.delete('search_status');
+                url.searchParams.delete('page');
+
+                window.location.href = url.toString();
+            };
+
+            // Bind keypress event to all search input fields (Enter masih berfungsi)
+            $('.column-search input').on('keypress', function (e) {
+                if (e.which === 13) { // Enter key
+                    applyFilters();
+                }
+            });
+
+            // Clear individual column search when input is emptied
+            $('.column-search input').on('keyup', function (e) {
+                if (e.which === 13 && $(this).val().trim() === '') {
+                    applyFilters(); // Apply filters to update URL (removing empty filter)
+                }
+            });
+
+            // Download functions with current filters
+            window.downloadCsv = function () {
+                let filters = getFilters();
+                let form = document.createElement('form');
+                form.method = 'GET';
+                form.action = '{{ route('dbpks.export.pks.list.csv') }}';
+                form.target = '_blank';
+
+                Object.keys(filters).forEach(key => {
+                    if (filters[key] && key !== 'per_page') {
+                        let input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = key;
+                        input.value = filters[key];
+                        form.appendChild(input);
+                    }
+                });
+
+                document.body.appendChild(form);
+                form.submit();
+                document.body.removeChild(form);
+            };
+
+            window.downloadPdf = function () {
+                let filters = getFilters();
+                let form = document.createElement('form');
+                form.method = 'GET';
+                form.action = '{{ route('dbpks.export.pks.list.pdf') }}';
+                form.target = '_blank';
+
+                Object.keys(filters).forEach(key => {
+                    if (filters[key] && key !== 'per_page') {
+                        let input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = key;
+                        input.value = filters[keyy];
+                        form.appendChild(input);
+                    }
+                });
+
+                document.body.appendChild(form);
+                form.submit();
+                document.body.removeChild(form);
+            };
+
+            window.downloadPdf = function () {
+                let filters = getFilters();
+                let form = document.createElement('form');
+                form.method = 'GET';
+                form.action = '{{ route('spp.export.spp.list.pdf') }}';
+                form.target = '_blank';
+
+                Object.keys(filters).forEach(key => {
+                    if (filters[key] && key !== 'per_page') {
+                        let input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = key;
+                        input.value = filters[key];
+                        form.appendChild(input);
+                    }
+                });
+
+                document.body.appendChild(form);
+                form.submit();
+                document.body.removeChild(form);
+            };
+
+            // Load filter values from URL on page load
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('search_namaupt')) {
+                $('#search-namaupt').val(urlParams.get('search_namaupt'));
+            }
+            if (urlParams.get('search_kanwil')) {
+                $('#search-kanwil').val(urlParams.get('search_kanwil'));
+            }
+            if (urlParams.get('search_tanggal_dari')) {
+                $('#search-tanggal-dari').val(urlParams.get('search_tanggal_dari'));
+            }
+            if (urlParams.get('search_tanggal_sampai')) {
+                $('#search-tanggal-sampai').val(urlParams.get('search_tanggal_sampai'));
+            }
+            if (urlParams.get('search_status')) {
+                $('#search-status').val(urlParams.get('search_status'));
+            }
+
+            // Show export buttons if there's data
+            if ($("#Table tbody tr").length > 0 && !$("#Table tbody tr").find('td[colspan="7"]').length) {
+                $("#export-buttons").show();
+            } else {
+                $("#export-buttons").hide();
+            }
         });
     </script>
 
-    {{-- Search and Pagination JavaScript --}}
+    {{-- File Name Display --}}
     <script>
-        $(document).ready(function() {
-            const $rows = $("#Table tbody tr");
-            let limit = parseInt($("#row-limit").val());
-            let currentPage = 1;
-            let totalPages = Math.ceil($rows.length / limit);
+        document.addEventListener('DOMContentLoaded', function() {
+            // Loop melalui semua input file berdasarkan ID dinamis
+            document.querySelectorAll('input[type="file"][id^="uploaded_pdf"]').forEach(function(input) {
+                input.addEventListener('change', function() {
+                    const id = this.id.replace('uploaded_pdf', ''); // Ambil ID dari input
+                    const fileNameDisplay = document.getElementById('fileNameDisplay' +
+                        id); // Ambil elemen span
+                    const fileName = this.files.length > 0 ? this.files[0].name :
+                        'Tidak ada file yang dipilih';
 
-            function updateTable() {
-                $rows.hide();
-
-                let start = (currentPage - 1) * limit;
-                let end = start + limit;
-
-                $rows.slice(start, end).show();
-
-                // update info halaman
-                $("#page-info").text(`Page ${currentPage} of ${totalPages}`);
-
-                // disable prev/next sesuai kondisi
-                $("#prev-page").prop("disabled", currentPage === 1);
-                $("#next-page").prop("disabled", currentPage === totalPages);
-            }
-
-            // apply awal
-            updateTable();
-
-            // kalau ganti jumlah data
-            $("#row-limit").on("change", function() {
-                limit = parseInt($(this).val());
-                currentPage = 1;
-                totalPages = Math.ceil($rows.length / limit);
-                updateTable();
-            });
-
-            // tombol prev
-            $("#prev-page").on("click", function() {
-                if (currentPage > 1) {
-                    currentPage--;
-                    updateTable();
-                }
-            });
-
-            // tombol next
-            $("#next-page").on("click", function() {
-                if (currentPage < totalPages) {
-                    currentPage++;
-                    updateTable();
-                }
-            });
-
-            // Filter Data By Search
-            $("#btn-search").on("keyup", function() {
-                let value = $(this).val().toLowerCase();
-                $("#Table tbody tr").filter(function() {
-                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                    // Perbarui teks di span dengan nama file
+                    fileNameDisplay.textContent = fileName;
                 });
-
-                // Update pagination after search
-                const $visibleRows = $("#Table tbody tr:visible");
-                totalPages = Math.ceil($visibleRows.length / limit);
-                currentPage = 1;
-
-                if (value === '') {
-                    // If search is cleared, show all rows with pagination
-                    updateTable();
-                } else {
-                    // If searching, hide pagination info
-                    $("#page-info").text(`Showing ${$visibleRows.length} results`);
-                    $("#prev-page").prop("disabled", true);
-                    $("#next-page").prop("disabled", true);
-                }
-            });
-
-            // Handle modal events
-            $('.modal').on('show.bs.modal', function(e) {
-                console.log('Modal is opening');
-            });
-
-            $('.modal').on('shown.bs.modal', function(e) {
-                console.log('Modal is fully visible');
-            });
-
-            $('.modal').on('hide.bs.modal', function(e) {
-                console.log('Modal is closing');
             });
         });
     </script>

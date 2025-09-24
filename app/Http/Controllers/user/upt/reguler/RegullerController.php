@@ -639,7 +639,7 @@ class RegullerController extends Controller
         $user = Upt::with('dataOpsional')->findOrFail($id);
 
         $data = [
-            'title' => 'LAPAS PEREMPUAN KELAS IIA JAKARTA',
+            'title' => 'Data UPT Reguller '. $user->namaupt,
             'user' => $user,
         ];
 

@@ -267,7 +267,7 @@ class VtrenController extends Controller
         $ponpes = Ponpes::with('dataOpsional')->findOrFail($id);
 
         $data = [
-            'title' => 'Data Pondok Pesantren ' . $ponpes->nama_ponpes,
+            'title' => 'Data PONPES VTREN ' . $ponpes->nama_ponpes,
             'ponpes' => $ponpes,
         ];
 

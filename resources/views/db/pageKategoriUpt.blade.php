@@ -30,7 +30,7 @@
                                 <span class="checkmark">✓</span>
                                 100 Data
                             </div>
-                            <a href="{{ route('pks.ListDataPks') }}" class="list-button">List Data
+                            <a href="{{ route('dbpks.ListDataPks') }}" class="list-button">List Data
                                 PKS</a>
                         </div>
                     </div>
@@ -58,7 +58,7 @@
                                 <span class="checkmark">✓</span>
                                 100 Data
                             </div>
-                            <a href="{{ route('ListDataVpas') }}" class="list-button">List Data
+                            <a href="{{ route('vpas.ListDataVpas') }}" class="list-button">List Data
                                 Customer</a>
                         </div>
                     </div>

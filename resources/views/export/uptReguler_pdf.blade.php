@@ -53,7 +53,7 @@
     </style>
 </head>
 <body>
-    <div class="title">DATA UPT REGULLER</div>
+    <div class="title">{{ $title }}</div>
     <table>
         <tr><td colspan="2" class="section-header">Data Opsional</td></tr>
         <tr><td class="nowrap">PIC UPT</td><td>{{ $user->dataOpsional->pic_upt ?? '' }}</td></tr>

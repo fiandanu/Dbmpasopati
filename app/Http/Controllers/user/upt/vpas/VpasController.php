@@ -16,17 +16,58 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class VpasController extends Controller
 {
-    public function ListDataVpas(Request $request)
+    private $optionalFields = [
+        'pic_upt',
+        'no_telpon',
+        'alamat',
+        'jumlah_wbp',
+        'jumlah_line',
+        'provider_internet',
+        'kecepatan_internet',
+        'tarif_wartel',
+        'status_wartel',
+        'akses_topup_pulsa',
+        'password_topup',
+        'akses_download_rekaman',
+        'password_download',
+        'internet_protocol',
+        'vpn_user',
+        'vpn_password',
+        'jenis_vpn',
+        'jumlah_extension',
+        'no_extension',
+        'extension_password',
+        'pin_tes'
+    ];
+
+    private function calculateStatus($dataOpsional)
     {
-        $query = Upt::with('dataOpsional');
+        if (!$dataOpsional) {
+            return 'Belum di Update';
+        }
+        $filledFields = 0;
+        foreach ($this->optionalFields as $field) {
+            if (!empty($dataOpsional->$field)) {
+                $filledFields++;
+            }
+        }
+        $totalFields = count($this->optionalFields);
+        $percentage = $totalFields > 0 ? round(($filledFields / $totalFields) * 100) : 0;
 
-        $query->where('tipe', 'vpas');
+        if ($filledFields == 0) {
+            return 'Belum di Update';
+        } elseif ($filledFields == $totalFields) {
+            return 'Sudah Update';
+        } else {
+            return "Sebagian ({$percentage}%)";
+        }
+    }
 
-        // Cek apakah ada parameter pencarian
+    private function applyFilters($query, Request $request)
+    {
+        // Global search
         if ($request->has('table_search') && !empty($request->table_search)) {
             $searchTerm = $request->table_search;
-
-            // Lakukan pencarian berdasarkan beberapa kolom
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('namaupt', 'LIKE', '%' . $searchTerm . '%')
                     ->orWhere('kanwil', 'LIKE', '%' . $searchTerm . '%')
@@ -39,11 +80,197 @@ class VpasController extends Controller
             });
         }
 
-        $data = $query->get();
+        // Column-specific searches
+        if ($request->has('search_namaupt') && !empty($request->search_namaupt)) {
+            $query->where('namaupt', 'LIKE', '%' . $request->search_namaupt . '%');
+        }
+        if ($request->has('search_kanwil') && !empty($request->search_kanwil)) {
+            $query->where('kanwil', 'LIKE', '%' . $request->search_kanwil . '%');
+        }
+        if ($request->has('search_tipe') && !empty($request->search_tipe)) {
+            $query->where('tipe', 'LIKE', '%' . $request->search_tipe . '%');
+        }
+
+        // Date range filtering
+        if ($request->has('search_tanggal_dari') && !empty($request->search_tanggal_dari)) {
+            $query->whereDate('tanggal', '>=', $request->search_tanggal_dari);
+        }
+        if ($request->has('search_tanggal_sampai') && !empty($request->search_tanggal_sampai)) {
+            $query->whereDate('tanggal', '<=', $request->search_tanggal_sampai);
+        }
+
+        return $query;
+    }
+
+    private function applyStatusFilter($data, Request $request)
+    {
+        if ($request->has('search_status') && !empty($request->search_status)) {
+            $statusSearch = strtolower($request->search_status);
+            return $data->filter(function ($d) use ($statusSearch) {
+                $status = strtolower($this->calculateStatus($d->dataOpsional));
+                return strpos($status, $statusSearch) !== false;
+            });
+        }
+        return $data;
+    }
+
+    public function ListDataVpas(Request $request)
+    {
+        $query = Upt::with('dataOpsional')->where('tipe', 'vpas');
+
+        // Apply database filters
+        $query = $this->applyFilters($query, $request);
+
+        // Get per_page from request, default 10
+        $perPage = $request->get('per_page', 10);
+
+        // Validate per_page
+        if (!in_array($perPage, [10, 15, 20, 'all'])) {
+            $perPage = 20;
+        }
+
+        // Handle pagination
+        if ($perPage == 'all') {
+            $data = $query->orderBy('tanggal', 'desc')->get();
+
+            // Apply status filter to collection
+            $data = $this->applyStatusFilter(collect($data), $request);
+
+            // Create a mock paginator for "all" option
+            $data = new \Illuminate\Pagination\LengthAwarePaginator(
+                $data,
+                $data->count(),
+                99999,
+                1,
+                ['path' => $request->url(), 'query' => $request->query()]
+            );
+        } else {
+            // For paginated results, we need to get all data first, apply status filter, then paginate
+            $allData = $query->orderBy('tanggal', 'desc')->get();
+            $filteredData = $this->applyStatusFilter($allData, $request);
+
+            // Manual pagination of filtered data
+            $currentPage = \Illuminate\Pagination\Paginator::resolveCurrentPage('page');
+            $offset = ($currentPage - 1) * $perPage;
+            $itemsForCurrentPage = $filteredData->slice($offset, $perPage)->values();
+
+            $data = new \Illuminate\Pagination\LengthAwarePaginator(
+                $itemsForCurrentPage,
+                $filteredData->count(),
+                $perPage,
+                $currentPage,
+                [
+                    'path' => $request->url(),
+                    'query' => $request->query(),
+                    'pageName' => 'page'
+                ]
+            );
+        }
+
         $providers = Provider::all();
         $vpns = Vpn::all();
 
         return view('db.upt.vpas.indexVpas', compact('data', 'providers', 'vpns'));
+    }
+
+    public function exportListCsv(Request $request): StreamedResponse
+    {
+        $query = Upt::with('dataOpsional')->where('tipe', 'vpas');
+        $query = $this->applyFilters($query, $request);
+
+        // Add date sorting when date filters are applied
+        if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
+            $query = $query->orderBy('tanggal', 'asc');
+        }
+
+        $data = $query->get();
+
+        // Apply status filter
+        $data = $this->applyStatusFilter($data, $request);
+
+        // Additional sorting if date filter is applied
+        if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
+            $data = $data->sortBy('tanggal')->values();
+        }
+
+        $filename = 'list_upt_vpas_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
+
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+
+        $rows = [['No', 'Nama UPT', 'Kanwil', 'Tipe', 'Tanggal Dibuat', 'Status Update']];
+        $no = 1;
+        foreach ($data as $d) {
+            $status = $this->calculateStatus($d->dataOpsional);
+            $rows[] = [
+                $no++,
+                $d->namaupt,
+                $d->kanwil,
+                ucfirst($d->tipe),
+                \Carbon\Carbon::parse($d->tanggal)->format('d M Y'),
+                $status
+            ];
+        }
+
+        $callback = function () use ($rows) {
+            $file = fopen('php://output', 'w');
+            foreach ($rows as $row) {
+                fputcsv($file, $row);
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    public function exportListPdf(Request $request)
+    {
+        $query = Upt::with('dataOpsional')->where('tipe', 'vpas');
+        $query = $this->applyFilters($query, $request);
+
+        // Add date sorting when date filters are applied
+        if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
+            $query = $query->orderBy('tanggal', 'asc');
+        }
+
+        $data = $query->get();
+
+        // Apply status filter
+        $data = $this->applyStatusFilter($data, $request);
+
+        // Convert collection to array with calculated status
+        $dataArray = [];
+        foreach ($data as $d) {
+            $dataItem = $d->toArray();
+            $dataItem['calculated_status'] = $this->calculateStatus($d->dataOpsional);
+            $dataArray[] = $dataItem;
+        }
+
+        // Additional sorting using correct field name
+        if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
+            usort($dataArray, function ($a, $b) {
+                $dateA = strtotime($a['tanggal']);
+                $dateB = strtotime($b['tanggal']);
+                return $dateA - $dateB;
+            });
+        }
+
+        $pdfData = [
+            'title' => 'List Data UPT VPAS',
+            'data' => $dataArray,
+            'optionalFields' => $this->optionalFields,
+            'generated_at' => Carbon::now()->format('d M Y H:i:s')
+        ];
+
+        $pdf = Pdf::loadView('export.db.upt.uptVpas', $pdfData);
+        $filename = 'list_upt_vpas_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
+
+        return $pdf->download($filename);
     }
 
     public function ListUpdateVpas(Request $request, $id)
@@ -51,6 +278,11 @@ class VpasController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
+                // Field Wajib Form UPT (tidak diupdate karena readonly di form)
+                'namaupt' => 'nullable|string|max:255',
+                'kanwil' => 'nullable|string|max:255',
+                'tanggal' => 'nullable|date',
+
                 // Data Opsional (Form VPAS)
                 'pic_upt' => 'nullable|string|max:255',
                 'no_telpon' => 'nullable|string|regex:/^([0-9\s\-\+\(\)]*)$/|max:20',
@@ -60,7 +292,7 @@ class VpasController extends Controller
                 'provider_internet' => 'nullable|string|max:255',
                 'kecepatan_internet' => 'nullable|string|max:255',
                 'tarif_wartel' => 'nullable|numeric|min:0',
-                'status_wartel' => 'nullable|string',
+                'status_wartel' => 'nullable|boolean',
 
                 // IMC PAS
                 'akses_topup_pulsa' => 'nullable|string',
@@ -157,7 +389,7 @@ class VpasController extends Controller
             ];
 
             // Update or create data_opsional_upt record
-            DataOpsionalUpt::updateOrCreate(
+            $dataOpsional = DataOpsionalUpt::updateOrCreate(
                 ['upt_id' => $upt->id],
                 $opsionalData
             );
@@ -170,12 +402,19 @@ class VpasController extends Controller
         }
     }
 
-    public function UserPageDestroy($id)
+    public function UserPage(Request $request)
+    {
+        $dataupt = Upt::with(['dataOpsional', 'uploadFolder'])->get();
+        
+        return view('user.indexUser', compact('dataupt'));
+    }
+
+    public function DataBasePageDestroy($id)
     {
         $dataupt = Upt::find($id);
 
         if (!$dataupt) {
-            return redirect()->route('upt.UserPage')->with('error', 'Data tidak ditemukan!');
+            return redirect()->route('vpas.ListDataVpas')->with('error', 'Data tidak ditemukan!');
         }
 
         // Ambil nama UPT tanpa suffix (VpasReg) untuk pengecekan
@@ -187,7 +426,7 @@ class VpasController extends Controller
         // Update nama UPT yang tersisa berdasarkan jumlah data
         $this->updateUptNamesBySuffix($namaUptBase);
 
-        return redirect()->route('upt.UserPage')->with('success', 'Data berhasil dihapus!');
+        return redirect()->route('vpas.ListDataVpas')->with('success', 'Data berhasil dihapus!');
     }
 
     public function UserPageStore(Request $request)
@@ -258,7 +497,7 @@ class VpasController extends Controller
         // Berikan pesan berdasarkan hasil
         if (count($createdRecords) > 0) {
             $message = 'Data UPT berhasil ditambahkan untuk tipe: ' . implode(', ', $createdRecords);
-            return redirect()->route('upt.UserPage')->with('success', $message);
+            return redirect()->route('vpas.UserPage')->with('success', $message);
         } else {
             return redirect()->back()
                 ->withInput()
@@ -307,13 +546,9 @@ class VpasController extends Controller
         $dataupt->tipe = $request->tipe;
         $dataupt->save();
 
-        return redirect()->route('upt.UserPage')->with('success', 'Data UPT berhasil diupdate!');
+        return redirect()->route('vpas.UserPage')->with('success', 'Data UPT berhasil diupdate!');
     }
 
-    /**
-     * Helper method untuk menghilangkan suffix (VpasReg) dari nama UPT
-     * Menghapus semua kemungkinan suffix ganda
-     */
     private function removeVpasRegSuffix($namaUpt)
     {
         // Hapus semua kemungkinan suffix (VpasReg) yang mungkin ganda
@@ -401,32 +636,11 @@ class VpasController extends Controller
         $user = Upt::with('dataOpsional')->findOrFail($id);
 
         $data = [
-            'title' => 'LAPAS PEREMPUAN KELAS IIA JAKARTA - VPAS',
+            'title' => 'Data UPT VPAS ' . $user->namaupt,
             'user' => $user,
         ];
 
-        // Ganti dari 'export.vpas_pdf' menjadi 'export.upt_pdf'
-        $pdf = Pdf::loadView('export.upt_pdf', $data);
+        $pdf = Pdf::loadView('export.uptReguler_pdf', $data);
         return $pdf->download('data_upt_vpas_' . $user->namaupt . '.pdf');
-    }
-
-    public function DatabasePageDestroy($id)
-    {
-        $dataupt = Upt::find($id);
-
-        if (!$dataupt) {
-            return redirect()->route('DbVpas')->with('error', 'Data tidak ditemukan!');
-        }
-
-        // Ambil nama UPT tanpa suffix (VpasReg) untuk pengecekan
-        $namaUptBase = $this->removeVpasRegSuffix($dataupt->namaupt);
-
-        // Hapus data yang dipilih
-        $dataupt->delete();
-
-        // Update nama UPT yang tersisa berdasarkan jumlah data
-        $this->updateUptNamesBySuffix($namaUptBase);
-
-        return redirect()->route('DbVpas')->with('success', 'Data berhasil dihapus!');
     }
 }

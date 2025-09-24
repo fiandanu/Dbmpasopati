@@ -13,7 +13,6 @@ use App\Http\Controllers\user\PageUser;
 
 Route::prefix('upt')->name('upt.')->group(function () {
 
-
     Route::put('/ListUpdateReguller/{id}', [RegullerController::class, 'ListUpdateReguller'])->name('ListUpdateReguller');
     Route::get('/ListDataReguller', action: [RegullerController::class, 'ListDataReguller'])->name('ListDataReguller');
     Route::get('/UserPage', [RegullerController::class, 'UserPage'])->name('UserPage');
