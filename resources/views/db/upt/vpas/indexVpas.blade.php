@@ -407,12 +407,12 @@
                                                     <select class="form-control" id="status_wartel{{ $d->id }}"
                                                         name="status_wartel">
                                                         <option value="">-- Pilih Status --</option>
-                                                        <option value="1" {{ ($dataOpsional->status_wartel ?? 0) == 1 ? 'selected' : '' }}>
+                                                        <option value="Aktif" {{ ($dataOpsional->status_wartel ?? '') == 'Aktif' ? 'selected' : '' }}>
                                                             Aktif
                                                         </option>
-                                                        <option value="0" {{ ($dataOpsional->status_wartel ?? 0) == 0 ? 'selected' : '' }}>
-                                                            Tidak
-                                                            Aktif</option>
+                                                        <option value="Tidak Aktif" {{ ($dataOpsional->status_wartel ?? '') == 'Tidak Aktif' ? 'selected' : '' }}>
+                                                            Tidak Aktif
+                                                        </option>
                                                     </select>
                                                 </div>
                                             </div>

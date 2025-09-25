@@ -159,9 +159,15 @@
                                             </div>
                                         </div>
                                     </th>
-                                    <th class="text-center align-top">
-                                        <div class="d-flex justify-content-center align-items-center flex-column gap-12">
+                                    <th class="text-center">
+                                        <div class="d-flex flex-column gap-12">
                                             <span>Tipe</span>
+                                            <div class="btn-searchbar column-search">
+                                                <span>
+                                                    <i class="fas fa-search"></i>
+                                                </span>
+                                                <input type="text" id="search-tipe" name="search_tipe">
+                                            </div>
                                         </div>
                                     </th>
                                     <th class="text-center">
@@ -191,6 +197,7 @@
                                         </div>
                                     </th>
                                     <th class="text-center align-top">Action</th>
+
                                 </tr>
                             </thead>
                             <tbody>
@@ -208,10 +215,9 @@
                                         <td>{{ $d->namaupt }}</td>
                                         <td><span class="tag tag-success">{{ $d->kanwil }}</span></td>
                                         <td class="text-center">
-                                            <span
-                                                class="@if ($d->tipe == 'reguler') Tipereguller
-                                                @elseif($d->tipe == 'vpas') Tipevpas
-                                                @elseif($d->tipe == 'spp') Tipespp @endif">
+                                            <span class="@if ($d->tipe == 'reguler') Tipereguller
+                                            @elseif($d->tipe == 'vpas') Tipevpas
+                                                    @elseif($d->tipe == 'spp') Tipespp @endif">
                                                 {{ ucfirst($d->tipe) }}
                                             </span>
                                         </td>
@@ -229,21 +235,21 @@
                                         </td>
                                         <td class="text-center">
                                             <div class="btn-group" role="group">
-                                                <button data-toggle="modal"
-                                                    data-target="#uploadModal{{ $d->id }}"
+                                                <!-- Upload PDF Button - Selalu tampil -->
+                                                <button data-toggle="modal" data-target="#uploadModal{{ $d->id }}"
                                                     title="Upload PDF">
-                                                    <ion-icon name="cloud-upload-outline"></ion-icon>
+                                                    <ion-icon name="folder-outline"></ion-icon>
                                                 </button>
-                                                <a href="{{ route('dbpks.export.pks.pdf', $d->id) }}" title="Unduh PDF">
-                                                    <button>
-                                                        <ion-icon name="document-outline"></ion-icon>
-                                                    </button>
-                                                </a>
-                                                <a href="{{ route('dbpks.export.pks.csv', $d->id) }}" title="Unduh CSV">
-                                                    <button>
-                                                        <ion-icon name="document-text-outline"></ion-icon>
-                                                    </button>
-                                                </a>
+{{-- 
+                                                <!-- View PDF Button - Hanya tampil jika PDF sudah diupload -->
+                                                @if($d->uploadFolder && !empty($d->uploadFolder->uploaded_pdf))
+                                                    <a href="{{ route('dbpks.viewpdf', $d->id) }}" target="_blank"
+                                                        title="Lihat PDF">
+                                                        <button>
+                                                            <ion-icon name="eye-outline"></ion-icon>
+                                                        </button>
+                                                    </a>
+                                                @endif --}}
                                             </div>
                                         </td>
                                     </tr>
@@ -253,15 +259,14 @@
                                         aria-labelledby="uploadModalLabel{{ $d->id }}" aria-hidden="true">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
-                                                <form action="{{ route('dbpks.uploadFilePDFPks', $d->id) }}"
-                                                    method="POST" enctype="multipart/form-data"
-                                                    id="uploadForm{{ $d->id }}">
+                                                <form action="{{ route('dbpks.uploadFilePDFPks', $d->id) }}" method="POST"
+                                                    enctype="multipart/form-data" id="uploadForm{{ $d->id }}">
                                                     @csrf
                                                     <div class="modal-header">
                                                         <label id="uploadModalLabel{{ $d->id }}">Upload PDF PKS
                                                         </label>
-                                                        <button type="button" class="btn-close-custom"
-                                                            data-dismiss="modal" aria-label="Close">
+                                                        <button type="button" class="btn-close-custom" data-dismiss="modal"
+                                                            aria-label="Close">
                                                             <i class="bi bi-x"></i>
                                                         </button>
                                                     </div>
@@ -313,16 +318,12 @@
                                                         </div>
 
                                                         <div>
-                                                            <label for="uploaded_pdf{{ $d->id }}"
-                                                                class="btn-upload">
+                                                            <label for="uploaded_pdf{{ $d->id }}" class="btn-upload">
                                                                 Upload PDF
                                                             </label>
-                                                            <input type="file"
-                                                                id="uploaded_pdf{{ $d->id }}"
-                                                                name="uploaded_pdf" accept=".pdf"
-                                                                style="display: none;">
-                                                            <span id="fileNameDisplay{{ $d->id }}"
-                                                                class="text-muted"></span>
+                                                            <input type="file" id="uploaded_pdf{{ $d->id }}" name="uploaded_pdf"
+                                                                accept=".pdf" style="display: none;">
+                                                            <span id="fileNameDisplay{{ $d->id }}" class="text-muted"></span>
                                                             <small class="form-text text-muted">Max Upload
                                                                 10MB</small>
                                                         </div>
@@ -352,17 +353,15 @@
                                                         ingin
                                                         dihapus?</label>
                                                 </div>
-                                                <div
-                                                    class="modal-footer flex-row-reverse justify-content-between">
+                                                <div class="modal-footer flex-row-reverse justify-content-between">
                                                     <button type="button" class="btn-cancel-modal"
                                                         data-dismiss="modal">Batal</button>
-                                                    <form
-                                                        action="{{ route('dbpks.deleteFilePDF', $d->id) }}"
-                                                        method="POST" style="display: inline;">
+                                                    <form action="{{ route('dbpks.deleteFilePDF', $d->id) }}" method="POST"
+                                                        style="display: inline;">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="btn-delete">
-                                                            Hapus 
+                                                            Hapus
                                                         </button>
                                                     </form>
                                                 </div>
@@ -486,6 +485,7 @@
                 return {
                     search_namaupt: $('#search-namaupt').val().trim(),
                     search_kanwil: $('#search-kanwil').val().trim(),
+                    search_tipe: $('#search-tipe').val().trim(),
                     search_tanggal_dari: $('#search-tanggal-dari').val().trim(),
                     search_tanggal_sampai: $('#search-tanggal-sampai').val().trim(),
                     search_status: $('#search-status').val().trim(),
@@ -521,6 +521,7 @@
                 // Clear semua input field dulu
                 $('#search-namaupt').val('');
                 $('#search-kanwil').val('');
+                $('#search-tipe').val('');
                 $('#search-tanggal-dari').val('');
                 $('#search-tanggal-sampai').val('');
                 $('#search-status').val('');
@@ -581,7 +582,7 @@
                 let filters = getFilters();
                 let form = document.createElement('form');
                 form.method = 'GET';
-                form.action = '{{ route('dbpks.export.pks.list.pdf') }}';
+                form.action = '{{ route('dbpks.export.pks.list.pdf') }}'; // Pastikan route ini ada
                 form.target = '_blank';
 
                 Object.keys(filters).forEach(key => {
@@ -589,7 +590,7 @@
                         let input = document.createElement('input');
                         input.type = 'hidden';
                         input.name = key;
-                        input.value = filters[keyy];
+                        input.value = filters[key]; // PERBAIKI dari filters[keyy] ke filters[key]
                         form.appendChild(input);
                     }
                 });
@@ -599,27 +600,6 @@
                 document.body.removeChild(form);
             };
 
-            window.downloadPdf = function () {
-                let filters = getFilters();
-                let form = document.createElement('form');
-                form.method = 'GET';
-                form.action = '{{ route('spp.export.spp.list.pdf') }}';
-                form.target = '_blank';
-
-                Object.keys(filters).forEach(key => {
-                    if (filters[key] && key !== 'per_page') {
-                        let input = document.createElement('input');
-                        input.type = 'hidden';
-                        input.name = key;
-                        input.value = filters[key];
-                        form.appendChild(input);
-                    }
-                });
-
-                document.body.appendChild(form);
-                form.submit();
-                document.body.removeChild(form);
-            };
 
             // Load filter values from URL on page load
             const urlParams = new URLSearchParams(window.location.search);
@@ -628,6 +608,9 @@
             }
             if (urlParams.get('search_kanwil')) {
                 $('#search-kanwil').val(urlParams.get('search_kanwil'));
+            }
+            if (urlParams.get('search_tipe')) {
+                $('#search-tipe').val(urlParams.get('search_tipe'));
             }
             if (urlParams.get('search_tanggal_dari')) {
                 $('#search-tanggal-dari').val(urlParams.get('search_tanggal_dari'));
@@ -650,10 +633,10 @@
 
     {{-- File Name Display --}}
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Loop melalui semua input file berdasarkan ID dinamis
-            document.querySelectorAll('input[type="file"][id^="uploaded_pdf"]').forEach(function(input) {
-                input.addEventListener('change', function() {
+            document.querySelectorAll('input[type="file"][id^="uploaded_pdf"]').forEach(function (input) {
+                input.addEventListener('change', function () {
                     const id = this.id.replace('uploaded_pdf', ''); // Ambil ID dari input
                     const fileNameDisplay = document.getElementById('fileNameDisplay' +
                         id); // Ambil elemen span

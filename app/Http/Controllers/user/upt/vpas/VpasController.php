@@ -292,7 +292,7 @@ class VpasController extends Controller
                 'provider_internet' => 'nullable|string|max:255',
                 'kecepatan_internet' => 'nullable|string|max:255',
                 'tarif_wartel' => 'nullable|numeric|min:0',
-                'status_wartel' => 'nullable|boolean',
+                'status_wartel' => 'nullable|string',
 
                 // IMC PAS
                 'akses_topup_pulsa' => 'nullable|string',
@@ -325,7 +325,7 @@ class VpasController extends Controller
                 'kecepatan_internet.string' => 'Kecepatan internet harus berupa teks.',
                 'tarif_wartel.numeric' => 'Tarif wartel harus berupa angka.',
                 'tarif_wartel.min' => 'Tarif wartel tidak boleh negatif.',
-                'status_wartel.boolean' => 'Status wartel harus berupa boolean.',
+                'status_wartel.string' => 'Status wartel harus berupa string.',
 
                 // IMC PAS
                 'akses_topup_pulsa.string' => 'Akses top up pulsa harus berupa String.',
@@ -373,7 +373,7 @@ class VpasController extends Controller
                 'provider_internet' => $request->provider_internet,
                 'kecepatan_internet' => $request->kecepatan_internet,
                 'tarif_wartel' => $request->tarif_wartel,
-                'status_wartel' => $request->status_wartel ? 1 : 0,
+                'status_wartel' => $request->status_wartel,
                 'akses_topup_pulsa' => $request->akses_topup_pulsa,
                 'password_topup' => $request->password_topup,
                 'akses_download_rekaman' => $request->akses_download_rekaman,
@@ -605,7 +605,7 @@ class VpasController extends Controller
             ['Provider Internet', $dataOpsional->provider_internet ?? ''],
             ['Kecepatan Internet (mbps)', $dataOpsional->kecepatan_internet ?? ''],
             ['Tarif Wartel VPAS', $dataOpsional->tarif_wartel ?? ''],
-            ['Status Wartel', $dataOpsional->status_wartel ? 'Aktif' : 'Tidak Aktif'],
+            ['Status Wartel', $dataOpsional->status_wartel ?? ''],
             ['Akses Topup Pulsa', $dataOpsional->akses_topup_pulsa ?? ''],
             ['Password Topup', $dataOpsional->password_topup ?? ''],
             ['Akses Download Rekaman', $dataOpsional->akses_download_rekaman ?? ''],

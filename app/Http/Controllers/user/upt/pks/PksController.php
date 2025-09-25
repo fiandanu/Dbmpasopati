@@ -137,7 +137,7 @@ class PksController extends Controller
 
     public function exportListCsv(Request $request): StreamedResponse
     {
-        $query = Upt::with('uploadFolder')->where('tipe', 'pks');
+        $query = Upt::with('uploadFolder')->whereIn('tipe', ['vpas', 'reguler']);
         $query = $this->applyFilters($query, $request);
 
         // Add date sorting when date filters are applied
@@ -192,7 +192,7 @@ class PksController extends Controller
 
     public function exportListPdf(Request $request)
     {
-        $query = Upt::with('uploadFolder')->where('tipe', 'pks');
+        $query = Upt::with('uploadFolder')->whereIn('tipe', ['vpas', 'reguler']);
         $query = $this->applyFilters($query, $request);
 
         // Add date sorting when date filters are applied
@@ -232,60 +232,6 @@ class PksController extends Controller
         $filename = 'list_upt_pks_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
 
         return $pdf->download($filename);
-    }
-
-    public function exportVerticalCsv($id): StreamedResponse
-    {
-        $user = Upt::with('uploadFolder')->findOrFail($id);
-        $uploadFolder = $user->uploadFolder;
-
-        $filename = 'data_upt_pks_' . $user->namaupt . '.csv';
-
-        $headers = [
-            "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
-        ];
-
-        $rows = [
-            ['Nama UPT', $user->namaupt],
-            ['Kanwil', $user->kanwil],
-            ['Tipe', ucfirst($user->tipe)],
-            ['Tanggal Dibuat', \Carbon\Carbon::parse($user->tanggal)->format('d M Y')],
-            ['Status Upload PDF', $this->calculatePdfStatus($uploadFolder)],
-        ];
-
-        // Add PDF status
-        $hasFile = false;
-        if ($uploadFolder) {
-            $hasFile = !empty($uploadFolder->uploaded_pdf);
-        }
-        $rows[] = ["PDF File", $hasFile ? 'Ada' : 'Belum ada'];
-
-        $callback = function () use ($rows) {
-            $file = fopen('php://output', 'w');
-            foreach ($rows as $row) {
-                fputcsv($file, $row);
-            }
-            fclose($file);
-        };
-
-        return response()->stream($callback, 200, $headers);
-    }
-
-    public function exportPksPdf($id)
-    {
-        $user = Upt::with('uploadFolder')->findOrFail($id);
-
-        $data = [
-            'title' => 'Data UPT PKS ' . $user->namaupt,
-            'user' => $user,
-        ];
-
-        $pdf = Pdf::loadView('export.db.upt.uptPksPersonal', $data);
-        return $pdf->download('data_upt_pks_' . $user->namaupt . '.pdf');
     }
 
     public function DatabasePageDestroy($id)

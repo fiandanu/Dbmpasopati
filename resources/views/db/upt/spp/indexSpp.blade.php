@@ -159,9 +159,15 @@
                                             </div>
                                         </div>
                                     </th>
-                                    <th class="text-center align-top">
-                                        <div class="d-flex justify-content-center align-items-center flex-column gap-12">
+                                    <th class="text-center">
+                                        <div class="d-flex flex-column gap-12">
                                             <span>Tipe</span>
+                                            <div class="btn-searchbar column-search">
+                                                <span>
+                                                    <i class="fas fa-search"></i>
+                                                </span>
+                                                <input type="text" id="search-tipe" name="search_tipe">
+                                            </div>
                                         </div>
                                     </th>
                                     <th class="text-center">
@@ -253,16 +259,6 @@
                                                     title="Upload PDF">
                                                     <ion-icon name="folder-outline"></ion-icon>
                                                 </button>
-                                                <a href="{{ route('spp.export.spp.pdf', $d->id) }}" title="Unduh PDF">
-                                                    <button>
-                                                        <ion-icon name="document-outline"></ion-icon>
-                                                    </button>
-                                                </a>
-                                                <a href="{{ route('spp.export.spp.csv', $d->id) }}" title="Unduh CSV">
-                                                    <button>
-                                                        <ion-icon name="document-text-outline"></ion-icon>
-                                                    </button>
-                                                </a>
                                             </div>
                                         </td>
                                     </tr>
@@ -643,6 +639,7 @@
                 return {
                     search_namaupt: $('#search-namaupt').val().trim(),
                     search_kanwil: $('#search-kanwil').val().trim(),
+                    search_tipe: $('#search-tipe').val().trim(),
                     search_tanggal_dari: $('#search-tanggal-dari').val().trim(),
                     search_tanggal_sampai: $('#search-tanggal-sampai').val().trim(),
                     search_status: $('#search-status').val().trim(),
@@ -658,6 +655,7 @@
                 // Remove existing filter parameters
                 url.searchParams.delete('search_namaupt');
                 url.searchParams.delete('search_kanwil');
+                url.searchParams.delete('search_tipe');
                 url.searchParams.delete('search_tanggal_dari');
                 url.searchParams.delete('search_tanggal_sampai');
                 url.searchParams.delete('search_status');
@@ -763,6 +761,9 @@
             }
             if (urlParams.get('search_kanwil')) {
                 $('#search-kanwil').val(urlParams.get('search_kanwil'));
+            }
+            if (urlParams.get('search_tipe')) {
+                $('#search-tipe').val(urlParams.get('search_tipe'));
             }
             if (urlParams.get('search_tanggal_dari')) {
                 $('#search-tanggal-dari').val(urlParams.get('search_tanggal_dari'));

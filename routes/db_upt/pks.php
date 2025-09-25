@@ -14,10 +14,6 @@ Route::prefix('dbpks')->name('dbpks.')->group(function () {
     Route::get('/view-pdf/{id}', [PksController::class, 'viewUploadedPDF'])->name('viewpdf');
     Route::delete('/delete-pdf/{id}', [PksController::class, 'deleteFilePDF'])->name('deleteFilePDF');
 
-    // Export Data Personal
-    Route::get('/export-pks-csv/{id}', [PksController::class, 'exportVerticalCsv'])->name('export.pks.csv');
-    Route::get('/export-pks-pdf/{id}', [PksController::class, 'exportPksPdf'])->name('export.pks.pdf');
-
     // Export Global Data List
     Route::get('/export-pks-list-csv', [PksController::class, 'exportListCsv'])->name('export.pks.list.csv');
     Route::get('/export-pks-list-pdf', [PksController::class, 'exportListPdf'])->name('export.pks.list.pdf');

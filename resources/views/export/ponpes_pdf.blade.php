@@ -108,7 +108,7 @@
         </tr>
         <tr>
             <td>Status Wartel</td>
-            <td>{{ ($ponpes->dataOpsional->status_wartel ?? 0) == 1 ? 'Aktif' : 'Tidak Aktif' }}</td>
+            <td>{{ $ponpes->dataOpsional->status_wartel ?? '' }}</td>
         </tr>
 
 

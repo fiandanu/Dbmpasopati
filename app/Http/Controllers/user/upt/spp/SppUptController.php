@@ -244,63 +244,6 @@ class SppUptController extends Controller
         return $pdf->download($filename);
     }
 
-    public function exportVerticalCsv($id): StreamedResponse
-    {
-        $user = Upt::with('uploadFolder')->findOrFail($id);
-        $uploadFolder = $user->uploadFolder;
-
-        $filename = 'data_upt_' . strtolower($user->tipe) . '_' . $user->namaupt . '.csv';
-
-        $headers = [
-            "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
-        ];
-
-        $rows = [
-            ['Nama UPT', $user->namaupt],
-            ['Kanwil', $user->kanwil],
-            ['Tipe', ucfirst($user->tipe)],
-            ['Tanggal Dibuat', \Carbon\Carbon::parse($user->tanggal)->format('d M Y')],
-            ['Status Upload PDF', $this->calculatePdfStatus($uploadFolder)],
-        ];
-
-        // Add PDF status for each folder
-        for ($i = 1; $i <= 10; $i++) {
-            $hasFile = false;
-            if ($uploadFolder) {
-                $column = 'pdf_folder_' . $i;
-                $hasFile = !empty($uploadFolder->$column);
-            }
-            $rows[] = ["PDF Folder {$i}", $hasFile ? 'Ada' : 'Belum ada'];
-        }
-
-        $callback = function () use ($rows) {
-            $file = fopen('php://output', 'w');
-            foreach ($rows as $row) {
-                fputcsv($file, $row);
-            }
-            fclose($file);
-        };
-
-        return response()->stream($callback, 200, $headers);
-    }
-
-    public function exportUptPdf($id)
-    {
-        $user = Upt::with('uploadFolder')->findOrFail($id);
-
-        $data = [
-            'title' => 'Data UPT ' . strtoupper($user->tipe) . ' ' . $user->namaupt,
-            'user' => $user,
-        ];
-
-        $pdf = Pdf::loadView('export.db.upt.uptSppPersonal', $data);
-        return $pdf->download('data_upt_' . strtolower($user->tipe) . '_' . $user->namaupt . '.pdf');
-    }
-
     public function DatabasePageDestroy($id)
     {
         try {
