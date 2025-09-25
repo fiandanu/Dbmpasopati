@@ -405,7 +405,7 @@ class VpasController extends Controller
     public function UserPage(Request $request)
     {
         $dataupt = Upt::with(['dataOpsional', 'uploadFolder'])->get();
-        
+
         return view('user.indexUser', compact('dataupt'));
     }
 
@@ -605,7 +605,7 @@ class VpasController extends Controller
             ['Provider Internet', $dataOpsional->provider_internet ?? ''],
             ['Kecepatan Internet (mbps)', $dataOpsional->kecepatan_internet ?? ''],
             ['Tarif Wartel VPAS', $dataOpsional->tarif_wartel ?? ''],
-            ['Status Wartel', $dataOpsional->status_wartel ?? ''],
+            ['Status Wartel', $this->formatStatusWartel($dataOpsional->status_wartel ?? '')],
             ['Akses Topup Pulsa', $dataOpsional->akses_topup_pulsa ?? ''],
             ['Password Topup', $dataOpsional->password_topup ?? ''],
             ['Akses Download Rekaman', $dataOpsional->akses_download_rekaman ?? ''],
@@ -629,6 +629,24 @@ class VpasController extends Controller
         };
 
         return response()->stream($callback, 200, $headers);
+    }
+    private function formatStatusWartel($status)
+    {
+        if (empty($status)) {
+            return '';
+        }
+
+        // Normalisasi status ke format yang benar
+        $status = strtolower(trim($status));
+
+        if ($status === 'aktif' || $status === '1' || $status === 'active') {
+            return 'Aktif';
+        } elseif ($status === 'tidak aktif' || $status === 'nonaktif' || $status === '0' || $status === 'inactive') {
+            return 'Tidak Aktif';
+        }
+
+        // Jika sudah dalam format yang benar, kembalikan seperti semula
+        return ucfirst($status);
     }
 
     public function exportUptPdf($id)
