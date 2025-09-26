@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('provider_internet')->nullable();
             $table->string('kecepatan_internet')->nullable();
             $table->decimal('tarif_wartel', 10, 2)->nullable();
-            $table->boolean('status_wartel')->default(0);
+            $table->string('status_wartel')->nullable();
             $table->string('akses_topup_pulsa')->nullable();
             $table->string('password_topup')->nullable();
             $table->string('akses_download_rekaman')->nullable();

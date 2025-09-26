@@ -31,7 +31,7 @@
                                 <span class="checkmark">✓</span>
                                 100 Data
                             </div>
-                            <a href="{{ route('ponpes.pks.ListDataPks') }}" class="list-button">List Data PKS</a>
+                            <a href="{{ route('DbPonpes.pks.ListDataPks') }}" class="list-button">List Data PKS</a>
                         </div>
                     </div>
 
@@ -57,7 +57,7 @@
                                 <span class="checkmark">✓</span>
                                 100 Data
                             </div>
-                            <a href="{{ route('ListDataVtrend') }}" class="list-button">List Data
+                            <a href="{{ route('DbPonpes.ListDataVtrend') }}" class="list-button">List Data
                                 Vtren</a>
                         </div>
                     </div>
@@ -71,7 +71,7 @@
                                 <span class="checkmark">✓</span>
                                 100 Data
                             </div>
-                            <a href="{{ route('ListDataPonpes') }}" class="list-button">
+                            <a href="{{ route('ponpes.ListDataPonpes') }}" class="list-button">
                                 List Data PKS
                             </a>
                         </div>

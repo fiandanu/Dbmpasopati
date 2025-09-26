@@ -286,7 +286,7 @@ class RegullerController extends Controller
             'generated_at' => Carbon::now()->format('d M Y H:i:s')
         ];
 
-        $pdf = Pdf::loadView('export.db.upt.uptReguller', $pdfData);
+        $pdf = Pdf::loadView('export.public.db.upt.indexReguller', $pdfData);
         $filename = 'list_upt_reguler_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
 
         return $pdf->download($filename);
@@ -319,7 +319,7 @@ class RegullerController extends Controller
                 'provider_internet' => 'nullable|string|max:255',
                 'kecepatan_internet' => 'nullable|string|max:255',
                 'tarif_wartel' => 'nullable|numeric|min:0',
-                'status_wartel' => 'nullable|boolean',
+                'status_wartel' => 'nullable|string',
 
                 // IMC PAS
                 'akses_topup_pulsa' => 'nullable|string',
@@ -353,7 +353,7 @@ class RegullerController extends Controller
                 'kecepatan_internet.string' => 'Kecepatan internet harus berupa teks.',
                 'tarif_wartel.numeric' => 'Tarif wartel harus berupa angka.',
                 'tarif_wartel.min' => 'Tarif wartel tidak boleh negatif.',
-                'status_wartel.boolean' => 'Status wartel harus berupa boolean.',
+                'status_wartel.string' => 'Status wartel harus berupa string.',
 
                 // IMC PAS
                 'akses_topup_pulsa.string' => 'Akses top up pulsa harus berupa String.',
@@ -401,7 +401,7 @@ class RegullerController extends Controller
                 'provider_internet' => $request->provider_internet,
                 'kecepatan_internet' => $request->kecepatan_internet,
                 'tarif_wartel' => $request->tarif_wartel,
-                'status_wartel' => $request->status_wartel ? 1 : 0,
+                'status_wartel' => $request->status_wartel,
                 'akses_topup_pulsa' => $request->akses_topup_pulsa,
                 'password_topup' => $request->password_topup,
                 'akses_download_rekaman' => $request->akses_download_rekaman,
@@ -662,7 +662,7 @@ class RegullerController extends Controller
             'user' => $user,
         ];
 
-        $pdf = Pdf::loadView('export.uptReguler_pdf', $data);
+        $pdf = Pdf::loadView('export.private.upt.indexUpt', $data);
         return $pdf->download('data_upt_' . $user->namaupt . '.pdf');
     }
 }

@@ -238,7 +238,7 @@ class SppUptController extends Controller
             'generated_at' => Carbon::now()->format('d M Y H:i:s')
         ];
 
-        $pdf = Pdf::loadView('export.db.upt.uptSpp', $pdfData);
+        $pdf = Pdf::loadView('export.public.db.upt.indexSpp', $pdfData);
         $filename = 'list_upt_vpas_reguler_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
 
         return $pdf->download($filename);

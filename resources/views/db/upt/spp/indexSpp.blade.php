@@ -217,7 +217,7 @@
                                             <span
                                                 class="@if ($d->tipe == 'reguler') Tipereguller
                                                 @elseif($d->tipe == 'vpas') Tipevpas
-                                                @elseif($d->tipe == 'spp') Tipespp @endif">
+                                                @endif">
                                                 {{ ucfirst($d->tipe) }}
                                             </span>
                                         </td>

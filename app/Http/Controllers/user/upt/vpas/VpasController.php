@@ -267,7 +267,7 @@ class VpasController extends Controller
             'generated_at' => Carbon::now()->format('d M Y H:i:s')
         ];
 
-        $pdf = Pdf::loadView('export.db.upt.uptVpas', $pdfData);
+        $pdf = Pdf::loadView('export.private.upt.indexVpas', $pdfData);
         $filename = 'list_upt_vpas_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
 
         return $pdf->download($filename);
@@ -658,7 +658,7 @@ class VpasController extends Controller
             'user' => $user,
         ];
 
-        $pdf = Pdf::loadView('export.uptReguler_pdf', $data);
+        $pdf = Pdf::loadView('export.private.upt.indexUpt', $data);
         return $pdf->download('data_upt_vpas_' . $user->namaupt . '.pdf');
     }
 }

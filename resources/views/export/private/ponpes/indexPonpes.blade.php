@@ -108,7 +108,28 @@
         </tr>
         <tr>
             <td>Status Wartel</td>
-            <td>{{ $ponpes->dataOpsional->status_wartel ?? '' }}</td>
+            <td>
+                @php
+                    $status = $ponpes->dataOpsional->status_wartel ?? '';
+                    if (empty($status)) {
+                        echo '';
+                    } else {
+                        $status = strtolower(trim($status));
+                        if ($status === 'aktif' || $status === '1' || $status === 'active') {
+                            echo 'Aktif';
+                        } elseif (
+                            $status === 'tidak aktif' ||
+                            $status === 'nonaktif' ||
+                            $status === '0' ||
+                            $status === 'inactive'
+                        ) {
+                            echo 'Tidak Aktif';
+                        } else {
+                            echo ucfirst($status);
+                        }
+                    }
+                @endphp
+            </td>
         </tr>
 
 

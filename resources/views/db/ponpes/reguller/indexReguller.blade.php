@@ -10,7 +10,7 @@
                         <div class="d-flex justify-center align-items-center gap-12">
                             <button class="btn-pushmenu" data-widget="pushmenu" role="button">
                                 <i class="fas fa-bars"></i></button>
-                            <h1 class="headline-large-32 mb-0">List Data Vtren</h1>
+                            <h1 class="headline-large-32 mb-0">List Data Ponpes Reguler</h1>
                         </div>
 
                         <div class="d-flex align-items-center gap-2 flex-wrap">
@@ -21,7 +21,8 @@
                                     <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export CSV
                                 </button>
                                 <button onclick="downloadPdf()"
-                                    class="btn-page d-flex justify-content-center align-items-center" title="Download PDF">
+                                    class="btn-page d-flex justify-content-center align-items-center" title="Download PDF"
+                                    title="Download PDF">
                                     <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PDF
                                 </button>
                             </div>
@@ -31,7 +32,7 @@
             </div>
         </section>
 
-        <!-- Alert messages -->
+        <!-- Alert messages tetap sama -->
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mx-4" role="alert">
                 <div class="d-flex">
@@ -112,7 +113,7 @@
                         <div class="alert alert-info">
                             <i class="fas fa-info-circle"></i>
                             Hasil pencarian untuk: "<strong>{{ request('table_search') }}</strong>"
-                            <a href="{{ route('DbPonpes.ListDataVtrend') }}" class="btn btn-sm btn-secondary ml-2">
+                            <a href="{{ route('ponpes.ListDataPonpes') }}" class="btn btn-sm btn-secondary ml-2">
                                 <i class="fas fa-times"></i> Clear
                             </a>
                         </div>
@@ -123,7 +124,7 @@
                         <table class="table table-hover text-nowrap" id="Table">
                             <thead>
                                 <tr>
-                                    <th class="text-center align-top">
+                                    <th class=" text-center align-top">
                                         <div class="d-flex flex-column gap-12">
                                             <span>No</span>
                                             <div class="d-flex align-items-center gap-2">
@@ -141,7 +142,7 @@
                                                 <span>
                                                     <i class="fas fa-search"></i>
                                                 </span>
-                                                <input type="text" id="search-namaponpes" name="search_namaponpes">
+                                                <input type="text" id="search-nama-ponpes" name="search_nama_ponpes">
                                             </div>
                                         </div>
                                     </th>
@@ -152,7 +153,8 @@
                                                 <span>
                                                     <i class="fas fa-search"></i>
                                                 </span>
-                                                <input type="text" id="search-wilayah" name="search_wilayah">
+                                                <input type="text" id="search-nama-wilayah"
+                                                    name="search_nama_wilayah">
                                             </div>
                                         </div>
                                     </th>
@@ -162,7 +164,7 @@
                                         </div>
                                     </th>
                                     <th class="text-center">
-                                        <div class="d-flex flex-column gap-12">
+                                        <div class="d-flex flex-column gap-12 ">
                                             <span>Tanggal</span>
                                             <div class="d-flex justify-content-center align-items-center gap-12">
                                                 <div class="btn-searchbar column-search">
@@ -192,7 +194,7 @@
                             </thead>
                             <tbody>
                                 @php
-                                    // Calculate starting number for pagination
+                                    // Ubah dari $no = 1; menjadi:
                                     if (request('per_page') == 'all') {
                                         $no = 1;
                                     } else {
@@ -205,7 +207,7 @@
                                         <td>{{ $d->nama_ponpes }}</td>
                                         <td><span class="tag tag-success">{{ $d->nama_wilayah }}</span></td>
                                         <td class="text-center">
-                                            <span class="Tipevpas">{{ ucfirst($d->tipe) }}</span>
+                                            <span class="Tipereguller">{{ ucfirst($d->tipe) }}</span>
                                         </td>
                                         <td class="text-center">
                                             {{ \Carbon\Carbon::parse($d->tanggal)->translatedFormat('M d Y') }}
@@ -261,12 +263,12 @@
                                                 data-target="#editModal{{ $d->id }}" title="Edit">
                                                 <ion-icon name="pencil-outline"></ion-icon>
                                             </button>
-                                            <a href="{{ route('DbPonpes.exportPonpesPdf', $d->id) }}" title="Unduh PDF">
+                                            <a href="{{ route('ponpes.exportPonpesPdf', $d->id) }}" title="Unduh PDF">
                                                 <button>
                                                     <ion-icon name="document-outline"></ion-icon>
                                                 </button>
                                             </a>
-                                            <a href="{{ route('DbPonpes.exportPonpesCsv', $d->id) }}" title="Unduh CSV">
+                                            <a href="{{ route('ponpes.exportPonpesCsv', $d->id) }}" title="Unduh CSV">
                                                 <button>
                                                     <ion-icon name="document-text-outline"></ion-icon>
                                                 </button>
@@ -279,7 +281,7 @@
                                         <td colspan="7" class="text-center py-4">
                                             <div class="text-muted">
                                                 <i class="fas fa-info-circle fa-2x mb-2"></i>
-                                                <p>Tidak ada data Vtren yang tersedia</p>
+                                                <p>Tidak ada data Ponpes yang tersedia</p>
                                             </div>
                                         </td>
                                     </tr>
@@ -288,19 +290,19 @@
                         </table>
                     </div>
 
-                    <!-- Modal edit for each item -->
+                    <!-- Modal edit tetap sama -->
                     @foreach ($data as $d)
                         <div class="modal fade" id="editModal{{ $d->id }}" tabindex="-1"
                             aria-labelledby="editModalLabel{{ $d->id }}" aria-hidden="true">
                             <form id="editForm{{ $d->id }}"
-                                action="{{ route('DbPonpes.ListDataPonpesUpdate', ['id' => $d->id]) }}" method="POST">
+                                action="{{ route('ponpes.ListDataPonpesUpdate', ['id' => $d->id]) }}" method="POST">
                                 @csrf
                                 @method('PUT')
                                 <div class="modal-dialog modal-lg">
                                     <div class="modal-content">
                                         <div class="modal-header">
                                             <label class="modal-title" id="editModalLabel{{ $d->id }}">Edit
-                                                Data Vtren</label>
+                                                Data</label>
                                             <button type="button" class="btn-close-custom" data-dismiss="modal"
                                                 aria-label="Close">
                                                 <i class="bi bi-x"></i>
@@ -376,7 +378,8 @@
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="jumlah_line{{ $d->id }}" class="form-label">Jumlah
-                                                        Line Reguler Terpasang</label>
+                                                        Line
+                                                        Reguler Terpasang</label>
                                                     <input type="number" class="form-control"
                                                         id="jumlah_line{{ $d->id }}" name="jumlah_line"
                                                         value="{{ $dataOpsional->jumlah_line ?? '' }}"
@@ -410,11 +413,12 @@
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="tarif_wartel{{ $d->id }}" class="form-label">Tarif
-                                                        Wartel Reguler</label>
+                                                        Wartel
+                                                        Reguler</label>
                                                     <input type="text" class="form-control"
                                                         id="tarif_wartel{{ $d->id }}" name="tarif_wartel"
                                                         value="{{ $dataOpsional->tarif_wartel ?? '' }}"
-                                                        placeholder="Contoh: Rp 2.000 / menit">
+                                                        placeholder="Contoh: 2000">
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="status_wartel{{ $d->id }}"
@@ -429,8 +433,8 @@
                                                         </option>
                                                         <option value="Tidak Aktif"
                                                             {{ ($dataOpsional->status_wartel ?? '') == 'Tidak Aktif' ? 'selected' : '' }}>
-                                                            Tidak Aktif
-                                                        </option>
+                                                            Tidak
+                                                            Aktif</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -482,7 +486,7 @@
                                             <!-- Akses VPN Section -->
                                             <div class="mb-4">
                                                 <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                    <label>VPN</label>
+                                                    <label>Akses VPN</label>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="internet_protocol{{ $d->id }}"
@@ -560,7 +564,7 @@
                                                         pada baris
                                                         terpisah</small>
                                                     <textarea class="form-control" id="no_extension{{ $d->id }}" name="no_extension" rows="6"
-                                                        placeholder="Contoh:&#10;No Extension&#10;No Extension&#10;No Extension">{{ $dataOpsional->no_extension ?? '' }}</textarea>
+                                                        placeholder="Contoh:&#10;101&#10;102&#10;103">{{ $dataOpsional->no_extension ?? '' }}</textarea>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="extension_password{{ $d->id }}"
@@ -570,7 +574,7 @@
                                                         extension pada
                                                         baris terpisah (sesuai urutan nomor extension di atas)</small>
                                                     <textarea class="form-control" id="extension_password{{ $d->id }}" name="extension_password" rows="6"
-                                                        placeholder="Contoh:&#10;password&#10;password&#10;password">{{ $dataOpsional->extension_password ?? '' }}</textarea>
+                                                        placeholder="Contoh:&#10;password1&#10;password2&#10;password3">{{ $dataOpsional->extension_password ?? '' }}</textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -597,13 +601,13 @@
                                 @if (request('table_search'))
                                     <input type="hidden" name="table_search" value="{{ request('table_search') }}">
                                 @endif
-                                @if (request('search_namaponpes'))
-                                    <input type="hidden" name="search_namaponpes"
-                                        value="{{ request('search_namaponpes') }}">
+                                @if (request('search_nama_ponpes'))
+                                    <input type="hidden" name="search_nama_ponpes"
+                                        value="{{ request('search_nama_ponpes') }}">
                                 @endif
-                                @if (request('search_wilayah'))
-                                    <input type="hidden" name="search_wilayah"
-                                        value="{{ request('search_wilayah') }}">
+                                @if (request('search_nama_wilayah'))
+                                    <input type="hidden" name="search_nama_wilayah"
+                                        value="{{ request('search_nama_wilayah') }}">
                                 @endif
                                 @if (request('search_tipe'))
                                     <input type="hidden" name="search_tipe" value="{{ request('search_tipe') }}">
@@ -687,8 +691,8 @@
             // Function to get current filter values
             function getFilters() {
                 return {
-                    search_namaponpes: $('#search-namaponpes').val().trim(),
-                    search_wilayah: $('#search-wilayah').val().trim(),
+                    search_nama_ponpes: $('#search-nama-ponpes').val().trim(),
+                    search_nama_wilayah: $('#search-nama-wilayah').val().trim(),
                     search_tanggal_dari: $('#search-tanggal-dari').val().trim(),
                     search_tanggal_sampai: $('#search-tanggal-sampai').val().trim(),
                     search_status: $('#search-status').val().trim(),
@@ -702,8 +706,8 @@
                 let url = new URL(window.location.href);
 
                 // Remove existing filter parameters
-                url.searchParams.delete('search_namaponpes');
-                url.searchParams.delete('search_wilayah');
+                url.searchParams.delete('search_nama_ponpes');
+                url.searchParams.delete('search_nama_wilayah');
                 url.searchParams.delete('search_tanggal_dari');
                 url.searchParams.delete('search_tanggal_sampai');
                 url.searchParams.delete('search_status');
@@ -722,8 +726,8 @@
             // Function to clear all search filters (GLOBAL - bisa dipanggil dari tombol Reset)
             window.clearAllFilters = function() {
                 // Clear semua input field dulu
-                $('#search-namaponpes').val('');
-                $('#search-wilayah').val('');
+                $('#search-nama-ponpes').val('');
+                $('#search-nama-wilayah').val('');
                 $('#search-tanggal-dari').val('');
                 $('#search-tanggal-sampai').val('');
                 $('#search-status').val('');
@@ -732,8 +736,8 @@
 
                 // Remove all search parameters
                 url.searchParams.delete('table_search');
-                url.searchParams.delete('search_namaponpes');
-                url.searchParams.delete('search_wilayah');
+                url.searchParams.delete('search_nama_ponpes');
+                url.searchParams.delete('search_nama_wilayah');
                 url.searchParams.delete('search_tipe');
                 url.searchParams.delete('search_tanggal_dari');
                 url.searchParams.delete('search_tanggal_sampai');
@@ -762,7 +766,7 @@
                 let filters = getFilters();
                 let form = document.createElement('form');
                 form.method = 'GET';
-                form.action = '{{ route('DbPonpes.vtren.export.list.csv') }}'; // Update sesuai route Vtren
+                form.action = '{{ route('ponpes.export.list.csv') }}';
                 form.target = '_blank';
 
                 Object.keys(filters).forEach(key => {
@@ -784,7 +788,7 @@
                 let filters = getFilters();
                 let form = document.createElement('form');
                 form.method = 'GET';
-                form.action = '{{ route('DbPonpes.vtren.export.list.pdf') }}'; // Update sesuai route Vtren
+                form.action = '{{ route('ponpes.export.list.pdf') }}';
                 form.target = '_blank';
 
                 Object.keys(filters).forEach(key => {
@@ -804,11 +808,11 @@
 
             // Load filter values from URL on page load
             const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('search_namaponpes')) {
-                $('#search-namaponpes').val(urlParams.get('search_namaponpes'));
+            if (urlParams.get('search_nama_ponpes')) {
+                $('#search-nama-ponpes').val(urlParams.get('search_nama_ponpes'));
             }
-            if (urlParams.get('search_wilayah')) {
-                $('#search-wilayah').val(urlParams.get('search_wilayah'));
+            if (urlParams.get('search_nama_wilayah')) {
+                $('#search-nama-wilayah').val(urlParams.get('search_nama_wilayah'));
             }
             if (urlParams.get('search_tanggal_dari')) {
                 $('#search-tanggal-dari').val(urlParams.get('search_tanggal_dari'));
