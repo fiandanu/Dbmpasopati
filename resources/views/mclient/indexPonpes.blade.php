@@ -31,7 +31,7 @@
                                 <span class="checkmark">✓</span>
                                 100 Data
                             </div>
-                            <a href="{{ route('ListDataMclientPonpesVtren') }}" class="list-button">Data VTREN</a>
+                            <a href="{{ route('mcvtren.ListDataMclientVtren') }}" class="list-button">Data VTREN</a>
                         </div>
                     </div>
 

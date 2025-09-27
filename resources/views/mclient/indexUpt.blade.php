@@ -31,7 +31,7 @@
                                 <span class="checkmark">✓</span>
                                 100 Data
                             </div>
-                            <a href="{{ route('ListDataMclientVpas') }}" class="list-button">List Data VPAS</a>
+                            <a href="{{ route('mcvpas.ListDataMclientVpas') }}" class="list-button">List Data VPAS</a>
                         </div>
                     </div>
 
@@ -44,7 +44,7 @@
                                 <span class="checkmark">✓</span>
                                 100 Data
                             </div>
-                            <a href="{{ route('ListDataMclientReguller') }}" class="list-button">List Data Reguller</a>
+                            <a href="{{ route('mcreguler.ListDataMclientReguller') }}" class="list-button">List Data Reguller</a>
                         </div>
                     </div>
 

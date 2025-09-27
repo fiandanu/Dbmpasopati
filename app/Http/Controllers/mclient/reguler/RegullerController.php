@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 use App\Models\user\Kendala;
 use App\Models\user\Pic;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class RegullerController extends Controller
 {
@@ -48,9 +50,49 @@ class RegullerController extends Controller
     {
         $query = Reguller::query();
 
+        // Apply filters
+        $query = $this->applyFilters($query, $request);
+
+        // Get per_page from request, default 10
+        $perPage = $request->get('per_page', 10);
+
+        // Validate per_page
+        if (!in_array($perPage, [10, 15, 20, 'all'])) {
+            $perPage = 20;
+        }
+
+        // Handle pagination
+        if ($perPage == 'all') {
+            $data = $query->orderBy('created_at', 'desc')->get();
+
+            // Create a mock paginator for "all" option
+            $data = new \Illuminate\Pagination\LengthAwarePaginator(
+                $data,
+                $data->count(),
+                99999,
+                1,
+                ['path' => $request->url(), 'query' => $request->query()]
+            );
+        } else {
+            $data = $query->orderBy('created_at', 'desc')->paginate($perPage);
+        }
+
+        $jenisKendala = Kendala::orderBy('jenis_kendala')->get();
+        $picList = Pic::orderBy('nama_pic')->get();
+
+        $uptList = Upt::select('namaupt', 'kanwil')
+            ->where('tipe', 'reguler')
+            ->orderBy('namaupt')
+            ->get();
+
+        return view('mclient.upt.indexReguller', compact('data', 'jenisKendala', 'picList', 'uptList'));
+    }
+
+     private function applyFilters($query, Request $request)
+    {
+        // Global search
         if ($request->has('table_search') && !empty($request->table_search)) {
             $searchTerm = $request->table_search;
-
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('nama_upt', 'LIKE', '%' . $searchTerm . '%')
                     ->orWhere('kanwil', 'LIKE', '%' . $searchTerm . '%')
@@ -64,16 +106,41 @@ class RegullerController extends Controller
             });
         }
 
-        $data = $query->orderBy('created_at', 'desc')->paginate(10);
+        // Column-specific searches
+        if ($request->has('search_nama_upt') && !empty($request->search_nama_upt)) {
+            $query->where('nama_upt', 'LIKE', '%' . $request->search_nama_upt . '%');
+        }
+        if ($request->has('search_kanwil') && !empty($request->search_kanwil)) {
+            $query->where('kanwil', 'LIKE', '%' . $request->search_kanwil . '%');
+        }
+        if ($request->has('search_jenis_kendala') && !empty($request->search_jenis_kendala)) {
+            $query->where('jenis_kendala', 'LIKE', '%' . $request->search_jenis_kendala . '%');
+        }
+        if ($request->has('search_status') && !empty($request->search_status)) {
+            $query->where('status', 'LIKE', '%' . $request->search_status . '%');
+        }
+        if ($request->has('search_pic_1') && !empty($request->search_pic_1)) {
+            $query->where('pic_1', 'LIKE', '%' . $request->search_pic_1 . '%');
+        }
+        if ($request->has('search_pic_2') && !empty($request->search_pic_2)) {
+            $query->where('pic_2', 'LIKE', '%' . $request->search_pic_2 . '%');
+        }
 
-        $jenisKendala = Kendala::orderBy('jenis_kendala')->get();
-        $picList = Pic::orderBy('nama_pic')->get();
-        $uptList = Upt::select('namaupt', 'kanwil')
-            ->where('tipe', 'reguler')
-            ->orderBy('namaupt')
-            ->get();
+        // Date range filtering
+        if ($request->has('search_tanggal_terlapor_dari') && !empty($request->search_tanggal_terlapor_dari)) {
+            $query->whereDate('tanggal_terlapor', '>=', $request->search_tanggal_terlapor_dari);
+        }
+        if ($request->has('search_tanggal_terlapor_sampai') && !empty($request->search_tanggal_terlapor_sampai)) {
+            $query->whereDate('tanggal_terlapor', '<=', $request->search_tanggal_terlapor_sampai);
+        }
+        if ($request->has('search_tanggal_selesai_dari') && !empty($request->search_tanggal_selesai_dari)) {
+            $query->whereDate('tanggal_selesai', '>=', $request->search_tanggal_selesai_dari);
+        }
+        if ($request->has('search_tanggal_selesai_sampai') && !empty($request->search_tanggal_selesai_sampai)) {
+            $query->whereDate('tanggal_selesai', '<=', $request->search_tanggal_selesai_sampai);
+        }
 
-        return view('mclient.upt.indexReguller', compact('data', 'jenisKendala', 'picList', 'uptList'));
+        return $query;
     }
 
     public function MclientRegullerStore(Request $request)
@@ -242,6 +309,84 @@ class RegullerController extends Controller
         }
     }
 
+    public function exportListPdf(Request $request)
+    {
+        $query = Reguller::query();
+        $query = $this->applyFilters($query, $request);
+
+        // Add date sorting when date filters are applied
+        if ($request->filled('search_tanggal_terlapor_dari') || $request->filled('search_tanggal_terlapor_sampai') ||
+            $request->filled('search_tanggal_selesai_dari') || $request->filled('search_tanggal_selesai_sampai')) {
+            $query = $query->orderBy('tanggal_terlapor', 'asc');
+        }
+
+        $data = $query->orderBy('created_at', 'desc')->get();
+
+        $pdfData = [
+            'title' => 'List Data Monitoring Client Reguler',
+            'data' => $data,
+            'generated_at' => Carbon::now()->format('d M Y H:i:s')
+        ];
+
+        $pdf = Pdf::loadView('export.public.mclient.upt.indexReguller', $pdfData);
+        $filename = 'list_monitoring_client_reguler_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
+
+        return $pdf->download($filename);
+    }
+
+    public function exportListCsv(Request $request): StreamedResponse
+    {
+        $query = Reguller::query();
+        $query = $this->applyFilters($query, $request);
+
+        // Add date sorting when date filters are applied
+        if ($request->filled('search_tanggal_terlapor_dari') || $request->filled('search_tanggal_terlapor_sampai') ||
+            $request->filled('search_tanggal_selesai_dari') || $request->filled('search_tanggal_selesai_sampai')) {
+            $query = $query->orderBy('tanggal_terlapor', 'asc');
+        }
+
+        $data = $query->orderBy('created_at', 'desc')->get();
+
+        $filename = 'list_monitoring_client_reguler_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
+
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+
+        $rows = [['No', 'Nama UPT', 'Kanwil', 'Jenis Kendala', 'Detail Kendala', 'Tanggal Terlapor', 'Tanggal Selesai', 'Durasi (Hari)', 'Status', 'PIC 1', 'PIC 2', 'Dibuat Pada']];
+        $no = 1;
+        foreach ($data as $row) {
+            $rows[] = [
+                $no++,
+                $row->nama_upt,
+                $row->kanwil,
+                $row->jenis_kendala,
+                $row->detail_kendala,
+                $row->tanggal_terlapor ? $row->tanggal_terlapor->format('Y-m-d') : '',
+                $row->tanggal_selesai ? $row->tanggal_selesai->format('Y-m-d') : '',
+                $row->durasi_hari,
+                $row->status,
+                $row->pic_1,
+                $row->pic_2,
+                $row->created_at ? $row->created_at->format('Y-m-d H:i:s') : ''
+            ];
+        }
+
+        $callback = function () use ($rows) {
+            $file = fopen('php://output', 'w');
+            foreach ($rows as $row) {
+                fputcsv($file, $row);
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
     public function exportCsv()
     {
         $data = Reguller::orderBy('created_at', 'desc')->get();
@@ -306,7 +451,6 @@ class RegullerController extends Controller
         $statusProses = Reguller::where('status', 'proses')->count();
         $statusSelesai = Reguller::where('status', 'selesai')->count();
         $statusTerjadwal = Reguller::where('status', 'terjadwal')->count();
-
 
         $bulanIni = Reguller::whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)

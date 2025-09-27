@@ -10,6 +10,10 @@ use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 use App\Models\user\Kendala;
 use App\Models\user\Pic;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Barryvdh\DomPDF\Facade\Pdf;
+
+
 
 class VtrenController extends Controller
 {
@@ -44,13 +48,53 @@ class VtrenController extends Controller
         ];
     }
 
-    public function ListDataMclientPonpesVtren(Request $request)
+    public function ListDataMclientVtren(Request $request)
     {
         $query = Vtren::query();
 
+        // Apply filters
+        $query = $this->applyFilters($query, $request);
+
+        // Get per_page from request, default 10
+        $perPage = $request->get('per_page', 10);
+
+        // Validate per_page
+        if (!in_array($perPage, [10, 15, 20, 'all'])) {
+            $perPage = 20;
+        }
+
+        // Handle pagination
+        if ($perPage == 'all') {
+            $data = $query->orderBy('created_at', 'desc')->get();
+
+            // Create a mock paginator for "all" option
+            $data = new \Illuminate\Pagination\LengthAwarePaginator(
+                $data,
+                $data->count(),
+                99999,
+                1,
+                ['path' => $request->url(), 'query' => $request->query()]
+            );
+        } else {
+            $data = $query->orderBy('created_at', 'desc')->paginate($perPage);
+        }
+
+        $jenisKendala = Kendala::orderBy('jenis_kendala')->get();
+        $picList = Pic::orderBy('nama_pic')->get();
+
+        $ponpesList = Ponpes::select('nama_ponpes', 'nama_wilayah')
+            ->where('tipe', 'vtren')
+            ->orderBy('nama_ponpes')
+            ->get();
+
+        return view('mclient.ponpes.indexVtren', compact('data', 'jenisKendala', 'picList', 'ponpesList'));
+    }
+
+     private function applyFilters($query, Request $request)
+    {
+        // Global search
         if ($request->has('table_search') && !empty($request->table_search)) {
             $searchTerm = $request->table_search;
-
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('nama_ponpes', 'LIKE', '%' . $searchTerm . '%')
                     ->orWhere('nama_wilayah', 'LIKE', '%' . $searchTerm . '%')
@@ -64,20 +108,44 @@ class VtrenController extends Controller
             });
         }
 
-        $data = $query->orderBy('created_at', 'desc')->paginate(10);
+        // Column-specific searches
+        if ($request->has('search_nama_ponpes') && !empty($request->search_nama_ponpes)) {
+            $query->where('nama_ponpes', 'LIKE', '%' . $request->search_nama_ponpes . '%');
+        }
+        if ($request->has('search_nama_wilayah') && !empty($request->search_nama_wilayah)) {
+            $query->where('nama_wilayah', 'LIKE', '%' . $request->search_nama_wilayah . '%');
+        }
+        if ($request->has('search_jenis_kendala') && !empty($request->search_jenis_kendala)) {
+            $query->where('jenis_kendala', 'LIKE', '%' . $request->search_jenis_kendala . '%');
+        }
+        if ($request->has('search_status') && !empty($request->search_status)) {
+            $query->where('status', 'LIKE', '%' . $request->search_status . '%');
+        }
+        if ($request->has('search_pic_1') && !empty($request->search_pic_1)) {
+            $query->where('pic_1', 'LIKE', '%' . $request->search_pic_1 . '%');
+        }
+        if ($request->has('search_pic_2') && !empty($request->search_pic_2)) {
+            $query->where('pic_2', 'LIKE', '%' . $request->search_pic_2 . '%');
+        }
 
-        $jenisKendala = Kendala::orderBy('jenis_kendala')->get();
-        $picList = Pic::orderBy('nama_pic')->get();
+        // Date range filtering
+        if ($request->has('search_tanggal_terlapor_dari') && !empty($request->search_tanggal_terlapor_dari)) {
+            $query->whereDate('tanggal_terlapor', '>=', $request->search_tanggal_terlapor_dari);
+        }
+        if ($request->has('search_tanggal_terlapor_sampai') && !empty($request->search_tanggal_terlapor_sampai)) {
+            $query->whereDate('tanggal_terlapor', '<=', $request->search_tanggal_terlapor_sampai);
+        }
+        if ($request->has('search_tanggal_selesai_dari') && !empty($request->search_tanggal_selesai_dari)) {
+            $query->whereDate('tanggal_selesai', '>=', $request->search_tanggal_selesai_dari);
+        }
+        if ($request->has('search_tanggal_selesai_sampai') && !empty($request->search_tanggal_selesai_sampai)) {
+            $query->whereDate('tanggal_selesai', '<=', $request->search_tanggal_selesai_sampai);
+        }
 
-        $ponpesList = Ponpes::select('nama_ponpes', 'nama_wilayah', 'tipe')
-            ->where('tipe', 'vtren')
-            ->orderBy('nama_ponpes')
-            ->get();
-
-        return view('mclient.ponpes.indexVtren', compact('data', 'jenisKendala', 'picList', 'ponpesList'));
+        return $query;
     }
 
-    public function MclientPonpesVtrenStore(Request $request)
+    public function MclientVtrenStore(Request $request)
     {
         $validator = Validator::make(
             $request->all(),
@@ -97,10 +165,10 @@ class VtrenController extends Controller
                 'nama_ponpes.required' => 'Nama Ponpes harus diisi.',
                 'nama_ponpes.string' => 'Nama Ponpes harus berupa teks.',
                 'nama_ponpes.max' => 'Nama Ponpes tidak boleh lebih dari 255 karakter.',
-                'nama_wilayah.string' => 'Nama wilayah harus berupa teks.',
-                'nama_wilayah.max' => 'Nama wilayah tidak boleh lebih dari 255 karakter.',
-                'jenis_kendala.string' => 'Kendala VTREN harus berupa teks.',
-                'detail_kendala.string' => 'Detail kendala VTREN harus berupa teks.',
+                'nama_wilayah.string' => 'Nama Wilayah harus berupa teks.',
+                'nama_wilayah.max' => 'Nama Wilayah tidak boleh lebih dari 255 karakter.',
+                'jenis_kendala.string' => 'Kendala Vtren harus berupa teks.',
+                'detail_kendala.string' => 'Detail kendala Vtren harus berupa teks.',
                 'tanggal_terlapor.date' => 'Format tanggal terlapor harus valid.',
                 'tanggal_selesai.date' => 'Format tanggal selesai harus valid.',
                 'tanggal_selesai.after_or_equal' => 'Tanggal selesai tidak boleh lebih awal dari tanggal terlapor.',
@@ -132,7 +200,7 @@ class VtrenController extends Controller
 
             Vtren::create($data);
 
-            return redirect()->route('ListDataMclientPonpesVtren')->with('success', 'Data monitoring client Ponpes VTREN berhasil ditambahkan!');
+            return redirect()->back()->with('success', 'Data monitoring client Vtren berhasil ditambahkan!');
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
@@ -140,7 +208,7 @@ class VtrenController extends Controller
         }
     }
 
-    public function MclientPonpesVtrenUpdate(Request $request, $id)
+    public function MclientVtrenUpdate(Request $request, $id)
     {
         $validator = Validator::make(
             $request->all(),
@@ -160,10 +228,10 @@ class VtrenController extends Controller
                 'nama_ponpes.required' => 'Nama Ponpes harus diisi.',
                 'nama_ponpes.string' => 'Nama Ponpes harus berupa teks.',
                 'nama_ponpes.max' => 'Nama Ponpes tidak boleh lebih dari 255 karakter.',
-                'nama_wilayah.string' => 'Nama wilayah harus berupa teks.',
-                'nama_wilayah.max' => 'Nama wilayah tidak boleh lebih dari 255 karakter.',
-                'jenis_kendala.string' => 'Kendala VTREN harus berupa teks.',
-                'detail_kendala.string' => 'Detail kendala VTREN harus berupa teks.',
+                'nama_wilayah.string' => 'Nama Wilayah harus berupa teks.',
+                'nama_wilayah.max' => 'Nama Wilayah tidak boleh lebih dari 255 karakter.',
+                'jenis_kendala.string' => 'Kendala Vtren harus berupa teks.',
+                'detail_kendala.string' => 'Detail kendala Vtren harus berupa teks.',
                 'tanggal_terlapor.date' => 'Format tanggal terlapor harus valid.',
                 'tanggal_selesai.date' => 'Format tanggal selesai harus valid.',
                 'tanggal_selesai.after_or_equal' => 'Tanggal selesai tidak boleh lebih awal dari tanggal terlapor.',
@@ -220,7 +288,7 @@ class VtrenController extends Controller
 
             $data->update($updateData);
 
-            return redirect()->route('ListDataMclientPonpesVtren')->with('success', 'Data monitoring client Ponpes VTREN berhasil diupdate!');
+            return redirect()->back()->with('success', 'Data monitoring client Vtren berhasil diupdate!');
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
@@ -228,26 +296,104 @@ class VtrenController extends Controller
         }
     }
 
-    public function MclientPonpesVtrenDestroy($id)
+    public function MclientVtrenDestroy($id)
     {
         try {
             $data = Vtren::findOrFail($id);
-            $namaPonpes = $data->nama_ponpes;
+            $nama_ponpes = $data->nama_ponpes;
             $data->delete();
 
-            return redirect()->route('ListDataMclientPonpesVtren')
-                ->with('success', "Data monitoring client VTREN di Ponpes '{$namaPonpes}' berhasil dihapus!");
+            return redirect()->back()
+                ->with('success', "Data monitoring client Vtren di Ponpes '{$nama_ponpes}' berhasil dihapus!");
         } catch (\Exception $e) {
-            return redirect()->route('ListDataMclientPonpesVtren')
+            return redirect()->back()
                 ->with('error', 'Gagal menghapus data: ' . $e->getMessage());
         }
+    }
+
+        public function exportListPdf(Request $request)
+    {
+        $query = Vtren::query();
+        $query = $this->applyFilters($query, $request);
+
+        // Add date sorting when date filters are applied
+        if ($request->filled('search_tanggal_terlapor_dari') || $request->filled('search_tanggal_terlapor_sampai') ||
+            $request->filled('search_tanggal_selesai_dari') || $request->filled('search_tanggal_selesai_sampai')) {
+            $query = $query->orderBy('tanggal_terlapor', 'asc');
+        }
+
+        $data = $query->orderBy('created_at', 'desc')->get();
+
+        $pdfData = [
+            'title' => 'List Data Monitoring Client Vtren',
+            'data' => $data,
+            'generated_at' => Carbon::now()->format('d M Y H:i:s')
+        ];
+
+        $pdf = Pdf::loadView('export.public.mclient.ponpes.indexVtren', $pdfData);
+        $filename = 'list_monitoring_client_vtren_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
+
+        return $pdf->download($filename);
+    }
+
+    public function exportListCsv(Request $request): StreamedResponse
+    {
+        $query = Vtren::query();
+        $query = $this->applyFilters($query, $request);
+
+        // Add date sorting when date filters are applied
+        if ($request->filled('search_tanggal_terlapor_dari') || $request->filled('search_tanggal_terlapor_sampai') ||
+            $request->filled('search_tanggal_selesai_dari') || $request->filled('search_tanggal_selesai_sampai')) {
+            $query = $query->orderBy('tanggal_terlapor', 'asc');
+        }
+
+        $data = $query->orderBy('created_at', 'desc')->get();
+
+        $filename = 'list_monitoring_client_vtren_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
+
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+
+        $rows = [['No', 'Nama Ponpes', 'Nama Wilayah', 'Jenis Kendala', 'Detail Kendala', 'Tanggal Terlapor', 'Tanggal Selesai', 'Durasi (Hari)', 'Status', 'PIC 1', 'PIC 2', 'Dibuat Pada']];
+        $no = 1;
+        foreach ($data as $row) {
+            $rows[] = [
+                $no++,
+                $row->nama_ponpes,
+                $row->nama_wilayah,
+                $row->jenis_kendala,
+                $row->detail_kendala,
+                $row->tanggal_terlapor ? $row->tanggal_terlapor->format('Y-m-d') : '',
+                $row->tanggal_selesai ? $row->tanggal_selesai->format('Y-m-d') : '',
+                $row->durasi_hari,
+                $row->status,
+                $row->pic_1,
+                $row->pic_2,
+                $row->created_at ? $row->created_at->format('Y-m-d H:i:s') : ''
+            ];
+        }
+
+        $callback = function () use ($rows) {
+            $file = fopen('php://output', 'w');
+            foreach ($rows as $row) {
+                fputcsv($file, $row);
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 
     public function exportCsv()
     {
         $data = Vtren::orderBy('created_at', 'desc')->get();
 
-        $filename = 'monitoring_client_ponpes_vtren_' . date('Y-m-d_H-i-s') . '.csv';
+        $filename = 'monitoring_client_vtren_' . date('Y-m-d_H-i-s') . '.csv';
 
         $headers = [
             "Content-type" => "text/csv",
@@ -263,7 +409,7 @@ class VtrenController extends Controller
             fputcsv($file, [
                 'Nama Ponpes',
                 'Nama Wilayah',
-                'Kendala VTREN',
+                'Kendala Vtren',
                 'Detail Kendala',
                 'Tanggal Terlapor',
                 'Tanggal Selesai',
@@ -327,8 +473,8 @@ class VtrenController extends Controller
 
     public function getPonpesData(Request $request)
     {
-        $namaPonpes = $request->input('nama_ponpes');
-        $ponpes = Ponpes::where('nama_ponpes', $namaPonpes)->first();
+        $nama_ponpes = $request->input('nama_ponpes');
+        $ponpes = Ponpes::where('nama_ponpes', $nama_ponpes)->first();
 
         if ($ponpes) {
             return response()->json([
