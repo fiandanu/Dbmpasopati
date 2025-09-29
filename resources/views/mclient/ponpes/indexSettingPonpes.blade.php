@@ -15,12 +15,19 @@
                         </div>
 
                         <div class="d-flex align-items-center gap-2 flex-wrap">
-                            <!-- Search bar -->
-                            <div class="btn-searchbar">
-                                <span>
-                                    <i class="fas fa-search"></i>
-                                </span>
-                                <input type="text" id="btn-search" name="table_search" placeholder="Search">
+                            <!-- Export Buttons -->
+                            <div class="d-flex gap-2" id="export-buttons">
+                                {{-- Button Export CSV --}}
+                                <button onclick="downloadCsv()"
+                                    class="btn-page d-flex justify-content-center align-items-center" title="Download CSV">
+                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export CSV
+                                </button>
+
+                                {{-- Button Export PDF --}}
+                                <button onclick="downloadPdf()"
+                                    class="btn-page d-flex justify-content-center align-items-center" title="Download PDF">
+                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PDF
+                                </button>
                             </div>
 
                             <button class="btn-purple" data-bs-toggle="modal" data-bs-target="#addModal">
@@ -110,39 +117,144 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
-                        @if (request('table_search'))
-                            <div class="card-body">
-                                <div class="alert alert-info">
-                                    <i class="fas fa-info-circle"></i>
-                                    Hasil pencarian untuk: "<strong>{{ request('table_search') }}</strong>"
-                                    <a href="{{ route('ListDataMclientPonpesSetting') }}"
-                                        class="btn btn-sm btn-secondary ml-2">
-                                        <i class="fas fa-times"></i> Clear
-                                    </a>
-                                </div>
-                            </div>
-                        @endif
-
                         <div class="card mt-3">
                             <div class="card-body table-responsive p-0">
                                 <table class="table table-hover text-nowrap" id="Table">
                                     <thead>
                                         <tr>
-                                            <th>Nama Ponpes</th>
-                                            <th class="text-center">Jenis Layanan</th>
-                                            <th class="text-center">Keterangan</th>
-                                            <th>Tanggal Terlapor</th>
-                                            <th>Tanggal Selesai</th>
-                                            <th>Durasi (Hari)</th>
-                                            <th class="text-center">Status</th>
-                                            <th>PIC 1</th>
-                                            <th>PIC 2</th>
-                                            <th class="text-center">Action</th>
+                                            <th class="text-center align-top">
+                                                <div class="d-flex flex-column gap-12">
+                                                    <span>No</span>
+                                                    <div class="d-flex justify-content-center align-items-center gap-12">
+                                                        <button type="button" class="btn-purple w-auto" onclick="applyFilters()">
+                                                            <i class="fas fa-search"></i> Cari
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </th>
+                                            <th>
+                                                <div class="d-flex flex-column gap-12">
+                                                    <span>Nama Ponpes</span>
+                                                    <div class="btn-searchbar column-search">
+                                                        <span>
+                                                            <i class="fas fa-search"></i>
+                                                        </span>
+                                                        <input type="text" id="search-nama_ponpes" name="search_nama_ponpes"
+                                                            placeholder="Search">
+                                                    </div>
+                                                </div>
+                                            </th>
+                                            <th class="text-center">
+                                                <div
+                                                    class="d-flex justify-content-center align-items-center flex-column gap-12">
+                                                    <span>Jenis Layanan</span>
+                                                    <div class="btn-searchbar column-search">
+                                                        <span>
+                                                            <i class="fas fa-search"></i>
+                                                        </span>
+                                                        <input type="text" id="search-jenis_layanan"
+                                                            name="search_jenis_layanan" placeholder="Search">
+                                                    </div>
+                                                </div>
+                                            </th>
+                                            <th class="text-center">
+                                                <div
+                                                    class="d-flex justify-content-center align-items-center flex-column gap-12">
+                                                    <span>Keterangan</span>
+                                                    <div class="btn-searchbar column-search">
+                                                        <span>
+                                                            <i class="fas fa-search"></i>
+                                                        </span>
+                                                        <input type="text" id="search-keterangan"
+                                                            name="search_keterangan" placeholder="Search">
+                                                    </div>
+                                                </div>
+                                            </th>
+                                            <th class="text-center">
+                                                <div class="d-flex flex-column gap-12">
+                                                    <span>Tanggal Terlapor</span>
+                                                    <div class="d-flex justify-content-center align-items-center gap-12">
+                                                        <div class="btn-searchbar column-search">
+                                                            <input type="date" id="search-tanggal-terlapor-dari"
+                                                                name="search_tanggal_terlapor_dari" title="Tanggal Dari">
+                                                        </div>
+                                                        <div class="btn-searchbar column-search">
+                                                            <input type="date" id="search-tanggal-terlapor-sampai"
+                                                                name="search_tanggal_terlapor_sampai"
+                                                                title="Tanggal Sampai">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </th>
+                                            <th class="text-center">
+                                                <div class="d-flex flex-column gap-12">
+                                                    <span>Tanggal Selesai</span>
+                                                    <div class="d-flex justify-content-center align-items-center gap-12">
+                                                        <div class="btn-searchbar column-search">
+                                                            <input type="date" id="search-tanggal-selesai-dari"
+                                                                name="search_tanggal_selesai_dari" title="Tanggal Dari">
+                                                        </div>
+                                                        <div class="btn-searchbar column-search">
+                                                            <input type="date" id="search-tanggal-selesai-sampai"
+                                                                name="search_tanggal_selesai_sampai"
+                                                                title="Tanggal Sampai">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </th>
+                                            <th class="text-center align-top">Durasi (Hari)</th>
+                                            <th class="text-center">
+                                                <div
+                                                    class="d-flex justify-content-center align-items-center flex-column gap-12">
+                                                    <span>Status</span>
+                                                    <div class="btn-searchbar column-search">
+                                                        <span>
+                                                            <i class="fas fa-search"></i>
+                                                        </span>
+                                                        <input type="text" id="search-status" name="search_status"
+                                                            placeholder="Search">
+                                                    </div>
+                                                </div>
+                                            </th>
+                                            <th class="text-center">
+                                                <div class="d-flex flex-column gap-12">
+                                                    <span>PIC 1</span>
+                                                    <div class="btn-searchbar column-search">
+                                                        <span>
+                                                            <i class="fas fa-search"></i>
+                                                        </span>
+                                                        <input type="text" id="search-pic-1" name="search_pic_1"
+                                                            placeholder="Search">
+                                                    </div>
+                                                </div>
+                                            </th>
+                                            <th class="text-center">
+                                                <div class="d-flex flex-column gap-12">
+                                                    <span>PIC 2</span>
+                                                    <div class="btn-searchbar column-search">
+                                                        <span>
+                                                            <i class="fas fa-search"></i>
+                                                        </span>
+                                                        <input type="text" id="search-pic-2" name="search_pic_2"
+                                                            placeholder="Search">
+                                                    </div>
+                                                </div>
+                                            </th>
+                                            <th class="text-center align-top">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @php
+                                            // Calculate starting number for pagination
+                                            if (request('per_page') == 'all') {
+                                                $no = 1;
+                                            } else {
+                                                $no = ($data->currentPage() - 1) * $data->perPage() + 1;
+                                            }
+                                        @endphp
                                         @forelse ($data as $d)
                                             <tr>
+                                                <td class="text-center">{{ $no++ }}</td>
                                                 <td>{{ $d->nama_ponpes ?? '-' }}</td>
                                                 <td class="text-center">
                                                     @php
@@ -150,7 +262,7 @@
                                                             'vtren' => 'Tipevpas',
                                                             'reguler' => 'Tipereguller',
                                                             'vtrenreg' => 'badge-prosses',
-                                                            default => 'badge-light',
+                                                            default => '',
                                                         };
                                                     @endphp
                                                     <span class="{{ $layananClass }}">
@@ -189,18 +301,18 @@
                                                         {{ ucfirst($d->status ?? 'Belum ditentukan') }}
                                                     </span>
                                                 </td>
-                                                <td>{{ $d->pic_1 ?? '-' }}</td>
-                                                <td>{{ $d->pic_2 ?? '-' }}</td>
+                                                <td class="text-center">{{ $d->pic_1 ?? '-' }}</td>
+                                                <td class="text-center">{{ $d->pic_2 ?? '-' }}</td>
                                                 <td class="text-center">
                                                     <a href="#editModal{{ $d->id }}" data-bs-toggle="modal"
-                                                        data-bs-target="#editModal{{ $d->id }}">
+                                                        data-bs-target="#editModal{{ $d->id }}" title="Edit">
                                                         <button>
                                                             <ion-icon name="pencil-outline"></ion-icon>
                                                         </button>
                                                     </a>
 
                                                     <a data-toggle="modal"
-                                                        data-target="#modal-default{{ $d->id }}">
+                                                        data-target="#modal-default{{ $d->id }}" title="Hapus">
                                                         <button>
                                                             <ion-icon name="trash-outline"></ion-icon>
                                                         </button>
@@ -216,7 +328,7 @@
                                                             <ion-icon name="alert-circle-outline"
                                                                 class="text-9xl text-[var(--yellow-04)]"></ion-icon>
                                                             <p class="headline-large-32">Anda Yakin?</p>
-                                                            <label>Apakah Data Setting <b>{{ $d->nama_ponpes }}
+                                                            <label>Apakah Data setting <b>{{ $d->nama_ponpes }}
                                                                     ({{ $d->formatted_jenis_layanan }})
                                                                 </b> ingin
                                                                 dihapus?</label>
@@ -237,7 +349,7 @@
                                             </div>
                                         @empty
                                             <tr>
-                                                <td colspan="10" class="text-center">Tidak ada data yang ditemukan</td>
+                                                <td colspan="11" class="text-center">Tidak ada data yang ditemukan</td>
                                             </tr>
                                         @endforelse
                                     </tbody>
@@ -250,11 +362,10 @@
                                 </div>
                             @endif
                         </div>
-
                         {{-- Add Modal --}}
                         <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel"
                             aria-hidden="true">
-                            <form action="{{ route('MclientPonpesSettingStore') }}" method="POST">
+                            <form id="addForm" action="{{ route('MclientPonpesSettingStore') }}" method="POST">
                                 @csrf
                                 <div class="modal-dialog modal-lg">
                                     <div class="modal-content">
@@ -325,17 +436,17 @@
                                                 </div>
                                             </div>
 
-                                            <!-- Tanggal & Status -->
+                                            <!-- Jadwal & Status -->
                                             <div class="mb-4">
                                                 <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                    <label class="fw-bold">Tanggal & Status</label>
+                                                    <label class="fw-bold">Jadwal & Status</label>
                                                 </div>
 
                                                 <div class="column">
                                                     <div class="mb-3">
-                                                        <label for="jadwal">Jadwal</label>
-                                                        <input type="date" class="form-control" id="jadwal"
-                                                            name="jadwal">
+                                                        <label for="tanggal_terlapor">Tanggal Terlapor</label>
+                                                        <input type="date" class="form-control"
+                                                            id="tanggal_terlapor" name="tanggal_terlapor">
                                                     </div>
                                                 </div>
                                                 <div class="column">
@@ -345,7 +456,6 @@
                                                             name="tanggal_selesai">
                                                     </div>
                                                 </div>
-
 
                                                 <div class="column">
                                                     <div class="mb-3">
@@ -374,6 +484,7 @@
                                                 <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
                                                     <label class="fw-bold">PIC</label>
                                                 </div>
+
                                                 <div class="column">
                                                     <div class="mb-3">
                                                         <label for="pic_1">PIC 1</label>
@@ -416,7 +527,8 @@
                             <div class="modal fade" id="editModal{{ $d->id }}" tabindex="-1"
                                 aria-labelledby="editModalLabel{{ $d->id }}" aria-hidden="true">
                                 <form id="editForm{{ $d->id }}"
-                                    action="{{ route('MclientPonpesSettingUpdate', ['id' => $d->id]) }}" method="POST">
+                                    action="{{ route('MclientPonpesSettingUpdate', ['id' => $d->id]) }}"
+                                    method="POST">
                                     @csrf
                                     @method('PUT')
                                     <div class="modal-dialog modal-lg">
@@ -467,10 +579,10 @@
                                                     </div>
                                                 </div>
 
-                                                <!-- Detail Kunjungan -->
+                                                <!-- Detail Setting -->
                                                 <div class="mb-4">
                                                     <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                        <label class="fw-bold">Detail Kunjungan</label>
+                                                        <label class="fw-bold">Detail Setting</label>
                                                     </div>
 
                                                     <div class="mb-3">
@@ -486,10 +598,10 @@
                                                         <label class="fw-bold">Jadwal & Status</label>
                                                     </div>
 
-
                                                     <div class="column">
                                                         <div class="mb-3">
-                                                            <label for="tanggal_terlapor">Tanggal Terlapor</label>
+                                                            <label
+                                                                for="tanggal_terlapor{{ $d->id }}">Tanggal Terlapor</label>
                                                             <input type="date" class="form-control"
                                                                 id="tanggal_terlapor{{ $d->id }}"
                                                                 name="tanggal_terlapor"
@@ -506,8 +618,6 @@
                                                                 value="{{ $d->tanggal_selesai ? $d->tanggal_selesai->format('Y-m-d') : '' }}">
                                                         </div>
                                                     </div>
-
-
 
                                                     <div class="column">
                                                         <div class="mb-3">
@@ -548,7 +658,6 @@
                                                     <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
                                                         <label class="fw-bold">PIC</label>
                                                     </div>
-
 
                                                     <div class="column">
                                                         <div class="mb-3">
@@ -608,33 +717,114 @@
                         @endforeach
                     </div>
                 </div>
-
-                <!-- Pagination Controls -->
+                <!-- Custom Pagination dengan Dropdown -->
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div class="btn-datakolom">
-                        <button class="btn-select d-flex align-items-center">
-                            <select id="row-limit">
-                                <option value="10">10</option>
-                                <option value="15">15</option>
-                                <option value="20">20</option>
-                                <option value="9999">Semua</option>
-                            </select>
-                            Kolom
-                        </button>
+                    <!-- Left: Data info + Dropdown per page -->
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="btn-datakolom">
+                            <form method="GET" class="d-flex align-items-center">
+                                @if (request('search_nama_ponpes'))
+                                    <input type="hidden" name="search_nama_ponpes"
+                                        value="{{ request('search_nama_ponpes') }}">
+                                @endif
+                                @if (request('search_jenis_layanan'))
+                                    <input type="hidden" name="search_jenis_layanan"
+                                        value="{{ request('search_jenis_layanan') }}">
+                                @endif
+                                @if (request('search_keterangan'))
+                                    <input type="hidden" name="search_keterangan"
+                                        value="{{ request('search_keterangan') }}">
+                                @endif
+                                @if (request('search_status'))
+                                    <input type="hidden" name="search_status" value="{{ request('search_status') }}">
+                                @endif
+                                @if (request('search_pic_1'))
+                                    <input type="hidden" name="search_pic_1" value="{{ request('search_pic_1') }}">
+                                @endif
+                                @if (request('search_pic_2'))
+                                    <input type="hidden" name="search_pic_2" value="{{ request('search_pic_2') }}">
+                                @endif
+                                @if (request('search_tanggal_terlapor_dari'))
+                                    <input type="hidden" name="search_tanggal_terlapor_dari"
+                                        value="{{ request('search_tanggal_terlapor_dari') }}">
+                                @endif
+                                @if (request('search_tanggal_terlapor_sampai'))
+                                    <input type="hidden" name="search_tanggal_terlapor_sampai"
+                                        value="{{ request('search_tanggal_terlapor_sampai') }}">
+                                @endif
+                                @if (request('search_tanggal_selesai_dari'))
+                                    <input type="hidden" name="search_tanggal_selesai_dari"
+                                        value="{{ request('search_tanggal_selesai_dari') }}">
+                                @endif
+                                @if (request('search_tanggal_selesai_sampai'))
+                                    <input type="hidden" name="search_tanggal_selesai_sampai"
+                                        value="{{ request('search_tanggal_selesai_sampai') }}">
+                                @endif
+
+                                <div class="d-flex align-items-center">
+                                    <select name="per_page" class="form-control form-control-sm pr-2"
+                                        style="width: auto;" onchange="this.form.submit()">
+                                        <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>
+                                            10
+                                        </option>
+                                        <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>15
+                                        </option>
+                                        <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20
+                                        </option>
+                                        <option value="all" {{ request('per_page') == 'all' ? 'selected' : '' }}>
+                                            Semua
+                                        </option>
+                                    </select>
+                                    <span>Rows</span>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="text-muted">
+                            @if (request('per_page') != 'all')
+                                Menampilkan {{ $data->firstItem() }} sampai {{ $data->lastItem() }}
+                                dari {{ $data->total() }} data
+                            @else
+                                Menampilkan semua {{ $data->total() }} data
+                            @endif
+                        </div>
                     </div>
 
-                    <div class="pagination-controls d-flex align-items-center gap-12">
-                        <button class="btn-page" id="prev-page" disabled>&laquo; Previous</button>
-                        <span id="page-info">Page 1 of 5</span>
-                        <button class="btn-page" id="next-page">Next &raquo;</button>
-                    </div>
+                    <!-- Right: Navigation (hanya tampil jika tidak pilih "Semua") -->
+                    @if (request('per_page') != 'all' && $data->lastPage() > 1)
+                        <div class="pagination-controls d-flex align-items-center gap-12">
+                            @if ($data->onFirstPage())
+                                <button class="btn-page" disabled>&laquo; Previous</button>
+                            @else
+                                <button class="btn-datakolom w-auto p-3">
+                                    <a href="{{ $data->appends(request()->query())->previousPageUrl() }}">&laquo;
+                                        Previous</a>
+                                </button>
+                            @endif
+
+                            <span id="page-info">Page {{ $data->currentPage() }} of
+                                {{ $data->lastPage() }}</span>
+
+                            @if ($data->hasMorePages())
+                                <button class="btn-datakolom w-auto p-3">
+                                    <a href="{{ $data->appends(request()->query())->nextPageUrl() }}">Next&raquo;</a>
+                                </button>
+                            @else
+                                <button class="btn-page" disabled>Next &raquo;</button>
+                            @endif
+                        </div>
+                    @endif
                 </div>
             </div>
         </section>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    {{-- jQuery Library --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+    {{-- DROPDOWN UNTUK ADD MODAL DAN EDIT MODAL --}}
     <script>
         // Ponpes Lists for different service types
         const ponpesListVtren = @json($ponpesListVtren);
@@ -841,65 +1031,198 @@
             document.getElementById('dropdown-btn').disabled = true;
             document.getElementById('ponpes_search').placeholder = 'Pilih jenis layanan dulu...';
         });
+    </script>
 
-        // Search and Pagination
+    {{-- Search and Filter JavaScript --}}
+    <script>
         $(document).ready(function() {
-            const $rows = $("#Table tbody tr");
-            let limit = parseInt($("#row-limit").val());
-            let currentPage = 1;
-            let totalPages = Math.ceil($rows.length / limit);
-
-            function updateTable() {
-                $rows.hide();
-                let start = (currentPage - 1) * limit;
-                let end = start + limit;
-                $rows.slice(start, end).show();
-
-                $("#page-info").text(`Page ${currentPage} of ${totalPages}`);
-                $("#prev-page").prop("disabled", currentPage === 1);
-                $("#next-page").prop("disabled", currentPage === totalPages);
+            // Function to get current filter values
+            function getFilters() {
+                return {
+                    search_nama_ponpes: $('#search-nama_ponpes').val().trim(),
+                    search_jenis_layanan: $('#search-jenis_layanan').val().trim(),
+                    search_keterangan: $('#search-keterangan').val().trim(),
+                    search_status: $('#search-status').val().trim(),
+                    search_pic_1: $('#search-pic-1').val().trim(),
+                    search_pic_2: $('#search-pic-2').val().trim(),
+                    search_tanggal_terlapor_dari: $('#search-tanggal-terlapor-dari').val().trim(),
+                    search_tanggal_terlapor_sampai: $('#search-tanggal-terlapor-sampai').val().trim(),
+                    search_tanggal_selesai_dari: $('#search-tanggal-selesai-dari').val().trim(),
+                    search_tanggal_selesai_sampai: $('#search-tanggal-selesai-sampai').val().trim(),
+                    per_page: $('select[name="per_page"]').val()
+                };
             }
 
-            updateTable();
+            // Function to apply filters and redirect (GLOBAL - bisa dipanggil dari tombol)
+            window.applyFilters = function() {
+                let filters = getFilters();
+                let url = new URL(window.location.href);
 
-            $("#row-limit").on("change", function() {
-                limit = parseInt($(this).val());
-                currentPage = 1;
-                totalPages = Math.ceil($rows.length / limit);
-                updateTable();
-            });
+                // Remove existing filter parameters
+                url.searchParams.delete('search_nama_ponpes');
+                url.searchParams.delete('search_jenis_layanan');
+                url.searchParams.delete('search_keterangan');
+                url.searchParams.delete('search_status');
+                url.searchParams.delete('search_pic_1');
+                url.searchParams.delete('search_pic_2');
+                url.searchParams.delete('search_tanggal_terlapor_dari');
+                url.searchParams.delete('search_tanggal_terlapor_sampai');
+                url.searchParams.delete('search_tanggal_selesai_dari');
+                url.searchParams.delete('search_tanggal_selesai_sampai');
+                url.searchParams.delete('page'); // Reset to page 1
 
-            $("#prev-page").on("click", function() {
-                if (currentPage > 1) {
-                    currentPage--;
-                    updateTable();
-                }
-            });
-
-            $("#next-page").on("click", function() {
-                if (currentPage < totalPages) {
-                    currentPage++;
-                    updateTable();
-                }
-            });
-
-            $("#btn-search").on("keyup", function() {
-                let value = $(this).val().toLowerCase();
-                $("#Table tbody tr").filter(function() {
-                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                // Add non-empty filters
+                Object.keys(filters).forEach(key => {
+                    if (filters[key] && filters[key].trim() !== '' && key !== 'per_page') {
+                        url.searchParams.set(key, filters[key]);
+                    }
                 });
 
-                const $visibleRows = $("#Table tbody tr:visible");
-                totalPages = Math.ceil($visibleRows.length / limit);
-                currentPage = 1;
+                window.location.href = url.toString();
+            };
 
-                if (value === '') {
-                    updateTable();
-                } else {
-                    $("#page-info").text(`Showing ${$visibleRows.length} results`);
-                    $("#prev-page").prop("disabled", true);
-                    $("#next-page").prop("disabled", true);
+            // Function to clear all search filters (GLOBAL - bisa dipanggil dari tombol Reset)
+            window.clearAllFilters = function() {
+                // Clear semua input field dulu
+                $('#search-nama_ponpes').val('');
+                $('#search-jenis_layanan').val('');
+                $('#search-keterangan').val('');
+                $('#search-status').val('');
+                $('#search-pic-1').val('');
+                $('#search-pic-2').val('');
+                $('#search-tanggal-terlapor-dari').val('');
+                $('#search-tanggal-terlapor-sampai').val('');
+                $('#search-tanggal-selesai-dari').val('');
+                $('#search-tanggal-selesai-sampai').val('');
+
+                let url = new URL(window.location.href);
+
+                // Remove all search parameters
+                url.searchParams.delete('search_nama_ponpes');
+                url.searchParams.delete('search_jenis_layanan');
+                url.searchParams.delete('search_keterangan');
+                url.searchParams.delete('search_status');
+                url.searchParams.delete('search_pic_1');
+                url.searchParams.delete('search_pic_2');
+                url.searchParams.delete('search_tanggal_terlapor_dari');
+                url.searchParams.delete('search_tanggal_terlapor_sampai');
+                url.searchParams.delete('search_tanggal_selesai_dari');
+                url.searchParams.delete('search_tanggal_selesai_sampai');
+                url.searchParams.delete('page');
+
+                window.location.href = url.toString();
+            };
+
+            // Bind keypress event to all search input fields (Enter masih berfungsi)
+            $('.column-search input').on('keypress', function(e) {
+                if (e.which === 13) { // Enter key
+                    applyFilters();
                 }
+            });
+
+            // Clear individual column search when input is emptied
+            $('.column-search input').on('keyup', function(e) {
+                if (e.which === 13 && $(this).val().trim() === '') {
+                    applyFilters(); // Apply filters to update URL (removing empty filter)
+                }
+            });
+
+            // Download functions with current filters
+            window.downloadCsv = function() {
+                let filters = getFilters();
+                let form = document.createElement('form');
+                form.method = 'GET';
+                form.action = '{{ route('mclientsettingponpes.export.list.csv') }}';
+                form.target = '_blank';
+
+                Object.keys(filters).forEach(key => {
+                    if (filters[key] && key !== 'per_page') {
+                        let input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = key;
+                        input.value = filters[key];
+                        form.appendChild(input);
+                    }
+                });
+
+                document.body.appendChild(form);
+                form.submit();
+                document.body.removeChild(form);
+            };
+
+            window.downloadPdf = function() {
+                let filters = getFilters();
+                let form = document.createElement('form');
+                form.method = 'GET';
+                form.action = '{{ route('mclientsettingponpes.export.list.pdf') }}';
+                form.target = '_blank';
+
+                Object.keys(filters).forEach(key => {
+                    if (filters[key] && key !== 'per_page') {
+                        let input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = key;
+                        input.value = filters[key];
+                        form.appendChild(input);
+                    }
+                });
+
+                document.body.appendChild(form);
+                form.submit();
+                document.body.removeChild(form);
+            };
+
+            // Load filter values from URL on page load
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('search_nama_ponpes')) {
+                $('#search-nama_ponpes').val(urlParams.get('search_nama_ponpes'));
+            }
+            if (urlParams.get('search_jenis_layanan')) {
+                $('#search-jenis_layanan').val(urlParams.get('search_jenis_layanan'));
+            }
+            if (urlParams.get('search_keterangan')) {
+                $('#search-keterangan').val(urlParams.get('search_keterangan'));
+            }
+            if (urlParams.get('search_status')) {
+                $('#search-status').val(urlParams.get('search_status'));
+            }
+            if (urlParams.get('search_pic_1')) {
+                $('#search-pic-1').val(urlParams.get('search_pic_1'));
+            }
+            if (urlParams.get('search_pic_2')) {
+                $('#search-pic-2').val(urlParams.get('search_pic_2'));
+            }
+            if (urlParams.get('search_tanggal_terlapor_dari')) {
+                $('#search-tanggal-terlapor-dari').val(urlParams.get('search_tanggal_terlapor_dari'));
+            }
+            if (urlParams.get('search_tanggal_terlapor_sampai')) {
+                $('#search-tanggal-terlapor-sampai').val(urlParams.get('search_tanggal_terlapor_sampai'));
+            }
+            if (urlParams.get('search_tanggal_selesai_dari')) {
+                $('#search-tanggal-selesai-dari').val(urlParams.get('search_tanggal_selesai_dari'));
+            }
+            if (urlParams.get('search_tanggal_selesai_sampai')) {
+                $('#search-tanggal-selesai-sampai').val(urlParams.get('search_tanggal_selesai_sampai'));
+            }
+
+            // Show export buttons if there's data
+            if ($("#Table tbody tr").length > 0 && !$("#Table tbody tr").find('td[colspan="11"]').length) {
+                $("#export-buttons").show();
+            } else {
+                $("#export-buttons").hide();
+            }
+
+            // Handle modal events
+            $('.modal').on('show.bs.modal', function(e) {
+                console.log('Modal is opening');
+            });
+
+            $('.modal').on('shown.bs.modal', function(e) {
+                console.log('Modal is fully visible');
+            });
+
+            $('.modal').on('hide.bs.modal', function(e) {
+                console.log('Modal is closing');
             });
         });
     </script>

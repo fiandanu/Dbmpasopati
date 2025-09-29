@@ -2,14 +2,14 @@
 
 namespace Database\Factories\Mclient\Ponpes;
 
-use App\Models\mclient\ponpes\Vtren;
+use App\Models\mclient\ponpes\Reguller;
 use App\Models\user\Ponpes;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Carbon\Carbon;
 
-class VtrenFactory extends Factory
+class RegullerFactory extends Factory
 {
-    protected $model = Vtren::class;
+    protected $model = Reguller::class;
 
     public function definition(): array
     {
@@ -55,7 +55,7 @@ class VtrenFactory extends Factory
                 'VIII Banjarmasin'
             ]),
             'jenis_kendala' => $this->faker->randomElement([
-                'Sistem Vtren tidak dapat diakses',
+                'Sistem Reguller tidak dapat diakses',
                 'Error saat proses validasi dokumen',
                 'Timeout pada sistem database',
                 'Koneksi jaringan tidak stabil',
@@ -131,7 +131,7 @@ class VtrenFactory extends Factory
         return $this->state(function (array $attributes) {
             return [
                 'jenis_kendala' => $this->faker->randomElement([
-                    'Sistem Vtren down total',
+                    'Sistem Reguller down total',
                     'Database server crash',
                     'Critical security breach',
                     'Network infrastructure failure',

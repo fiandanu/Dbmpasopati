@@ -44,7 +44,7 @@
                                 <span class="checkmark">✓</span>
                                 100 Data
                             </div>
-                            <a href="{{ route('ListDataMclientPonpesReguller') }}" class="list-button">Data
+                            <a href="{{ route('mcponpesreguler.ListDataMclientPonpesReguller') }}" class="list-button">Data
                                 Reguller</a>
                         </div>
                     </div>

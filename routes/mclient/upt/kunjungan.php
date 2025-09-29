@@ -13,6 +13,7 @@ Route::prefix('mclient-kunjungan-upt')->group(function () {
     Route::get('/dashboard-stats', [KunjunganController::class, 'getDashboardStats'])->name('MclientKunjungan.dashboard.stats');
     Route::get('/get-upt-data', [KunjunganController::class, 'getUptData'])->name('MclientKunjungan.getUptData');
 
+    // global export
     Route::get('/kunjungan/export/pdf', [KunjunganController::class, 'exportListPdf'])->name('mckunjungan.export.list.pdf');
     Route::get('/kunjungan/export/csv', [KunjunganController::class, 'exportListCsv'])->name('mckunjungan.export.list.csv');
 });

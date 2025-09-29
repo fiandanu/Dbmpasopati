@@ -10,71 +10,90 @@ use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 use App\Models\user\Kendala;
 use App\Models\user\Pic;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class RegullerController extends Controller
 {
-    private function getJenisKendala()
-    {
-        return [
-            'Sistem tidak dapat diakses',
-            'Data tidak tersinkronisasi',
-            'Performa lambat',
-            'Error saat input data',
-            'Laporan tidak muncul',
-            'User tidak bisa login',
-            'Timeout koneksi',
-            'Database connection failed',
-            'Server maintenance',
-            'Update sistem gagal',
-            'Backup data error',
-            'Security warning',
-            'Storage penuh',
-            'API tidak respond',
-            'Interface bermasalah',
-            'Validasi data error',
-            'Export data gagal',
-            'Import data bermasalah',
-            'Session expired',
-            'Permission denied',
-            'Network connectivity issue',
-            'Browser compatibility',
-            'Cache bermasalah',
-            'Plugin error',
-            'Configuration error'
-        ];
-    }
-
     public function ListDataMclientPonpesReguller(Request $request)
     {
         $query = Reguller::query();
 
-        if ($request->has('table_search') && !empty($request->table_search)) {
-            $searchTerm = $request->table_search;
+        // Apply filter
+        $query = $this->applyFilters($query, $request);
 
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('nama_ponpes', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('nama_wilayah', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('jenis_kendala', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('detail_kendala', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('status', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('pic_1', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('pic_2', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('tanggal_terlapor', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('tanggal_selesai', 'LIKE', '%' . $searchTerm . '%');
-            });
+        // Get per_page from request, default 10
+        $perPage = $request->get('per_page', 10);
+
+        // Validate per_page
+        if (!in_array($perPage, [10, 15, 20, 'all'])) {
+            $perPage = 20;
         }
 
-        $data = $query->orderBy('created_at', 'desc')->paginate(10);
+        // Handle pagination
+        if ($perPage == 'all') {
+            $data = $query->orderBy('created_at', 'desc')->get();
+
+            // Create a mock paginator for "all" option
+            $data = new \Illuminate\Pagination\LengthAwarePaginator(
+                $data,
+                $data->count(),
+                99999,
+                1,
+                ['path' => $request->url(), 'query' => $request->query()]
+            );
+        } else {
+            $data = $query->orderBy('created_at', 'desc')->paginate($perPage);
+        }
 
         $jenisKendala = Kendala::orderBy('jenis_kendala')->get();
         $picList = Pic::orderBy('nama_pic')->get();
 
-        $ponpesList = Ponpes::select('nama_ponpes', 'nama_wilayah', 'tipe')
+        $ponpesList = Ponpes::select('nama_ponpes', 'nama_wilayah')
             ->where('tipe', 'reguler')
             ->orderBy('nama_ponpes')
             ->get();
 
         return view('mclient.ponpes.indexReguller', compact('data', 'jenisKendala', 'picList', 'ponpesList'));
+    }
+
+    private function applyFilters($query, Request $request)
+    {
+        // Column-specific searches
+        if ($request->has('search_nama_ponpes') && !empty($request->search_nama_ponpes)) {
+            $query->where('nama_ponpes', 'LIKE', '%' . $request->search_nama_ponpes . '%');
+        }
+        if ($request->has('search_nama_wilayah') && !empty($request->search_nama_wilayah)) {
+            $query->where('nama_wilayah', 'LIKE', '%' . $request->search_nama_wilayah . '%');
+        }
+        if ($request->has('search_jenis_kendala') && !empty($request->search_jenis_kendala)) {
+            $query->where('jenis_kendala', 'LIKE', '%' . $request->search_jenis_kendala . '%');
+        }
+        if ($request->has('search_status') && !empty($request->search_status)) {
+            $query->where('status', 'LIKE', '%' . $request->search_status . '%');
+        }
+        if ($request->has('search_pic_1') && !empty($request->search_pic_1)) {
+            $query->where('pic_1', 'LIKE', '%' . $request->search_pic_1 . '%');
+        }
+        if ($request->has('search_pic_2') && !empty($request->search_pic_2)) {
+            $query->where('pic_2', 'LIKE', '%' . $request->search_pic_2 . '%');
+        }
+
+        // Date range filtering
+        if ($request->has('search_tanggal_terlapor_dari') && !empty($request->search_tanggal_terlapor_dari)) {
+            $query->whereDate('tanggal_terlapor', '>=', $request->search_tanggal_terlapor_dari);
+        }
+        if ($request->has('search_tanggal_terlapor_sampai') && !empty($request->search_tanggal_terlapor_sampai)) {
+            $query->whereDate('tanggal_terlapor', '<=', $request->search_tanggal_terlapor_sampai);
+        }
+        if ($request->has('search_tanggal_selesai_dari') && !empty($request->search_tanggal_selesai_dari)) {
+            $query->whereDate('tanggal_selesai', '>=', $request->search_tanggal_selesai_dari);
+        }
+        if ($request->has('search_tanggal_selesai_sampai') && !empty($request->search_tanggal_selesai_sampai)) {
+            $query->whereDate('tanggal_selesai', '<=', $request->search_tanggal_selesai_sampai);
+        }
+
+        return $query;
     }
 
     public function MclientPonpesRegullerStore(Request $request)
@@ -132,7 +151,7 @@ class RegullerController extends Controller
 
             Reguller::create($data);
 
-            return redirect()->route('ListDataMclientPonpesReguller')->with('success', 'Data monitoring client Ponpes Reguller berhasil ditambahkan!');
+            return redirect()->back()->with('success', 'Data monitoring client Ponpes Reguller berhasil ditambahkan!');
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
@@ -178,49 +197,40 @@ class RegullerController extends Controller
         );
 
         if ($validator->fails()) {
-            $validatedData = [];
-            $invalidFields = array_keys($validator->errors()->messages());
-
-            foreach ($request->all() as $key => $value) {
-                if (!in_array($key, $invalidFields)) {
-                    $validatedData[$key] = $value;
-                }
-            }
-
-            try {
-                if (!empty($validatedData)) {
-                    $data = Reguller::findOrFail($id);
-
-                    if (isset($validatedData['tanggal_terlapor']) && isset($validatedData['tanggal_selesai'])) {
-                        $tanggalTerlapor = Carbon::parse($validatedData['tanggal_terlapor']);
-                        $tanggalSelesai = Carbon::parse($validatedData['tanggal_selesai']);
-                        $validatedData['durasi_hari'] = $tanggalSelesai->diffInDays($tanggalTerlapor);
-                    }
-
-                    $data->update($validatedData);
-                }
-            } catch (\Exception $e) {
-            }
-
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput()
-                ->with('partial_success', 'Data valid telah disimpan. Silakan perbaiki field yang bermasalah.');
+                ->with('error', 'Silakan perbaiki data yang bermasalah.');
         }
 
         try {
             $data = Reguller::findOrFail($id);
-            $updateData = $request->all();
 
-            if ($request->tanggal_terlapor && $request->tanggal_selesai) {
+            // Cuma ambil field yang diizinkan (whitelist approach)
+            $updateData = $request->only([
+                'nama_ponpes',
+                'nama_wilayah',
+                'jenis_kendala',
+                'detail_kendala',
+                'tanggal_terlapor',
+                'tanggal_selesai',
+                'durasi_hari',
+                'status',
+                'pic_1',
+                'pic_2'
+            ]);
+
+            // Auto-calculate durasi jika ada tanggal
+            if ($request->filled('tanggal_terlapor') && $request->filled('tanggal_selesai')) {
                 $tanggalTerlapor = Carbon::parse($request->tanggal_terlapor);
                 $tanggalSelesai = Carbon::parse($request->tanggal_selesai);
                 $updateData['durasi_hari'] = $tanggalSelesai->diffInDays($tanggalTerlapor);
             }
 
+            // SINGLE UPDATE - tidak ada double update
             $data->update($updateData);
 
-            return redirect()->route('ListDataMclientPonpesReguller')->with('success', 'Data monitoring client Ponpes Reguller berhasil diupdate!');
+            return redirect()->back()->with('success', 'Data monitoring client Ponpes Reguller berhasil diupdate!');
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
@@ -235,12 +245,94 @@ class RegullerController extends Controller
             $namaPonpes = $data->nama_ponpes;
             $data->delete();
 
-            return redirect()->route('ListDataMclientPonpesReguller')
-                ->with('success', "Data monitoring client Reguller di Ponpes '{$namaPonpes}' berhasil dihapus!");
+            return redirect()->back()
+                ->with('success', "Data monitoring client Ponpes Reguller di '{$namaPonpes}' berhasil dihapus!");
         } catch (\Exception $e) {
-            return redirect()->route('ListDataMclientPonpesReguller')
+            return redirect()->back()
                 ->with('error', 'Gagal menghapus data: ' . $e->getMessage());
         }
+    }
+
+    public function exportListPdf(Request $request)
+    {
+        $query = Reguller::query();
+        $query = $this->applyFilters($query, $request);
+
+        // Add date sorting when date filters are applied
+        if (
+            $request->filled('search_tanggal_terlapor_dari') || $request->filled('search_tanggal_terlapor_sampai') ||
+            $request->filled('search_tanggal_selesai_dari') || $request->filled('search_tanggal_selesai_sampai')
+        ) {
+            $query = $query->orderBy('tanggal_terlapor', 'asc');
+        }
+
+        $data = $query->orderBy('created_at', 'desc')->get();
+
+        $pdfData = [
+            'title' => 'List Data Monitoring Client Ponpes Reguler',
+            'data' => $data,
+            'generated_at' => Carbon::now()->format('d M Y H:i:s')
+        ];
+
+        $pdf = Pdf::loadView('export.public.mclient.ponpes.indexReguller', $pdfData);
+        $filename = 'list_monitoring_client_ponpes_reguler_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
+
+        return $pdf->download($filename);
+    }
+
+    public function exportListCsv(Request $request): StreamedResponse
+    {
+        $query = Reguller::query();
+        $query = $this->applyFilters($query, $request);
+
+        // Add date sorting when date filters are applied
+        if (
+            $request->filled('search_tanggal_terlapor_dari') || $request->filled('search_tanggal_terlapor_sampai') ||
+            $request->filled('search_tanggal_selesai_dari') || $request->filled('search_tanggal_selesai_sampai')
+        ) {
+            $query = $query->orderBy('tanggal_terlapor', 'asc');
+        }
+
+        $data = $query->orderBy('created_at', 'desc')->get();
+
+        $filename = 'list_monitoring_client_ponpes_reguler_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
+
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+
+        $rows = [['No', 'Nama Ponpes', 'Nama Wilayah', 'Jenis Kendala', 'Detail Kendala', 'Tanggal Terlapor', 'Tanggal Selesai', 'Durasi (Hari)', 'Status', 'PIC 1', 'PIC 2', 'Dibuat Pada']];
+        $no = 1;
+        foreach ($data as $row) {
+            $rows[] = [
+                $no++,
+                $row->nama_ponpes,
+                $row->nama_wilayah,
+                $row->jenis_kendala,
+                $row->detail_kendala,
+                $row->tanggal_terlapor ? $row->tanggal_terlapor->format('Y-m-d') : '',
+                $row->tanggal_selesai ? $row->tanggal_selesai->format('Y-m-d') : '',
+                $row->durasi_hari,
+                $row->status,
+                $row->pic_1,
+                $row->pic_2,
+                $row->created_at ? $row->created_at->format('Y-m-d H:i:s') : ''
+            ];
+        }
+
+        $callback = function () use ($rows) {
+            $file = fopen('php://output', 'w');
+            foreach ($rows as $row) {
+                fputcsv($file, $row);
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 
     public function exportCsv()
@@ -262,7 +354,7 @@ class RegullerController extends Controller
 
             fputcsv($file, [
                 'Nama Ponpes',
-                'nama_wilayah',
+                'Nama Wilayah',
                 'Kendala Reguller',
                 'Detail Kendala',
                 'Tanggal Terlapor',
@@ -275,8 +367,10 @@ class RegullerController extends Controller
                 'Diupdate Pada'
             ]);
 
+            $no = 1;
             foreach ($data as $row) {
                 fputcsv($file, [
+                    $no++,
                     $row->nama_ponpes,
                     $row->nama_wilayah,
                     $row->jenis_kendala,

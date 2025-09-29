@@ -9,14 +9,93 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 use App\Models\user\Pic;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class KunjunganController extends Controller
 {
+    public function exportListPdf(Request $request)
+    {
+        $query = Kunjungan::query();
+        $query = $this->applyFilters($query, $request);
+
+        if (
+            $request->filled('search_tanggal_terlapor_dari') || $request->filled('search_tanggal_terlapor_sampai') ||
+            $request->filled('search_tanggal_selesai_dari') || $request->filled('search_tanggal_selesai_sampai')
+        ) {
+            $query = $query->orderBy('jadwal', 'asc');
+        }
+
+        $data = $query->orderBy('created_at', 'desc')->get();
+
+        $pdfData = [
+            'title' => 'List Data Kunjungan Ponpes',
+            'data' => $data,
+            'generated_at' => Carbon::now()->format('d M Y H:i:s')
+        ];
+
+        $pdf = Pdf::loadView('export.public.mclient.ponpes.indexKunjungan', $pdfData);
+        $filename = 'list_kunjungan_ponpes_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
+
+        return $pdf->download($filename);
+    }
+
+    public function exportListCsv(Request $request)
+    {
+        $query = Kunjungan::query();
+        $query = $this->applyFilters($query, $request);
+
+        if (
+            $request->filled('search_tanggal_terlapor_dari') || $request->filled('search_tanggal_terlapor_sampai') ||
+            $request->filled('search_tanggal_selesai_dari') || $request->filled('search_tanggal_selesai_sampai')
+        ) {
+            $query = $query->orderBy('jadwal', 'asc');
+        }
+
+        $data = $query->orderBy('created_at', 'desc')->get();
+
+        $filename = 'List_Kunjungan_Ponpes_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
+
+        $headers = [
+            'Content-type' => 'text/csv',
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+
+        $rows = [['No', 'Nama Ponpes', 'Jenis Layanan', 'Keterangan', 'Jadwal', 'Tanggal Selesai', 'Durasi (Hari)', 'Status', 'Pic 1', 'Pic 2', 'Dibuat Pada']];
+        $no = 1;
+        foreach ($data as $row) {
+            $rows[] = [
+                $no++,
+                $row->nama_ponpes,
+                $row->jenis_layanan,
+                $row->keterangan,
+                $row->jadwal ? $row->jadwal->format('Y-m-d') : '',
+                $row->tanggal_selesai ? $row->tanggal_selesai->format('Y-m-d') : '',
+                $row->durasi_hari,
+                $row->status,
+                $row->pic_1,
+                $row->pic_2,
+                $row->created_at ? $row->created_at->format('Y-m-d H:i:s') : ''
+            ];
+        }
+
+        $callback = function () use ($rows) {
+            $file = fopen('php://output', 'w');
+            foreach ($rows as $row) {
+                fputcsv($file, $row);
+            }
+            fclose($file);
+        };
+        return response()->stream($callback, 200, $headers);
+    }
+
     private function getJenisLayanan()
     {
         return [
             'vtren' => 'VTREN',
-            'reguler' => 'Reguler', 
+            'reguler' => 'Reguler',
             'vtrenreg' => 'VTREN + Reguler'
         ];
     }
@@ -25,32 +104,41 @@ class KunjunganController extends Controller
     {
         $query = Kunjungan::query();
 
-        if ($request->has('table_search') && !empty($request->table_search)) {
-            $searchTerm = $request->table_search;
+        // Apply filters
+        $query = $this->applyFilters($query, $request);
 
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('nama_ponpes', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('jenis_layanan', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('keterangan', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('status', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('pic_1', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('pic_2', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('jadwal', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('tanggal_selesai', 'LIKE', '%' . $searchTerm . '%');
-            });
+        // Get per_page from request, default 10
+        $perPage = $request->get('per_page', 10);
+
+        // Validate per_page
+        if (!in_array($perPage, [10, 15, 20, 'all'])) {
+            $perPage = 10;
         }
 
-        $data = $query->orderBy('created_at', 'desc')->paginate(10);
+        // Handle pagination
+        if ($perPage == 'all') {
+            $data = $query->orderBy('created_at', 'desc')->get();
+            // Create a mock paginator for "all" option
+            $data = new \Illuminate\Pagination\LengthAwarePaginator(
+                $data,
+                $data->count(),
+                99999,
+                1,
+                ['path' => $request->url(), 'query' => $request->query()]
+            );
+        } else {
+            $data = $query->orderBy('created_at', 'desc')->paginate($perPage);
+        }
 
         $picList = Pic::orderBy('nama_pic')->get();
 
         // Get Ponpes list based on jenis layanan
-        $ponpesListVtren = Ponpes::select('nama_ponpes', 'nama_wilayah', 'tipe')
+        $ponpesListVtren = Ponpes::select('nama_ponpes', 'nama_wilayah')
             ->where('tipe', 'vtren')
             ->orderBy('nama_ponpes')
             ->get();
-            
-        $ponpesListReguler = Ponpes::select('nama_ponpes', 'nama_wilayah', 'tipe')
+
+        $ponpesListReguler = Ponpes::select('nama_ponpes', 'nama_wilayah')
             ->where('tipe', 'reguler')
             ->orderBy('nama_ponpes')
             ->get();
@@ -61,13 +149,55 @@ class KunjunganController extends Controller
         $jenisLayananOptions = $this->getJenisLayanan();
 
         return view('mclient.ponpes.indexKunjungan', compact(
-            'data', 
-            'picList', 
-            'ponpesListVtren', 
-            'ponpesListReguler', 
+            'data',
+            'picList',
+            'ponpesListVtren',
+            'ponpesListReguler',
             'ponpesListAll',
             'jenisLayananOptions'
         ));
+    }
+
+    private function applyFilters($query, Request $request)
+    {
+        // Column-specific search
+        if ($request->has('search_nama_ponpes') && !empty($request->search_nama_ponpes)) {
+            $query->where('nama_ponpes', 'LIKE', '%' . $request->search_nama_ponpes . '%');
+        }
+        if ($request->has('search_nama_wilayah') && !empty($request->search_nama_wilayah)) {
+            $query->where('nama_wilayah', 'LIKE', '%' . $request->search_nama_wilayah . '%');
+        }
+        if ($request->has('search_jenis_layanan') && !empty($request->search_jenis_layanan)) {
+            $query->where('jenis_layanan', 'LIKE', '%' . $request->search_jenis_layanan . '%');
+        }
+        if ($request->has('search_keterangan') && !empty($request->search_keterangan)) {
+            $query->where('keterangan', 'LIKE', '%' . $request->search_keterangan . '%');
+        }
+        if ($request->has('search_status') && !empty($request->search_status)) {
+            $query->where('status', 'LIKE', '%' . $request->search_status . '%');
+        }
+        if ($request->has('search_pic_1') && !empty($request->search_pic_1)) {
+            $query->where('pic_1', 'LIKE', '%' . $request->search_pic_1 . '%');
+        }
+        if ($request->has('search_pic_2') && !empty($request->search_pic_2)) {
+            $query->where('pic_2', 'LIKE', '%' . $request->search_pic_2 . '%');
+        }
+
+        // Date range filtering
+        if ($request->has('search_tanggal_terlapor_dari') && !empty($request->search_tanggal_terlapor_dari)) {
+            $query->whereDate('jadwal', '>=', $request->search_tanggal_terlapor_dari);
+        }
+        if ($request->has('search_tanggal_terlapor_sampai') && !empty($request->search_tanggal_terlapor_sampai)) {
+            $query->whereDate('jadwal', '<=', $request->search_tanggal_terlapor_sampai);
+        }
+        if ($request->has('search_tanggal_selesai_dari') && !empty($request->search_tanggal_selesai_dari)) {
+            $query->whereDate('tanggal_selesai', '>=', $request->search_tanggal_selesai_dari);
+        }
+        if ($request->has('search_tanggal_selesai_sampai') && !empty($request->search_tanggal_selesai_sampai)) {
+            $query->whereDate('tanggal_selesai', '<=', $request->search_tanggal_selesai_sampai);
+        }
+
+        return $query;
     }
 
     public function MclientPonpesKunjunganStore(Request $request)
@@ -231,59 +361,6 @@ class KunjunganController extends Controller
             return redirect()->back()
                 ->with('error', 'Gagal menghapus data: ' . $e->getMessage());
         }
-    }
-
-    public function exportCsv()
-    {
-        $data = Kunjungan::orderBy('created_at', 'desc')->get();
-
-        $filename = 'monitoring_client_ponpes_kunjungan_' . date('Y-m-d_H-i-s') . '.csv';
-
-        $headers = [
-            "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
-        ];
-
-        $callback = function () use ($data) {
-            $file = fopen('php://output', 'w');
-
-            fputcsv($file, [
-                'Nama Ponpes',
-                'Jenis Layanan',
-                'Keterangan',
-                'Jadwal',
-                'Tanggal Selesai',
-                'Durasi (Hari)',
-                'Status',
-                'PIC 1',
-                'PIC 2',
-                'Dibuat Pada',
-                'Diupdate Pada'
-            ]);
-
-            foreach ($data as $row) {
-                fputcsv($file, [
-                    $row->nama_ponpes,
-                    $row->formatted_jenis_layanan,
-                    $row->keterangan,
-                    $row->jadwal ? $row->jadwal->format('Y-m-d') : '',
-                    $row->tanggal_selesai ? $row->tanggal_selesai->format('Y-m-d') : '',
-                    $row->durasi_hari,
-                    $row->status,
-                    $row->pic_1,
-                    $row->pic_2,
-                    $row->created_at ? $row->created_at->format('Y-m-d H:i:s') : '',
-                    $row->updated_at ? $row->updated_at->format('Y-m-d H:i:s') : ''
-                ]);
-            }
-
-            fclose($file);
-        };
-
-        return response()->stream($callback, 200, $headers);
     }
 
     public function getDashboardStats()
