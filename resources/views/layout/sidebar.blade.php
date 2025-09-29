@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Dbm | Pasopati</title>
     <x-headlink></x-headlink>
+
     <style>
         :root {
             --Netral-10: #FFFFFF;
@@ -322,7 +323,7 @@
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="{{ route('upt.UserPage') }}" class="nav-link">
+                                    <a href="{{ route('User.UserPage') }}" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Data UPT</p>
                                     </a>
@@ -330,7 +331,7 @@
                             </ul>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="{{ route('ponpes.UserPage') }}" class="nav-link">
+                                    <a href="{{ route('UserPonpes.UserPage') }}" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Data Ponpes</p>
                                     </a>

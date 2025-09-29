@@ -16,36 +16,6 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class VpasController extends Controller
 {
-    private function getJenisKendala()
-    {
-        return [
-            'Tidak ada sinyal',
-            'Suara tidak jelas',
-            'Aplikasi error',
-            'Layar rusak',
-            'Internet lambat',
-            'Tidak bisa login',
-            'Kamera bermasalah',
-            'Data tidak sinkron',
-            'Server down',
-            'Update gagal',
-            'Mikrofon rusak',
-            'VPN terputus',
-            'Memory penuh',
-            'Android tidak support',
-            'Jaringan bermasalah',
-            'Aplikasi hang',
-            'Video tidak jalan',
-            'Koneksi timeout',
-            'Database error',
-            'Firewall block',
-            'Maintenance rutin',
-            'Aplikasi lambat',
-            'SSL expired',
-            'Recording error',
-            'Notifikasi tidak masuk'
-        ];
-    }
 
     public function ListDataMclientVpas(Request $request)
     {
@@ -89,7 +59,7 @@ class VpasController extends Controller
         return view('mclient.upt.indexVpas', compact('data', 'jenisKendala', 'picList', 'uptList'));
     }
 
-     private function applyFilters($query, Request $request)
+    private function applyFilters($query, Request $request)
     {
         // Global search
         if ($request->has('table_search') && !empty($request->table_search)) {
@@ -310,7 +280,7 @@ class VpasController extends Controller
         }
     }
 
-        public function exportListPdf(Request $request)
+    public function exportListPdf(Request $request)
     {
         $query = Vpas::query();
         $query = $this->applyFilters($query, $request);
@@ -469,7 +439,7 @@ class VpasController extends Controller
             'avg_durasi' => round($avgDurasi, 1)
         ];
     }
-
+    
     public function getUptData(Request $request)
     {
         $namaUpt = $request->input('nama_upt');

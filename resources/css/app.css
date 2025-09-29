@@ -581,6 +581,11 @@ a:hover {
     border-radius: 12px;
     color: var(--Netral-0);
     box-sizing: border-box;
+
+        /* Biar teks nggak keluar */
+    white-space: nowrap; 
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .btn-searchbar input:focus {

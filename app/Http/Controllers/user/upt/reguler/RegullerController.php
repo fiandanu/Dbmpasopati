@@ -227,7 +227,7 @@ class RegullerController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
-        private function formatStatusWartel($status)
+    private function formatStatusWartel($status)
     {
         if (empty($status)) {
             return '';
@@ -292,14 +292,6 @@ class RegullerController extends Controller
         return $pdf->download($filename);
     }
 
-    public function UserPage(Request $request)
-    {
-        $dataupt = Upt::with(['dataOpsional', 'uploadFolder'])->get();
-        
-        return view('user.indexUser', compact('dataupt'));
-    }
-
-    // ... rest of the methods remain unchanged
     public function ListUpdateReguller(Request $request, $id)
     {
         $validator = Validator::make(
@@ -430,178 +422,6 @@ class RegullerController extends Controller
         }
     }
 
-    // Method lainnya tetap sama...
-    public function UserPageDestroy($id)
-    {
-        $dataupt = Upt::find($id);
-
-        if (!$dataupt) {
-            return redirect()->route('upt.UserPage')->with('error', 'Data tidak ditemukan!');
-        }
-
-        // Ambil nama UPT tanpa suffix (VpasReg) untuk pengecekan
-        $namaUptBase = $this->removeVpasRegSuffix($dataupt->namaupt);
-
-        // Hapus data yang dipilih
-        $dataupt->delete();
-
-        // Update nama UPT yang tersisa berdasarkan jumlah data
-        $this->updateUptNamesBySuffix($namaUptBase);
-
-        return redirect()->route('upt.UserPage')->with('success', 'Data berhasil dihapus!');
-    }
-
-    public function UserPageStore(Request $request)
-    {
-        // Validasi input
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'namaupt' => 'required|string',
-                'kanwil' => 'required|string',
-                'tipe' => 'required|array|min:1',
-                'tipe.*' => 'in:reguler,vpas',
-            ],
-            [
-                'namaupt.required' => 'Nama UPT harus diisi',
-                'kanwil.required' => 'Kanwil harus diisi',
-                'tipe.required' => 'Tipe harus dipilih minimal satu',
-                'tipe.array' => 'Tipe harus berupa array',
-                'tipe.min' => 'Pilih minimal satu tipe',
-                'tipe.*.in' => 'Tipe hanya boleh reguler atau vpas',
-            ]
-        );
-
-        if ($validator->fails()) {
-            return redirect()->back()->withInput()->withErrors($validator);
-        }
-
-        // Ambil data tipe yang dipilih
-        $selectedTypes = $request->tipe;
-        $createdRecords = [];
-
-        // Bersihkan nama UPT dari suffix ganda yang mungkin ada
-        $cleanNamaUpt = $this->removeVpasRegSuffix($request->namaupt);
-
-        // Tentukan nama UPT berdasarkan jumlah tipe yang dipilih
-        $namaUpt = $cleanNamaUpt;
-        if (count($selectedTypes) == 2 && in_array('reguler', $selectedTypes) && in_array('vpas', $selectedTypes)) {
-            $namaUpt = $cleanNamaUpt . ' (VpasReg)';
-        }
-
-        // Validasi manual untuk kombinasi nama UPT + tipe
-        foreach ($selectedTypes as $tipeValue) {
-            $existingRecord = Upt::where('namaupt', $namaUpt)
-                ->where('tipe', $tipeValue)
-                ->first();
-
-            if ($existingRecord) {
-                return redirect()->back()
-                    ->withInput()
-                    ->with('error', "Data UPT '{$namaUpt}' dengan tipe '{$tipeValue}' sudah ada!");
-            }
-        }
-
-        // Loop untuk setiap tipe yang dipilih
-        foreach ($selectedTypes as $tipeValue) {
-            // Buat record baru untuk setiap tipe
-            $dataupt = [
-                'namaupt' => $namaUpt,
-                'kanwil' => $request->kanwil,
-                'tipe' => $tipeValue,
-                'tanggal' => Carbon::now()->format('Y-m-d'),
-            ];
-
-            $newRecord = Upt::create($dataupt);
-            $createdRecords[] = $tipeValue;
-        }
-
-        // Berikan pesan berdasarkan hasil
-        if (count($createdRecords) > 0) {
-            $message = 'Data UPT berhasil ditambahkan untuk tipe: ' . implode(', ', $createdRecords);
-            return redirect()->route('upt.UserPage')->with('success', $message);
-        } else {
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'Gagal menambahkan data UPT');
-        }
-    }
-
-    public function UserPageUpdate(Request $request, $id)
-    {
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'namaupt' => [
-                    'required',
-                    'string',
-                    function ($attribute, $value, $fail) use ($id, $request) {
-                        // Cek apakah ada record lain dengan nama yang sama dan tipe yang sama
-                        $existingRecord = Upt::where('namaupt', $value)
-                            ->where('id', '!=', $id)
-                            ->where('tipe', $request->tipe)
-                            ->first();
-
-                        if ($existingRecord) {
-                            $fail("Nama UPT '{$value}' dengan tipe '{$request->tipe}' sudah ada.");
-                        }
-                    }
-                ],
-                'kanwil' => 'required|string',
-                'tipe' => 'required|string|in:reguler,vpas',
-            ],
-            [
-                'namaupt.required' => 'Nama UPT harus diisi',
-                'kanwil.required' => 'Kanwil harus diisi',
-                'tipe.required' => 'Tipe harus diisi',
-                'tipe.in' => 'Tipe hanya boleh reguler atau vpas',
-            ]
-        );
-
-        if ($validator->fails()) {
-            return redirect()->back()->withInput()->withErrors($validator);
-        }
-
-        $dataupt = Upt::findOrFail($id);
-        $dataupt->namaupt = $request->namaupt;
-        $dataupt->kanwil = $request->kanwil;
-        $dataupt->tipe = $request->tipe;
-        $dataupt->save();
-
-        return redirect()->route('upt.UserPage')->with('success', 'Data UPT berhasil diupdate!');
-    }
-
-    private function removeVpasRegSuffix($namaUpt)
-    {
-        // Hapus semua kemungkinan suffix (VpasReg) yang mungkin ganda
-        return preg_replace('/\s*\(VpasReg\)+/', '', $namaUpt);
-    }
-
-    private function updateUptNamesBySuffix($namaUptBase)
-    {
-        $relatedData = Upt::where('namaupt', 'LIKE', $namaUptBase . '%')->get();
-
-        // Jika ada 2 atau lebih data dengan nama base yang sama, pastikan ada suffix
-        if ($relatedData->count() >= 2) {
-            foreach ($relatedData as $data) {
-                if (!str_contains($data->namaupt, '(VpasReg)')) {
-                    $data->update([
-                        'namaupt' => $namaUptBase . ' (VpasReg)'
-                    ]);
-                }
-            }
-        }
-        // Jika hanya ada 1 data tersisa, hapus suffix
-        elseif ($relatedData->count() == 1) {
-            $remainingData = $relatedData->first();
-            if (str_contains($remainingData->namaupt, '(VpasReg)')) {
-                $remainingData->update([
-                    'namaupt' => $namaUptBase
-                ]);
-            }
-        }
-    }
-
     public function exportVerticalCsv($id): StreamedResponse
     {
         $user = Upt::with('dataOpsional')->findOrFail($id);
@@ -658,7 +478,7 @@ class RegullerController extends Controller
         $user = Upt::with('dataOpsional')->findOrFail($id);
 
         $data = [
-            'title' => 'Data UPT Reguller '. $user->namaupt,
+            'title' => 'Data UPT Reguller ' . $user->namaupt,
             'user' => $user,
         ];
 

@@ -523,7 +523,7 @@
                     random: true
                 },
                 size: {
-                    value: 3,
+                    value: 10,
                     random: {
                         enable: true,
                         minimumValue: 1

@@ -26,15 +26,6 @@
                                     <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PDF
                                 </button>
                             </div>
-
-                            <!-- Search bar -->
-                            <div class="btn-searchbar">
-                                <span>
-                                    <i class="fas fa-search"></i>
-                                </span>
-                                <input type="text" id="btn-search" name="table_search" placeholder="Search">
-                            </div>
-
                             <button class="btn-purple" data-bs-toggle="modal" data-bs-target="#addModal">
                                 <i class="fa fa-plus"></i> Add Data
                             </button>
@@ -121,26 +112,12 @@
             </div>
         @endif
 
-
-
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
                 <!-- /.row -->
                 <div class="row">
                     <div class="col-12">
-                        @if (request('table_search'))
-                            <div class="card-body">
-                                <div class="alert alert-info">
-                                    <i class="fas fa-info-circle"></i>
-                                    Hasil pencarian untuk: "<strong>{{ request('table_search') }}</strong>"
-                                    <a href="{{ route('mcvpas.ListDataMclientVpas') }}" class="btn btn-sm btn-secondary ml-2">
-                                        <i class="fas fa-times"></i> Clear
-                                    </a>
-                                </div>
-                            </div>
-                        @endif
-
                         <div class="card mt-3">
                             <!-- /.card-header -->
                             <div class="card-body table-responsive p-0">
@@ -151,8 +128,8 @@
                                                 <div class="d-flex flex-column gap-12">
                                                     <span>No</span>
                                                     <div class="d-flex align-items-center gap-2">
-                                                        <button type="button" class="btn-purple w-auto" onclick="applyFilters()"
-                                                            title="Cari Semua Filter">
+                                                        <button type="button" class="btn-purple w-auto"
+                                                            onclick="applyFilters()" title="Cari Semua Filter">
                                                             <i class="fas fa-search"></i> Cari
                                                         </button>
                                                     </div>
@@ -165,7 +142,8 @@
                                                         <span>
                                                             <i class="fas fa-search"></i>
                                                         </span>
-                                                        <input type="text" id="search-nama-upt" name="search_nama_upt">
+                                                        <input type="text" id="search-nama-upt"
+                                                            name="search_nama_upt">
                                                     </div>
                                                 </div>
                                             </th>
@@ -187,7 +165,8 @@
                                                         <span>
                                                             <i class="fas fa-search"></i>
                                                         </span>
-                                                        <input type="text" id="search-jenis-kendala" name="search_jenis_kendala">
+                                                        <input type="text" id="search-jenis-kendala"
+                                                            name="search_jenis_kendala">
                                                     </div>
                                                 </div>
                                             </th>
@@ -196,12 +175,13 @@
                                                     <span>Tanggal Terlapor</span>
                                                     <div class="d-flex justify-content-center align-items-center gap-12">
                                                         <div class="btn-searchbar column-search">
-                                                            <input type="date" id="search-tanggal-terlapor-dari" name="search_tanggal_terlapor_dari"
-                                                                title="Tanggal Dari">
+                                                            <input type="date" id="search-tanggal-terlapor-dari"
+                                                                name="search_tanggal_terlapor_dari" title="Tanggal Dari">
                                                         </div>
                                                         <div class="btn-searchbar column-search">
                                                             <input type="date" id="search-tanggal-terlapor-sampai"
-                                                                name="search_tanggal_terlapor_sampai" title="Tanggal Sampai">
+                                                                name="search_tanggal_terlapor_sampai"
+                                                                title="Tanggal Sampai">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -211,19 +191,21 @@
                                                     <span>Tanggal Selesai</span>
                                                     <div class="d-flex justify-content-center align-items-center gap-12">
                                                         <div class="btn-searchbar column-search">
-                                                            <input type="date" id="search-tanggal-selesai-dari" name="search_tanggal_selesai_dari"
-                                                                title="Tanggal Dari">
+                                                            <input type="date" id="search-tanggal-selesai-dari"
+                                                                name="search_tanggal_selesai_dari" title="Tanggal Dari">
                                                         </div>
                                                         <div class="btn-searchbar column-search">
                                                             <input type="date" id="search-tanggal-selesai-sampai"
-                                                                name="search_tanggal_selesai_sampai" title="Tanggal Sampai">
+                                                                name="search_tanggal_selesai_sampai"
+                                                                title="Tanggal Sampai">
                                                         </div>
                                                     </div>
                                                 </div>
                                             </th>
                                             <th class="text-center align-top">Durasi (Hari)</th>
                                             <th class="text-center">
-                                                <div class="d-flex justify-content-center align-items-center flex-column gap-12">
+                                                <div
+                                                    class="d-flex justify-content-center align-items-center flex-column gap-12">
                                                     <span>Status</span>
                                                     <div class="btn-searchbar column-search">
                                                         <span>
@@ -349,12 +331,12 @@
                                                         <div class="modal-footer flex-row-reverse justify-content-between">
                                                             <button type="button" class="btn-cancel-modal"
                                                                 data-dismiss="modal">Tutup</button>
-                                                            <form action="{{ route('mcvpas.MclientVpasDestroy', $d->id) }}"
+                                                            <form
+                                                                action="{{ route('mcvpas.MclientVpasDestroy', $d->id) }}"
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
-                                                                <button type="submit"
-                                                                    class="btn-delete">Hapus</button>
+                                                                <button type="submit" class="btn-delete">Hapus</button>
                                                             </form>
                                                         </div>
                                                     </div>
@@ -373,104 +355,6 @@
                                     </tbody>
                                 </table>
                             </div>
-
-                            <!-- Custom Pagination dengan Dropdown -->
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <!-- Left: Data info + Dropdown per page -->
-                                <div class="d-flex align-items-center gap-3">
-                                    <div class="btn-datakolom">
-                                        <form method="GET" class="d-flex align-items-center">
-                                            <!-- Preserve all search parameters -->
-                                            @if (request('table_search'))
-                                                <input type="hidden" name="table_search" value="{{ request('table_search') }}">
-                                            @endif
-                                            @if (request('search_nama_upt'))
-                                                <input type="hidden" name="search_nama_upt" value="{{ request('search_nama_upt') }}">
-                                            @endif
-                                            @if (request('search_kanwil'))
-                                                <input type="hidden" name="search_kanwil" value="{{ request('search_kanwil') }}">
-                                            @endif
-                                            @if (request('search_jenis_kendala'))
-                                                <input type="hidden" name="search_jenis_kendala" value="{{ request('search_jenis_kendala') }}">
-                                            @endif
-                                            @if (request('search_status'))
-                                                <input type="hidden" name="search_status" value="{{ request('search_status') }}">
-                                            @endif
-                                            @if (request('search_pic_1'))
-                                                <input type="hidden" name="search_pic_1" value="{{ request('search_pic_1') }}">
-                                            @endif
-                                            @if (request('search_pic_2'))
-                                                <input type="hidden" name="search_pic_2" value="{{ request('search_pic_2') }}">
-                                            @endif
-                                            @if (request('search_tanggal_terlapor_dari'))
-                                                <input type="hidden" name="search_tanggal_terlapor_dari"
-                                                    value="{{ request('search_tanggal_terlapor_dari') }}">
-                                            @endif
-                                            @if (request('search_tanggal_terlapor_sampai'))
-                                                <input type="hidden" name="search_tanggal_terlapor_sampai"
-                                                    value="{{ request('search_tanggal_terlapor_sampai') }}">
-                                            @endif
-                                            @if (request('search_tanggal_selesai_dari'))
-                                                <input type="hidden" name="search_tanggal_selesai_dari"
-                                                    value="{{ request('search_tanggal_selesai_dari') }}">
-                                            @endif
-                                            @if (request('search_tanggal_selesai_sampai'))
-                                                <input type="hidden" name="search_tanggal_selesai_sampai"
-                                                    value="{{ request('search_tanggal_selesai_sampai') }}">
-                                            @endif
-
-                                            <div class="d-flex align-items-center">
-                                                <select name="per_page" class="form-control form-control-sm pr-2" style="width: auto;"
-                                                    onchange="this.form.submit()">
-                                                    <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10
-                                                    </option>
-                                                    <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>15
-                                                    </option>
-                                                    <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20
-                                                    </option>
-                                                    <option value="all" {{ request('per_page') == 'all' ? 'selected' : '' }}>Semua
-                                                    </option>
-                                                </select>
-                                                <span>Rows</span>
-                                            </div>
-                                        </form>
-                                    </div>
-
-                                    <div class="text-muted">
-                                        @if (request('per_page') != 'all')
-                                            Menampilkan {{ $data->firstItem() }} sampai {{ $data->lastItem() }}
-                                            dari {{ $data->total() }} data
-                                        @else
-                                            Menampilkan semua {{ $data->total() }} data
-                                        @endif
-                                    </div>
-                                </div>
-
-                                <!-- Right: Navigation (hanya tampil jika tidak pilih "Semua") -->
-                                @if (request('per_page') != 'all' && $data->lastPage() > 1)
-                                    <div class="pagination-controls d-flex align-items-center gap-12">
-                                        @if ($data->onFirstPage())
-                                            <button class="btn-page" disabled>&laquo; Previous</button>
-                                        @else
-                                            <button class="btn-datakolom w-auto p-3">
-                                                <a href="{{ $data->appends(request()->query())->previousPageUrl() }}">&laquo;
-                                                    Previous</a>
-                                            </button>
-                                        @endif
-
-                                        <span id="page-info">Page {{ $data->currentPage() }} of {{ $data->lastPage() }}</span>
-
-                                        @if ($data->hasMorePages())
-                                            <button class="btn-datakolom w-auto p-3">
-                                                <a href="{{ $data->appends(request()->query())->nextPageUrl() }}">Next&raquo;</a>
-                                            </button>
-                                        @else
-                                            <button class="btn-page" disabled>Next &raquo;</button>
-                                        @endif
-                                    </div>
-                                @endif
-                            </div>
-
                         </div>
 
                         {{-- Add Modal --}}
@@ -673,7 +557,7 @@
                                                         <div class="mb-3">
                                                             <label for="nama_upt_edit_{{ $d->id }}"
                                                                 class="form-label">Nama UPT</label>
-                                                                <input type="text" class="form-control"
+                                                            <input type="text" class="form-control"
                                                                 id="nama_upt_edit_{{ $d->id }}" name="nama_upt"
                                                                 value="{{ $d->nama_upt }}" readonly>
                                                             </select>
@@ -855,6 +739,102 @@
                 </div>
                 <!-- /.row -->
 
+                <!-- Custom Pagination dengan Dropdown -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <!-- Left: Data info + Dropdown per page -->
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="btn-datakolom">
+                            <form method="GET" class="d-flex align-items-center">
+                                <!-- Preserve all search parameters -->
+                                @if (request('search_nama_upt'))
+                                    <input type="hidden" name="search_nama_upt"
+                                        value="{{ request('search_nama_upt') }}">
+                                @endif
+                                @if (request('search_kanwil'))
+                                    <input type="hidden" name="search_kanwil" value="{{ request('search_kanwil') }}">
+                                @endif
+                                @if (request('search_jenis_kendala'))
+                                    <input type="hidden" name="search_jenis_kendala"
+                                        value="{{ request('search_jenis_kendala') }}">
+                                @endif
+                                @if (request('search_status'))
+                                    <input type="hidden" name="search_status" value="{{ request('search_status') }}">
+                                @endif
+                                @if (request('search_pic_1'))
+                                    <input type="hidden" name="search_pic_1" value="{{ request('search_pic_1') }}">
+                                @endif
+                                @if (request('search_pic_2'))
+                                    <input type="hidden" name="search_pic_2" value="{{ request('search_pic_2') }}">
+                                @endif
+                                @if (request('search_tanggal_terlapor_dari'))
+                                    <input type="hidden" name="search_tanggal_terlapor_dari"
+                                        value="{{ request('search_tanggal_terlapor_dari') }}">
+                                @endif
+                                @if (request('search_tanggal_terlapor_sampai'))
+                                    <input type="hidden" name="search_tanggal_terlapor_sampai"
+                                        value="{{ request('search_tanggal_terlapor_sampai') }}">
+                                @endif
+                                @if (request('search_tanggal_selesai_dari'))
+                                    <input type="hidden" name="search_tanggal_selesai_dari"
+                                        value="{{ request('search_tanggal_selesai_dari') }}">
+                                @endif
+                                @if (request('search_tanggal_selesai_sampai'))
+                                    <input type="hidden" name="search_tanggal_selesai_sampai"
+                                        value="{{ request('search_tanggal_selesai_sampai') }}">
+                                @endif
+
+                                <div class="d-flex align-items-center">
+                                    <select name="per_page" class="form-control form-control-sm pr-2"
+                                        style="width: auto;" onchange="this.form.submit()">
+                                        <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10
+                                        </option>
+                                        <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>15
+                                        </option>
+                                        <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20
+                                        </option>
+                                        <option value="all" {{ request('per_page') == 'all' ? 'selected' : '' }}>Semua
+                                        </option>
+                                    </select>
+                                    <span>Rows</span>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="text-muted">
+                            @if (request('per_page') != 'all')
+                                Menampilkan {{ $data->firstItem() }} sampai {{ $data->lastItem() }}
+                                dari {{ $data->total() }} data
+                            @else
+                                Menampilkan semua {{ $data->total() }} data
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Right: Navigation (hanya tampil jika tidak pilih "Semua") -->
+                    @if (request('per_page') != 'all' && $data->lastPage() > 1)
+                        <div class="pagination-controls d-flex align-items-center gap-12">
+                            @if ($data->onFirstPage())
+                                <button class="btn-page" disabled>&laquo; Previous</button>
+                            @else
+                                <button class="btn-datakolom w-auto p-3">
+                                    <a href="{{ $data->appends(request()->query())->previousPageUrl() }}">&laquo;
+                                        Previous</a>
+                                </button>
+                            @endif
+
+                            <span id="page-info">Page {{ $data->currentPage() }} of {{ $data->lastPage() }}</span>
+
+                            @if ($data->hasMorePages())
+                                <button class="btn-datakolom w-auto p-3">
+                                    <a href="{{ $data->appends(request()->query())->nextPageUrl() }}">Next&raquo;</a>
+                                </button>
+                            @else
+                                <button class="btn-page" disabled>Next &raquo;</button>
+                            @endif
+                        </div>
+                    @endif
+                </div>
+
             </div><!-- /.container-fluid -->
         </section>
         <!-- /.content -->
@@ -910,8 +890,9 @@
                     const selectedOptionEdit{{ $d->id }} = selectEdit{{ $d->id }}.querySelector(
                         'option:checked');
                     if (selectedOptionEdit{{ $d->id }}) {
-                        const kanwilEdit{{ $d->id }} = selectedOptionEdit{{ $d->id }}.getAttribute(
-                            'data-kanwil');
+                        const kanwilEdit{{ $d->id }} = selectedOptionEdit{{ $d->id }}
+                            .getAttribute(
+                                'data-kanwil');
                         if (kanwilEdit{{ $d->id }}) {
                             document.getElementById('kanwil_edit_{{ $d->id }}').value =
                                 kanwilEdit{{ $d->id }};
@@ -1086,7 +1067,6 @@
                 let url = new URL(window.location.href);
 
                 // Remove all search parameters
-                url.searchParams.delete('table_search');
                 url.searchParams.delete('search_nama_upt');
                 url.searchParams.delete('search_kanwil');
                 url.searchParams.delete('search_jenis_kendala');

@@ -15,42 +15,11 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class RegullerController extends Controller
 {
-    private function getJenisKendala()
-    {
-        return [
-            'Tidak ada sinyal',
-            'Suara tidak jelas',
-            'Aplikasi error',
-            'Layar rusak',
-            'Internet lambat',
-            'Tidak bisa login',
-            'Kamera bermasalah',
-            'Data tidak sinkron',
-            'Server down',
-            'Update gagal',
-            'Mikrofon rusak',
-            'VPN terputus',
-            'Memory penuh',
-            'Android tidak support',
-            'Jaringan bermasalah',
-            'Aplikasi hang',
-            'Video tidak jalan',
-            'Koneksi timeout',
-            'Database error',
-            'Firewall block',
-            'Maintenance rutin',
-            'Aplikasi lambat',
-            'SSL expired',
-            'Recording error',
-            'Notifikasi tidak masuk'
-        ];
-    }
-
     public function ListDataMclientReguller(Request $request)
     {
         $query = Reguller::query();
 
-        // Apply filters
+        // Apply filter
         $query = $this->applyFilters($query, $request);
 
         // Get per_page from request, default 10
@@ -88,24 +57,8 @@ class RegullerController extends Controller
         return view('mclient.upt.indexReguller', compact('data', 'jenisKendala', 'picList', 'uptList'));
     }
 
-     private function applyFilters($query, Request $request)
+    private function applyFilters($query, Request $request)
     {
-        // Global search
-        if ($request->has('table_search') && !empty($request->table_search)) {
-            $searchTerm = $request->table_search;
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('nama_upt', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('kanwil', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('jenis_kendala', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('detail_kendala', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('status', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('pic_1', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('pic_2', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('tanggal_terlapor', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('tanggal_selesai', 'LIKE', '%' . $searchTerm . '%');
-            });
-        }
-
         // Column-specific searches
         if ($request->has('search_nama_upt') && !empty($request->search_nama_upt)) {
             $query->where('nama_upt', 'LIKE', '%' . $request->search_nama_upt . '%');
@@ -243,47 +196,39 @@ class RegullerController extends Controller
             ]
         );
 
+        // Jika validation gagal, LANGSUNG return tanpa update apapun
         if ($validator->fails()) {
-            $validatedData = [];
-            $invalidFields = array_keys($validator->errors()->messages());
-
-            foreach ($request->all() as $key => $value) {
-                if (!in_array($key, $invalidFields)) {
-                    $validatedData[$key] = $value;
-                }
-            }
-
-            try {
-                if (!empty($validatedData)) {
-                    $data = Reguller::findOrFail($id);
-
-                    if (isset($validatedData['tanggal_terlapor']) && isset($validatedData['tanggal_selesai'])) {
-                        $tanggalTerlapor = Carbon::parse($validatedData['tanggal_terlapor']);
-                        $tanggalSelesai = Carbon::parse($validatedData['tanggal_selesai']);
-                        $validatedData['durasi_hari'] = $tanggalSelesai->diffInDays($tanggalTerlapor);
-                    }
-
-                    $data->update($validatedData);
-                }
-            } catch (\Exception $e) {
-            }
-
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput()
-                ->with('partial_success', 'Data valid telah disimpan. Silakan perbaiki field yang bermasalah.');
+                ->with('error', 'Silakan perbaiki data yang bermasalah.');
         }
 
         try {
             $data = Reguller::findOrFail($id);
-            $updateData = $request->all();
 
-            if ($request->tanggal_terlapor && $request->tanggal_selesai) {
+            // Cuma ambil field yang diizinkan (whitelist approach)
+            $updateData = $request->only([
+                'nama_upt',
+                'kanwil',
+                'jenis_kendala',
+                'detail_kendala',
+                'tanggal_terlapor',
+                'tanggal_selesai',
+                'durasi_hari',
+                'status',
+                'pic_1',
+                'pic_2'
+            ]);
+
+            // Auto-calculate durasi jika ada tanggal
+            if ($request->filled('tanggal_terlapor') && $request->filled('tanggal_selesai')) {
                 $tanggalTerlapor = Carbon::parse($request->tanggal_terlapor);
                 $tanggalSelesai = Carbon::parse($request->tanggal_selesai);
                 $updateData['durasi_hari'] = $tanggalSelesai->diffInDays($tanggalTerlapor);
             }
 
+            // SINGLE UPDATE - tidak ada double update
             $data->update($updateData);
 
             return redirect()->back()->with('success', 'Data monitoring client Reguller berhasil diupdate!');
@@ -315,8 +260,10 @@ class RegullerController extends Controller
         $query = $this->applyFilters($query, $request);
 
         // Add date sorting when date filters are applied
-        if ($request->filled('search_tanggal_terlapor_dari') || $request->filled('search_tanggal_terlapor_sampai') ||
-            $request->filled('search_tanggal_selesai_dari') || $request->filled('search_tanggal_selesai_sampai')) {
+        if (
+            $request->filled('search_tanggal_terlapor_dari') || $request->filled('search_tanggal_terlapor_sampai') ||
+            $request->filled('search_tanggal_selesai_dari') || $request->filled('search_tanggal_selesai_sampai')
+        ) {
             $query = $query->orderBy('tanggal_terlapor', 'asc');
         }
 
@@ -340,8 +287,10 @@ class RegullerController extends Controller
         $query = $this->applyFilters($query, $request);
 
         // Add date sorting when date filters are applied
-        if ($request->filled('search_tanggal_terlapor_dari') || $request->filled('search_tanggal_terlapor_sampai') ||
-            $request->filled('search_tanggal_selesai_dari') || $request->filled('search_tanggal_selesai_sampai')) {
+        if (
+            $request->filled('search_tanggal_terlapor_dari') || $request->filled('search_tanggal_terlapor_sampai') ||
+            $request->filled('search_tanggal_selesai_dari') || $request->filled('search_tanggal_selesai_sampai')
+        ) {
             $query = $query->orderBy('tanggal_terlapor', 'asc');
         }
 
@@ -488,4 +437,5 @@ class RegullerController extends Controller
             'message' => 'UPT not found'
         ]);
     }
+    
 }

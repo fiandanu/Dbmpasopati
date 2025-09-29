@@ -430,7 +430,7 @@ class RegullerController extends Controller
         }
     }
 
-    public function UserPageDestroy($id)
+    public function PonpesPageDestroy($id)
     {
         $dataponpes = Ponpes::find($id);
 
