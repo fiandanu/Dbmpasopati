@@ -94,11 +94,11 @@
             <thead>
                 <tr>
                     <th style="width: 5%;">No</th>
-                    <th style="width: 15%;">Nama UPT</th>
-                    <th style="width: 12%;">Jenis Layanan</th>
+                    <th style="width: 20%;">Nama UPT</th>
+                    <th style="width: 10%;">Jenis Layanan</th>
                     <th style="width: 15%;">Keterangan</th>
                     <th style="width: 15%;">Tanggal Pengiriman</th>
-                    <th style="width: 15%;">Tanggal Selesai</th>
+                    <th style="width: 15%;">Tanggal Sampai</th>
                     <th style="width: 8%;">Durasi hari</th>
                     <th style="width: 10%;">Status</th>
                     <th style="width: 8%;">PIC 1</th>
@@ -134,13 +134,13 @@
                             {{ $d->tanggal_pengiriman ? \Carbon\Carbon::parse($d->tanggal_pengiriman)->format('d M Y') : '-' }}
                         </td>
                         <td class="text-center">
-                            {{ $d->tanggal_selesai ? \Carbon\Carbon::parse($d->tanggal_selesai)->format('d M Y') : '-' }}
+                            {{ $d->tanggal_sampai ? \Carbon\Carbon::parse($d->tanggal_sampai)->format('d M Y') : '-' }}
                         </td>
                         <td class="text-center">{{ $d->durasi_hari ? $d->durasi_hari . ' hari' : '-' }}</td>
                         <td class="text-center {{ $statusClass }}">{{ ucfirst($d->status ?? 'Belum ditentukan') }}
                         </td>
-                        <td>{{ $d->pic_1 ?? '-' }}</td>
-                        <td>{{ $d->pic_2 ?? '-' }}</td>
+                        <td class="text-center">{{ $d->pic_1 ?? '-' }}</td>
+                        <td class="text-center">{{ $d->pic_2 ?? '-' }}</td>
                     </tr>
                 @endforeach
             </tbody>

@@ -127,7 +127,7 @@
                                                     <span>No</span>
                                                     <div class="d-flex justify-content-center align-items-center gap-12">
                                                         <button type="button" class="btn-purple w-auto"
-                                                            onclick="applyFilter()">
+                                                            onclick="applyFilters()">
                                                             <i class="fas fa-search"></i> Cari
                                                         </button>
                                                     </div>
@@ -140,51 +140,57 @@
                                                         <span>
                                                             <i class="fas fa-search"></i>
                                                         </span>
-                                                        <input type="text" id="search-nama-upt" name="search_nama_upt">
+                                                        <input type="text" id="search-nama_upt" name="search_nama_upt"
+                                                            placeholder="Search">
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th>
-                                                <div class="d-flex flex-column gap-12">
+                                            <th class="text-center">
+                                                <div
+                                                    class="d-flex justify-content-center align-items-center flex-column gap-12">
                                                     <span>Jenis Layanan</span>
                                                     <div class="btn-searchbar column-search">
                                                         <span>
                                                             <i class="fas fa-search"></i>
                                                         </span>
-                                                        <input type="text" id="search-jenis-layanan"
-                                                            name="search_jenis_layanan">
+                                                        <input type="text" id="search-jenis_layanan"
+                                                            name="search_jenis_layanan" placeholder="Search">
                                                     </div>
                                                 </div>
                                             </th>
                                             <th class="text-center">
-                                                <div class="d-flex flex-column gap-12">
+                                                <div
+                                                    class="d-flex justify-content-center align-items-center flex-column gap-12">
                                                     <span>Keterangan</span>
                                                     <div class="btn-searchbar column-search">
                                                         <span>
                                                             <i class="fas fa-search"></i>
                                                         </span>
                                                         <input type="text" id="search-keterangan"
-                                                            name="search_keterangan">
+                                                            name="search_keterangan" placeholder="Search">
                                                     </div>
                                                 </div>
                                             </th>
                                             <th class="text-center">
                                                 <div class="d-flex flex-column gap-12">
-                                                    <span> Tanggal Pengiriman</span>
+                                                    <span>Tanggal Pengiriman</span>
                                                     <div class="d-flex justify-content-center align-items-center gap-12">
                                                         <div class="btn-searchbar column-search">
                                                             <input type="date" id="search-tanggal-pengiriman-dari"
-                                                                name="search_tanggal_pengiriman_dari">
+                                                                name="search_tanggal_pengiriman_dari"
+                                                                title="Tanggal Dari">
                                                         </div>
                                                         <div class="btn-searchbar column-search">
-                                                            <input type="date" id="search-tanggal-pengiriman-sampai" name="search_tanggal_pengiriman_sampai">
+                                                            <input type="date" id="search-tanggal-pengiriman-sampai"
+                                                                name="search_tanggal_pengiriman_sampai"
+                                                                title="Tanggal Sampai">
                                                         </div>
                                                     </div>
                                                 </div>
                                             </th>
                                             <th class="text-center">
                                                 <div class="d-flex flex-column gap-12">
-                                                    <span>Tanggal Selesai</span>
+                                                    <span>Tanggal Sampai</span>
                                                     <div class="d-flex justify-content-center align-items-center gap-12">
                                                         <div class="btn-searchbar column-search">
                                                             <input type="date" id="search-tanggal-selesai-dari"
@@ -257,7 +263,8 @@
                                                         $layananClass = match (strtolower($d->jenis_layanan ?? '')) {
                                                             'vpas' => 'Tipevpas',
                                                             'reguler' => 'Tipereguller',
-                                                            'vpasreg' => 'badge-prosses', // default => '',
+                                                            'vpasreg' => 'badge-prosses',
+                                                            default => '',
                                                         };
                                                     @endphp
                                                     <span class="{{ $layananClass }}">
@@ -296,8 +303,8 @@
                                                         {{ ucfirst($d->status ?? 'Belum ditentukan') }}
                                                     </span>
                                                 </td>
-                                                <td>{{ $d->pic_1 ?? '-' }}</td>
-                                                <td>{{ $d->pic_2 ?? '-' }}</td>
+                                                <td class="text-center">{{ $d->pic_1 ?? '-' }}</td>
+                                                <td class="text-center">{{ $d->pic_2 ?? '-' }}</td>
                                                 <td class="text-center">
                                                     <a href="#editModal{{ $d->id }}" data-bs-toggle="modal"
                                                         data-bs-target="#editModal{{ $d->id }}">
@@ -323,7 +330,7 @@
                                                             <ion-icon name="alert-circle-outline"
                                                                 class="text-9xl text-[var(--yellow-04)]"></ion-icon>
                                                             <p class="headline-large-32">Anda Yakin?</p>
-                                                            <label>Apakah Data Kunjungan <b>{{ $d->nama_upt }}
+                                                            <label>Apakah Data Pengiriman <b>{{ $d->nama_upt }}
                                                                     ({{ $d->formatted_jenis_layanan }})
                                                                 </b> ingin
                                                                 dihapus?</label>
@@ -344,7 +351,7 @@
                                             </div>
                                         @empty
                                             <tr>
-                                                <td colspan="10" class="text-center">Tidak ada data yang ditemukan</td>
+                                                <td colspan="11" class="text-center">Tidak ada data yang ditemukan</td>
                                             </tr>
                                         @endforelse
                                     </tbody>
@@ -413,16 +420,16 @@
                                                 </div>
                                             </div>
 
-                                            <!-- Detail Kunjungan -->
+                                            <!-- Detail Pengiriman -->
                                             <div class="mb-4">
                                                 <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                    <label class="fw-bold">Detail Kunjungan</label>
+                                                    <label class="fw-bold">Detail Pengiriman</label>
                                                 </div>
 
                                                 <div class="mb-3">
                                                     <label for="keterangan">Keterangan</label>
                                                     <textarea class="form-control" id="keterangan" name="keterangan" rows="3"
-                                                        placeholder="Masukkan keterangan kunjungan (opsional)"></textarea>
+                                                        placeholder="Masukkan keterangan pengiriman (opsional)"></textarea>
                                                 </div>
                                             </div>
 
@@ -440,8 +447,7 @@
                                                 </div>
                                                 <div class="column">
                                                     <div class="mb-3">
-                                                        <label for="tanggal_sampai">Tanggal
-                                                            Sampai</label>
+                                                        <label for="tanggal_sampai">Tanggal Sampai</label>
                                                         <input type="date" class="form-control" id="tanggal_sampai"
                                                             name="tanggal_sampai">
                                                     </div>
@@ -449,8 +455,7 @@
 
                                                 <div class="column">
                                                     <div class="mb-3">
-                                                        <label for="durasi_hari">Durasi
-                                                            (Hari)</label>
+                                                        <label for="durasi_hari">Durasi (Hari)</label>
                                                         <input type="number" class="form-control" id="durasi_hari"
                                                             name="durasi_hari" min="0"
                                                             placeholder="Masukkan durasi dalam hari">
@@ -525,7 +530,7 @@
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <label class="modal-title" id="editModalLabel{{ $d->id }}">Edit
-                                                    Data Kunjungan</label>
+                                                    Data Pengiriman</label>
                                                 <button type="button" class="btn-close-custom" data-bs-dismiss="modal"
                                                     aria-label="Close">
                                                     <i class="bi bi-x"></i>
@@ -569,16 +574,16 @@
                                                     </div>
                                                 </div>
 
-                                                <!-- Detail Kunjungan -->
+                                                <!-- Detail Pengiriman -->
                                                 <div class="mb-4">
                                                     <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                        <label class="fw-bold">Detail Kunjungan</label>
+                                                        <label class="fw-bold">Detail Pengiriman</label>
                                                     </div>
 
                                                     <div class="mb-3">
                                                         <label for="keterangan{{ $d->id }}">Keterangan</label>
                                                         <textarea class="form-control" id="keterangan{{ $d->id }}" name="keterangan" rows="3"
-                                                            placeholder="Masukkan keterangan kunjungan (opsional)">{{ $d->keterangan ?? '' }}</textarea>
+                                                            placeholder="Masukkan keterangan pengiriman (opsional)">{{ $d->keterangan ?? '' }}</textarea>
                                                     </div>
                                                 </div>
 
@@ -611,8 +616,7 @@
                                                     <div class="column">
                                                         <div class="mb-3">
                                                             <label for="durasi_hari{{ $d->id }}">Durasi
-                                                                (Hari)
-                                                            </label>
+                                                                (Hari)</label>
                                                             <input type="number" class="form-control"
                                                                 id="durasi_hari{{ $d->id }}" name="durasi_hari"
                                                                 min="0" value="{{ $d->durasi_hari }}"
@@ -647,7 +651,6 @@
                                                     <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
                                                         <label class="fw-bold">PIC</label>
                                                     </div>
-
 
                                                     <div class="column">
                                                         <div class="mb-3">
@@ -692,7 +695,6 @@
                                                             </select>
                                                         </div>
                                                     </div>
-
                                                 </div>
                                             </div>
 
@@ -740,9 +742,9 @@
                                     <input type="hidden" name="search_tanggal_pengiriman_dari"
                                         value="{{ request('search_tanggal_pengiriman_dari') }}">
                                 @endif
-                                @if (request('search_tanggal_terlapor_sampai'))
-                                    <input type="hidden" name="search_tanggal_terlapor_sampai"
-                                        value="{{ request('search_tanggal_terlapor_sampai') }}">
+                                @if (request('search_tanggal_pengiriman_sampai'))
+                                    <input type="hidden" name="search_tanggal_pengiriman_sampai"
+                                        value="{{ request('search_tanggal_pengiriman_sampai') }}">
                                 @endif
                                 @if (request('search_tanggal_selesai_dari'))
                                     <input type="hidden" name="search_tanggal_selesai_dari"
@@ -1026,21 +1028,20 @@
         });
     </script>
 
-    {{-- Search And Filters Pagination --}}
     {{-- Search and Filter JavaScript --}}
     <script>
         $(document).ready(function() {
             // Function to get current filter values
             function getFilters() {
                 return {
-                    search_nama_upt: $('#search-nama-upt').val().trim(),
-                    search_jenis_layanan: $('#search-jenis-layanan').val().trim(),
+                    search_nama_upt: $('#search-nama_upt').val().trim(),
+                    search_jenis_layanan: $('#search-jenis_layanan').val().trim(),
                     search_keterangan: $('#search-keterangan').val().trim(),
                     search_status: $('#search-status').val().trim(),
                     search_pic_1: $('#search-pic-1').val().trim(),
                     search_pic_2: $('#search-pic-2').val().trim(),
                     search_tanggal_pengiriman_dari: $('#search-tanggal-pengiriman-dari').val().trim(),
-                    search_tanggal_pengiriman_sampai: $('#search-tanggal-terlapor-sampai').val().trim(),
+                    search_tanggal_pengiriman_sampai: $('#search-tanggal-pengiriman-sampai').val().trim(),
                     search_tanggal_selesai_dari: $('#search-tanggal-selesai-dari').val().trim(),
                     search_tanggal_selesai_sampai: $('#search-tanggal-selesai-sampai').val().trim(),
                     per_page: $('select[name="per_page"]').val()
@@ -1060,7 +1061,7 @@
                 url.searchParams.delete('search_pic_1');
                 url.searchParams.delete('search_pic_2');
                 url.searchParams.delete('search_tanggal_pengiriman_dari');
-                url.searchParams.delete('search_tanggal_terlapor_sampai');
+                url.searchParams.delete('search_tanggal_pengiriman_sampai');
                 url.searchParams.delete('search_tanggal_selesai_dari');
                 url.searchParams.delete('search_tanggal_selesai_sampai');
                 url.searchParams.delete('page'); // Reset to page 1
@@ -1078,14 +1079,14 @@
             // Function to clear all search filters (GLOBAL - bisa dipanggil dari tombol Reset)
             window.clearAllFilters = function() {
                 // Clear semua input field dulu
-                $('#search-nama-upt').val('');
-                $('#search-jenis-layanan').val('');
+                $('#search-nama_upt').val('');
+                $('#search-jenis_layanan').val('');
                 $('#search-keterangan').val('');
                 $('#search-status').val('');
                 $('#search-pic-1').val('');
                 $('#search-pic-2').val('');
-                $('#search-tanggal-terlapor-dari').val('');
-                $('#search-tanggal-terlapor-sampai').val('');
+                $('#search-tanggal-pengiriman-dari').val('');
+                $('#search-tanggal-pengiriman-sampai').val('');
                 $('#search-tanggal-selesai-dari').val('');
                 $('#search-tanggal-selesai-sampai').val('');
 
@@ -1099,7 +1100,7 @@
                 url.searchParams.delete('search_pic_1');
                 url.searchParams.delete('search_pic_2');
                 url.searchParams.delete('search_tanggal_pengiriman_dari');
-                url.searchParams.delete('search_tanggal_terlapor_sampai');
+                url.searchParams.delete('search_tanggal_pengiriman_sampai');
                 url.searchParams.delete('search_tanggal_selesai_dari');
                 url.searchParams.delete('search_tanggal_selesai_sampai');
                 url.searchParams.delete('page');
@@ -1126,7 +1127,7 @@
                 let filters = getFilters();
                 let form = document.createElement('form');
                 form.method = 'GET';
-                form.action = '{{ route('mckunjungan.export.list.csv') }}';
+                form.action = '{{ route('mcpengiriman.export.list.csv') }}';
                 form.target = '_blank';
 
                 Object.keys(filters).forEach(key => {
@@ -1148,7 +1149,7 @@
                 let filters = getFilters();
                 let form = document.createElement('form');
                 form.method = 'GET';
-                form.action = '{{ route('mckunjungan.export.list.pdf') }}';
+                form.action = '{{ route('mcpengiriman.export.list.pdf') }}';
                 form.target = '_blank';
 
                 Object.keys(filters).forEach(key => {
@@ -1169,10 +1170,10 @@
             // Load filter values from URL on page load
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('search_nama_upt')) {
-                $('#search-nama-upt').val(urlParams.get('search_nama_upt'));
+                $('#search-nama_upt').val(urlParams.get('search_nama_upt'));
             }
             if (urlParams.get('search_jenis_layanan')) {
-                $('#search-jenis-layanan').val(urlParams.get('search_jenis_layanan'));
+                $('#search-jenis_layanan').val(urlParams.get('search_jenis_layanan'));
             }
             if (urlParams.get('search_keterangan')) {
                 $('#search-keterangan').val(urlParams.get('search_keterangan'));
@@ -1187,10 +1188,10 @@
                 $('#search-pic-2').val(urlParams.get('search_pic_2'));
             }
             if (urlParams.get('search_tanggal_pengiriman_dari')) {
-                $('#search-tanggal-terlapor-dari').val(urlParams.get('search_tanggal_pengiriman_dari'));
+                $('#search-tanggal-pengiriman-dari').val(urlParams.get('search_tanggal_pengiriman_dari'));
             }
-            if (urlParams.get('search_tanggal_terlapor_sampai')) {
-                $('#search-tanggal-terlapor-sampai').val(urlParams.get('search_tanggal_terlapor_sampai'));
+            if (urlParams.get('search_tanggal_pengiriman_sampai')) {
+                $('#search-tanggal-pengiriman-sampai').val(urlParams.get('search_tanggal_pengiriman_sampai'));
             }
             if (urlParams.get('search_tanggal_selesai_dari')) {
                 $('#search-tanggal-selesai-dari').val(urlParams.get('search_tanggal_selesai_dari'));

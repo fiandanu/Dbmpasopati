@@ -14,6 +14,57 @@ use Barryvdh\DomPDF\Facade\Pdf;
 class KunjunganController extends Controller
 {
 
+    private function applyFilters($query, Request $request)
+    {
+        // column-specific search
+        if ($request->has('search_nama_upt') && !empty($request->search_nama_upt)) {
+            $query->where('nama_upt', 'LIKE', '%' . $request->search_nama_upt . '%');
+        }
+        if ($request->has('search_kanwil') && !empty($request->search_kanwil)) {
+            $query->where('kanwil', 'LIKE', '%' . $request->search_kanwil . '%');
+        }
+        if ($request->has('search_jenis_layanan') && !empty($request->search_jenis_layanan)) {
+            $query->where('jenis_layanan', 'LIKE', '%' . $request->search_jenis_layanan . '%');
+        }
+        if ($request->has('search_keterangan') && !empty($request->search_keterangan)) {
+            $query->where('keterangan', 'LIKE', '%' . $request->search_keterangan . '%');
+        }
+        if ($request->has('search_status') && !empty($request->search_status)) {
+            $query->where('status', 'LIKE', '%' . $request->search_status . '%');
+        }
+        if ($request->has('search_pic_1') && !empty($request->search_pic_1)) {
+            $query->where('pic_1', 'LIKE', '%' . $request->search_pic_1 . '%');
+        }
+        if ($request->has('search_pic_2') && !empty($request->search_pic_2)) {
+            $query->where('pic_2', 'LIKE', '%' . $request->search_pic_2 . '%');
+        }
+
+        // Date range filtering
+        if ($request->has('search_tanggal_terlapor_dari') && !empty($request->search_tanggal_terlapor_dari)) {
+            $query->whereDate('tanggal_terlapor', '>=', $request->search_tanggal_terlapor_dari);
+        }
+        if ($request->has('search_tanggal_terlapor_sampai') && !empty($request->search_tanggal_terlapor_sampai)) {
+            $query->whereDate('tanggal_terlapor', '<=', $request->search_tanggal_terlapor_sampai);
+        }
+        if ($request->has('search_tanggal_selesai_dari') && !empty($request->search_tanggal_selesai_dari)) {
+            $query->whereDate('tanggal_selesai', '>=', $request->search_tanggal_selesai_dari);
+        }
+        if ($request->has('search_tanggal_selesai_sampai') && !empty($request->search_tanggal_selesai_sampai)) {
+            $query->whereDate('tanggal_selesai', '<=', $request->search_tanggal_selesai_sampai);
+        }
+
+        return $query;
+    }
+
+    private function getJenisLayanan()
+    {
+        return [
+            'vpas' => 'VPAS',
+            'reguler' => 'Reguler',
+            'vpasreg' => 'VPAS + Reguler'
+        ];
+    }
+
     public function exportListPdf(Request $request)
     {
         $query = Kunjungan::query();
@@ -90,15 +141,6 @@ class KunjunganController extends Controller
             fclose($file);
         };
         return response()->stream($callback, 200, $headers);
-        }
-
-    private function getJenisLayanan()
-    {
-        return [
-            'vpas' => 'VPAS',
-            'reguler' => 'Reguler',
-            'vpasreg' => 'VPAS + Reguler'
-        ];
     }
 
     public function ListDataMclientKunjungan(Request $request)
@@ -157,48 +199,6 @@ class KunjunganController extends Controller
             'uptListAll',
             'jenisLayananOptions'
         ));
-    }
-
-    private function applyFilters($query, Request $request)
-    {
-        // column-specific search
-        if ($request->has('search_nama_upt') && !empty($request->search_nama_upt)) {
-            $query->where('nama_upt', 'LIKE', '%' . $request->search_nama_upt . '%');
-        }
-        if ($request->has('search_kanwil') && !empty($request->search_kanwil)) {
-            $query->where('kanwil', 'LIKE', '%' . $request->search_kanwil . '%');
-        }
-        if ($request->has('search_jenis_layanan') && !empty($request->search_jenis_layanan)) {
-            $query->where('jenis_layanan', 'LIKE', '%' . $request->search_jenis_layanan . '%');
-        }
-        if ($request->has('search_keterangan') && !empty($request->search_keterangan)) {
-            $query->where('keterangan', 'LIKE', '%' . $request->search_keterangan . '%');
-        }
-        if ($request->has('search_status') && !empty($request->search_status)) {
-            $query->where('status', 'LIKE', '%' . $request->search_status . '%');
-        }
-        if ($request->has('search_pic_1') && !empty($request->search_pic_1)) {
-            $query->where('pic_1', 'LIKE', '%' . $request->search_pic_1 . '%');
-        }
-        if ($request->has('search_pic_2') && !empty($request->search_pic_2)) {
-            $query->where('pic_2', 'LIKE', '%' . $request->search_pic_2 . '%');
-        }
-
-        // Date range filtering
-        if ($request->has('search_tanggal_terlapor_dari') && !empty($request->search_tanggal_terlapor_dari)) {
-            $query->whereDate('tanggal_terlapor', '>=', $request->search_tanggal_terlapor_dari);
-        }
-        if ($request->has('search_tanggal_terlapor_sampai') && !empty($request->search_tanggal_terlapor_sampai)) {
-            $query->whereDate('tanggal_terlapor', '<=', $request->search_tanggal_terlapor_sampai);
-        }
-        if ($request->has('search_tanggal_selesai_dari') && !empty($request->search_tanggal_selesai_dari)) {
-            $query->whereDate('tanggal_selesai', '>=', $request->search_tanggal_selesai_dari);
-        }
-        if ($request->has('search_tanggal_selesai_sampai') && !empty($request->search_tanggal_selesai_sampai)) {
-            $query->whereDate('tanggal_selesai', '<=', $request->search_tanggal_selesai_sampai);
-        }
-
-        return $query;
     }
 
     public function MclientKunjunganStore(Request $request)
