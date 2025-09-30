@@ -10,8 +10,12 @@ Route::prefix('tutor_ponpes_reguller')->name('tutor_ponpes_reguller.')->group(fu
     Route::delete('/DataBasePageDestroy/{id}', [RegullerPonpesController::class, 'DatabasePageDestroy'])->name('DataBasePageDestroy');
     Route::post('/store', [RegullerPonpesController::class, 'store'])->name('store');
 
-    // Move PDF routes inside the group for consistency
+    // PDF routes
     Route::post('/upload-pdf/{id}/{folder}', [RegullerPonpesController::class, 'uploadFilePDF'])->name('uploadFilePDF');
     Route::get('/view-pdf/{id}/{folder}', [RegullerPonpesController::class, 'viewUploadedPDF'])->name('viewpdf');
     Route::delete('/delete-pdf/{id}/{folder}', [RegullerPonpesController::class, 'deleteFilePDF'])->name('deleteFilePDF');
+    
+    // Export routes
+    Route::get('/export-reguller-list-csv', [RegullerPonpesController::class, 'exportListCsv'])->name('export.reguller.list.csv');
+    Route::get('/export-reguller-list-pdf', [RegullerPonpesController::class, 'exportListPdf'])->name('export.reguller.list.pdf');
 });
