@@ -568,8 +568,8 @@ a:hover {
 }
 
 .btn-searchbar {
-    flex: 1; /* biar ngikutin ruang yang ada */
-    width: 100%; /* isi penuh parent */
+    /* flex: 1; biar ngikutin ruang yang ada */
+    width: fit-content; /* isi penuh parent */
     max-width: 238px; /* batas maksimal di desktop */
     min-width: 120px; /* biar gak terlalu kecil */
     height: auto; /* tinggi otomatis */
