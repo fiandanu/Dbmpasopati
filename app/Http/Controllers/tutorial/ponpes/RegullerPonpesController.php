@@ -14,6 +14,12 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class RegullerPonpesController extends Controller
 {
+
+    public function Tutorial_Upt_Reguler()
+    {
+        return view('tutorial.indexPonpes');
+    }
+
     private function calculatePdfStatus($reguller)
     {
         $uploadedFolders = 0;

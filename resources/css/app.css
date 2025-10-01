@@ -86,6 +86,7 @@
     --Secondary-08: #124fa6;
     --Secondary-09: #0d3c7c;
     --Secondary-10: #08244a;
+    --Secondary-Active: #2563eb; /* Tambahan untuk parent dropdown */
 
     --yellow-00: #fffdf0;
     --yellow-01: #fffad6;
@@ -124,117 +125,198 @@
     --purple-10: #0c0821;
 }
 
+/* Font Poppins Classes */
 .poppins-thin {
-    font-family: "Poppins", sans-serif;
+    font-family: var(--font-primary);
     font-weight: 100;
     font-style: normal;
 }
 
 .poppins-extralight {
-    font-family: "Poppins", sans-serif;
+    font-family: var(--font-primary);
     font-weight: 200;
     font-style: normal;
 }
 
 .poppins-light {
-    font-family: "Poppins", sans-serif;
+    font-family: var(--font-primary);
     font-weight: 300;
     font-style: normal;
 }
 
 .poppins-regular {
-    font-family: "Poppins", sans-serif;
+    font-family: var(--font-primary);
     font-weight: 400;
     font-style: normal;
 }
 
 .poppins-medium {
-    font-family: "Poppins", sans-serif;
+    font-family: var(--font-primary);
     font-weight: 500;
     font-style: normal;
 }
 
 .poppins-semibold {
-    font-family: "Poppins", sans-serif;
+    font-family: var(--font-primary);
     font-weight: 600;
     font-style: normal;
 }
 
 .poppins-bold {
-    font-family: "Poppins", sans-serif;
+    font-family: var(--font-primary);
     font-weight: 700;
     font-style: normal;
 }
 
 .poppins-extrabold {
-    font-family: "Poppins", sans-serif;
+    font-family: var(--font-primary);
     font-weight: 800;
     font-style: normal;
 }
 
 .poppins-black {
-    font-family: "Poppins", sans-serif;
+    font-family: var(--font-primary);
     font-weight: 900;
     font-style: normal;
 }
 
 .poppins-thin-italic {
-    font-family: "Poppins", sans-serif;
+    font-family: var(--font-primary);
     font-weight: 100;
     font-style: italic;
 }
 
 .poppins-extralight-italic {
-    font-family: "Poppins", sans-serif;
+    font-family: var(--font-primary);
     font-weight: 200;
     font-style: italic;
 }
 
 .poppins-light-italic {
-    font-family: "Poppins", sans-serif;
+    font-family: var(--font-primary);
     font-weight: 300;
     font-style: italic;
 }
 
 .poppins-regular-italic {
-    font-family: "Poppins", sans-serif;
+    font-family: var(--font-primary);
     font-weight: 400;
     font-style: italic;
 }
 
 .poppins-medium-italic {
-    font-family: "Poppins", sans-serif;
+    font-family: var(--font-primary);
     font-weight: 500;
     font-style: italic;
 }
 
 .poppins-semibold-italic {
-    font-family: "Poppins", sans-serif;
+    font-family: var(--font-primary);
     font-weight: 600;
     font-style: italic;
 }
 
 .poppins-bold-italic {
-    font-family: "Poppins", sans-serif;
+    font-family: var(--font-primary);
     font-weight: 700;
     font-style: italic;
 }
 
 .poppins-extrabold-italic {
-    font-family: "Poppins", sans-serif;
+    font-family: var(--font-primary);
     font-weight: 800;
     font-style: italic;
 }
 
 .poppins-black-italic {
-    font-family: "Poppins", sans-serif;
+    font-family: var(--font-primary);
     font-weight: 900;
     font-style: italic;
 }
 
+/* Sidebar Styling */
+.main-sidebar {
+    transition: all 0.3s ease-in-out;
+    background: var(--Netral-10); /* White background */
+}
+
+.main-sidebar .sidebar {
+    padding: 10px;
+}
+
+.main-sidebar .user-panel {
+    border-bottom: 1px solid var(--Netral-6);
+}
+
+.main-sidebar .user-panel .info a {
+    font-family: var(--font-primary);
+    font-size: var(--label-large-size);
+    line-height: var(--label-large-line-height);
+    letter-spacing: var(--label-large-letter-spacing);
+    color: var(--Netral-1);
+    transition: color 0.3s;
+}
+
+.nav-sidebar .nav-item .nav-link {
+    font-family: var(--font-primary);
+    font-size: var(--body-medium-size);
+    font-weight: var(--weight-medium);
+    border-radius: 8px;
+    margin: 4px 0;
+    padding: 10px 15px;
+    /* background-color: var(--Secondary-Active); */
+    /* color: var(--Netral-10); White text */
+    transition: none; /* No hover effect for parent */
+}
+
+.nav-sidebar .nav-item .nav-link.active {
+    background-color: var(
+        --Secondary-Active
+    ); /* Same color for active parent */
+    /* color: var(--Netral-10); */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.nav-sidebar .nav-treeview .nav-link {
+    font-family: var(--font-primary);
+    font-size: var(--body-medium-size);
+    font-weight: var(--weight-regular);
+    padding-left: 30px;
+    color: var(--Netral-1);
+    transition: all 0.3s ease;
+}
+
+.nav-sidebar .nav-treeview .nav-link:hover {
+    background-color: var(--Secondary-01); /* #e7f0fd for sub-menu hover */
+    color: var(--Secondary-09); /* #0d3c7c for text */
+}
+
+.nav-sidebar .nav-treeview .nav-link.active {
+    background-color: var(--Secondary-01); /* #e7f0fd for active sub-menu */
+    color: var(--Secondary-09);
+}
+
+.nav-icon {
+    margin-right: 10px;
+    color: var(--Netral-1); 
+}
+
+
+.nav-treeview .nav-link.active .nav-icon {
+    color: var(--Secondary-09); /* #0d3c7c for active sub-menu icon */
+}
+
+.right.fas {
+    transition: transform 0.3s;
+}
+
+.nav-item.menu-open .right.fas {
+    transform: rotate(-90deg);
+}
+
+/* Existing app.css styles */
 .Tipereguller {
     background-color: var(--Secondary-01);
-    /* width: 74px; */
     height: 32px;
     padding: 12px 6px;
     border-radius: 50px;
@@ -250,16 +332,16 @@
 }
 
 .Tipevpas {
-    background-color: #c7f5d5;
+    background-color: var(--Primary-01);
     width: 74px;
     height: 32px;
     padding: 12px 6px;
     border-radius: 50px;
-    border: 1px solid #5be186;
+    border: 1px solid var(--Primary-03);
     opacity: 1;
     font-family: Arial;
     font-size: 12px;
-    color: #125f2a;
+    color: var(--Primary-07);
     text-align: center;
     display: inline-flex;
     justify-content: center;
@@ -423,7 +505,6 @@ h5 {
 }
 
 .badge {
-    /* display: inline-block; */
     height: 32px;
     padding: 0.375rem 0.75rem;
     border-radius: 3.125rem;
@@ -437,7 +518,6 @@ h5 {
 }
 
 .badge-prosses {
-    /* display: inline-block; */
     padding: 0.375rem 0.75rem;
     height: 32px;
     border-radius: 3.125rem;
@@ -464,7 +544,7 @@ h5 {
 
 td .btn,
 td button {
-    display: inline-flex; /* atau flex, tergantung elemennya */ /* jarak antar tombol/link */
+    display: inline-flex;
     color: var(--Netral-1);
     font-size: 24px;
     margin: 0.5rem;
@@ -481,9 +561,9 @@ a:hover {
 .text-center-status,
 .text-center-action {
     display: flex;
-    justify-content: center; /* horizontal center */
-    align-items: center; /* vertical center */
-    gap: 12px; /* jarak antar elemen (khusus action) */
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
 }
 
 .content-header {
@@ -568,11 +648,10 @@ a:hover {
 }
 
 .btn-searchbar {
-    /* flex: 1; biar ngikutin ruang yang ada */
-    width: fit-content; /* isi penuh parent */
-    max-width: 238px; /* batas maksimal di desktop */
-    min-width: 120px; /* biar gak terlalu kecil */
-    height: auto; /* tinggi otomatis */
+    width: fit-content;
+    max-width: 238px;
+    min-width: 120px;
+    height: auto;
     padding: 0.75rem 1rem;
     display: flex;
     align-items: center;
@@ -581,17 +660,15 @@ a:hover {
     border-radius: 12px;
     color: var(--Netral-0);
     box-sizing: border-box;
-
-        /* Biar teks nggak keluar */
-    white-space: nowrap; 
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 .btn-searchbar input:focus {
-    outline: none; /* ilangin outline biru */
-    box-shadow: none; /* ilangin shadow biru (bootstrap biasanya) */
-    border: none; /* opsional, kalo mau bener2 polos */
+    outline: none;
+    box-shadow: none;
+    border: none;
 }
 
 @media (max-width: 768px) {
@@ -609,25 +686,20 @@ a:hover {
 }
 
 .btn-datakolom {
-    width: 120px; /* dilebarin dikit biar lega */
+    width: 120px;
     height: 50px;
     display: flex;
-    align-items: center; /* bikin tengah vertikal */ /* kasih jarak otomatis */
+    align-items: center;
     border-radius: 12px;
     border: solid 1px var(--Netral-7);
 }
-/* 
-.btn-datakolom label {
-    font-weight: bold;
-    margin: 0;
-} */
 
 .btn-datakolom select {
     appearance: none;
     border: none;
     background: transparent;
     padding: 0;
-    font: inherit; /* biar fontnya sama kaya label */
+    font: inherit;
     text-align: center;
 }
 
@@ -651,7 +723,6 @@ a:hover {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    /* background-color: var(--Netral-9) !important; */
     border-bottom: none !important;
 }
 
@@ -736,20 +807,16 @@ textarea.form-control {
 }
 
 .modal-body {
-    /* padding: 1.5rem; */
     background-color: #ffffff;
     max-height: 500px;
     border-radius: 12px;
-    /* Set maximum height for modal-body */
     overflow-y: auto;
-    /* Enable vertical scrolling */
 }
 
 .modal-content {
     max-width: 500px;
     width: 100%;
     margin: 0 auto;
-    /* border: 1px solid var(--Netral-4); */
     border-radius: 0.75rem;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     background-color: #f8fafc;
@@ -813,15 +880,6 @@ textarea.form-control {
     cursor: pointer;
 }
 
-/* h1 {
-    color: var(--Netral-4);
-    font-family: var(--font-primary);
-    font-weight: var(--weight-medium);
-    font-size: var(--label-small-size);
-    line-height: var(--label-small-line-height);
-    letter-spacing: var(--label-small-letter-spacing);
-} */
-
 .text-kategori {
     color: var(--Netral-4);
     font-family: var(--font-primary);
@@ -839,7 +897,6 @@ textarea.form-control {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
-    /* gap: 16px; */
 }
 
 .pks-title {
@@ -900,13 +957,13 @@ textarea.form-control {
 .alert-success {
     background-color: var(--Primary-01);
     color: var(--Primary-07);
-    /* border: 1px solid var(--Primary-03) !important; */
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-        "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
-        "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    font-family:
+        -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+        Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+        "Segoe UI Symbol", "Noto Color Emoji";
 }
 
 .alert-warning {
@@ -915,14 +972,6 @@ body {
     border: 1px solid var(--yellow-07) !important;
     border-radius: 3.125rem;
 }
-
-.nav-sidebar .nav-item .nav-link {
-    font-size: var(--body-medium-size);
-    padding: 10px 15px;
-    /* margin-bottom: 10px; */
-}
-
-/*  */
 
 .profile-card {
     background: var(--Netral-10);
@@ -994,7 +1043,6 @@ body {
 }
 
 .profile-action:hover {
-    /* background: var(--Netral-9); */
     transform: scale(1.3);
 }
 
@@ -1013,4 +1061,6 @@ body {
 }
 
 
-
+.nav-pills .nav-link:not(.active):hover {
+    color: var(--Netral-);
+}

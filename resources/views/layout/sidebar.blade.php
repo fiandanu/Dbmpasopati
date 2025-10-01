@@ -154,17 +154,18 @@
     <div class="wrapper">
 
         <!-- Main Sidebar Container -->
-        <aside class="main-sidebar sidebar-light-primary elevation-4">
+        <aside class="main-sidebar sidebar-white-primary elevation-4">
             <!-- Sidebar -->
             <div class="sidebar">
-                <!-- Sidebar user panel (optional) -->
-                <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-                    <div class="image">
-                        <img src="{{ asset('lte/dist/img/user2-160x160.jpg') }}" class="img-circle elevation-2"
-                            alt="User Image">
+                <!-- Sidebar user panel -->
+                <div class="d-flex justify-content-center user-panel mt-3 pb-3 mb-3 d-flex align-items-center">
+                    <div class="d-flex justify-content-center">
+                        <span>
+                            <i class="nav-icon fas fa-user"></i>
+                        </span>
                     </div>
                     <div class="info">
-                        <a href="#" class="d-block">Alexander Pierce</a>
+                        <a href="#" class="d-block font-weight-medium">Alexander Pierce</a>
                     </div>
                 </div>
 
@@ -172,195 +173,188 @@
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                         data-accordion="false">
-                        {{-- Data Base --}}
-                        <li class="nav-item">
+                        <!-- Data Base -->
+                        <li class="nav-item {{ Route::is('database.*') ? 'menu-open' : '' }}">
                             <a href="#" class="nav-link">
-                                <i class="fa fa-database"></i>
-                                <p>
-                                    DataBase
-                                    <i class="right fas fa-angle-left"></i>
-                                </p>
+                                <i class="fas fa-database nav-icon"></i>
+                                <p>DataBase<i class="right fas fa-angle-left"></i></p>
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="{{ route('database.DbUpt') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
+                                    <a href="{{ route('database.DbUpt') }}"
+                                        class="nav-link {{ Route::is('database.DbUpt') ? 'active' : '' }}">
                                         <p>Database UPT</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{{ route('database.DataBasePonpes') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
+                                    <a href="{{ route('database.DataBasePonpes') }}"
+                                        class="nav-link {{ Route::is('database.DataBasePonpes') ? 'active' : '' }}">
                                         <p>Database Ponpes</p>
                                     </a>
                                 </li>
                             </ul>
                         </li>
-                        {{-- Data Base --}}
 
-                        {{-- Monitoring Server --}}
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="fa fa-shield-alt"></i>
-                                <p>
-                                    Monitoring Server
-                                    <i class="right fas fa-angle-left"></i>
-                                </p>
+                        <!-- Monitoring Server -->
+                        <li
+                            class="nav-item {{ Route::is('GrafikServer') || Route::is('MonitoringUpt') || Route::is('MonitoringPonpes') ? 'menu-open' : '' }}">
+                            <a href="#"
+                                class="nav-link">
+                                <i class="fas fa-shield-alt nav-icon"></i>
+                                <p>Monitoring Server<i class="right fas fa-angle-left"></i></p>
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="{{ route('GrafikServer') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
+                                    <a href="{{ route('GrafikServer') }}"
+                                        class="nav-link {{ Route::is('GrafikServer') ? 'active' : '' }}">
                                         <p>Grafik</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{{ route('MonitoringUpt') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
+                                    <a href="{{ route('MonitoringUpt') }}"
+                                        class="nav-link {{ Route::is('MonitoringUpt') ? 'active' : '' }}">
                                         <p>Monitoring UPT</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{{ route('MonitoringPonpes') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
+                                    <a href="{{ route('MonitoringPonpes') }}"
+                                        class="nav-link {{ Route::is('MonitoringPonpes') ? 'active' : '' }}">
                                         <p>Monitoring Ponpes</p>
                                     </a>
                                 </li>
                             </ul>
                         </li>
-                        {{-- Monitoring Server --}}
 
-                        {{-- Monitoring Customer --}}
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="fa fa-eye"></i>
-                                <p>
-                                    Monitoring Customer
-                                    <i class="right fas fa-angle-left"></i>
-                                </p>
+                        <!-- Monitoring Customer -->
+                        <li
+                            class="nav-item {{ Route::is('GrafikClient') || Route::is('KomplainUpt') || Route::is('KomplainPonpes') || Route::is('ListDataMclientCatatanVpas') || Route::is('ListDataMclientCatatanVtren') ? 'menu-open' : '' }}">
+                            <a href="#"
+                                class="nav-link ">
+                                <i class="fas fa-eye nav-icon"></i>
+                                <p>Monitoring Customer<i class="right fas fa-angle-left"></i></p>
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="{{ route('GrafikClient') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
+                                    <a href="{{ route('GrafikClient') }}"
+                                        class="nav-link {{ Route::is('GrafikClient') ? 'active' : '' }}">
                                         <p>Grafik</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{{ route('KomplainUpt') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
+                                    <a href="{{ route('KomplainUpt') }}"
+                                        class="nav-link {{ Route::is('KomplainUpt') ? 'active' : '' }}">
                                         <p>Komplain UPT</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{{ route('KomplainPonpes') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
+                                    <a href="{{ route('KomplainPonpes') }}"
+                                        class="nav-link {{ Route::is('KomplainPonpes') ? 'active' : '' }}">
                                         <p>Komplain Ponpes</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
+<<<<<<< HEAD
                                     <a href="{{ route('mccatatanvpas.ListDataMclientCatatanVpas') }}" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
+=======
+                                    <a href="{{ route('ListDataMclientCatatanVpas') }}"
+                                        class="nav-link {{ Route::is('ListDataMclientCatatanVpas') ? 'active' : '' }}">
+>>>>>>> fa7d8afa19dc641c158e78a8f5cddfe910007fce
                                         <p>Pencatatan kartu Vpas</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
+<<<<<<< HEAD
                                     <a href="{{ route('mccatatanvtren.ListDataMclientCatatanVtren') }}" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
+=======
+                                    <a href="{{ route('ListDataMclientCatatanVtren') }}"
+                                        class="nav-link {{ Route::is('ListDataMclientCatatanVtren') ? 'active' : '' }}">
+>>>>>>> fa7d8afa19dc641c158e78a8f5cddfe910007fce
                                         <p>Pencatatan kartu Vtren</p>
                                     </a>
                                 </li>
                             </ul>
                         </li>
-                        {{-- Monitoring Customer --}}
 
-                        {{-- Tutorial --}}
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="fas fa-lightbulb"></i>
-                                <p>
-                                    Tutorial
-                                    <i class="right fas fa-angle-left"></i>
-                                </p>
+                        <!-- Tutorial -->
+                        <li
+                            class="nav-item {{ Route::is('TutorialUpt') || Route::is('tutor_ponpes_reguller.TutorialPonpes') || Route::is('tutorial_server') || Route::is('tutorial_mikrotik') ? 'menu-open' : '' }}">
+                            <a href="#"
+                                class="nav-link">
+                                <i class="fas fa-lightbulb nav-icon"></i>
+                                <p>Tutorial<i class="right fas fa-angle-left"></i></p>
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="{{ route('TutorialUpt') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
+                                    <a href="{{ route('TutorialUpt') }}"
+                                        class="nav-link {{ Route::is('TutorialUpt') ? 'active' : '' }}">
                                         <p>UPT</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{{ route('TutorialPonpes') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
+                                    <a href="{{ route('tutor_ponpes_reguller.TutorialPonpes') }}"
+                                        class="nav-link {{ Route::is('tutor_ponpes_reguller.TutorialPonpes') ? 'active' : '' }}">
                                         <p>Ponpes</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{{ route('tutorial_server') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
+                                    <a href="{{ route('tutorial_server') }}"
+                                        class="nav-link {{ Route::is('tutorial_server') ? 'active' : '' }}">
                                         <p>Server</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{{ route('tutorial_mikrotik') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Mirkrotik</p>
+                                    <a href="{{ route('tutorial_mikrotik') }}"
+                                        class="nav-link {{ Route::is('tutorial_mikrotik') ? 'active' : '' }}">
+                                        <p>Mikrotik</p>
                                     </a>
                                 </li>
                             </ul>
                         </li>
-                        {{-- Tutorial --}}
 
-                        {{-- User --}}
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="fa fa-user"></i>
-                                <p>
-                                    User
-                                    <i class="right fas fa-angle-left"></i>
-                                </p>
+                        <!-- User -->
+                        <li
+                            class="nav-item {{ Route::is('User.UserPage') || Route::is('UserPonpes.UserPage') || Route::is('provider.DataProvider') || Route::is('kendala.DataKendala') ? 'menu-open' : '' }}">
+                            <a href="#"
+                                class="nav-link">
+                                <i class="fas fa-user nav-icon"></i>
+                                <p>User<i class="right fas fa-angle-left"></i></p>
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="{{ route('User.UserPage') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
+                                    <a href="{{ route('User.UserPage') }}"
+                                        class="nav-link {{ Route::is('User.UserPage') ? 'active' : '' }}">
                                         <p>Data UPT</p>
                                     </a>
                                 </li>
-                            </ul>
-                            <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="{{ route('UserPonpes.UserPage') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
+                                    <a href="{{ route('UserPonpes.UserPage') }}"
+                                        class="nav-link {{ Route::is('UserPonpes.UserPage') ? 'active' : '' }}">
                                         <p>Data Ponpes</p>
                                     </a>
                                 </li>
-                            </ul>
-                            <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="{{ route('provider.DataProvider') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
+                                    <a href="{{ route('provider.DataProvider') }}"
+                                        class="nav-link {{ Route::is('provider.DataProvider') ? 'active' : '' }}">
                                         <p>Data Provider/Vpn</p>
                                     </a>
                                 </li>
-                            </ul>
-                            <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="{{ route('kendala.DataKendala') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
+                                    <a href="{{ route('kendala.DataKendala') }}"
+                                        class="nav-link {{ Route::is('kendala.DataKendala') ? 'active' : '' }}">
                                         <p>Data Kendala/PIC</p>
                                     </a>
                                 </li>
                             </ul>
                         </li>
-                        {{-- User --}}
                     </ul>
                 </nav>
                 <!-- /.sidebar-menu -->
             </div>
             <!-- /.sidebar -->
         </aside>
+
         <!-- /.content-wrapper -->
         @yield('content')
 
@@ -372,6 +366,7 @@
     <!-- ./wrapper -->
 
     <x-script></x-script>
+
 
 </body>
 
