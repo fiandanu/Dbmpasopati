@@ -253,24 +253,14 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
-<<<<<<< HEAD
-                                    <a href="{{ route('mccatatanvpas.ListDataMclientCatatanVpas') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-=======
-                                    <a href="{{ route('ListDataMclientCatatanVpas') }}"
+                                    <a href="{{ route('mccatatanvpas.ListDataMclientCatatanVpas') }}"
                                         class="nav-link {{ Route::is('ListDataMclientCatatanVpas') ? 'active' : '' }}">
->>>>>>> fa7d8afa19dc641c158e78a8f5cddfe910007fce
                                         <p>Pencatatan kartu Vpas</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-<<<<<<< HEAD
-                                    <a href="{{ route('mccatatanvtren.ListDataMclientCatatanVtren') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-=======
-                                    <a href="{{ route('ListDataMclientCatatanVtren') }}"
+                                    <a href="{{ route('mccatatanvtren.ListDataMclientCatatanVtren') }}"
                                         class="nav-link {{ Route::is('ListDataMclientCatatanVtren') ? 'active' : '' }}">
->>>>>>> fa7d8afa19dc641c158e78a8f5cddfe910007fce
                                         <p>Pencatatan kartu Vtren</p>
                                     </a>
                                 </li>
