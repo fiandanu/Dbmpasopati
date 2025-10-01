@@ -336,7 +336,7 @@
                                                             <button type="button" class="btn-cancel-modal"
                                                                 data-dismiss="modal">Tutup</button>
                                                             <form
-                                                                action="{{ route('MclientPonpesPengirimanDestroyPonpes', $d->id) }}"
+                                                                action="{{ route('mclientpengirimanponpes.MclientPonpesPengirimanDestroyPonpes', $d->id) }}"
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
@@ -364,7 +364,7 @@
                         {{-- Add Modal --}}
                         <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel"
                             aria-hidden="true">
-                            <form id="addForm" action="{{ route('MclientPonpesPengirimanStore') }}" method="POST">
+                            <form id="addForm" action="{{ route('mclientpengirimanponpes.MclientPonpesPengirimanStore') }}" method="POST">
                                 @csrf
                                 <div class="modal-dialog modal-lg">
                                     <div class="modal-content">
@@ -525,7 +525,7 @@
                             <div class="modal fade" id="editModal{{ $d->id }}" tabindex="-1"
                                 aria-labelledby="editModalLabel{{ $d->id }}" aria-hidden="true">
                                 <form id="editForm{{ $d->id }}"
-                                    action="{{ route('MclientPonpesPengirimanUpdatePonpes', ['id' => $d->id]) }}"
+                                    action="{{ route('mclientpengirimanponpes.MclientPonpesPengirimanUpdatePonpes', ['id' => $d->id]) }}"
                                     method="POST">
                                     @csrf
                                     @method('PUT')
@@ -1130,7 +1130,7 @@
                 let filters = getFilters();
                 let form = document.createElement('form');
                 form.method = 'GET';
-                form.action = '{{ route('mclientpengirimanponpes.export.list.csv') }}';
+                form.action = '{{ route('mclientpengirimanponpes.mclientpengirimanponpes.export.list.csv') }}';
                 form.target = '_blank';
 
                 Object.keys(filters).forEach(key => {
@@ -1152,7 +1152,7 @@
                 let filters = getFilters();
                 let form = document.createElement('form');
                 form.method = 'GET';
-                form.action = '{{ route('mclientpengirimanponpes.export.list.pdf') }}';
+                form.action = '{{ route('mclientpengirimanponpes.mclientpengirimanponpes.export.list.pdf') }}';
                 form.target = '_blank';
 
                 Object.keys(filters).forEach(key => {

@@ -259,13 +259,13 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{{ route('ListDataMclientCatatanVpas') }}" class="nav-link">
+                                    <a href="{{ route('mccatatanvpas.ListDataMclientCatatanVpas') }}" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Pencatatan kartu Vpas</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{{ route('ListDataMclientCatatanVtren') }}" class="nav-link">
+                                    <a href="{{ route('mccatatanvtren.ListDataMclientCatatanVtren') }}" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Pencatatan kartu Vtren</p>
                                     </a>

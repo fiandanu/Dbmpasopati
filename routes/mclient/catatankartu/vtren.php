@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\mclient\catatankartu\VtrenController;
 
-Route::prefix('mclient-catatan-vtren')->group(function () {
+Route::prefix('mclient-catatan-vtren')->name('mccatatanvtren.')->group(function () {
     Route::get('/', [VtrenController::class, 'ListDataMclientCatatanVtren'])->name('ListDataMclientCatatanVtren');
     Route::post('/store', [VtrenController::class, 'MclientCatatanStoreVtren'])->name('MclientCatatanStoreVtren');
     Route::put('/update/{id}', [VtrenController::class, 'MclientCatatanUpdateVtren'])->name('MclientCatatanUpdateVtren');

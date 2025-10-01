@@ -622,7 +622,7 @@
                                                                 class="form-label">Tanggal Selesai</label>
                                                             <input type="date" class="form-control"
                                                                 id="tanggal_selesai_edit_{{ $d->id }}"
-                                                                name="tanggal_selesai" 
+                                                                name="tanggal_selesai"
                                                                 value="{{ $d->tanggal_selesai ? ($d->tanggal_selesai)->format('Y-m-d') : '' }}">
                                                         </div>
                                                         <div class="mb-3">
@@ -783,24 +783,36 @@
                     </div>
 
                     <!-- Right: Navigation (hanya tampil jika tidak pilih "Semua") -->
+                    <!-- Right: Navigation (hanya tampil jika tidak pilih "Semua") -->
+                    <!-- Right: Navigation (hanya tampil jika tidak pilih "Semua") -->
                     @if (request('per_page') != 'all' && $data->lastPage() > 1)
                         <div class="pagination-controls d-flex align-items-center gap-12">
+                            @php
+                                $queryParams = request()->except('page');
+                            @endphp
+
                             @if ($data->onFirstPage())
                                 <button class="btn-page" disabled>&laquo; Previous</button>
                             @else
-                                <button class="btn-datakolom w-auto p-3">
-                                    <a href="{{ $data->appends(request()->query())->previousPageUrl() }}">&laquo;
-                                        Previous</a>
-                                </button>
+                                @php
+                                    $prevParams = array_merge($queryParams, ['page' => $data->currentPage() - 1]);
+                                @endphp
+                                <a href="{{ route('mcponpesreguler.ListDataMclientPonpesReguller', $prevParams) }}"
+                                class="btn-datakolom w-auto p-3">
+                                    &laquo; Previous
+                                </a>
                             @endif
 
-                            <span id="page-info">Page {{ $data->currentPage() }} of
-                                {{ $data->lastPage() }}</span>
+                            <span id="page-info">Page {{ $data->currentPage() }} of {{ $data->lastPage() }}</span>
 
                             @if ($data->hasMorePages())
-                                <button class="btn-datakolom w-auto p-3">
-                                    <a href="{{ $data->appends(request()->query())->nextPageUrl() }}">Next&raquo;</a>
-                                </button>
+                                @php
+                                    $nextParams = array_merge($queryParams, ['page' => $data->currentPage() + 1]);
+                                @endphp
+                                <a href="{{ route('mcponpesreguler.ListDataMclientPonpesReguller', $nextParams) }}"
+                                class="btn-datakolom w-auto p-3">
+                                    Next &raquo;
+                                </a>
                             @else
                                 <button class="btn-page" disabled>Next &raquo;</button>
                             @endif

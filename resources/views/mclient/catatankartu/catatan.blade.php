@@ -122,7 +122,7 @@
                                 <div class="alert alert-info">
                                     <i class="fas fa-info-circle"></i>
                                     Hasil pencarian untuk: "<strong>{{ request('table_search') }}</strong>"
-                                    <a href="{{ route('ListDataMclientCatatanVpas') }}" class="btn btn-sm btn-secondary ml-2">
+                                    <a href="{{ route('mccatatanvpas.ListDataMclientCatatanVpas') }}" class="btn btn-sm btn-secondary ml-2">
                                         <i class="fas fa-times"></i> Clear
                                     </a>
                                 </div>
@@ -210,7 +210,7 @@
                                                         <div class="modal-footer flex-row-reverse justify-content-between">
                                                             <button type="button" class="btn-cancel-modal"
                                                                 data-dismiss="modal">Tutup</button>
-                                                            <form action="{{ route('MclientCatatanDestroyVpas', $d->id) }}"
+                                                            <form action="{{ route('mccatatanvpas.MclientCatatanDestroyVpas', $d->id) }}"
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
@@ -240,7 +240,7 @@
                         {{-- Add Modal --}}
                         <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel"
                             aria-hidden="true">
-                            <form id="addForm" action="{{ route('MclientCatatanStoreVpas') }}" method="POST">
+                            <form id="addForm" action="{{ route('mccatatanvpas.MclientCatatanStoreVpas') }}" method="POST">
                                 @csrf
                                 <div class="modal-dialog modal-lg">
                                     <div class="modal-content">
@@ -339,7 +339,7 @@
                                                             <label for="kartu_belum_teregister" class="form-label">Kartu
                                                                 Belum Teregister</label>
                                                             <input type="text" class="form-control"
-                                                                id="kartu_belum_teregister" 
+                                                                id="kartu_belum_teregister"
                                                                 name="kartu_belum_teregister"
                                                                 value=""
                                                                 placeholder="Jumlah kartu belum teregister">
@@ -351,7 +351,7 @@
                                                                 class="form-label">WhatsApp Telah Terpakai</label>
                                                             <input type="text" class="form-control"
                                                                 id="whatsapp_telah_terpakai"
-                                                                name="whatsapp_telah_terpakai" 
+                                                                name="whatsapp_telah_terpakai"
                                                                 value=""
                                                                 placeholder="Jumlah WhatsApp terpakai">
                                                         </div>
@@ -425,7 +425,7 @@
                             <div class="modal fade" id="editModal{{ $d->id }}" tabindex="-1"
                                 aria-labelledby="editModalLabel{{ $d->id }}" aria-hidden="true">
                                 <form id="editForm{{ $d->id }}"
-                                    action="{{ route('MclientCatatanUpdateVpas', ['id' => $d->id]) }}" method="POST">
+                                    action="{{ route('mccatatanvpas.MclientCatatanUpdateVpas', ['id' => $d->id]) }}" method="POST">
                                     @csrf
                                     @method('PUT')
                                     <div class="modal-dialog modal-lg">
@@ -816,7 +816,7 @@
                             }
                         });
 
-                        // Memunculkan Dropdown jika tidak kosong 
+                        // Memunculkan Dropdown jika tidak kosong
                         if (searchTerm.length > 0 && hasVisibleOption) {
                             uptDropdownEdit{{ $d->id }}.style.display = 'block';
                         } else if (searchTerm.length === 0) {
@@ -1013,7 +1013,7 @@
 
     {{-- Search and Pagination JavaScript --}}
     <script>
-        
+
             const $rows = $("#Table tbody tr");
             let limit = parseInt($("#row-limit").val());
             let currentPage = 1;

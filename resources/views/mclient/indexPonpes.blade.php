@@ -58,7 +58,7 @@
                                 <span class="checkmark">✓</span>
                                 {{ $ponpesKunjunganCount ?? 0 }} Data
                             </div>
-                            <a href="{{ route('ListDataMclientPonpesKunjungan') }}" class="list-button">Kunjungan Ponpes</a>
+                            <a href="{{ route('mckunjunganponpes.ListDataMclientPonpesKunjungan') }}" class="list-button">Kunjungan Ponpes</a>
                         </div>
                     </div>
 
@@ -70,10 +70,10 @@
                                 <span class="checkmark">✓</span>
                                 {{ $ponpesSettingCount ?? 0 }} Data
                             </div>
-                            <a href="{{ route('ListDataMclientPonpesSetting')}}" class="list-button">Setting Ponpes</a>
+                            <a href="{{ route('mclientponpessetting.ListDataMclientPonpesSetting')}}" class="list-button">Setting Ponpes</a>
                         </div>
                     </div>
-                    
+
                     <!-- Kategori Pengiriman Alat Ponpes -->
                     <div class="col-md-3">
                         <div class="card-kategori">
@@ -83,7 +83,7 @@
                                 <span class="checkmark">✓</span>
                                 100 Data
                             </div>
-                            <a href="{{ route('ListDataMclientPonpesPengiriman') }}" class="list-button">Pengiriman Alat Ponpes</a>
+                            <a href="{{ route('mclientpengirimanponpes.ListDataMclientPonpesPengiriman') }}" class="list-button">Pengiriman Alat Ponpes</a>
                         </div>
                     </div>
                 </div>

@@ -337,7 +337,7 @@
                                                             <button type="button" class="btn-cancel-modal"
                                                                 data-dismiss="modal">Tutup</button>
                                                             <form
-                                                                action="{{ route('MclientPonpesSettingDestroy', $d->id) }}"
+                                                                action="{{ route('mclientponpessetting.MclientPonpesSettingDestroy', $d->id) }}"
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
@@ -365,7 +365,7 @@
                         {{-- Add Modal --}}
                         <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel"
                             aria-hidden="true">
-                            <form id="addForm" action="{{ route('MclientPonpesSettingStore') }}" method="POST">
+                            <form id="addForm" action="{{ route('mclientponpessetting.MclientPonpesSettingStore') }}" method="POST">
                                 @csrf
                                 <div class="modal-dialog modal-lg">
                                     <div class="modal-content">
@@ -527,7 +527,7 @@
                             <div class="modal fade" id="editModal{{ $d->id }}" tabindex="-1"
                                 aria-labelledby="editModalLabel{{ $d->id }}" aria-hidden="true">
                                 <form id="editForm{{ $d->id }}"
-                                    action="{{ route('MclientPonpesSettingUpdate', ['id' => $d->id]) }}"
+                                    action="{{ route('mclientponpessetting.MclientPonpesSettingUpdate', ['id' => $d->id]) }}"
                                     method="POST">
                                     @csrf
                                     @method('PUT')
@@ -1132,7 +1132,7 @@
                 let filters = getFilters();
                 let form = document.createElement('form');
                 form.method = 'GET';
-                form.action = '{{ route('mclientsettingponpes.export.list.csv') }}';
+                form.action = '{{ route('mclientponpessetting.mclientsettingponpes.export.list.csv') }}';
                 form.target = '_blank';
 
                 Object.keys(filters).forEach(key => {
@@ -1154,7 +1154,7 @@
                 let filters = getFilters();
                 let form = document.createElement('form');
                 form.method = 'GET';
-                form.action = '{{ route('mclientsettingponpes.export.list.pdf') }}';
+                form.action = '{{ route('mclientponpessetting.mclientsettingponpes.export.list.pdf') }}';
                 form.target = '_blank';
 
                 Object.keys(filters).forEach(key => {

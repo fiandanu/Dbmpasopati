@@ -57,7 +57,7 @@
                                 <span class="checkmark">✓</span>
                                 {{ $totalKunjungan ?? 0 }} Data
                             </div>
-                            <a href="{{ route('ListDataMclientKunjungan') }}" class="list-button">List Data Kunjungan</a>
+                            <a href="{{ route('mclientkunjunganupt.ListDataMclientKunjungan') }}" class="list-button">List Data Kunjungan</a>
                         </div>
                     </div>
 
@@ -70,7 +70,7 @@
                                 <span class="checkmark">✓</span>
                                 100 Data
                             </div>
-                            <a href="{{ route('ListDataMclientPengirimanUpt')}}" class="list-button">List Data Pengiriman Alat UPT</a>
+                            <a href="{{ route('mclientpengirimanupt.ListDataMclientPengirimanUpt') }}" class="list-button">List Data Pengiriman Alat UPT</a>
                         </div>
                     </div>
 
@@ -83,7 +83,7 @@
                                 <span class="checkmark">✓</span>
                                 100 Data
                             </div>
-                            <a href="{{ route('ListDataMclientSettingAlat') }}" class="list-button">List Data Setting Alat
+                            <a href="{{ route('mclientsettingalatupt.ListDataMclientSettingAlat') }}" class="list-button">List Data Setting Alat
                                 UPT</a>
                         </div>
                     </div>

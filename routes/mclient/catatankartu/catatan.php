@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\mclient\catatankartu\CatatanController;
 
-Route::prefix('mclient-catatan-vpas')->group(function () {
+Route::prefix('mclient-catatan-vpas')->name('mccatatanvpas.')->group(function () {
     Route::get('/', [CatatanController::class, 'ListDataMclientCatatanVpas'])->name('ListDataMclientCatatanVpas');
     Route::post('/store', [CatatanController::class, 'MclientCatatanStoreVpas'])->name('MclientCatatanStoreVpas');
     Route::put('/update/{id}', [CatatanController::class, 'MclientCatatanUpdateVpas'])->name('MclientCatatanUpdateVpas');

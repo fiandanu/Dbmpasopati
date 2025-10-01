@@ -5,6 +5,7 @@ use App\Http\Controllers\user\ponpes\pks\PksController;
 
 // PKS Ponpes
 Route::prefix('DbPonpes.pks.')->name('DbPonpes.pks.')->group(function () {
+    
     Route::get('/ListDataPks', [PksController::class, 'ListDataPks'])->name('ListDataPks');
     Route::delete('/DataBasePageDestroy/{id}', [PksController::class, 'DataBasePageDestroy'])->name('DataBasePageDestroy');
 

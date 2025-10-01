@@ -3,8 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\mclient\reguler\PengirimanController;
 
-Route::prefix('mclient-pengiriman-upt')->group(function () {
-    
+Route::prefix('mclient-pengiriman-upt')->name('mclientpengirimanupt.')->group(function () {
+
     Route::get('/', [PengirimanController::class, 'ListDataMclientPengirimanUpt'])->name('ListDataMclientPengirimanUpt');
     Route::post('/store', [PengirimanController::class, 'MclientPengirimanStoreUpt'])->name('MclientPengirimanStoreUpt');
     Route::put('/update/{id}', [PengirimanController::class, 'MclientPengirimanUpdateUpt'])->name('MclientPengirimanUpdateUpt');

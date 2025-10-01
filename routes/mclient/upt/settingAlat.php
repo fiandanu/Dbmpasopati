@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\mclient\reguler\SettingAlatController;
 
-Route::prefix('mclient-setting-alat-upt')->group(function () {
+Route::prefix('mclient-setting-alat-upt')->name('mclientsettingalatupt.')->group(function () {
 
     Route::get('/', [SettingAlatController::class, 'ListDataMclientSettingAlat'])->name('ListDataMclientSettingAlat');
     Route::post('/store', [SettingAlatController::class, 'MclientSettingAlatStore'])->name('MclientSettingAlatStore');

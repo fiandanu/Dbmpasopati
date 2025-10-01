@@ -339,7 +339,7 @@
                                                             <button type="button" class="btn-cancel-modal"
                                                                 data-dismiss="modal">Tutup</button>
                                                             <form
-                                                                action="{{ route('MclientKunjunganDestroyUpt', $d->id) }}"
+                                                                action="{{ route('mclientpengirimanupt.MclientKunjunganDestroyUpt', $d->id) }}"
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
@@ -362,7 +362,7 @@
                         {{-- Add Modal --}}
                         <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel"
                             aria-hidden="true">
-                            <form id="addForm" action="{{ route('MclientPengirimanStoreUpt') }}" method="POST">
+                            <form id="addForm" action="{{ route('mclientpengirimanupt.MclientPengirimanStoreUpt') }}" method="POST">
                                 @csrf
                                 <div class="modal-dialog modal-lg">
                                     <div class="modal-content">
@@ -523,7 +523,7 @@
                             <div class="modal fade" id="editModal{{ $d->id }}" tabindex="-1"
                                 aria-labelledby="editModalLabel{{ $d->id }}" aria-hidden="true">
                                 <form id="editForm{{ $d->id }}"
-                                    action="{{ route('MclientPengirimanUpdateUpt', ['id' => $d->id]) }}" method="POST">
+                                    action="{{ route('mclientpengirimanupt.MclientPengirimanUpdateUpt', ['id' => $d->id]) }}" method="POST">
                                     @csrf
                                     @method('PUT')
                                     <div class="modal-dialog modal-lg">
@@ -1127,7 +1127,7 @@
                 let filters = getFilters();
                 let form = document.createElement('form');
                 form.method = 'GET';
-                form.action = '{{ route('mcpengiriman.export.list.csv') }}';
+                form.action = '{{ route('mclientpengirimanupt.mcpengiriman.export.list.csv') }}';
                 form.target = '_blank';
 
                 Object.keys(filters).forEach(key => {
@@ -1149,7 +1149,7 @@
                 let filters = getFilters();
                 let form = document.createElement('form');
                 form.method = 'GET';
-                form.action = '{{ route('mcpengiriman.export.list.pdf') }}';
+                form.action = '{{ route('mclientpengirimanupt.mcpengiriman.export.list.pdf') }}';
                 form.target = '_blank';
 
                 Object.keys(filters).forEach(key => {
