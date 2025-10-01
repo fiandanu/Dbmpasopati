@@ -17,9 +17,8 @@ Route::prefix('tutor_upt')->name('tutor_upt.')->group(function () {
     Route::post('/upload-pdf/{id}/{folder}', [RegullerController::class, 'uploadFilePDF'])->name('uploadFilePDF');
     Route::get('/view-pdf/{id}/{folder}', [RegullerController::class, 'viewUploadedPDF'])->name('viewpdf');
     Route::delete('/delete-pdf/{id}/{folder}', [RegullerController::class, 'deleteFilePDF'])->name('deleteFilePDF');
-});
 
-// // Monitoring Tutorial
-Route::get('/TutorialPonpes', [TutorialController::class, 'TutorialPonpes'])->name('TutorialPonpes');
-// Route::get('/TutorialServer', [TutorialController::class, 'TutorialServer'])->name('TutorialServer');
-Route::get('/TutorialMicrotik', [TutorialController::class, 'TutorialMicrotik'])->name('TutorialMicrotik');
+    // Export routes
+    Route::get('/export-upt-list-csv', [RegullerController::class, 'exportListCsv'])->name('export.upt.list.csv');
+    Route::get('/export-upt-list-pdf', [RegullerController::class, 'exportListPdf'])->name('export.upt.list.pdf');
+});

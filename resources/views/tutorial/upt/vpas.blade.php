@@ -15,12 +15,20 @@
                         </div>
 
                         <div class="d-flex align-items-center gap-2 flex-wrap">
-                            <!-- Search bar -->
-                            <div class="btn-searchbar">
-                                <span>
-                                    <i class="fas fa-search"></i>
-                                </span>
-                                <input type="text" id="btn-search" name="table_search" placeholder="Search">
+
+                            <!-- Export Buttons -->
+                            <div class="d-flex gap-2" id="export-buttons">
+                                {{-- Button Export CSV --}}
+                                <button onclick="downloadCsv()"
+                                    class="btn-page d-flex justify-content-center align-items-center" title="Download CSV">
+                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export CSV
+                                </button>
+
+                                {{-- Button Export PDF --}}
+                                <button onclick="downloadPdf()"
+                                    class="btn-page d-flex justify-content-center align-items-center" title="Download PDF">
+                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PDF
+                                </button>
                             </div>
 
                             <button class="btn-purple" data-bs-toggle="modal" data-bs-target="#addModal">
@@ -114,34 +122,81 @@
                 <!-- /.row -->
                 <div class="row">
                     <div class="col-12">
-                        @if (request('table_search'))
-                            <div class="card-body">
-                                <div class="alert alert-info">
-                                    <i class="fas fa-info-circle"></i>
-                                    Hasil pencarian untuk: "<strong>{{ request('table_search') }}</strong>"
-                                    <a href="{{ route('tutor_vpas.ListDataSpp') }}" class="btn btn-sm btn-secondary ml-2">
-                                        <i class="fas fa-times"></i> Clear
-                                    </a>
-                                </div>
-                            </div>
-                        @endif
                         <div class="card">
                             <!-- /.card-header -->
                             <div class="card-body table-responsive p-0">
                                 <table class="table table-hover text-nowrap" id="Table">
                                     <thead>
                                         <tr>
-                                            <th>No</th>
-                                            <th>Tutorial Vpas</th>
-                                            <th class="text-center">Tanggal Dibuat</th>
-                                            <th class="text-center">Status Upload PDF</th>
-                                            <th class="text-center">Action</th>
+                                            <th class="text-center">
+                                                <div class="d-flex flex-column gap-12">
+                                                    <span>No</span>
+                                                    <div class="d-flex justify-content-center align-items-center gap-12">
+                                                        <button type="button" class="btn-purple w-auto"
+                                                            onclick="applyFilters()" title="Cari Semua Filter">
+                                                            <i class="fas fa-search"></i> Cari
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </th>
+                                            <th>
+                                                <div class="d-flex flex-column gap-12">
+                                                    <span>Judul Tutorial</span>
+                                                    <div class="btn-searchbar column-search">
+                                                        <span>
+                                                            <i class="fas fa-search"></i>
+                                                        </span>
+                                                        <input type="text" id="search-judul-tutorial"
+                                                            name="search_judul_tutorial" placeholder="Search">
+                                                    </div>
+                                                </div>
+                                            </th>
+                                            <th class="text-center">
+                                                <div class="d-flex flex-column gap-12">
+                                                    <span>Tanggal Dibuat</span>
+                                                    <div class="d-flex justify-content-center align-items-center gap-12">
+                                                        <div class="btn-searchbar column-search">
+                                                            <input type="date" id="search-tanggal-dibuat-dari"
+                                                                name="search_tanggal_dibuat_dari"
+                                                                title="Tanggal Dibuat Dari">
+                                                        </div>
+                                                        <div class="btn-searchbar column-search">
+                                                            <input type="date" id="search-tanggal-dibuat-sampai"
+                                                                name="search_tanggal_dibuat_sampai"
+                                                                title="Tanggal Dibuat Sampai">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </th>
+                                            <th class="text-center">
+                                                <div class="d-flex flex-column gap-12">
+                                                    <span>Status Upload</span>
+                                                    <div class="d-flex justify-content-center align-items-center">
+                                                        <div class="btn-searchbar column-search">
+                                                            <span>
+                                                                <i class="fas fa-search"></i>
+                                                            </span>
+                                                            <input type="text" id="search-status"
+                                                                name="search_status">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </th>
+                                            <th class="text-center align-top">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @php
+                                            // Calculate starting number for pagination
+                                            if (request('per_page') == 'all') {
+                                                $no = 1;
+                                            } else {
+                                                $no = ($data->currentPage() - 1) * $data->perPage() + 1;
+                                            }
+                                        @endphp
                                         @forelse ($data as $d)
                                             <tr>
-                                                <td>{{ $loop->iteration }}</td>
+                                                <td class="text-center">{{ $no++ }}</td>
                                                 <td>{{ $d->tutor_vpas }}</td>
                                                 <td class="text-center">
                                                     {{ \Carbon\Carbon::parse($d->tanggal)->translatedFormat('M d Y') }}
@@ -464,35 +519,93 @@
                 </div>
                 <!-- /.row -->
 
-                <!-- Pagination Controls -->
+                <!-- Custom Pagination dengan Dropdown -->
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <!-- Row limit -->
-                    <div class="btn-datakolom">
-                        <button class="btn-select d-flex align-items-center">
-                            <select id="row-limit">
-                                <option value="10">10</option>
-                                <option value="15">15</option>
-                                <option value="20">20</option>
-                                <option value="9999">Semua</option>
-                            </select>
-                            Kolom
-                        </button>
+                    <!-- Left: Data info + Dropdown per page -->
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="btn-datakolom">
+                            <form method="GET" class="d-flex align-items-center">
+                                @if (request('search_judul_tutorial'))
+                                    <input type="hidden" name="search_judul_tutorial"
+                                        value="{{ request('search_judul_tutorial') }}">
+                                @endif
+                                @if (request('search_tanggal_dibuat_dari'))
+                                    <input type="hidden" name="search_tanggal_dibuat_dari"
+                                        value="{{ request('search_tanggal_dibuat_dari') }}">
+                                @endif
+                                @if (request('search_tanggal_dibuat_sampai'))
+                                    <input type="hidden" name="search_tanggal_dibuat_sampai"
+                                        value="{{ request('search_tanggal_dibuat_sampai') }}">
+                                @endif
+                                @if (request('search_status'))
+                                    <input type="hidden" name="search_status" value="{{ request('search_status') }}">
+                                @endif
+
+                                <div class="d-flex align-items-center">
+                                    <select name="per_page" class="form-control form-control-sm pr-2"
+                                        style="width: auto;" onchange="this.form.submit()">
+                                        <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>
+                                            10
+                                        </option>
+                                        <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>15
+                                        </option>
+                                        <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20
+                                        </option>
+                                        <option value="all" {{ request('per_page') == 'all' ? 'selected' : '' }}>
+                                            Semua
+                                        </option>
+                                    </select>
+                                    <span>Rows</span>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="text-muted">
+                            @if (request('per_page') != 'all')
+                                Menampilkan {{ $data->firstItem() }} sampai {{ $data->lastItem() }}
+                                dari {{ $data->total() }} data
+                            @else
+                                Menampilkan semua {{ $data->total() }} data
+                            @endif
+                        </div>
                     </div>
 
-                    <!-- Pagination -->
-                    <div class="pagination-controls d-flex align-items-center gap-12">
-                        <button class="btn-page" id="prev-page" disabled>&laquo; Previous</button>
-                        <span id="page-info">Page 1 of 5</span>
-                        <button class="btn-page" id="next-page">Next &raquo;</button>
-                    </div>
+                    <!-- Right: Navigation (hanya tampil jika tidak pilih "Semua") -->
+                    @if (request('per_page') != 'all' && $data->lastPage() > 1)
+                        <div class="pagination-controls d-flex align-items-center gap-12">
+                            @if ($data->onFirstPage())
+                                <button class="btn-page" disabled>&laquo; Previous</button>
+                            @else
+                                <button class="btn-datakolom w-auto p-3">
+                                    <a href="{{ $data->appends(request()->query())->previousPageUrl() }}">&laquo;
+                                        Previous</a>
+                                </button>
+                            @endif
+
+                            <span id="page-info">Page {{ $data->currentPage() }} of
+                                {{ $data->lastPage() }}</span>
+
+                            @if ($data->hasMorePages())
+                                <button class="btn-datakolom w-auto p-3">
+                                    <a href="{{ $data->appends(request()->query())->nextPageUrl() }}">Next&raquo;</a>
+                                </button>
+                            @else
+                                <button class="btn-page" disabled>Next &raquo;</button>
+                            @endif
+                        </div>
+                    @endif
                 </div>
+
             </div><!-- /.container-fluid -->
         </section>
         <!-- /.content -->
     </div>
 
-    {{-- Component Search and Pagination JS --}}
-    <x-script.pagination />
+    {{-- jQuery Library --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 
     {{-- Update Folder --}}
     <script>
@@ -562,6 +675,158 @@
                     // Perbarui teks di span dengan nama file
                     fileNameDisplay.textContent = fileName;
                 });
+            });
+        });
+    </script>
+
+    {{-- Search and Filter JavaScript --}}
+    <script>
+        $(document).ready(function() {
+            // Function to get current filter values
+            function getFilters() {
+                return {
+                    search_judul_tutorial: $('#search-judul-tutorial').val().trim(),
+                    search_tanggal_dibuat_dari: $('#search-tanggal-dibuat-dari').val().trim(),
+                    search_tanggal_dibuat_sampai: $('#search-tanggal-dibuat-sampai').val().trim(),
+                    search_status: $('#search-status').val().trim(),
+                    per_page: $('select[name="per_page"]').val()
+                };
+            }
+
+            // Function to apply filters and redirect (GLOBAL - bisa dipanggil dari tombol)
+            window.applyFilters = function() {
+                let filters = getFilters();
+                let url = new URL(window.location.href);
+
+                // Remove existing filter parameters
+                url.searchParams.delete('search_judul_tutorial');
+                url.searchParams.delete('search_tanggal_dibuat_dari');
+                url.searchParams.delete('search_tanggal_dibuat_sampai');
+                url.searchParams.delete('search_status');
+                url.searchParams.delete('page'); // Reset to page 1
+
+                // Add non-empty filters
+                Object.keys(filters).forEach(key => {
+                    if (filters[key] && filters[key].trim() !== '' && key !== 'per_page') {
+                        url.searchParams.set(key, filters[key]);
+                    }
+                });
+
+                window.location.href = url.toString();
+            };
+
+            // Function to clear all search filters (GLOBAL - bisa dipanggil dari tombol Reset)
+            window.clearAllFilters = function() {
+                // Clear semua input field dulu
+                $('#search-judul-tutorial').val('');
+                $('#search-tanggal-dibuat-dari').val('');
+                $('#search-tanggal-dibuat-sampai').val('');
+                $('#search-status').val('');
+
+                let url = new URL(window.location.href);
+
+                // Remove all search parameters
+                url.searchParams.delete('search_judul_tutorial');
+                url.searchParams.delete('search_tanggal_dibuat_dari');
+                url.searchParams.delete('search_tanggal_dibuat_sampai');
+                url.searchParams.delete('search_status');
+                url.searchParams.delete('page');
+
+                window.location.href = url.toString();
+            };
+
+            // Bind keypress event to all search input fields (Enter masih berfungsi)
+            $('.column-search input').on('keypress', function(e) {
+                if (e.which === 13) { // Enter key
+                    applyFilters();
+                }
+            });
+
+            // Clear individual column search when input is emptied
+            $('.column-search input').on('keyup', function(e) {
+                if (e.which === 13 && $(this).val().trim() === '') {
+                    applyFilters(); // Apply filters to update URL (removing empty filter)
+                }
+            });
+
+            // Download functions with current filters
+            window.downloadCsv = function() {
+                let filters = getFilters();
+                let form = document.createElement('form');
+                form.method = 'GET';
+                form.action = '{{ route('tutor_vpas.export.vpas.list.csv') }}';
+                form.target = '_blank';
+
+                Object.keys(filters).forEach(key => {
+                    if (filters[key] && key !== 'per_page') {
+                        let input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = key;
+                        input.value = filters[key];
+                        form.appendChild(input);
+                    }
+                });
+
+                document.body.appendChild(form);
+                form.submit();
+                document.body.removeChild(form);
+            };
+
+            window.downloadPdf = function() {
+                let filters = getFilters();
+                let form = document.createElement('form');
+                form.method = 'GET';
+                form.action = '{{ route('tutor_vpas.export.vpas.list.pdf') }}';
+                form.target = '_blank';
+
+                Object.keys(filters).forEach(key => {
+                    if (filters[key] && key !== 'per_page') {
+                        let input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = key;
+                        input.value = filters[key];
+                        form.appendChild(input);
+                    }
+                });
+
+                document.body.appendChild(form);
+                form.submit();
+                document.body.removeChild(form);
+            };
+
+            // Load filter values from URL on page load
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('search_judul_tutorial')) {
+                $('#search-judul-tutorial').val(urlParams.get('search_judul_tutorial'));
+            }
+            if (urlParams.get('search_tanggal_dibuat_dari')) {
+                $('#search-tanggal-dibuat-dari').val(urlParams.get('search_tanggal_dibuat_dari'));
+            }
+            if (urlParams.get('search_tanggal_dibuat_sampai')) {
+                $('#search-tanggal-dibuat-sampai').val(urlParams.get('search_tanggal_dibuat_sampai'));
+            }
+            if (urlParams.get('search_status')) {
+                $('#search-status').val(urlParams.get('search_status'));
+            }
+
+            // Show export buttons if there's data
+            if ($("#Table tbody tr").length > 0 && !$("#Table tbody tr").find('td[colspan="11"]').length) {
+                $("#export-buttons").show();
+            } else {
+                $("#export-buttons").hide();
+            }
+
+            // Handle modal events
+            $('.modal').on('show.bs.modal', function(e) {
+                console.log('Modal is opening');
+            });
+
+            $('.modal').on('shown.bs.modal', function(e) {
+                console.log('Modal is fully visible');
+            });
+
+            $('.modal').on('hide.bs.modal', function(e) {
+                console.log('Modal is closing');
             });
         });
     </script>

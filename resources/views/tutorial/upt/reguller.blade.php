@@ -127,10 +127,10 @@
                                 <table class="table table-hover text-nowrap" id="Table">
                                     <thead>
                                         <tr>
-                                            <th class="align-top">
+                                            <th class="text-center align-top">
                                                 <div class="d-flex flex-column gap-12">
                                                     <span>No</span>
-                                                    <div class="d-flex align-items-center gap-12">
+                                                    <div class="d-flex justify-content-center align-items-center gap-12">
                                                         <button type="button" class="btn-purple w-auto"
                                                             onclick="applyFilters()" title="Cari Semua Filter">
                                                             <i class="fas fa-search"></i> Cari
@@ -751,7 +751,7 @@
                 let filters = getFilters();
                 let form = document.createElement('form');
                 form.method = 'GET';
-                form.action = '{{ route('mcreguler.export.list.csv') }}';
+                form.action = '{{ route('tutor_upt.export.upt.list.csv') }}';
                 form.target = '_blank';
 
                 Object.keys(filters).forEach(key => {
@@ -773,7 +773,7 @@
                 let filters = getFilters();
                 let form = document.createElement('form');
                 form.method = 'GET';
-                form.action = '{{ route('mcreguler.export.list.pdf') }}';
+                form.action = '{{ route('tutor_upt.export.upt.list.pdf') }}';
                 form.target = '_blank';
 
                 Object.keys(filters).forEach(key => {
