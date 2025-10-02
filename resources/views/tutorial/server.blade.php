@@ -145,7 +145,7 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th>
+                                            <th class="align-top">
                                                 <div class="d-flex flex-column gap-12">
                                                     <span>Tutorial Server</span>
                                                     <div class="btn-searchbar column-search">
@@ -159,7 +159,7 @@
                                             <th class="text-center">
                                                 <div class="d-flex flex-column gap-12">
                                                     <span>Tanggal</span>
-                                                    <div class="d-flex justify-content-center align-items-center gap-12">
+                                                    <div class="d-flex flex-column justify-content-center align-items-center gap-12">
                                                         <div class="btn-searchbar column-search">
                                                             <input type="date" id="search-tanggal-dari"
                                                                 name="search_tanggal_dari" title="Tanggal Dari">
@@ -171,9 +171,9 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th class="text-center">
+                                            <th class="text-center align-top">
                                                 <div
-                                                    class="d-flex justify-content-center align-items-center flex-column gap-12">
+                                                    class="d-flex flex-column justify-content-center align-items-center flex-column gap-12">
                                                     <span>Status Upload PDF</span>
                                                     <div class="btn-searchbar column-search">
                                                         <span>

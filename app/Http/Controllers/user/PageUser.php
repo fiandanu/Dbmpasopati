@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\user\Upt;
 use App\Models\user\Ponpes;
 
+
 class PageUser extends Controller
 {
     // public function UserPage()
@@ -66,7 +67,7 @@ class PageUser extends Controller
                       ->orWhere('tipe', 'like', '%' . $search . '%')
                       ->with(['dataOpsional', 'uploadFolder'])
                       ->get();
-        
+
         return view('user.indexUser', compact('dataupt'));
     }
 
@@ -78,7 +79,7 @@ class PageUser extends Controller
                             ->orWhere('tipe', 'like', '%' . $search . '%')
                             ->with(['dataOpsional', 'uploadFolder'])
                             ->get();
-        
+
         return view('user.indexUserPonpes', compact('dataponpes'));
     }
 }

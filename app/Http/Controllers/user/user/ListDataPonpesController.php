@@ -13,6 +13,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\user\NamaWilayah;
 
 class ListDataPonpesController extends Controller
 {
@@ -216,7 +217,9 @@ class ListDataPonpesController extends Controller
         $providers = Provider::all();
         $vpns = Vpn::all();
 
-        return view('user.indexPonpes', compact('data', 'providers', 'vpns'));
+        $datanamawilayah = NamaWilayah::all();
+
+        return view('user.indexPonpes', compact('data', 'providers', 'vpns', 'datanamawilayah'));
     }
 
     public function UserPageStore(Request $request)

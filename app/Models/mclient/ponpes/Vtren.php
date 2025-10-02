@@ -121,6 +121,21 @@ class Vtren extends Model
         return null;
     }
 
+        public function getDurasiHariAttribute($value)
+    {
+        // Jika tanggal_selesai sudah ada, gunakan nilai yang tersimpan
+        if ($this->tanggal_selesai) {
+            return $value;
+        }
+
+        // Jika tanggal_selesai belum ada, hitung dari created_at sampai sekarang
+        if ($this->created_at) {
+            return Carbon::parse($this->created_at)->diffInDays(Carbon::now());
+        }
+
+        return null;
+    }
+
     protected static function boot()
     {
         parent::boot();

@@ -71,6 +71,8 @@ class RouteServiceProvider extends ServiceProvider
                 // Route User
                 require base_path('routes/user/upt.php');
                 require base_path('routes/user/ponpes.php');
+                require base_path('routes/user/kanwil.php');
+                require base_path('routes/user/namawilayah.php');
             });
         });
     }

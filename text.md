@@ -48,15 +48,23 @@ Auto Functions:
 
 ❌ [Tanggal] - [Deskripsi bug] - [Lokasi: Controller/View/Route]
 
+❌ [Tanggal] - [Route [viewpdf.ponpes] not defined.] - [Lokasi: \resources\views\db\ponpes\pks\indexPks.blade
+.php]
+
 =============================================================
 📝 CATATAN REVISI
 =============================================================
 
 - Tanggal dibuat Format menjadi Angka saja 
-- Di setiap jenis kendala ditambahkan keterangan dan pdf/csv (limit 10 karakter)
-- Di kolom Tanggal menjadi 1 flex column
-- Kanwil dan Nama Wilayah dibuat menjadi dropdown saja 
-- pada saat menentukan tanggal terlapor maka otomatis hari akan berjalan 
+✅ Di setiap jenis kendala ditambahkan keterangan dan pdf/csv (limit 10 karakter) ----- done 
+🔄 Di kolom Tanggal menjadi 1 flex column ----- done
+✅ Kanwil dan Nama Wilayah dibuat menjadi dropdown saja ------- done
+✅ pada saat menentukan tanggal terlapor maka otomatis hari akan berjalan 
+
+
+- provider kendala  sama kanwil/nama wilayah dibuat export public all data Csv dan PDF
+- sidebar untuk memilih kategori tidak ketutup
+
 
 =============================================================
 📊 PROGRESS SUMMARY

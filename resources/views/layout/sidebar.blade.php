@@ -198,8 +198,7 @@
                         <!-- Monitoring Server -->
                         <li
                             class="nav-item {{ Route::is('GrafikServer') || Route::is('MonitoringUpt') || Route::is('MonitoringPonpes') ? 'menu-open' : '' }}">
-                            <a href="#"
-                                class="nav-link">
+                            <a href="#" class="nav-link">
                                 <i class="fas fa-shield-alt nav-icon"></i>
                                 <p>Monitoring Server<i class="right fas fa-angle-left"></i></p>
                             </a>
@@ -228,8 +227,7 @@
                         <!-- Monitoring Customer -->
                         <li
                             class="nav-item {{ Route::is('GrafikClient') || Route::is('KomplainUpt') || Route::is('KomplainPonpes') || Route::is('ListDataMclientCatatanVpas') || Route::is('ListDataMclientCatatanVtren') ? 'menu-open' : '' }}">
-                            <a href="#"
-                                class="nav-link ">
+                            <a href="#" class="nav-link ">
                                 <i class="fas fa-eye nav-icon"></i>
                                 <p>Monitoring Customer<i class="right fas fa-angle-left"></i></p>
                             </a>
@@ -270,8 +268,7 @@
                         <!-- Tutorial -->
                         <li
                             class="nav-item {{ Route::is('TutorialUpt') || Route::is('tutor_ponpes_reguller.TutorialPonpes') || Route::is('tutorial_server') || Route::is('tutorial_mikrotik') ? 'menu-open' : '' }}">
-                            <a href="#"
-                                class="nav-link">
+                            <a href="#" class="nav-link">
                                 <i class="fas fa-lightbulb nav-icon"></i>
                                 <p>Tutorial<i class="right fas fa-angle-left"></i></p>
                             </a>
@@ -306,8 +303,7 @@
                         <!-- User -->
                         <li
                             class="nav-item {{ Route::is('User.UserPage') || Route::is('UserPonpes.UserPage') || Route::is('provider.DataProvider') || Route::is('kendala.DataKendala') ? 'menu-open' : '' }}">
-                            <a href="#"
-                                class="nav-link">
+                            <a href="#" class="nav-link">
                                 <i class="fas fa-user nav-icon"></i>
                                 <p>User<i class="right fas fa-angle-left"></i></p>
                             </a>
@@ -334,6 +330,12 @@
                                     <a href="{{ route('kendala.DataKendala') }}"
                                         class="nav-link {{ Route::is('kendala.DataKendala') ? 'active' : '' }}">
                                         <p>Data Kendala/PIC</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('kanwil.DataKanwil') }}"
+                                        class="nav-link {{ Route::is('kanwil.DataKanwil') || Route::is('namawilayah.DataNamaWilayah') ? 'active' : '' }}">
+                                        <p>Data Kanwil/Nama Wilayah</p>
                                     </a>
                                 </li>
                             </ul>

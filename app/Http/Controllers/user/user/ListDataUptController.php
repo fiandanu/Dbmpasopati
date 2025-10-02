@@ -13,6 +13,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\user\Kanwil;
 
 class ListDataUptController extends Controller
 {
@@ -213,7 +214,10 @@ class ListDataUptController extends Controller
         $providers = Provider::all();
         $vpns = Vpn::all();
 
-        return view('user.indexUser', compact('data', 'providers', 'vpns'));
+        // TAMBAHKAN 2 BARIS INI:
+        $datakanwil = Kanwil::all();
+
+        return view('user.indexUser', compact('data', 'providers', 'vpns', 'datakanwil'));
     }
 
     public function UserPageStore(Request $request)

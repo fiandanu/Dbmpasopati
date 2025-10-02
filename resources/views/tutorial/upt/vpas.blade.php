@@ -139,7 +139,7 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th>
+                                            <th class="align-top">
                                                 <div class="d-flex flex-column gap-12">
                                                     <span>Judul Tutorial</span>
                                                     <div class="btn-searchbar column-search">
@@ -154,7 +154,7 @@
                                             <th class="text-center">
                                                 <div class="d-flex flex-column gap-12">
                                                     <span>Tanggal Dibuat</span>
-                                                    <div class="d-flex justify-content-center align-items-center gap-12">
+                                                    <div class="d-flex flex-column justify-content-center align-items-center gap-12">
                                                         <div class="btn-searchbar column-search">
                                                             <input type="date" id="search-tanggal-dibuat-dari"
                                                                 name="search_tanggal_dibuat_dari"
@@ -168,7 +168,7 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th class="text-center">
+                                            <th class="text-center align-top">
                                                 <div class="d-flex flex-column gap-12">
                                                     <span>Status Upload</span>
                                                     <div class="d-flex justify-content-center align-items-center">
