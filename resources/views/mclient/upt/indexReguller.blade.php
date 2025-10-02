@@ -132,7 +132,7 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th>
+                                            <th class="align-top">
                                                 <div class="d-flex flex-column gap-12">
                                                     <span>Nama UPT</span>
                                                     <div class="btn-searchbar column-search">
@@ -144,7 +144,7 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th>
+                                            <th class="align-top">
                                                 <div class="d-flex flex-column gap-12">
                                                     <span>Kanwil</span>
                                                     <div class="btn-searchbar column-search">
@@ -155,7 +155,7 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th>
+                                            <th class="align-top">
                                                 <div class="d-flex flex-column gap-12">
                                                     <span>Jenis Kendala</span>
                                                     <div class="btn-searchbar column-search">
@@ -167,10 +167,10 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th class="text-center">
+                                            <th class="text-center align-top">
                                                 <div class="d-flex flex-column gap-12">
                                                     <span>Tanggal Terlapor</span>
-                                                    <div class="d-flex justify-content-center align-items-center gap-12">
+                                                    <div class="d-flex flex-column justify-content-center align-items-center gap-12">
                                                         <div class="btn-searchbar column-search">
                                                             <input type="date" id="search-tanggal-terlapor-dari"
                                                                 name="search_tanggal_terlapor_dari" title="Tanggal Dari">
@@ -183,10 +183,10 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th class="text-center">
+                                            <th class="text-center align-top">
                                                 <div class="d-flex flex-column gap-12">
                                                     <span>Tanggal Selesai</span>
-                                                    <div class="d-flex justify-content-center align-items-center gap-12">
+                                                    <div class="d-flex flex-column justify-content-center align-items-center gap-12">
                                                         <div class="btn-searchbar column-search">
                                                             <input type="date" id="search-tanggal-selesai-dari"
                                                                 name="search_tanggal_selesai_dari" title="Tanggal Dari">
@@ -200,7 +200,7 @@
                                                 </div>
                                             </th>
                                             <th class="text-center align-top">Durasi (Hari)</th>
-                                            <th class="text-center">
+                                            <th class="text-center align-top">
                                                 <div
                                                     class="d-flex justify-content-center align-items-center flex-column gap-12">
                                                     <span>Status</span>
@@ -212,7 +212,7 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th>
+                                            <th class="align-top">
                                                 <div class="d-flex flex-column gap-12">
                                                     <span>PIC 1</span>
                                                     <div class="btn-searchbar column-search">
@@ -223,7 +223,7 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th>
+                                            <th class="align-top">
                                                 <div class="d-flex flex-column gap-12">
                                                     <span>PIC 2</span>
                                                     <div class="btn-searchbar column-search">

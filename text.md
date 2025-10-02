@@ -49,12 +49,14 @@ Auto Functions:
 ❌ [Tanggal] - [Deskripsi bug] - [Lokasi: Controller/View/Route]
 
 =============================================================
-📝 CATATAN PENTING
+📝 CATATAN REVISI
 =============================================================
 
-- Field yang diubah: jadwal → tanggal_terlapor
-- Dependencies: jQuery 3.7.1, DomPDF, Bootstrap, Ion Icons
-- Testing di: Chrome, Firefox, Safari
+- Tanggal dibuat Format menjadi Angka saja 
+- Di setiap jenis kendala ditambahkan keterangan dan pdf/csv (limit 10 karakter)
+- Di kolom Tanggal menjadi 1 flex column
+- Kanwil dan Nama Wilayah dibuat menjadi dropdown saja 
+- pada saat menentukan tanggal terlapor maka otomatis hari akan berjalan 
 
 =============================================================
 📊 PROGRESS SUMMARY
