@@ -13,8 +13,6 @@ use App\Models\user\Pic;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Barryvdh\DomPDF\Facade\Pdf;
 
-
-
 class VtrenController extends Controller
 {
     private function getJenisKendala()

@@ -7,9 +7,33 @@
                 <div class="row mb-2 py-3 align-items-center">
                     <div class="col d-flex justify-content-between align-items-center">
                         <h1 class="headline-large-32">List Data Kendala/PIC</h1>
-                        <button class="btn-purple" data-bs-toggle="modal" data-bs-target="#addDataModal">
-                            <i class="fa fa-plus"></i> Add Data
-                        </button>
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            <!-- Export Buttons for Kendala -->
+                            <div class="d-flex gap-2" id="export-buttons-kendala">
+                                <button onclick="downloadKendalaCsv()"
+                                    class="btn-page d-flex justify-content-center align-items-center" title="Download Kendala CSV">
+                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export Kendala CSV
+                                </button>
+                                <button onclick="downloadKendalaPdf()"
+                                    class="btn-page d-flex justify-content-center align-items-center" title="Download Kendala PDF">
+                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export Kendala PDF
+                                </button>
+                            </div>
+                            <!-- Export Buttons for PIC -->
+                            <div class="d-flex gap-2" id="export-buttons-pic">
+                                <button onclick="downloadPicCsv()"
+                                    class="btn-page d-flex justify-content-center align-items-center" title="Download PIC CSV">
+                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PIC CSV
+                                </button>
+                                <button onclick="downloadPicPdf()"
+                                    class="btn-page d-flex justify-content-center align-items-center" title="Download PIC PDF">
+                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PIC PDF
+                                </button>
+                            </div>
+                            <button class="btn-purple" data-bs-toggle="modal" data-bs-target="#addDataModal">
+                                <i class="fa fa-plus"></i> Add Data
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -99,13 +123,14 @@
                                                             <ion-icon name="alert-circle-outline"
                                                                 class="text-9xl text-[var(--yellow-04)]"></ion-icon>
                                                             <p class="headline-large-32">Anda Yakin?</p>
-                                                            <label>Apakah <b> {{ $k->jenis_kendala }} </b> ingin
+                                                            <label>Apakah <b>{{ $k->jenis_kendala }}</b> ingin
                                                                 dihapus?</label>
                                                         </div>
                                                         <div class="modal-footer flex-row-reverse justify-content-between">
                                                             <button type="button" class="btn-cancel-modal"
-                                                                data-dismiss="modal">Tutup</button>
-                                                            <form action="{{ route('kendala.KendalaPageDestroy', $k->id) }}"
+                                                                data-dismiss="modal">Cancel</button>
+                                                            <form
+                                                                action="{{ route('kendala.KendalaPageDestroy', $k->id) }}"
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
@@ -115,13 +140,48 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <!-- Edit Modal Kendala -->
+                                            <div class="modal fade" id="editKendalaModal{{ $k->id }}" tabindex="-1"
+                                                aria-labelledby="editKendalaModalLabel" aria-hidden="true">
+                                                <form id="editKendalaForm"
+                                                    action="{{ route('kendala.KendalaPageUpdate', ['id' => $k->id]) }}"
+                                                    method="POST">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <label class="modal-title"
+                                                                    id="editKendalaModalLabel">Edit Data
+                                                                    Kendala</label>
+                                                                <button type="button" class="btn-close-custom"
+                                                                    data-bs-dismiss="modal" aria-label="Close">
+                                                                    <i class="bi bi-x"></i>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <div class="mb-3">
+                                                                    <label for="jenis_kendala">Jenis Kendala</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="jenis_kendala" name="jenis_kendala"
+                                                                        value="{{ $k->jenis_kendala }}">
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn-cancel-modal"
+                                                                    data-bs-dismiss="modal">Cancel</button>
+                                                                <button type="submit" class="btn-purple">Update</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
                                         @endforeach
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
-
                     <!-- Tabel PIC -->
                     <div class="col-md-6">
                         <div class="card">
@@ -136,7 +196,7 @@
                                     <tbody>
                                         @foreach ($datapic as $p)
                                             <tr>
-                                                <td><span class="tag tag-success">{{ $p->nama_pic }}</span></td>
+                                                <td>{{ $p->nama_pic }}</td>
                                                 <td class="text-center">
                                                     {{-- Edit Button --}}
                                                     <button href="#editPicModal{{ $p->id }}" data-bs-toggle="modal"
@@ -145,8 +205,8 @@
                                                     </button>
 
                                                     {{-- Delete Button --}}
-                                                    <button data-toggle="modal"
-                                                        data-target="#deletePicModal{{ $p->id }}" title="Hapus">
+                                                    <button data-toggle="modal" data-target="#deletePicModal{{ $p->id }}"
+                                                        title="Hapus">
                                                         <ion-icon name="trash-outline"></ion-icon>
                                                     </button>
                                                 </td>
@@ -160,22 +220,56 @@
                                                             <ion-icon name="alert-circle-outline"
                                                                 class="text-9xl text-[var(--yellow-04)]"></ion-icon>
                                                             <p class="headline-large-32">Anda Yakin?</p>
-                                                            <label>Apakah <b> {{ $p->nama_pic }} </b> ingin
+                                                            <label>Apakah <b>{{ $p->nama_pic }}</b> ingin
                                                                 dihapus?</label>
                                                         </div>
                                                         <div class="modal-footer flex-row-reverse justify-content-between">
                                                             <button type="button" class="btn-cancel-modal"
-                                                                data-dismiss="modal">Tutup</button>
+                                                                data-dismiss="modal">Cancel</button>
                                                             <form action="{{ route('pic.PicPageDestroy', $p->id) }}"
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
-                                                                <button type="submit"
-                                                                    class="btn-delete">Hapus</button>
+                                                                <button type="submit" class="btn-delete">Hapus</button>
                                                             </form>
                                                         </div>
                                                     </div>
                                                 </div>
+                                            </div>
+                                            <!-- Edit Modal PIC -->
+                                            <div class="modal fade" id="editPicModal{{ $p->id }}" tabindex="-1"
+                                                aria-labelledby="editPicModalLabel" aria-hidden="true">
+                                                <form id="editPicForm"
+                                                    action="{{ route('pic.PicPageUpdate', ['id' => $p->id]) }}"
+                                                    method="POST">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <label class="modal-title" id="editPicModalLabel">Edit
+                                                                    Data PIC</label>
+                                                                <button type="button" class="btn-close-custom"
+                                                                    data-bs-dismiss="modal" aria-label="Close">
+                                                                    <i class="bi bi-x"></i>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <div class="mb-3">
+                                                                    <label for="nama_pic">Nama PIC</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="nama_pic" name="nama_pic"
+                                                                        value="{{ $p->nama_pic }}">
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn-cancel-modal"
+                                                                    data-bs-dismiss="modal">Cancel</button>
+                                                                <button type="submit" class="btn-purple">Update</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
                                             </div>
                                         @endforeach
                                     </tbody>
@@ -184,137 +278,48 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
 
-        {{-- Combined Create Modal --}}
-        <div class="modal fade" id="addDataModal" tabindex="-1" aria-labelledby="addDataModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <label class="modal-title" id="addDataModalLabel">Tambah Data</label>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close">
-                            <i class="bi bi-x"></i>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <!-- Dynamic Form Container -->
-                        <div id="form_container">
-                            <!-- Kendala Form -->
-                            <div id="kendala_form" class="data-form">
+                <!-- Add Modal -->
+                <div class="modal fade" id="addDataModal" tabindex="-1" aria-labelledby="addDataModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <label class="modal-title" id="addDataModalLabel">Tambah Data</label>
+                                <button type="button" class="btn-close-custom" data-bs-dismiss="modal"
+                                    aria-label="Close">
+                                    <i class="bi bi-x"></i>
+                                </button>
+                            </div>
+                            <div class="modal-body">
                                 <div class="mb-3">
-                                    <label for="jenis_kendala">Jenis Kendala</label>
-                                    <input type="text" class="form-control" id="jenis_kendala" name="jenis_kendala"
-                                        placeholder="Masukkan jenis kendala">
+                                    <input type="radio" id="kendala_type" name="data_type" checked>
+                                    <label for="kendala_type">Kendala</label>
+                                    <input type="radio" id="pic_type" name="data_type">
+                                    <label for="pic_type">PIC</label>
+                                </div>
+                                <div id="kendala_form">
+                                    <div class="mb-3">
+                                        <label for="jenis_kendala">Jenis Kendala</label>
+                                        <input type="text" class="form-control" id="jenis_kendala" name="jenis_kendala">
+                                    </div>
+                                </div>
+                                <div id="pic_form" style="display: none;">
+                                    <div class="mb-3">
+                                        <label for="nama_pic">Nama PIC</label>
+                                        <input type="text" class="form-control" id="nama_pic" name="nama_pic">
+                                    </div>
                                 </div>
                             </div>
-
-                            <!-- PIC Form -->
-                            <div id="pic_form" class="data-form" style="display: none;">
-                                <div class="mb-3">
-                                    <label for="nama_pic">Nama PIC</label>
-                                    <input type="text" class="form-control" id="nama_pic" name="nama_pic"
-                                        placeholder="Masukkan nama PIC">
-                                </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn-cancel-modal" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn-purple" id="save_btn">Save</button>
                             </div>
                         </div>
-
-                        <!-- Data Type Selection -->
-                        <div class="mb-3">
-                            <label class="form-label">Pilih Jenis Data</label>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="data_type" id="kendala_type"
-                                    value="kendala" checked>
-                                <h6 class="form-check-label" for="kendala_type">
-                                    Kendala
-                                </h6>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="data_type" id="pic_type"
-                                    value="pic">
-                                <h6 class="form-check-label" for="pic_type">
-                                    PIC
-                                </h6>
-                            </div>
-                        </div>
-
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn-cancel-modal" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn-purple" id="save_btn">Simpan</button>
                     </div>
                 </div>
             </div>
-        </div>
-
-        {{-- Kendala Edit Modals --}}
-        @foreach ($datakendala as $k)
-            <div class="modal fade" id="editKendalaModal{{ $k->id }}" tabindex="-1"
-                aria-labelledby="editKendalaModalLabel" aria-hidden="true">
-                <form id="editKendalaForm" action="{{ route('kendala.KendalaPageUpdate', ['id' => $k->id]) }}"
-                    method="POST">
-                    @csrf
-                    @method('PUT')
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <label class="modal-title" id="editKendalaModalLabel">Edit Data Kendala</label>
-                                <button type="button" class="btn-close-custom" data-bs-dismiss="modal"
-                                    aria-label="Close">
-                                    <i class="bi bi-x"></i>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="mb-3">
-                                    <label for="jenis_kendala">Jenis Kendala</label>
-                                    <input type="text" class="form-control" id="jenis_kendala" name="jenis_kendala"
-                                        value="{{ $k->jenis_kendala }}">
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn-cancel-modal" data-bs-dismiss="modal">Cancel</button>
-                                <button type="submit" class="btn-purple">Update</button>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        @endforeach
-
-        {{-- PIC Edit Modals --}}
-        @foreach ($datapic as $p)
-            <div class="modal fade" id="editPicModal{{ $p->id }}" tabindex="-1"
-                aria-labelledby="editPicModalLabel" aria-hidden="true">
-                <form id="editPicForm" action="{{ route('pic.PicPageUpdate', ['id' => $p->id]) }}" method="POST">
-                    @csrf
-                    @method('PUT')
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <label class="modal-title" id="editPicModalLabel">Edit Data PIC</label>
-                                <button type="button" class="btn-close-custom" data-bs-dismiss="modal"
-                                    aria-label="Close">
-                                    <i class="bi bi-x"></i>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="mb-3">
-                                    <label for="nama_pic" class="form-label">Nama PIC</label>
-                                    <input type="text" class="form-control" id="nama_pic" name="nama_pic"
-                                        value="{{ $p->nama_pic }}">
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn-cancel-modal" data-bs-dismiss="modal">Cancel</button>
-                                <button type="submit" class="btn-purple">Update</button>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        @endforeach
+        </section>
     </div>
 
 
@@ -428,6 +433,60 @@
                 // Show kendala form, hide PIC form
                 toggleForms();
             });
+
+            // Download functions for Kendala
+            window.downloadKendalaCsv = function () {
+                let form = document.createElement('form');
+                form.method = 'GET';
+                form.action = '{{ route('kendala.export.kendala.list.csv') }}';
+                form.target = '_blank';
+                document.body.appendChild(form);
+                form.submit();
+                document.body.removeChild(form);
+            };
+
+            window.downloadKendalaPdf = function () {
+                let form = document.createElement('form');
+                form.method = 'GET';
+                form.action = '{{ route('kendala.export.kendala.list.pdf') }}';
+                form.target = '_blank';
+                document.body.appendChild(form);
+                form.submit();
+                document.body.removeChild(form);
+            };
+
+            // Download functions for PIC
+            window.downloadPicCsv = function () {
+                let form = document.createElement('form');
+                form.method = 'GET';
+                form.action = '{{ route('pic.export.pic.list.csv') }}';
+                form.target = '_blank';
+                document.body.appendChild(form);
+                form.submit();
+                document.body.removeChild(form);
+            };
+
+            window.downloadPicPdf = function () {
+                let form = document.createElement('form');
+                form.method = 'GET';
+                form.action = '{{ route('pic.export.pic.list.pdf') }}';
+                form.target = '_blank';
+                document.body.appendChild(form);
+                form.submit();
+                document.body.removeChild(form);
+            };
+
+            // Show export buttons if there's data
+            if ($(".table").eq(0).find("tbody tr").length > 0) {
+                $("#export-buttons-kendala").show();
+            } else {
+                $("#export-buttons-kendala").hide();
+            }
+            if ($(".table").eq(1).find("tbody tr").length > 0) {
+                $("#export-buttons-pic").show();
+            } else {
+                $("#export-buttons-pic").hide();
+            }
         });
     </script>
 

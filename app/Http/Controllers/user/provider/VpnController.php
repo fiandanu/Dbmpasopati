@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use App\Models\user\Vpn;
 use App\Models\user\Provider;
 use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class VpnController extends Controller
 {
@@ -16,6 +19,7 @@ class VpnController extends Controller
         $datavpn = Vpn::all();
         return view('user.indexProvider', compact('dataprovider', 'datavpn'));
     }
+
     public function VpnPageStore(Request $request)
     {
         $validator = Validator::make(
@@ -39,7 +43,6 @@ class VpnController extends Controller
         Vpn::create($datavpn);
         return redirect()->back()->with('success', 'Data VPN berhasil ditambahkan!');
     }
-
 
     public function VpnPageDestroy($id)
     {
@@ -70,5 +73,55 @@ class VpnController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Data VPN berhasil diupdate!');
+    }
+
+    public function exportListCsv(Request $request): StreamedResponse
+    {
+        $query = Vpn::query();
+        $data = $query->orderBy('jenis_vpn', 'asc')->get();
+
+        $filename = 'list_vpn_' . Carbon::now()->translatedFormat('d_M_Y') . '.csv';
+
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+
+        $columns = ['No', 'Jenis VPN'];
+
+        $callback = function () use ($data, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+            $no = 1;
+            foreach ($data as $d) {
+                fputcsv($file, [
+                    $no++,
+                    $d->jenis_vpn
+                ]);
+            }
+            fclose($file);
+        };
+
+        return new StreamedResponse($callback, 200, $headers);
+    }
+
+    public function exportListPdf(Request $request)
+    {
+        $query = Vpn::query();
+        $data = $query->orderBy('jenis_vpn', 'asc')->get()->toArray();
+
+        $pdfData = [
+            'title' => 'List VPN',
+            'data' => $data,
+            'generated_at' => Carbon::now()->format('d M Y H:i:s')
+        ];
+
+        $pdf = Pdf::loadView('export.public.user.vpn', $pdfData);
+        $filename = 'list_vpn_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
+
+        return $pdf->download($filename);
     }
 }

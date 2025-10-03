@@ -84,7 +84,7 @@
                         <div class="alert-heading h5 mb-2">Periksa kembali Data yang dimasukkan</div>
                         <div class="small">
                             @foreach ($errors->all() as $error)
-                                <div class="mb-1">• {{ $error }}</div>
+                                <div class="mb-1">â€¢ {{ $error }}</div>
                             @endforeach
                         </div>
                     </div>
@@ -126,13 +126,14 @@
                                                 <div class="d-flex flex-column gap-12">
                                                     <span>No</span>
                                                     <div class="d-flex justify-content-center align-items-center gap-12">
-                                                        <button type="button" class="btn-purple w-auto" onclick="applyFilters()">
+                                                        <button type="button" class="btn-purple w-auto"
+                                                            onclick="applyFilters()">
                                                             <i class="fas fa-search"></i> Cari
                                                         </button>
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th>
+                                            <th class="text-center align-top">
                                                 <div class="d-flex flex-column gap-12">
                                                     <span>Nama Ponpes</span>
                                                     <div class="btn-searchbar column-search">
@@ -144,7 +145,7 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th class="text-center">
+                                            <th class="text-center align-top">
                                                 <div
                                                     class="d-flex justify-content-center align-items-center flex-column gap-12">
                                                     <span>Jenis Layanan</span>
@@ -157,7 +158,7 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th class="text-center">
+                                            <th class="text-center align-top">
                                                 <div
                                                     class="d-flex justify-content-center align-items-center flex-column gap-12">
                                                     <span>Keterangan</span>
@@ -165,15 +166,16 @@
                                                         <span>
                                                             <i class="fas fa-search"></i>
                                                         </span>
-                                                        <input type="text" id="search-keterangan"
-                                                            name="search_keterangan" placeholder="Search">
+                                                        <input type="text" id="search-keterangan" name="search_keterangan"
+                                                            placeholder="Search">
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th class="text-center">
+                                            <th class="text-center align-top">
                                                 <div class="d-flex flex-column gap-12">
                                                     <span>Jadwal</span>
-                                                    <div class="d-flex justify-content-center align-items-center gap-12">
+                                                    <div
+                                                        class="d-flex flex-column justify-content-center align-items-center gap-12">
                                                         <div class="btn-searchbar column-search">
                                                             <input type="date" id="search-tanggal-terlapor-dari"
                                                                 name="search_tanggal_terlapor_dari" title="Tanggal Dari">
@@ -186,24 +188,24 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th class="text-center">
+                                            <th class="text-center align-top">
                                                 <div class="d-flex flex-column gap-12">
                                                     <span>Tanggal Selesai</span>
-                                                    <div class="d-flex justify-content-center align-items-center gap-12">
+                                                    <div
+                                                        class="d-flex flex-column justify-content-center align-items-center gap-12">
                                                         <div class="btn-searchbar column-search">
                                                             <input type="date" id="search-tanggal-selesai-dari"
                                                                 name="search_tanggal_selesai_dari" title="Tanggal Dari">
                                                         </div>
                                                         <div class="btn-searchbar column-search">
                                                             <input type="date" id="search-tanggal-selesai-sampai"
-                                                                name="search_tanggal_selesai_sampai"
-                                                                title="Tanggal Sampai">
+                                                                name="search_tanggal_selesai_sampai" title="Tanggal Sampai">
                                                         </div>
                                                     </div>
                                                 </div>
                                             </th>
                                             <th class="text-center align-top">Durasi (Hari)</th>
-                                            <th class="text-center">
+                                            <th class="text-center align-top">
                                                 <div
                                                     class="d-flex justify-content-center align-items-center flex-column gap-12">
                                                     <span>Status</span>
@@ -216,7 +218,7 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th class="text-center">
+                                            <th class="text-center align-top">
                                                 <div class="d-flex flex-column gap-12">
                                                     <span>PIC 1</span>
                                                     <div class="btn-searchbar column-search">
@@ -228,7 +230,7 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th class="text-center">
+                                            <th class="text-center align-top">
                                                 <div class="d-flex flex-column gap-12">
                                                     <span>PIC 2</span>
                                                     <div class="btn-searchbar column-search">
@@ -269,10 +271,28 @@
                                                         {{ $d->formatted_jenis_layanan }}
                                                     </span>
                                                 </td>
-                                                <td class="text-center">
-                                                    <span class="Tipereguller">
-                                                        {{ Str::limit($d->keterangan ?? 'Tidak ada keterangan', 40) }}
-                                                    </span>
+                                                <td>
+                                                    @if($d->keterangan && strlen($d->keterangan) > 20)
+                                                        <div id="short-text-{{ $d->id }}">
+                                                            <div>{{ Str::limit($d->keterangan, 20) }}</div>
+                                                            <a href="javascript:void(0)" onclick="toggleDetail({{ $d->id }})"
+                                                                class="text-primary">
+                                                                <small>Show</small>
+                                                            </a>
+                                                        </div>
+                                                        <div id="full-text-{{ $d->id }}" style="display: none;">
+                                                            <div
+                                                                style="white-space: pre-wrap; word-wrap: break-word; max-width: 300px;">
+                                                                {{ $d->keterangan }}
+                                                            </div>
+                                                            <a href="javascript:void(0)" onclick="toggleDetail({{ $d->id }})"
+                                                                class="text-primary">
+                                                                <small>Hide</small>
+                                                            </a>
+                                                        </div>
+                                                    @else
+                                                        {{ $d->keterangan ?? '-' }}
+                                                    @endif
                                                 </td>
                                                 <td class="text-center">
                                                     {{ $d->jadwal ? \Carbon\Carbon::parse($d->jadwal)->translatedFormat('d M Y') : '-' }}
@@ -281,10 +301,15 @@
                                                     {{ $d->tanggal_selesai ? \Carbon\Carbon::parse($d->tanggal_selesai)->translatedFormat('d M Y') : '-' }}
                                                 </td>
                                                 <td class="text-center">
-                                                    @if ($d->durasi_hari)
+                                                    @if ($d->tanggal_selesai)
+                                                        {{-- Jika sudah selesai, tampilkan durasi final dalam hari saja --}}
                                                         <span class="Tipereguller">{{ $d->durasi_hari }} hari</span>
                                                     @else
-                                                        -
+                                                        {{-- Jika belum selesai, tampilkan durasi real-time --}}
+                                                        <span class="Tipereguller durasi-realtime"
+                                                            data-created="{{ $d->created_at->format('Y-m-d H:i:s') }}">
+                                                            <span class="durasi-text">Menghitung...</span>
+                                                        </span>
                                                     @endif
                                                 </td>
                                                 <td class="text-center">
@@ -311,8 +336,7 @@
                                                         </button>
                                                     </a>
 
-                                                    <a data-toggle="modal"
-                                                        data-target="#modal-default{{ $d->id }}">
+                                                    <a data-toggle="modal" data-target="#modal-default{{ $d->id }}">
                                                         <button>
                                                             <ion-icon name="trash-outline"></ion-icon>
                                                         </button>
@@ -336,7 +360,8 @@
                                                         <div class="modal-footer flex-row-reverse justify-content-between">
                                                             <button type="button" class="btn-cancel-modal"
                                                                 data-dismiss="modal">Tutup</button>
-                                                            <form action="{{ route('mckunjunganponpes.MclientPonpesKunjunganDestroy', $d->id) }}"
+                                                            <form
+                                                                action="{{ route('mckunjunganponpes.MclientPonpesKunjunganDestroy', $d->id) }}"
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
@@ -364,7 +389,8 @@
                         {{-- Add Modal --}}
                         <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel"
                             aria-hidden="true">
-                            <form id="addForm" action="{{ route('mckunjunganponpes.MclientPonpesKunjunganStore') }}" method="POST">
+                            <form id="addForm" action="{{ route('mckunjunganponpes.MclientPonpesKunjunganStore') }}"
+                                method="POST">
                                 @csrf
                                 <div class="modal-dialog modal-lg">
                                     <div class="modal-content">
@@ -402,8 +428,8 @@
                                                     <div class="dropdown">
                                                         <div class="input-group">
                                                             <input type="text" class="form-control" id="ponpes_search"
-                                                                placeholder="Pilih jenis layanan dulu..."
-                                                                autocomplete="off" disabled>
+                                                                placeholder="Pilih jenis layanan dulu..." autocomplete="off"
+                                                                disabled>
                                                             <div class="input-group-append">
                                                                 <button type="button" class="btn btn-outline-secondary"
                                                                     onclick="togglePonpesDropdown()" disabled
@@ -430,7 +456,8 @@
 
                                                 <div class="mb-3">
                                                     <label for="keterangan">Keterangan</label>
-                                                    <textarea class="form-control" id="keterangan" name="keterangan" rows="3"
+                                                    <textarea class="form-control" id="keterangan" name="keterangan"
+                                                        rows="3"
                                                         placeholder="Masukkan keterangan kunjungan (opsional)"></textarea>
                                                 </div>
                                             </div>
@@ -443,8 +470,7 @@
                                                 <div class="column">
                                                     <div class="mb-3">
                                                         <label for="jadwal">Jadwal</label>
-                                                        <input type="date" class="form-control" id="jadwal"
-                                                            name="jadwal">
+                                                        <input type="date" class="form-control" id="jadwal" name="jadwal">
                                                     </div>
                                                 </div>
                                                 <div class="column">
@@ -456,14 +482,19 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="column">
-                                                    <div class="mb-3">
-                                                        <label for="durasi_hari">Durasi
-                                                            (Hari)</label>
-                                                        <input type="number" class="form-control" id="durasi_hari"
-                                                            name="durasi_hari" min="0"
-                                                            placeholder="Masukkan durasi dalam hari">
-                                                    </div>
+                                                <div class="mb-3">
+                                                    <label for="durasi_hari{{ $d->id }}" class="form-label">Durasi</label>
+                                                    @if($d->tanggal_selesai)
+                                                        <input type="text" class="form-control" id="durasi_hari{{ $d->id }}"
+                                                            value="{{ $d->durasi_hari }} hari (Final)" readonly>
+                                                        <small class="form-text text-muted">Durasi final telah ditetapkan</small>
+                                                    @else
+                                                        <input type="text" class="form-control durasi-realtime-modal"
+                                                            id="durasi_hari{{ $d->id }}"
+                                                            data-created="{{ $d->created_at->format('Y-m-d H:i:s') }}"
+                                                            value="Menghitung..." readonly>
+                                                        <small class="form-text text-muted">Durasi masih berjalan secara real-time</small>
+                                                    @endif
                                                 </div>
                                                 <div class="column">
                                                     <div class="mb-3">
@@ -492,7 +523,8 @@
                                                             <option value="">-- Pilih PIC 1 --</option>
                                                             @foreach ($picList as $pic)
                                                                 <option value="{{ $pic->nama_pic }}">
-                                                                    {{ $pic->nama_pic }}</option>
+                                                                    {{ $pic->nama_pic }}
+                                                                </option>
                                                             @endforeach
                                                         </select>
                                                     </div>
@@ -504,7 +536,8 @@
                                                             <option value="">-- Pilih PIC 2 --</option>
                                                             @foreach ($picList as $pic)
                                                                 <option value="{{ $pic->nama_pic }}">
-                                                                    {{ $pic->nama_pic }}</option>
+                                                                    {{ $pic->nama_pic }}
+                                                                </option>
                                                             @endforeach
                                                         </select>
                                                     </div>
@@ -527,7 +560,8 @@
                             <div class="modal fade" id="editModal{{ $d->id }}" tabindex="-1"
                                 aria-labelledby="editModalLabel{{ $d->id }}" aria-hidden="true">
                                 <form id="editForm{{ $d->id }}"
-                                    action="{{ route('mckunjunganponpes.MclientPonpesKunjunganUpdate', ['id' => $d->id]) }}" method="POST">
+                                    action="{{ route('mckunjunganponpes.MclientPonpesKunjunganUpdate', ['id' => $d->id]) }}"
+                                    method="POST">
                                     @csrf
                                     @method('PUT')
                                     <div class="modal-dialog modal-lg">
@@ -553,14 +587,12 @@
                                                     <div class="mb-3">
                                                         <label for="jenis_layanan_edit_{{ $d->id }}">Jenis Layanan
                                                             <span class="text-danger">*</span></label>
-                                                        <select class="form-control"
-                                                            id="jenis_layanan_edit_{{ $d->id }}"
+                                                        <select class="form-control" id="jenis_layanan_edit_{{ $d->id }}"
                                                             name="jenis_layanan" required
                                                             onchange="updatePonpesOptionsEdit({{ $d->id }})">
                                                             <option value="">-- Pilih Jenis Layanan --</option>
                                                             @foreach ($jenisLayananOptions as $key => $value)
-                                                                <option value="{{ $key }}"
-                                                                    {{ $d->jenis_layanan == $key ? 'selected' : '' }}>
+                                                                <option value="{{ $key }}" {{ $d->jenis_layanan == $key ? 'selected' : '' }}>
                                                                     {{ $value }}
                                                                 </option>
                                                             @endforeach
@@ -570,9 +602,8 @@
                                                     <div class="mb-3">
                                                         <label for="nama_ponpes_edit_{{ $d->id }}">Nama Ponpes <span
                                                                 class="text-danger">*</span></label>
-                                                        <select class="form-control"
-                                                            id="nama_ponpes_edit_{{ $d->id }}" name="nama_ponpes"
-                                                            required>
+                                                        <select class="form-control" id="nama_ponpes_edit_{{ $d->id }}"
+                                                            name="nama_ponpes" required>
                                                             <option value="">-- Pilih Ponpes --</option>
                                                         </select>
                                                     </div>
@@ -586,7 +617,8 @@
 
                                                     <div class="mb-3">
                                                         <label for="keterangan{{ $d->id }}">Keterangan</label>
-                                                        <textarea class="form-control" id="keterangan{{ $d->id }}" name="keterangan" rows="3"
+                                                        <textarea class="form-control" id="keterangan{{ $d->id }}"
+                                                            name="keterangan" rows="3"
                                                             placeholder="Masukkan keterangan kunjungan (opsional)">{{ $d->keterangan ?? '' }}</textarea>
                                                     </div>
                                                 </div>
@@ -599,8 +631,8 @@
                                                     <div class="column">
                                                         <div class="mb-3">
                                                             <label for="jadwal{{ $d->id }}">Jadwal</label>
-                                                            <input type="date" class="form-control"
-                                                                id="jadwal{{ $d->id }}" name="jadwal"
+                                                            <input type="date" class="form-control" id="jadwal{{ $d->id }}"
+                                                                name="jadwal"
                                                                 value="{{ $d->jadwal ? $d->jadwal->format('Y-m-d') : '' }}">
                                                         </div>
                                                     </div>
@@ -609,8 +641,7 @@
                                                             <label for="tanggal_selesai{{ $d->id }}">Tanggal
                                                                 Selesai</label>
                                                             <input type="date" class="form-control"
-                                                                id="tanggal_selesai{{ $d->id }}"
-                                                                name="tanggal_selesai"
+                                                                id="tanggal_selesai{{ $d->id }}" name="tanggal_selesai"
                                                                 value="{{ $d->tanggal_selesai ? $d->tanggal_selesai->format('Y-m-d') : '' }}">
                                                         </div>
                                                     </div>
@@ -621,28 +652,23 @@
                                                                 (Hari)
                                                             </label>
                                                             <input type="number" class="form-control"
-                                                                id="durasi_hari{{ $d->id }}" name="durasi_hari"
-                                                                min="0" value="{{ $d->durasi_hari }}"
+                                                                id="durasi_hari{{ $d->id }}" name="durasi_hari" min="0"
+                                                                value="{{ $d->durasi_hari }}"
                                                                 placeholder="Masukkan durasi dalam hari">
                                                         </div>
                                                     </div>
                                                     <div class="column">
                                                         <div class="mb-3">
                                                             <label for="status{{ $d->id }}">Status</label>
-                                                            <select class="form-control" id="status{{ $d->id }}"
-                                                                name="status">
+                                                            <select class="form-control" id="status{{ $d->id }}" name="status">
                                                                 <option value="">-- Pilih Status --</option>
-                                                                <option value="pending"
-                                                                    {{ $d->status == 'pending' ? 'selected' : '' }}>
+                                                                <option value="pending" {{ $d->status == 'pending' ? 'selected' : '' }}>
                                                                     Pending</option>
-                                                                <option value="proses"
-                                                                    {{ $d->status == 'proses' ? 'selected' : '' }}>
+                                                                <option value="proses" {{ $d->status == 'proses' ? 'selected' : '' }}>
                                                                     Proses</option>
-                                                                <option value="selesai"
-                                                                    {{ $d->status == 'selesai' ? 'selected' : '' }}>
+                                                                <option value="selesai" {{ $d->status == 'selesai' ? 'selected' : '' }}>
                                                                     Selesai</option>
-                                                                <option value="terjadwal"
-                                                                    {{ $d->status == 'terjadwal' ? 'selected' : '' }}>
+                                                                <option value="terjadwal" {{ $d->status == 'terjadwal' ? 'selected' : '' }}>
                                                                     Terjadwal</option>
                                                             </select>
                                                         </div>
@@ -658,12 +684,10 @@
                                                     <div class="column">
                                                         <div class="mb-3">
                                                             <label for="pic_1{{ $d->id }}">PIC 1</label>
-                                                            <select class="form-control" id="pic_1{{ $d->id }}"
-                                                                name="pic_1">
+                                                            <select class="form-control" id="pic_1{{ $d->id }}" name="pic_1">
                                                                 <option value="">-- Pilih PIC 1 --</option>
                                                                 @foreach ($picList as $pic)
-                                                                    <option value="{{ $pic->nama_pic }}"
-                                                                        {{ $d->pic_1 == $pic->nama_pic ? 'selected' : '' }}>
+                                                                    <option value="{{ $pic->nama_pic }}" {{ $d->pic_1 == $pic->nama_pic ? 'selected' : '' }}>
                                                                         {{ $pic->nama_pic }}
                                                                     </option>
                                                                 @endforeach
@@ -674,7 +698,8 @@
                                                                 @endphp
                                                                 @if ($d->pic_1 && !in_array($d->pic_1, $existingPics))
                                                                     <option value="{{ $d->pic_1 }}" selected>
-                                                                        {{ $d->pic_1 }} (Custom)</option>
+                                                                        {{ $d->pic_1 }} (Custom)
+                                                                    </option>
                                                                 @endif
                                                             </select>
                                                         </div>
@@ -682,18 +707,17 @@
                                                     <div class="column">
                                                         <div class="mb-3">
                                                             <label for="pic_2{{ $d->id }}">PIC 2</label>
-                                                            <select class="form-control" id="pic_2{{ $d->id }}"
-                                                                name="pic_2">
+                                                            <select class="form-control" id="pic_2{{ $d->id }}" name="pic_2">
                                                                 <option value="">-- Pilih PIC 2 --</option>
                                                                 @foreach ($picList as $pic)
-                                                                    <option value="{{ $pic->nama_pic }}"
-                                                                        {{ $d->pic_2 == $pic->nama_pic ? 'selected' : '' }}>
+                                                                    <option value="{{ $pic->nama_pic }}" {{ $d->pic_2 == $pic->nama_pic ? 'selected' : '' }}>
                                                                         {{ $pic->nama_pic }}
                                                                     </option>
                                                                 @endforeach
                                                                 @if ($d->pic_2 && !in_array($d->pic_2, $existingPics))
                                                                     <option value="{{ $d->pic_2 }}" selected>
-                                                                        {{ $d->pic_2 }} (Custom)</option>
+                                                                        {{ $d->pic_2 }} (Custom)
+                                                                    </option>
                                                                 @endif
                                                             </select>
                                                         </div>
@@ -721,16 +745,14 @@
                         <div class="btn-datakolom">
                             <form method="GET" class="d-flex align-items-center">
                                 @if (request('search_nama_ponpes'))
-                                    <input type="hidden" name="search_nama_ponpes"
-                                        value="{{ request('search_nama_ponpes') }}">
+                                    <input type="hidden" name="search_nama_ponpes" value="{{ request('search_nama_ponpes') }}">
                                 @endif
                                 @if (request('search_jenis_layanan'))
                                     <input type="hidden" name="search_jenis_layanan"
                                         value="{{ request('search_jenis_layanan') }}">
                                 @endif
                                 @if (request('search_keterangan'))
-                                    <input type="hidden" name="search_keterangan"
-                                        value="{{ request('search_keterangan') }}">
+                                    <input type="hidden" name="search_keterangan" value="{{ request('search_keterangan') }}">
                                 @endif
                                 @if (request('search_status'))
                                     <input type="hidden" name="search_status" value="{{ request('search_status') }}">
@@ -759,8 +781,8 @@
                                 @endif
 
                                 <div class="d-flex align-items-center">
-                                    <select name="per_page" class="form-control form-control-sm pr-2"
-                                        style="width: auto;" onchange="this.form.submit()">
+                                    <select name="per_page" class="form-control form-control-sm pr-2" style="width: auto;"
+                                        onchange="this.form.submit()">
                                         <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>
                                             10
                                         </option>
@@ -820,6 +842,79 @@
         integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+    {{-- JS Real-time Duration Counter --}}
+    <script>
+        // Fungsi untuk menghitung dan format durasi real-time
+        function calculateDuration(createdAtStr) {
+            const createdAt = new Date(createdAtStr + ' UTC');
+            const now = new Date();
+            const diffMs = now - createdAt;
+
+            const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diffMs % (1000 * 60)) / 1000);
+
+            return {
+                days: days,
+                hours: hours,
+                minutes: minutes,
+                seconds: seconds,
+                formatted: `${days} hari ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+            };
+        }
+
+        // Update semua durasi yang masih berjalan di tabel
+        function updateDurasiRealtime() {
+            document.querySelectorAll('.durasi-realtime').forEach(function(element) {
+                const createdAtStr = element.getAttribute('data-created');
+                if (createdAtStr) {
+                    const duration = calculateDuration(createdAtStr);
+                    const textElement = element.querySelector('.durasi-text');
+                    if (textElement) {
+                        textElement.textContent = duration.formatted;
+                    }
+                }
+            });
+        }
+
+        // Update durasi di modal edit yang terbuka
+        function updateDurasiModal() {
+            document.querySelectorAll('.durasi-realtime-modal').forEach(function(element) {
+                const createdAtStr = element.getAttribute('data-created');
+                if (createdAtStr) {
+                    const duration = calculateDuration(createdAtStr);
+                    element.value = duration.formatted;
+                }
+            });
+        }
+
+        // Update setiap 1 detik
+        let durasiInterval;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDurasiRealtime();
+            updateDurasiModal();
+
+            durasiInterval = setInterval(function() {
+                updateDurasiRealtime();
+                updateDurasiModal();
+            }, 1000);
+        });
+
+        // Update saat modal dibuka
+        $('.modal').on('shown.bs.modal', function() {
+            updateDurasiModal();
+        });
+
+        // Bersihkan interval saat halaman di-unload
+        window.addEventListener('beforeunload', function() {
+            if (durasiInterval) {
+                clearInterval(durasiInterval);
+            }
+        });
+    </script>
+
     {{-- DROPDOWN UNTUK ADD MODAL --}}
     <script>
         // Ponpes Lists for different service types
@@ -874,7 +969,7 @@
                 option.textContent = `${ponpes.nama_ponpes} - ${ponpes.nama_wilayah}`;
                 option.setAttribute('data-value', ponpes.nama_ponpes);
                 option.setAttribute('data-nama-wilayah', ponpes.nama_wilayah);
-                option.onclick = function() {
+                option.onclick = function () {
                     selectPonpes(ponpes.nama_ponpes, ponpes.nama_wilayah);
                 };
                 ponpesDropdown.appendChild(option);
@@ -940,7 +1035,7 @@
         }
 
         // Initialize edit modals on page load
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             @foreach ($data as $d)
                 updatePonpesOptionsEdit({{ $d->id }});
                 // Set current value
@@ -952,12 +1047,12 @@
                 }
             @endforeach
 
-            // Searchable Ponpes dropdown functionality
-            const ponpesSearch = document.getElementById('ponpes_search');
+                // Searchable Ponpes dropdown functionality
+                const ponpesSearch = document.getElementById('ponpes_search');
             const ponpesDropdown = document.getElementById('ponpesDropdownMenu');
 
             // Filter Ponpes options based on search input
-            ponpesSearch.addEventListener('input', function() {
+            ponpesSearch.addEventListener('input', function () {
                 const searchTerm = this.value.toLowerCase();
                 const ponpesOptions = ponpesDropdown.querySelectorAll('.ponpes-option');
                 let hasVisibleOption = false;
@@ -980,7 +1075,7 @@
             });
 
             // Show options when clicking on search input
-            ponpesSearch.addEventListener('focus', function() {
+            ponpesSearch.addEventListener('focus', function () {
                 if (this.value.length > 0 && !this.disabled) {
                     const searchTerm = this.value.toLowerCase();
                     const ponpesOptions = ponpesDropdown.querySelectorAll('.ponpes-option');
@@ -1003,14 +1098,14 @@
             });
 
             // Hide dropdown when clicking outside
-            document.addEventListener('click', function(event) {
+            document.addEventListener('click', function (event) {
                 if (!event.target.closest('.dropdown')) {
                     ponpesDropdown.style.display = 'none';
                 }
             });
 
             // Clear Ponpes selection when search is cleared
-            ponpesSearch.addEventListener('input', function() {
+            ponpesSearch.addEventListener('input', function () {
                 if (this.value === '') {
                     document.getElementById('nama_ponpes').value = '';
                 }
@@ -1018,7 +1113,7 @@
         });
 
         // Reset form when modal is closed
-        $('#addModal').on('hidden.bs.modal', function() {
+        $('#addModal').on('hidden.bs.modal', function () {
             document.getElementById('jenis_layanan').value = '';
             document.getElementById('ponpes_search').value = '';
             document.getElementById('nama_ponpes').value = '';
@@ -1031,7 +1126,7 @@
 
     {{-- Search and Filter JavaScript --}}
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             // Function to get current filter values
             function getFilters() {
                 return {
@@ -1050,7 +1145,7 @@
             }
 
             // Function to apply filters and redirect (GLOBAL - bisa dipanggil dari tombol)
-            window.applyFilters = function() {
+            window.applyFilters = function () {
                 let filters = getFilters();
                 let url = new URL(window.location.href);
 
@@ -1078,7 +1173,7 @@
             };
 
             // Function to clear all search filters (GLOBAL - bisa dipanggil dari tombol Reset)
-            window.clearAllFilters = function() {
+            window.clearAllFilters = function () {
                 // Clear semua input field dulu
                 $('#search-nama_ponpes').val('');
                 $('#search-jenis_layanan').val('');
@@ -1110,21 +1205,21 @@
             };
 
             // Bind keypress event to all search input fields (Enter masih berfungsi)
-            $('.column-search input').on('keypress', function(e) {
+            $('.column-search input').on('keypress', function (e) {
                 if (e.which === 13) { // Enter key
                     applyFilters();
                 }
             });
 
             // Clear individual column search when input is emptied
-            $('.column-search input').on('keyup', function(e) {
+            $('.column-search input').on('keyup', function (e) {
                 if (e.which === 13 && $(this).val().trim() === '') {
                     applyFilters(); // Apply filters to update URL (removing empty filter)
                 }
             });
 
             // Download functions with current filters
-            window.downloadCsv = function() {
+            window.downloadCsv = function () {
                 let filters = getFilters();
                 let form = document.createElement('form');
                 form.method = 'GET';
@@ -1146,7 +1241,7 @@
                 document.body.removeChild(form);
             };
 
-            window.downloadPdf = function() {
+            window.downloadPdf = function () {
                 let filters = getFilters();
                 let form = document.createElement('form');
                 form.method = 'GET';
@@ -1209,18 +1304,30 @@
             }
 
             // Handle modal events
-            $('.modal').on('show.bs.modal', function(e) {
+            $('.modal').on('show.bs.modal', function (e) {
                 console.log('Modal is opening');
             });
 
-            $('.modal').on('shown.bs.modal', function(e) {
+            $('.modal').on('shown.bs.modal', function (e) {
                 console.log('Modal is fully visible');
             });
 
-            $('.modal').on('hide.bs.modal', function(e) {
+            $('.modal').on('hide.bs.modal', function (e) {
                 console.log('Modal is closing');
             });
         });
+        function toggleDetail(id) {
+            const shortText = document.getElementById('short-text-' + id);
+            const fullText = document.getElementById('full-text-' + id);
+
+            if (shortText.style.display === 'none') {
+                shortText.style.display = 'inline';
+                fullText.style.display = 'none';
+            } else {
+                shortText.style.display = 'none';
+                fullText.style.display = 'inline';
+            }
+        }
     </script>
 
 @endsection

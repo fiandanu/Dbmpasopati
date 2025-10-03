@@ -12,9 +12,33 @@
                                 <i class="fas fa-bars"></i></button>
                             <h1 class="headline-large-32 mb-0">Provider dan Vpn</h1>
                         </div>
-                        <button class="btn-purple" data-bs-toggle="modal" data-bs-target="#addDataModal">
-                            <i class="fa fa-plus"></i> Add Data
-                        </button>
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            <!-- Export Buttons for Provider -->
+                            <div class="d-flex gap-2" id="export-buttons-provider">
+                                <button onclick="downloadProviderCsv()"
+                                    class="btn-page d-flex justify-content-center align-items-center" title="Download Provider CSV">
+                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export Provider CSV
+                                </button>
+                                <button onclick="downloadProviderPdf()"
+                                    class="btn-page d-flex justify-content-center align-items-center" title="Download Provider PDF">
+                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export Provider PDF
+                                </button>
+                            </div>
+                            <!-- Export Buttons for VPN -->
+                            <div class="d-flex gap-2" id="export-buttons-vpn">
+                                <button onclick="downloadVpnCsv()"
+                                    class="btn-page d-flex justify-content-center align-items-center" title="Download VPN CSV">
+                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export VPN CSV
+                                </button>
+                                <button onclick="downloadVpnPdf()"
+                                    class="btn-page d-flex justify-content-center align-items-center" title="Download VPN PDF">
+                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export VPN PDF
+                                </button>
+                            </div>
+                            <button class="btn-purple" data-bs-toggle="modal" data-bs-target="#addDataModal">
+                                <i class="fa fa-plus"></i> Add Data
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -49,7 +73,7 @@
                         <div class="alert-heading h5 mb-2">Periksa kembali Data yang dimasukkan</div>
                         <div class="small">
                             @foreach ($errors->all() as $error)
-                                <div class="mb-1">â€¢ {{ $error }}</div>
+                                <div class="mb-1">• {{ $error }}</div>
                             @endforeach
                         </div>
                     </div>
@@ -125,13 +149,47 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <!-- Edit Modal Provider -->
+                                            <div class="modal fade" id="editProviderModal{{ $d->id }}" tabindex="-1"
+                                                aria-labelledby="editProviderModalLabel" aria-hidden="true">
+                                                <form id="editProviderForm"
+                                                    action="{{ route('provider.ProviderPageUpdate', ['id' => $d->id]) }}"
+                                                    method="POST">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <label class="modal-title" id="editProviderModalLabel">Edit
+                                                                    Data Provider</label>
+                                                                <button type="button" class="btn-close-custom"
+                                                                    data-bs-dismiss="modal" aria-label="Close">
+                                                                    <i class="bi bi-x"></i>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <div class="mb-3">
+                                                                    <label for="nama_provider">Nama Provider</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="nama_provider" name="nama_provider"
+                                                                        value="{{ $d->nama_provider }}">
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn-cancel-modal"
+                                                                    data-bs-dismiss="modal">Cancel</button>
+                                                                <button type="submit" class="btn-purple">Update</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
                                         @endforeach
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
-
                     <!-- Tabel VPN -->
                     <div class="col-md-6">
                         <div class="card">
@@ -148,23 +206,26 @@
                                         @foreach ($datavpn as $v)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
-                                                <td><span class="tag tag-success">{{ $v->jenis_vpn }}</span></td>
+                                                <td>{{ $v->jenis_vpn }}</td>
                                                 <td class="text-center">
                                                     {{-- Edit Button --}}
-                                                    <button href="#editVpnModal{{ $v->id }}" data-bs-toggle="modal"
-                                                        data-bs-target="#editVpnModal{{ $v->id }}" title="Edit">
+                                                    <button href="#editVpnModal{{ $v->id }}"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#editVpnModal{{ $v->id }}"
+                                                        title="Edit">
                                                         <ion-icon name="pencil-outline"></ion-icon>
                                                     </button>
 
                                                     {{-- Delete Button --}}
                                                     <button data-toggle="modal"
-                                                        data-target="#deleteVpnModal{{ $v->id }}" title="Hapus">
+                                                        data-target="#deleteVpnModal{{ $v->id }}"
+                                                        title="Hapus">
                                                         <ion-icon name="trash-outline"></ion-icon>
                                                     </button>
                                                 </td>
                                             </tr>
 
-                                            <!-- Delete Modal Vpn -->
+                                            <!-- Delete Modal VPN -->
                                             <div class="modal fade" id="deleteVpnModal{{ $v->id }}">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
@@ -172,12 +233,14 @@
                                                             <ion-icon name="alert-circle-outline"
                                                                 class="text-9xl text-[var(--yellow-04)]"></ion-icon>
                                                             <p class="headline-large-32">Anda Yakin?</p>
-                                                            <label>Apakah <b>{{ $v->jenis_vpn }}</b> ingin dihapus?</label>
+                                                            <label>Apakah <b>{{ $v->jenis_vpn }}</b> ingin
+                                                                dihapus?</label>
                                                         </div>
                                                         <div class="modal-footer flex-row-reverse justify-content-between">
                                                             <button type="button" class="btn-cancel-modal"
-                                                                data-dismiss="modal">Tutup</button>
-                                                            <form action="{{ route('vpn.VpnPageDestroy', $v->id) }}"
+                                                                data-dismiss="modal">Cancel</button>
+                                                            <form
+                                                                action="{{ route('vpn.VpnPageDestroy', $v->id) }}"
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
@@ -194,133 +257,87 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
 
-        {{-- Combined Create Modal --}}
-        <div class="modal fade" id="addDataModal" tabindex="-1" aria-labelledby="addDataModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <label class="modal-title" id="addDataModalLabel">Tambah Data</label>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <!-- Dynamic Form Container -->
-                        <div id="form_container">
-                            <!-- Provider Form -->
-                            <div id="provider_form" class="data-form">
+                <!-- Add Modal -->
+                <div class="modal fade" id="addDataModal" tabindex="-1" aria-labelledby="addDataModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <label class="modal-title" id="addDataModalLabel">Tambah Data</label>
+                                <button type="button" class="btn-close-custom" data-bs-dismiss="modal"
+                                    aria-label="Close">
+                                    <i class="bi bi-x"></i>
+                                </button>
+                            </div>
+                            <div class="modal-body">
                                 <div class="mb-3">
-                                    <label for="nama_provider">Nama Provider</label>
-                                    <input type="text" class="form-control" id="nama_provider" name="nama_provider"
-                                        placeholder="Masukkan nama provider">
+                                    <input type="checkbox" id="provider_type" checked>
+                                    <label for="provider_type">Provider</label>
+                                    <input type="checkbox" id="vpn_type">
+                                    <label for="vpn_type">VPN</label>
+                                </div>
+                                <div id="provider_form">
+                                    <div class="mb-3">
+                                        <label for="nama_provider">Nama Provider</label>
+                                        <input type="text" class="form-control" id="nama_provider" name="nama_provider">
+                                    </div>
+                                </div>
+                                <div id="vpn_form" style="display: none;">
+                                    <div class="mb-3">
+                                        <label for="jenis_vpn">Jenis VPN</label>
+                                        <input type="text" class="form-control" id="jenis_vpn" name="jenis_vpn">
+                                    </div>
                                 </div>
                             </div>
-
-                            <!-- VPN Form -->
-                            <div id="vpn_form" class="data-form" style="display: none;">
-                                <div class="mb-3">
-                                    <label for="jenis_vpn">Jenis VPN</label>
-                                    <input type="text" class="form-control" id="jenis_vpn" name="jenis_vpn"
-                                        placeholder="Masukkan jenis VPN">
-                                </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn-cancel-modal" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn-purple" id="save_btn">Save</button>
                             </div>
                         </div>
-                        <!-- Data Type Selection - Changed to Radio Buttons -->
-                        <div class="mb-3">
-                            <label>Pilih Jenis Data</label>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="data_type" id="provider_type"
-                                    value="provider" checked>
-                                <h6 class="form-check-label" for="provider_type"> Provider </h6>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="data_type" id="vpn_type"
-                                    value="vpn">
-                                <h6 class="form-check-label" for="vpn_type">VPN</h6>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn-cancel-modal" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn-purple" id="save_btn">Simpan</button>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        {{-- Provider Edit Modals --}}
-        @foreach ($dataprovider as $d)
-            <div class="modal fade" id="editProviderModal{{ $d->id }}" tabindex="-1"
-                aria-labelledby="editProviderModalLabel" aria-hidden="true">
-                <form id="editProviderForm" action="{{ route('provider.ProviderPageUpdate', ['id' => $d->id]) }}"
-                    method="POST">
-                    @csrf
-                    @method('PUT')
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <label class="modal-title" id="editProviderModalLabel">Edit Data Provider</label>
-                                <button type="button" class="btn-close-custom" data-bs-dismiss="modal"
-                                    aria-label="Close">
-                                    <i class="bi bi-x"></i>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="mb-3">
-                                    <label for="nama_provider">Nama Provider</label>
-                                    <input type="text" class="form-control" id="nama_provider" name="nama_provider"
-                                        value="{{ $d->nama_provider }}">
+                {{-- VPN Edit Modals --}}
+                @foreach ($datavpn as $v)
+                    <div class="modal fade" id="editVpnModal{{ $v->id }}" tabindex="-1"
+                        aria-labelledby="editVpnModalLabel" aria-hidden="true">
+                        <form id="editVpnForm" action="{{ route('vpn.VpnPageUpdate', ['id' => $v->id]) }}"
+                            method="POST">
+                            @csrf
+                            @method('PUT')
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <label class="modal-title" id="editVpnModalLabel">Edit Data VPN</label>
+                                        <button type="button" class="btn-close-custom" data-bs-dismiss="modal"
+                                            aria-label="Close">
+                                            <i class="bi bi-x"></i>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label for="jenis_vpn">Jenis VPN</label>
+                                            <input type="text" class="form-control" id="jenis_vpn" name="jenis_vpn"
+                                                value="{{ $v->jenis_vpn }}">
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn-cancel-modal" data-bs-dismiss="modal">Cancel</button>
+                                        <button type="submit" class="btn-purple">Update</button>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn-cancel-modal" data-bs-dismiss="modal">Cancel</button>
-                                <button type="submit" class="btn-purple">Update</button>
-                            </div>
-                        </div>
+                        </form>
                     </div>
-                </form>
+                @endforeach
             </div>
-        @endforeach
-
-        {{-- VPN Edit Modals --}}
-        @foreach ($datavpn as $v)
-            <div class="modal fade" id="editVpnModal{{ $v->id }}" tabindex="-1"
-                aria-labelledby="editVpnModalLabel" aria-hidden="true">
-                <form id="editVpnForm" action="{{ route('vpn.VpnPageUpdate', ['id' => $v->id]) }}" method="POST">
-                    @csrf
-                    @method('PUT')
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <label class="modal-title" id="editVpnModalLabel">Edit Data VPN</label>
-                                <button type="button" class="btn-close-custom" data-bs-dismiss="modal"
-                                    aria-label="Close">
-                                    <i class="bi bi-x"></i>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="mb-3">
-                                    <label for="jenis_vpn">Jenis VPN</label>
-                                    <input type="text" class="form-control" id="jenis_vpn" name="jenis_vpn"
-                                        value="{{ $v->jenis_vpn }}">
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn-cancel-modal" data-bs-dismiss="modal">Cancel</button>
-                                <button type="submit" class="btn-purple">Update</button>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        @endforeach
+        </section>
     </div>
 
     {{-- JS --}}
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Get checkboxes
             const providerCheckbox = document.getElementById('provider_type');
             const vpnCheckbox = document.getElementById('vpn_type');
@@ -370,8 +387,8 @@
             providerCheckbox.addEventListener('change', handleCheckboxSelection);
             vpnCheckbox.addEventListener('change', handleCheckboxSelection);
 
-            // Save button click event (same as before)
-            saveBtn.addEventListener('click', function() {
+            // Save button click event
+            saveBtn.addEventListener('click', function () {
                 const isProvider = providerCheckbox.checked;
                 let form;
 
@@ -434,7 +451,7 @@
             });
 
             // Reset form when modal is closed
-            document.getElementById('addDataModal').addEventListener('hidden.bs.modal', function() {
+            document.getElementById('addDataModal').addEventListener('hidden.bs.modal', function () {
                 // Reset checkbox to provider
                 providerCheckbox.checked = true;
                 vpnCheckbox.checked = false;
@@ -446,7 +463,60 @@
                 // Show provider form, hide VPN form
                 toggleForms();
             });
+
+            // Download functions for Provider
+            window.downloadProviderCsv = function () {
+                let form = document.createElement('form');
+                form.method = 'GET';
+                form.action = '{{ route('provider.export.provider.list.csv') }}';
+                form.target = '_blank';
+                document.body.appendChild(form);
+                form.submit();
+                document.body.removeChild(form);
+            };
+
+            window.downloadProviderPdf = function () {
+                let form = document.createElement('form');
+                form.method = 'GET';
+                form.action = '{{ route('provider.export.provider.list.pdf') }}';
+                form.target = '_blank';
+                document.body.appendChild(form);
+                form.submit();
+                document.body.removeChild(form);
+            };
+
+            // Download functions for VPN
+            window.downloadVpnCsv = function () {
+                let form = document.createElement('form');
+                form.method = 'GET';
+                form.action = '{{ route('vpn.export.vpn.list.csv') }}';
+                form.target = '_blank';
+                document.body.appendChild(form);
+                form.submit();
+                document.body.removeChild(form);
+            };
+
+            window.downloadVpnPdf = function () {
+                let form = document.createElement('form');
+                form.method = 'GET';
+                form.action = '{{ route('vpn.export.vpn.list.pdf') }}';
+                form.target = '_blank';
+                document.body.appendChild(form);
+                form.submit();
+                document.body.removeChild(form);
+            };
+
+            // Show export buttons if there's data
+            if ($(".table").eq(0).find("tbody tr").length > 0) {
+                $("#export-buttons-provider").show();
+            } else {
+                $("#export-buttons-provider").hide();
+            }
+            if ($(".table").eq(1).find("tbody tr").length > 0) {
+                $("#export-buttons-vpn").show();
+            } else {
+                $("#export-buttons-vpn").hide();
+            }
         });
     </script>
-
 @endsection

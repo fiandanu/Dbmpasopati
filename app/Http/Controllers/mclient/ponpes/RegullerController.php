@@ -69,6 +69,9 @@ class RegullerController extends Controller
         if ($request->has('search_jenis_kendala') && !empty($request->search_jenis_kendala)) {
             $query->where('jenis_kendala', 'LIKE', '%' . $request->search_jenis_kendala . '%');
         }
+        if ($request->has('search_detail_kendala') && !empty($request->search_detail_kendala)) {
+            $query->where('detail_kendala', 'LIKE', '%' . $request->search_detail_kendala . '%');
+        }
         if ($request->has('search_status') && !empty($request->search_status)) {
             $query->where('status', 'LIKE', '%' . $request->search_status . '%');
         }
@@ -134,33 +137,29 @@ class RegullerController extends Controller
         );
 
         if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput()
-                ->with('error', 'Silakan periksa kembali data yang dimasukkan.');
+            return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        try {
-            $data = $request->all();
+        $validatedData = $validator->validated();
 
-            if ($request->tanggal_terlapor && $request->tanggal_selesai) {
-                $tanggalTerlapor = Carbon::parse($request->tanggal_terlapor);
-                $tanggalSelesai = Carbon::parse($request->tanggal_selesai);
-                $data['durasi_hari'] = $tanggalSelesai->diffInDays($tanggalTerlapor);
-            }
-
-            Reguller::create($data);
-
-            return redirect()->back()->with('success', 'Data monitoring client Ponpes Reguller berhasil ditambahkan!');
-        } catch (\Exception $e) {
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'Gagal menambahkan data: ' . $e->getMessage());
+        // Calculate durasi_hari only if both dates are provided
+        $durasi = null;
+        if (!empty($validatedData['tanggal_terlapor']) && !empty($validatedData['tanggal_selesai'])) {
+            $start = Carbon::parse($validatedData['tanggal_terlapor']);
+            $end = Carbon::parse($validatedData['tanggal_selesai']);
+            $durasi = $start->diffInDays($end);
         }
+        $validatedData['durasi_hari'] = $durasi;
+
+        Reguller::create($validatedData);
+
+        return redirect()->route('mcponpesreguler.ListDataMclientPonpesReguller')->with('success', 'Data berhasil disimpan.');
     }
 
     public function MclientPonpesRegullerUpdate(Request $request, $id)
     {
+        $data = Reguller::findOrFail($id);
+
         $validator = Validator::make(
             $request->all(),
             [
@@ -197,60 +196,31 @@ class RegullerController extends Controller
         );
 
         if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput()
-                ->with('error', 'Silakan perbaiki data yang bermasalah.');
+            return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        try {
-            $data = Reguller::findOrFail($id);
+        $validatedData = $validator->validated();
 
-            // Cuma ambil field yang diizinkan (whitelist approach)
-            $updateData = $request->only([
-                'nama_ponpes',
-                'nama_wilayah',
-                'jenis_kendala',
-                'detail_kendala',
-                'tanggal_terlapor',
-                'tanggal_selesai',
-                'durasi_hari',
-                'status',
-                'pic_1',
-                'pic_2'
-            ]);
-
-            // Auto-calculate durasi jika ada tanggal
-            if ($request->filled('tanggal_terlapor') && $request->filled('tanggal_selesai')) {
-                $tanggalTerlapor = Carbon::parse($request->tanggal_terlapor);
-                $tanggalSelesai = Carbon::parse($request->tanggal_selesai);
-                $updateData['durasi_hari'] = $tanggalSelesai->diffInDays($tanggalTerlapor);
-            }
-
-            // SINGLE UPDATE - tidak ada double update
-            $data->update($updateData);
-
-            return redirect()->back()->with('success', 'Data monitoring client Ponpes Reguller berhasil diupdate!');
-        } catch (\Exception $e) {
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'Gagal update data: ' . $e->getMessage());
+        // Calculate durasi_hari only if both dates are provided
+        $durasi = null;
+        if (!empty($validatedData['tanggal_terlapor']) && !empty($validatedData['tanggal_selesai'])) {
+            $start = Carbon::parse($validatedData['tanggal_terlapor']);
+            $end = Carbon::parse($validatedData['tanggal_selesai']);
+            $durasi = $start->diffInDays($end);
         }
+        $validatedData['durasi_hari'] = $durasi;
+
+        $data->update($validatedData);
+
+        return redirect()->route('mcponpesreguler.ListDataMclientPonpesReguller')->with('success', 'Data berhasil diupdate.');
     }
 
     public function MclientPonpesRegullerDestroy($id)
     {
-        try {
-            $data = Reguller::findOrFail($id);
-            $namaPonpes = $data->nama_ponpes;
-            $data->delete();
+        $data = Reguller::findOrFail($id);
+        $data->delete();
 
-            return redirect()->back()
-                ->with('success', "Data monitoring client Ponpes Reguller di '{$namaPonpes}' berhasil dihapus!");
-        } catch (\Exception $e) {
-            return redirect()->back()
-                ->with('error', 'Gagal menghapus data: ' . $e->getMessage());
-        }
+        return redirect()->route('mcponpesreguler.ListDataMclientPonpesReguller')->with('success', 'Data berhasil dihapus.');
     }
 
     public function exportListPdf(Request $request)

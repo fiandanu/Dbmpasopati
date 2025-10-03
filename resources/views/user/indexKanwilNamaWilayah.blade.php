@@ -7,9 +7,33 @@
                 <div class="row mb-2 py-3 align-items-center">
                     <div class="col d-flex justify-content-between align-items-center">
                         <h1 class="headline-large-32">List Data Kanwil/Nama Wilayah</h1>
-                        <button class="btn-purple" data-bs-toggle="modal" data-bs-target="#addDataModal">
-                            <i class="fa fa-plus"></i> Add Data
-                        </button>
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            <!-- Export Buttons for Kanwil -->
+                            <div class="d-flex gap-2" id="export-buttons-kanwil">
+                                <button onclick="downloadKanwilCsv()"
+                                    class="btn-page d-flex justify-content-center align-items-center" title="Download Kanwil CSV">
+                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export Kanwil CSV
+                                </button>
+                                <button onclick="downloadKanwilPdf()"
+                                    class="btn-page d-flex justify-content-center align-items-center" title="Download Kanwil PDF">
+                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export Kanwil PDF
+                                </button>
+                            </div>
+                            <!-- Export Buttons for Nama Wilayah -->
+                            <div class="d-flex gap-2" id="export-buttons-namawilayah">
+                                <button onclick="downloadNamaWilayahCsv()"
+                                    class="btn-page d-flex justify-content-center align-items-center" title="Download Nama Wilayah CSV">
+                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export Nama Wilayah CSV
+                                </button>
+                                <button onclick="downloadNamaWilayahPdf()"
+                                    class="btn-page d-flex justify-content-center align-items-center" title="Download Nama Wilayah PDF">
+                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export Nama Wilayah PDF
+                                </button>
+                            </div>
+                            <button class="btn-purple" data-bs-toggle="modal" data-bs-target="#addDataModal">
+                                <i class="fa fa-plus"></i> Add Data
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -85,7 +109,8 @@
 
                                                     {{-- Delete Button --}}
                                                     <button data-toggle="modal"
-                                                        data-target="#deleteKanwilModal{{ $k->id }}" title="Hapus">
+                                                        data-target="#deleteKanwilModal{{ $k->id }}"
+                                                        title="Hapus">
                                                         <ion-icon name="trash-outline"></ion-icon>
                                                     </button>
                                                 </td>
@@ -99,13 +124,14 @@
                                                             <ion-icon name="alert-circle-outline"
                                                                 class="text-9xl text-[var(--yellow-04)]"></ion-icon>
                                                             <p class="headline-large-32">Anda Yakin?</p>
-                                                            <label>Apakah <b> {{ $k->kanwil }} </b> ingin
+                                                            <label>Apakah <b>{{ $k->kanwil }}</b> ingin
                                                                 dihapus?</label>
                                                         </div>
                                                         <div class="modal-footer flex-row-reverse justify-content-between">
                                                             <button type="button" class="btn-cancel-modal"
-                                                                data-dismiss="modal">Tutup</button>
-                                                            <form action="{{ route('kanwil.KanwilPageDestroy', $k->id) }}"
+                                                                data-dismiss="modal">Cancel</button>
+                                                            <form
+                                                                action="{{ route('kanwil.KanwilPageDestroy', $k->id) }}"
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
@@ -115,13 +141,46 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <!-- Edit Modal Kanwil -->
+                                            <div class="modal fade" id="editKanwilModal{{ $k->id }}" tabindex="-1"
+                                                aria-labelledby="editKanwilModalLabel" aria-hidden="true">
+                                                <form id="editKanwilForm"
+                                                    action="{{ route('kanwil.KanwilPageUpdate', ['id' => $k->id]) }}"
+                                                    method="POST">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <label class="modal-title" id="editKanwilModalLabel">Edit
+                                                                    Data Kanwil</label>
+                                                                <button type="button" class="btn-close-custom"
+                                                                    data-bs-dismiss="modal" aria-label="Close">
+                                                                    <i class="bi bi-x"></i>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <div class="mb-3">
+                                                                    <label for="kanwil">Kanwil</label>
+                                                                    <input type="text" class="form-control" id="kanwil"
+                                                                        name="kanwil" value="{{ $k->kanwil }}">
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn-cancel-modal"
+                                                                    data-bs-dismiss="modal">Cancel</button>
+                                                                <button type="submit" class="btn-purple">Update</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
                                         @endforeach
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
-
                     <!-- Tabel Nama Wilayah -->
                     <div class="col-md-6">
                         <div class="card">
@@ -134,48 +193,87 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($datanamawilayah as $w)
+                                        @foreach ($datanamawilayah as $n)
                                             <tr>
-                                                <td><span class="tag tag-success">{{ $w->nama_wilayah }}</span></td>
+                                                <td>{{ $n->nama_wilayah }}</td>
                                                 <td class="text-center">
                                                     {{-- Edit Button --}}
-                                                    <button href="#editNamaWilayahModal{{ $w->id }}" data-bs-toggle="modal"
-                                                        data-bs-target="#editNamaWilayahModal{{ $w->id }}" title="Edit">
+                                                    <button href="#editNamaWilayahModal{{ $n->id }}"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#editNamaWilayahModal{{ $n->id }}"
+                                                        title="Edit">
                                                         <ion-icon name="pencil-outline"></ion-icon>
                                                     </button>
 
                                                     {{-- Delete Button --}}
                                                     <button data-toggle="modal"
-                                                        data-target="#deleteNamaWilayahModal{{ $w->id }}" title="Hapus">
+                                                        data-target="#deleteNamaWilayahModal{{ $n->id }}"
+                                                        title="Hapus">
                                                         <ion-icon name="trash-outline"></ion-icon>
                                                     </button>
                                                 </td>
                                             </tr>
 
                                             <!-- Delete Modal Nama Wilayah -->
-                                            <div class="modal fade" id="deleteNamaWilayahModal{{ $w->id }}">
+                                            <div class="modal fade" id="deleteNamaWilayahModal{{ $n->id }}">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
                                                         <div class="modal-body text-center align-items-center">
                                                             <ion-icon name="alert-circle-outline"
                                                                 class="text-9xl text-[var(--yellow-04)]"></ion-icon>
                                                             <p class="headline-large-32">Anda Yakin?</p>
-                                                            <label>Apakah <b> {{ $w->nama_wilayah }} </b> ingin
+                                                            <label>Apakah <b>{{ $n->nama_wilayah }}</b> ingin
                                                                 dihapus?</label>
                                                         </div>
                                                         <div class="modal-footer flex-row-reverse justify-content-between">
                                                             <button type="button" class="btn-cancel-modal"
-                                                                data-dismiss="modal">Tutup</button>
-                                                            <form action="{{ route('namawilayah.NamaWilayahPageDestroy', $w->id) }}"
+                                                                data-dismiss="modal">Cancel</button>
+                                                            <form
+                                                                action="{{ route('namawilayah.NamaWilayahPageDestroy', $n->id) }}"
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
-                                                                <button type="submit"
-                                                                    class="btn-delete">Hapus</button>
+                                                                <button type="submit" class="btn-delete">Hapus</button>
                                                             </form>
                                                         </div>
                                                     </div>
                                                 </div>
+                                            </div>
+                                            <!-- Edit Modal Nama Wilayah -->
+                                            <div class="modal fade" id="editNamaWilayahModal{{ $n->id }}" tabindex="-1"
+                                                aria-labelledby="editNamaWilayahModalLabel" aria-hidden="true">
+                                                <form id="editNamaWilayahForm"
+                                                    action="{{ route('namawilayah.NamaWilayahPageUpdate', ['id' => $n->id]) }}"
+                                                    method="POST">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <label class="modal-title"
+                                                                    id="editNamaWilayahModalLabel">Edit Data Nama
+                                                                    Wilayah</label>
+                                                                <button type="button" class="btn-close-custom"
+                                                                    data-bs-dismiss="modal" aria-label="Close">
+                                                                    <i class="bi bi-x"></i>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <div class="mb-3">
+                                                                    <label for="nama_wilayah">Nama Wilayah</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="nama_wilayah" name="nama_wilayah"
+                                                                        value="{{ $n->nama_wilayah }}">
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn-cancel-modal"
+                                                                    data-bs-dismiss="modal">Cancel</button>
+                                                                <button type="submit" class="btn-purple">Update</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
                                             </div>
                                         @endforeach
                                     </tbody>
@@ -184,140 +282,49 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
 
-        {{-- Combined Create Modal --}}
-        <div class="modal fade" id="addDataModal" tabindex="-1" aria-labelledby="addDataModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <label class="modal-title" id="addDataModalLabel">Tambah Data</label>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close">
-                            <i class="bi bi-x"></i>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <!-- Dynamic Form Container -->
-                        <div id="form_container">
-                            <!-- Kanwil Form -->
-                            <div id="kanwil_form" class="data-form">
+                <!-- Add Modal -->
+                <div class="modal fade" id="addDataModal" tabindex="-1" aria-labelledby="addDataModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <label class="modal-title" id="addDataModalLabel">Tambah Data</label>
+                                <button type="button" class="btn-close-custom" data-bs-dismiss="modal"
+                                    aria-label="Close">
+                                    <i class="bi bi-x"></i>
+                                </button>
+                            </div>
+                            <div class="modal-body">
                                 <div class="mb-3">
-                                    <label for="kanwil">Kanwil</label>
-                                    <input type="text" class="form-control" id="kanwil" name="kanwil"
-                                        placeholder="Masukkan kanwil">
+                                    <input type="radio" id="kanwil_type" name="data_type" checked>
+                                    <label for="kanwil_type">Kanwil</label>
+                                    <input type="radio" id="nama_wilayah_type" name="data_type">
+                                    <label for="nama_wilayah_type">Nama Wilayah</label>
+                                </div>
+                                <div id="kanwil_form">
+                                    <div class="mb-3">
+                                        <label for="kanwil">Kanwil</label>
+                                        <input type="text" class="form-control" id="kanwil" name="kanwil">
+                                    </div>
+                                </div>
+                                <div id="nama_wilayah_form" style="display: none;">
+                                    <div class="mb-3">
+                                        <label for="nama_wilayah">Nama Wilayah</label>
+                                        <input type="text" class="form-control" id="nama_wilayah" name="nama_wilayah">
+                                    </div>
                                 </div>
                             </div>
-
-                            <!-- Nama Wilayah Form -->
-                            <div id="nama_wilayah_form" class="data-form" style="display: none;">
-                                <div class="mb-3">
-                                    <label for="nama_wilayah">Nama Wilayah</label>
-                                    <input type="text" class="form-control" id="nama_wilayah" name="nama_wilayah"
-                                        placeholder="Masukkan nama wilayah">
-                                </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn-cancel-modal" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn-purple" id="save_btn">Save</button>
                             </div>
                         </div>
-
-                        <!-- Data Type Selection -->
-                        <div class="mb-3">
-                            <label class="form-label">Pilih Jenis Data</label>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="data_type" id="kanwil_type"
-                                    value="kanwil" checked>
-                                <h6 class="form-check-label" for="kanwil_type">
-                                    Kanwil
-                                </h6>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="data_type" id="nama_wilayah_type"
-                                    value="nama_wilayah">
-                                <h6 class="form-check-label" for="nama_wilayah_type">
-                                    Nama Wilayah
-                                </h6>
-                            </div>
-                        </div>
-
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn-cancel-modal" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn-purple" id="save_btn">Simpan</button>
                     </div>
                 </div>
             </div>
-        </div>
-
-        {{-- Kanwil Edit Modals --}}
-        @foreach ($datakanwil as $k)
-            <div class="modal fade" id="editKanwilModal{{ $k->id }}" tabindex="-1"
-                aria-labelledby="editKanwilModalLabel" aria-hidden="true">
-                <form id="editKanwilForm" action="{{ route('kanwil.KanwilPageUpdate', ['id' => $k->id]) }}"
-                    method="POST">
-                    @csrf
-                    @method('PUT')
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <label class="modal-title" id="editKanwilModalLabel">Edit Data Kanwil</label>
-                                <button type="button" class="btn-close-custom" data-bs-dismiss="modal"
-                                    aria-label="Close">
-                                    <i class="bi bi-x"></i>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="mb-3">
-                                    <label for="kanwil">Kanwil</label>
-                                    <input type="text" class="form-control" id="kanwil" name="kanwil"
-                                        value="{{ $k->kanwil }}">
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn-cancel-modal" data-bs-dismiss="modal">Cancel</button>
-                                <button type="submit" class="btn-purple">Update</button>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        @endforeach
-
-        {{-- Nama Wilayah Edit Modals --}}
-        @foreach ($datanamawilayah as $w)
-            <div class="modal fade" id="editNamaWilayahModal{{ $w->id }}" tabindex="-1"
-                aria-labelledby="editNamaWilayahModalLabel" aria-hidden="true">
-                <form id="editNamaWilayahForm" action="{{ route('namawilayah.NamaWilayahPageUpdate', ['id' => $w->id]) }}" method="POST">
-                    @csrf
-                    @method('PUT')
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <label class="modal-title" id="editNamaWilayahModalLabel">Edit Data Nama Wilayah</label>
-                                <button type="button" class="btn-close-custom" data-bs-dismiss="modal"
-                                    aria-label="Close">
-                                    <i class="bi bi-x"></i>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="mb-3">
-                                    <label for="nama_wilayah" class="form-label">Nama Wilayah</label>
-                                    <input type="text" class="form-control" id="nama_wilayah" name="nama_wilayah"
-                                        value="{{ $w->nama_wilayah }}">
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn-cancel-modal" data-bs-dismiss="modal">Cancel</button>
-                                <button type="submit" class="btn-purple">Update</button>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        @endforeach
+        </section>
     </div>
-
-
 
     {{-- JS --}}
     <script>
@@ -428,6 +435,60 @@
                 // Show kanwil form, hide Nama Wilayah form
                 toggleForms();
             });
+
+            // Download functions for Kanwil
+            window.downloadKanwilCsv = function () {
+                let form = document.createElement('form');
+                form.method = 'GET';
+                form.action = '{{ route('kanwil.export.kanwil.list.csv') }}';
+                form.target = '_blank';
+                document.body.appendChild(form);
+                form.submit();
+                document.body.removeChild(form);
+            };
+
+            window.downloadKanwilPdf = function () {
+                let form = document.createElement('form');
+                form.method = 'GET';
+                form.action = '{{ route('kanwil.export.kanwil.list.pdf') }}';
+                form.target = '_blank';
+                document.body.appendChild(form);
+                form.submit();
+                document.body.removeChild(form);
+            };
+
+            // Download functions for Nama Wilayah
+            window.downloadNamaWilayahCsv = function () {
+                let form = document.createElement('form');
+                form.method = 'GET';
+                form.action = '{{ route('namawilayah.export.namawilayah.list.csv') }}';
+                form.target = '_blank';
+                document.body.appendChild(form);
+                form.submit();
+                document.body.removeChild(form);
+            };
+
+            window.downloadNamaWilayahPdf = function () {
+                let form = document.createElement('form');
+                form.method = 'GET';
+                form.action = '{{ route('namawilayah.export.namawilayah.list.pdf') }}';
+                form.target = '_blank';
+                document.body.appendChild(form);
+                form.submit();
+                document.body.removeChild(form);
+            };
+
+            // Show export buttons if there's data
+            if ($(".table").eq(0).find("tbody tr").length > 0) {
+                $("#export-buttons-kanwil").show();
+            } else {
+                $("#export-buttons-kanwil").hide();
+            }
+            if ($(".table").eq(1).find("tbody tr").length > 0) {
+                $("#export-buttons-namawilayah").show();
+            } else {
+                $("#export-buttons-namawilayah").hide();
+            }
         });
     </script>
 

@@ -207,7 +207,7 @@ class KunjunganController extends Controller
             [
                 'nama_ponpes' => 'required|string|max:255',
                 'jenis_layanan' => 'required|string|in:vtren,reguler,vtrenreg',
-                'keterangan' => 'nullable|string',
+                'keterangan' => 'nullable|string|max:100',
                 'jadwal' => 'nullable|date',
                 'tanggal_selesai' => 'nullable|date|after_or_equal:jadwal',
                 'durasi_hari' => 'nullable|integer|min:0',
@@ -221,7 +221,7 @@ class KunjunganController extends Controller
                 'nama_ponpes.max' => 'Nama Ponpes tidak boleh lebih dari 255 karakter.',
                 'jenis_layanan.required' => 'Jenis layanan harus dipilih.',
                 'jenis_layanan.in' => 'Jenis layanan harus salah satu dari: VTREN, Reguler, atau VTREN + Reguler.',
-                'keterangan.string' => 'Keterangan harus berupa teks.',
+                'keterangan.string' => 'Keterangan maksimal 100 karakter.',
                 'jadwal.date' => 'Format jadwal harus valid.',
                 'tanggal_selesai.date' => 'Format tanggal selesai harus valid.',
                 'tanggal_selesai.after_or_equal' => 'Tanggal selesai tidak boleh lebih awal dari jadwal.',
@@ -245,10 +245,14 @@ class KunjunganController extends Controller
         try {
             $data = $request->all();
 
-            if ($request->jadwal && $request->tanggal_selesai) {
+            // Hitung durasi HANYA jika tanggal_selesai ada
+            if ($request->tanggal_selesai && $request->jadwal) {
                 $jadwal = Carbon::parse($request->jadwal);
                 $tanggalSelesai = Carbon::parse($request->tanggal_selesai);
-                $data['durasi_hari'] = $tanggalSelesai->diffInDays($jadwal);
+                $data['durasi_hari'] = $jadwal->diffInDays($tanggalSelesai);
+            } else {
+                // Jika belum ada tanggal_selesai, set null (akan dihitung dinamis)
+                $data['durasi_hari'] = null;
             }
 
             Kunjungan::create($data);
@@ -268,7 +272,7 @@ class KunjunganController extends Controller
             [
                 'nama_ponpes' => 'required|string|max:255',
                 'jenis_layanan' => 'required|string|in:vtren,reguler,vtrenreg',
-                'keterangan' => 'nullable|string',
+                'keterangan' => 'nullable|string|max:100',
                 'jadwal' => 'nullable|date',
                 'tanggal_selesai' => 'nullable|date|after_or_equal:jadwal',
                 'durasi_hari' => 'nullable|integer|min:0',
@@ -282,7 +286,7 @@ class KunjunganController extends Controller
                 'nama_ponpes.max' => 'Nama Ponpes tidak boleh lebih dari 255 karakter.',
                 'jenis_layanan.required' => 'Jenis layanan harus dipilih.',
                 'jenis_layanan.in' => 'Jenis layanan harus salah satu dari: VTREN, Reguler, atau VTREN + Reguler.',
-                'keterangan.string' => 'Keterangan harus berupa teks.',
+                'keterangan.string' => 'Keterangan maksimal 100 karakter.',
                 'jadwal.date' => 'Format jadwal harus valid.',
                 'tanggal_selesai.date' => 'Format tanggal selesai harus valid.',
                 'tanggal_selesai.after_or_equal' => 'Tanggal selesai tidak boleh lebih awal dari jadwal.',
@@ -296,45 +300,18 @@ class KunjunganController extends Controller
             ]
         );
 
-        if ($validator->fails()) {
-            $validatedData = [];
-            $invalidFields = array_keys($validator->errors()->messages());
-
-            foreach ($request->all() as $key => $value) {
-                if (!in_array($key, $invalidFields)) {
-                    $validatedData[$key] = $value;
-                }
-            }
-
-            try {
-                if (!empty($validatedData)) {
-                    $data = Kunjungan::findOrFail($id);
-
-                    if (isset($validatedData['jadwal']) && isset($validatedData['tanggal_selesai'])) {
-                        $jadwal = Carbon::parse($validatedData['jadwal']);
-                        $tanggalSelesai = Carbon::parse($validatedData['tanggal_selesai']);
-                        $validatedData['durasi_hari'] = $tanggalSelesai->diffInDays($jadwal);
-                    }
-
-                    $data->update($validatedData);
-                }
-            } catch (\Exception $e) {
-            }
-
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput()
-                ->with('partial_success', 'Data valid telah disimpan. Silakan perbaiki field yang bermasalah.');
-        }
-
         try {
             $data = Kunjungan::findOrFail($id);
             $updateData = $request->all();
 
-            if ($request->jadwal && $request->tanggal_selesai) {
+            // Hitung dan simpan durasi HANYA jika tanggal_selesai baru ditentukan
+            if ($request->tanggal_selesai && $request->jadwal) {
                 $jadwal = Carbon::parse($request->jadwal);
                 $tanggalSelesai = Carbon::parse($request->tanggal_selesai);
-                $updateData['durasi_hari'] = $tanggalSelesai->diffInDays($jadwal);
+                $updateData['durasi_hari'] = $jadwal->diffInDays($tanggalSelesai);
+            } elseif ($request->has('tanggal_selesai') && empty($request->tanggal_selesai)) {
+                // Jika tanggal_selesai dihapus, set durasi ke null
+                $updateData['durasi_hari'] = null;
             }
 
             $data->update($updateData);
