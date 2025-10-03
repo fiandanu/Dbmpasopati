@@ -11,7 +11,6 @@ class Upt extends Model
 {
     use HasFactory;
 
-
     protected $table = 'data_upt';
 
     protected $fillable = [

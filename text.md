@@ -55,15 +55,16 @@ Auto Functions:
 📝 CATATAN REVISI
 =============================================================
 
+
+🔄 Di kolom Tanggal menjadi 1 flex column ----- done
+🔄 provider kendala  sama kanwil/nama wilayah dibuat export public all data Csv dan PDF
+🔄 sidebar untuk memilih kategori tidak ketutup
+
 - Tanggal dibuat Format menjadi Angka saja 
 ✅ Di setiap jenis kendala ditambahkan keterangan dan pdf/csv (limit 10 karakter) ----- done 
-🔄 Di kolom Tanggal menjadi 1 flex column ----- done
 ✅ Kanwil dan Nama Wilayah dibuat menjadi dropdown saja ------- done
 ✅ pada saat menentukan tanggal terlapor maka otomatis hari akan berjalan 
 
-
-- provider kendala  sama kanwil/nama wilayah dibuat export public all data Csv dan PDF
-- sidebar untuk memilih kategori tidak ketutup
 
 
 =============================================================

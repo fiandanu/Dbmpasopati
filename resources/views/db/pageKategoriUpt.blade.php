@@ -11,7 +11,7 @@
                             <button class="btn-pushmenu" data-widget="pushmenu" role="button">
                                 <i class="fas fa-bars"></i>
                             </button>
-                            <h1 class="headline-large-32 mb-0">List Data UPT</h1>
+                            <h1 class="headline-large-32 mb-0">Database UPT</h1>
                         </div>
                     </div>
                 </div>

@@ -11,4 +11,8 @@ Route::prefix('mclient-catatan-vtren')->name('mccatatanvtren.')->group(function 
     Route::get('/export/csv', [VtrenController::class, 'exportCsv'])->name('MclientCatatanVtren.export.csv');
     Route::get('/dashboard-stats', [VtrenController::class, 'getDashboardStats'])->name('MclientCatatanVtren.dashboard.stats');
     Route::get('/get-upt-data', [VtrenController::class, 'getUptData'])->name('MclientCatatanVtren.getUptData');
+
+    // New global export routes
+    Route::get('/export-list-csv', [VtrenController::class, 'exportListCsv'])->name('export.list.csv');
+    Route::get('/export-list-pdf', [VtrenController::class, 'exportListPdf'])->name('export.list.pdf');
 });

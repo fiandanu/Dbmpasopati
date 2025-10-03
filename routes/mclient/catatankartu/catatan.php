@@ -11,4 +11,8 @@ Route::prefix('mclient-catatan-vpas')->name('mccatatanvpas.')->group(function ()
     Route::get('/export/csv', [CatatanController::class, 'exportCsv'])->name('MclientCatatan.export.csv');
     Route::get('/dashboard-stats', [CatatanController::class, 'getDashboardStats'])->name('MclientCatatan.dashboard.stats');
     Route::get('/get-upt-data', [CatatanController::class, 'getUptData'])->name('MclientCatatan.getUptData');
+
+    // New global export routes
+    Route::get('/export-list-csv', [CatatanController::class, 'exportListCsv'])->name('export.list.csv');
+    Route::get('/export-list-pdf', [CatatanController::class, 'exportListPdf'])->name('export.list.pdf');
 });

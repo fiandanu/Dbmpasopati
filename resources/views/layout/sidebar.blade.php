@@ -174,7 +174,8 @@
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                         data-accordion="false">
                         <!-- Data Base -->
-                        <li class="nav-item {{ Route::is('database.*') ? 'menu-open' : '' }}">
+                        <li
+                            class="nav-item {{ Route::is('database.*') || Route::is('upt.ListDataReguller') || Route::is('vpas.ListDataVpas') || Route::is('spp.ListDataSpp') || Route::is('dbpks.ListDataPks') || Route::is('ponpes.ListDataPonpes') || Route::is('DbPonpes.ListDataVtrend') || Route::is('sppPonpes.ListDataSpp') || Route::is('DbPonpes.pks.ListDataPks') ? 'menu-open' : '' }}">
                             <a href="#" class="nav-link">
                                 <i class="fas fa-database nav-icon"></i>
                                 <p>DataBase<i class="right fas fa-angle-left"></i></p>
@@ -182,13 +183,13 @@
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
                                     <a href="{{ route('database.DbUpt') }}"
-                                        class="nav-link {{ Route::is('database.DbUpt') ? 'active' : '' }}">
+                                        class="nav-link {{ Route::is('database.DbUpt') || Route::is('upt.ListDataReguller') || Route::is('vpas.ListDataVpas') || Route::is('spp.ListDataSpp') || Route::is('dbpks.ListDataPks') ? 'active' : '' }}">
                                         <p>Database UPT</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="{{ route('database.DataBasePonpes') }}"
-                                        class="nav-link {{ Route::is('database.DataBasePonpes') ? 'active' : '' }}">
+                                        class="nav-link {{ Route::is('database.DataBasePonpes') || Route::is('ponpes.ListDataPonpes') || Route::is('DbPonpes.ListDataVtrend') || Route::is('sppPonpes.ListDataSpp') || Route::is('DbPonpes.pks.ListDataPks') ? 'active' : '' }}">
                                         <p>Database Ponpes</p>
                                     </a>
                                 </li>
@@ -226,7 +227,7 @@
 
                         <!-- Monitoring Customer -->
                         <li
-                            class="nav-item {{ Route::is('GrafikClient') || Route::is('KomplainUpt') || Route::is('KomplainPonpes') || Route::is('ListDataMclientCatatanVpas') || Route::is('ListDataMclientCatatanVtren') ? 'menu-open' : '' }}">
+                            class="nav-item {{ Route::is('GrafikClient') || Route::is('KomplainUpt') || Route::is('KomplainPonpes') || Route::is('ListDataMclientCatatanVpas') || Route::is('ListDataMclientCatatanVtren') || Route::is('mcvpas.ListDataMclientVpas') || Route::is('mcreguler.ListDataMclientReguller') || Route::is('mclientkunjunganupt.ListDataMclientKunjungan') || Route::is('mclientpengirimanupt.ListDataMclientPengirimanUpt') || Route::is('mclientsettingalatupt.ListDataMclientSettingAlat') || Route::is('mcvtren.ListDataMclientVtren') || Route::is('mcponpesreguler.ListDataMclientPonpesReguller') || Route::is('mckunjunganponpes.ListDataMclientPonpesKunjungan') || Route::is('mclientponpessetting.ListDataMclientPonpesSetting') || Route::is('mclientpengirimanponpes.ListDataMclientPonpesPengiriman') ||  Route::is('mccatatanvpas.ListDataMclientCatatanVpas') || Route::is('mccatatanvtren.ListDataMclientCatatanVtren') ? 'menu-open' : '' }}">
                             <a href="#" class="nav-link ">
                                 <i class="fas fa-eye nav-icon"></i>
                                 <p>Monitoring Customer<i class="right fas fa-angle-left"></i></p>
@@ -240,25 +241,25 @@
                                 </li>
                                 <li class="nav-item">
                                     <a href="{{ route('KomplainUpt') }}"
-                                        class="nav-link {{ Route::is('KomplainUpt') ? 'active' : '' }}">
+                                        class="nav-link {{ Route::is('KomplainUpt') || Route::is('mcvpas.ListDataMclientVpas') || Route::is('mcreguler.ListDataMclientReguller') || Route::is('mclientkunjunganupt.ListDataMclientKunjungan') || Route::is('mclientpengirimanupt.ListDataMclientPengirimanUpt') || Route::is('mclientsettingalatupt.ListDataMclientSettingAlat') ? 'active' : '' }}">
                                         <p>Komplain UPT</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="{{ route('KomplainPonpes') }}"
-                                        class="nav-link {{ Route::is('KomplainPonpes') ? 'active' : '' }}">
+                                        class="nav-link {{ Route::is('KomplainPonpes') || Route::is('mcvtren.ListDataMclientVtren') || Route::is('mcponpesreguler.ListDataMclientPonpesReguller') || Route::is('mckunjunganponpes.ListDataMclientPonpesKunjungan') || Route::is('mclientponpessetting.ListDataMclientPonpesSetting') || Route::is('mclientpengirimanponpes.ListDataMclientPonpesPengiriman') ? 'active' : '' }}">
                                         <p>Komplain Ponpes</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="{{ route('mccatatanvpas.ListDataMclientCatatanVpas') }}"
-                                        class="nav-link {{ Route::is('ListDataMclientCatatanVpas') ? 'active' : '' }}">
+                                        class="nav-link {{ Route::is('mccatatanvpas.ListDataMclientCatatanVpas') ? 'active' : '' }}">
                                         <p>Pencatatan kartu Vpas</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="{{ route('mccatatanvtren.ListDataMclientCatatanVtren') }}"
-                                        class="nav-link {{ Route::is('ListDataMclientCatatanVtren') ? 'active' : '' }}">
+                                        class="nav-link {{ Route::is('mccatatanvtren.ListDataMclientCatatanVtren') ? 'active' : '' }}">
                                         <p>Pencatatan kartu Vtren</p>
                                     </a>
                                 </li>
@@ -267,7 +268,7 @@
 
                         <!-- Tutorial -->
                         <li
-                            class="nav-item {{ Route::is('TutorialUpt') || Route::is('tutor_ponpes_reguller.TutorialPonpes') || Route::is('tutorial_server') || Route::is('tutorial_mikrotik') ? 'menu-open' : '' }}">
+                            class="nav-item {{ Route::is('TutorialUpt') || Route::is('tutor_ponpes_reguller.TutorialPonpes') || Route::is('tutorial_server') || Route::is('tutorial_mikrotik') || Route::is('tutor_vpas.ListDataSpp') || Route::is('tutor_upt.ListDataSpp') || Route::is('tutorial_ponpes_vtren') || Route::is('tutorial_ponpes_reguller') ? 'menu-open' : '' }}">
                             <a href="#" class="nav-link">
                                 <i class="fas fa-lightbulb nav-icon"></i>
                                 <p>Tutorial<i class="right fas fa-angle-left"></i></p>
@@ -275,13 +276,13 @@
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
                                     <a href="{{ route('TutorialUpt') }}"
-                                        class="nav-link {{ Route::is('TutorialUpt') ? 'active' : '' }}">
+                                        class="nav-link {{ Route::is('TutorialUpt') || Route::is('tutor_vpas.ListDataSpp') || Route::is('tutor_upt.ListDataSpp') ? 'active' : '' }}">
                                         <p>UPT</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="{{ route('tutor_ponpes_reguller.TutorialPonpes') }}"
-                                        class="nav-link {{ Route::is('tutor_ponpes_reguller.TutorialPonpes') ? 'active' : '' }}">
+                                        class="nav-link {{ Route::is('tutor_ponpes_reguller.TutorialPonpes') || Route::is('tutorial_ponpes_vtren') || Route::is('tutorial_ponpes_reguller') ? 'active' : '' }}">
                                         <p>Ponpes</p>
                                     </a>
                                 </li>
@@ -302,7 +303,7 @@
 
                         <!-- User -->
                         <li
-                            class="nav-item {{ Route::is('User.UserPage') || Route::is('UserPonpes.UserPage') || Route::is('provider.DataProvider') || Route::is('kendala.DataKendala') ? 'menu-open' : '' }}">
+                            class="nav-item {{ Route::is('User.UserPage') || Route::is('UserPonpes.UserPage') || Route::is('provider.DataProvider') || Route::is('kendala.DataKendala') || Route::is('kanwil.DataKanwil') ? 'menu-open' : '' }}">
                             <a href="#" class="nav-link">
                                 <i class="fas fa-user nav-icon"></i>
                                 <p>User<i class="right fas fa-angle-left"></i></p>
@@ -340,6 +341,7 @@
                                 </li>
                             </ul>
                         </li>
+
                     </ul>
                 </nav>
                 <!-- /.sidebar-menu -->

@@ -110,17 +110,6 @@
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
-                @if (request('table_search'))
-                    <div>
-                        <div class="alert alert-info">
-                            <i class="fas fa-info-circle"></i>
-                            Hasil pencarian untuk: "<strong>{{ request('table_search') }}</strong>"
-                            <a href="{{ route('DbPonpes.pks.ListDataPks') }}" class="btn btn-sm btn-secondary ml-2">
-                                <i class="fas fa-times"></i> Clear
-                            </a>
-                        </div>
-                    </div>
-                @endif
                 <div class="card">
                     <div class="card-body table-responsive p-0">
                         <table class="table table-hover text-nowrap" id="Table">
@@ -137,7 +126,7 @@
                                             </div>
                                         </div>
                                     </th>
-                                    <th>
+                                    <th class="align-top">
                                         <div class="d-flex flex-column gap-12">
                                             <span>Nama Ponpes</span>
                                             <div class="btn-searchbar column-search">
@@ -148,7 +137,7 @@
                                             </div>
                                         </div>
                                     </th>
-                                    <th>
+                                    <th class="align-top">
                                         <div class="d-flex flex-column gap-12">
                                             <span>Nama Wilayah</span>
                                             <div class="btn-searchbar column-search">
@@ -159,7 +148,7 @@
                                             </div>
                                         </div>
                                     </th>
-                                    <th>
+                                    <th class="align-top">
                                         <div class="d-flex flex-column gap-12">
                                             <span>Tipe</span>
                                             <div class="btn-searchbar column-search">
@@ -173,7 +162,7 @@
                                     <th class="text-center">
                                         <div class="d-flex flex-column gap-12">
                                             <span>Tanggal Dibuat</span>
-                                            <div class="d-flex justify-content-center align-items-center gap-12">
+                                            <div class="d-flex flex-column justify-content-center align-items-center gap-12">
                                                 <div class="btn-searchbar column-search">
                                                     <input type="date" id="search-tanggal-dari"
                                                         name="search_tanggal_dari" title="Tanggal Dari">
@@ -185,7 +174,7 @@
                                             </div>
                                         </div>
                                     </th>
-                                    <th class="text-center">
+                                    <th class="text-center align-top">
                                         <div class="d-flex justify-content-center align-items-center flex-column gap-12">
                                             <span>Status Upload PDF</span>
                                             <div class="btn-searchbar column-search">
@@ -389,9 +378,6 @@
                         <div class="btn-datakolom">
                             <form method="GET" class="d-flex align-items-center">
                                 <!-- Preserve all search parameters -->
-                                @if (request('table_search'))
-                                    <input type="hidden" name="table_search" value="{{ request('table_search') }}">
-                                @endif
                                 @if (request('search_namaponpes'))
                                     <input type="hidden" name="search_namaponpes"
                                         value="{{ request('search_namaponpes') }}">
@@ -524,7 +510,6 @@
                 let url = new URL(window.location.href);
 
                 // Remove all search parameters
-                url.searchParams.delete('table_search');
                 url.searchParams.delete('search_namaponpes');
                 url.searchParams.delete('search_wilayah');
                 url.searchParams.delete('search_tanggal_dari');

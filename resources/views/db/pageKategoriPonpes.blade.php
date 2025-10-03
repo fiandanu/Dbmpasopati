@@ -39,7 +39,7 @@
                     <div class="col-md-3">
                         <div class="card-kategori">
                             <h3>SPP</h3>
-                            <p class="text-kategori mb-2">Layanan Vtren</p>
+                            <p class="text-kategori mb-2">Layanan Spp</p>
                             <span class="data-badge mb-3">
                                 100 Data
                             </span>

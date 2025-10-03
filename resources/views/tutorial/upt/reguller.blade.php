@@ -593,7 +593,7 @@
                         </div>
                     @endif
                 </div>
-
+                
             </div><!-- /.container-fluid -->
         </section>
         <!-- /.content -->

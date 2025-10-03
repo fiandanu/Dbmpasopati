@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\mclient\catatankartu;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use App\Models\mclient\catatankartu\Catatan;
 use App\Models\user\Upt;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use App\Models\user\Pic;
+use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class CatatanController extends Controller
 {
@@ -15,30 +18,83 @@ class CatatanController extends Controller
     {
         $query = Catatan::query();
 
-        if ($request->has('table_search') && !empty($request->table_search)) {
-            $searchTerm = $request->table_search;
+        // Apply filter
+        $query = $this->applyFilters($query, $request);
 
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('nama_upt', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('pic', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('status', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('tanggal', 'LIKE', '%' . $searchTerm . '%');
-            });
+        // Get per_page from request, default 10
+        $perPage = $request->get('per_page', 10);
+
+        // Validate per_page
+        if (!in_array($perPage, [10, 15, 20, 'all'])) {
+            $perPage = 20;
         }
 
-        $data = $query->orderBy('created_at', 'desc')->paginate(10);
+        // Handle pagination
+        if ($perPage == 'all') {
+            $data = $query->orderBy('created_at', 'desc')->get();
+
+            // Create a mock paginator for "all" option
+            $data = new \Illuminate\Pagination\LengthAwarePaginator(
+                $data,
+                $data->count(),
+                99999,
+                1,
+                ['path' => $request->url(), 'query' => $request->query()]
+            );
+        } else {
+            $data = $query->orderBy('created_at', 'desc')->paginate($perPage);
+        }
 
         $picList = Pic::orderBy('nama_pic')->get();
-
-        // Get card supporting list from Pic model (same source as PIC)
         $cardSupportingList = Pic::orderBy('nama_pic')->pluck('nama_pic');
-
         $uptList = Upt::select('namaupt', 'kanwil')
             ->where('tipe', 'vpas')
             ->orderBy('namaupt')
             ->get();
 
         return view('mclient.catatankartu.catatan', compact('data', 'picList', 'cardSupportingList', 'uptList'));
+    }
+
+    private function applyFilters($query, Request $request)
+    {
+        // Column-specific searches
+        if ($request->has('search_nama_upt') && !empty($request->search_nama_upt)) {
+            $query->where('nama_upt', 'LIKE', '%' . $request->search_nama_upt . '%');
+        }
+        if ($request->has('search_kartu_baru') && !empty($request->search_kartu_baru)) {
+            $query->where('spam_vpas_kartu_baru', 'LIKE', '%' . $request->search_kartu_baru . '%');
+        }
+        if ($request->has('search_kartu_bekas') && !empty($request->search_kartu_bekas)) {
+            $query->where('spam_vpas_kartu_bekas', 'LIKE', '%' . $request->search_kartu_bekas . '%');
+        }
+        if ($request->has('search_kartu_goip') && !empty($request->search_kartu_goip)) {
+            $query->where('spam_vpas_kartu_goip', 'LIKE', '%' . $request->search_kartu_goip . '%');
+        }
+        if ($request->has('search_kartu_belum_register') && !empty($request->search_kartu_belum_register)) {
+            $query->where('kartu_belum_teregister', 'LIKE', '%' . $request->search_kartu_belum_register . '%');
+        }
+        if ($request->has('search_whatsapp_terpakai') && !empty($request->search_whatsapp_terpakai)) {
+            $query->where('whatsapp_telah_terpakai', 'LIKE', '%' . $request->search_whatsapp_terpakai . '%');
+        }
+        if ($request->has('search_card_supporting') && !empty($request->search_card_supporting)) {
+            $query->where('card_supporting', 'LIKE', '%' . $request->search_card_supporting . '%');
+        }
+        if ($request->has('search_pic') && !empty($request->search_pic)) {
+            $query->where('pic', 'LIKE', '%' . $request->search_pic . '%');
+        }
+        if ($request->has('search_kartu_terpakai') && !empty($request->search_kartu_terpakai)) {
+            $query->where('jumlah_kartu_terpakai_perhari', 'LIKE', '%' . $request->search_kartu_terpakai . '%');
+        }
+
+        // Date range filtering
+        if ($request->has('search_tanggal_dari') && !empty($request->search_tanggal_dari)) {
+            $query->whereDate('tanggal', '>=', $request->search_tanggal_dari);
+        }
+        if ($request->has('search_tanggal_sampai') && !empty($request->search_tanggal_sampai)) {
+            $query->whereDate('tanggal', '<=', $request->search_tanggal_sampai);
+        }
+
+        return $query;
     }
 
     public function MclientCatatanStoreVpas(Request $request)
@@ -89,14 +145,17 @@ class CatatanController extends Controller
 
             // Remove empty string fields to allow null values
             $stringFields = [
-                'spam_vpas_kartu_baru', 'spam_vpas_kartu_bekas', 'spam_vpas_kartu_goip',
-                'kartu_belum_teregister', 'whatsapp_telah_terpakai',
+                'spam_vpas_kartu_baru',
+                'spam_vpas_kartu_bekas',
+                'spam_vpas_kartu_goip',
+                'kartu_belum_teregister',
+                'whatsapp_telah_terpakai',
                 'jumlah_kartu_terpakai_perhari'
             ];
 
             foreach ($stringFields as $field) {
                 if (isset($data[$field]) && trim($data[$field]) === '') {
-                    unset($data[$field]); // Remove empty fields to allow null
+                    unset($data[$field]);
                 }
             }
 
@@ -147,60 +206,47 @@ class CatatanController extends Controller
         );
 
         if ($validator->fails()) {
-            $validatedData = [];
-            $invalidFields = array_keys($validator->errors()->messages());
-
-            foreach ($request->all() as $key => $value) {
-                if (!in_array($key, $invalidFields)) {
-                    $validatedData[$key] = $value;
-                }
-            }
-
-            try {
-                if (!empty($validatedData)) {
-                    $data = Catatan::findOrFail($id);
-
-                    // Remove empty string fields to allow null values
-                    $stringFields = [
-                        'spam_vpas_kartu_baru', 'spam_vpas_kartu_bekas', 'spam_vpas_kartu_goip',
-                        'kartu_belum_teregister', 'whatsapp_telah_terpakai',
-                        'jumlah_kartu_terpakai_perhari'
-                    ];
-
-                    foreach ($stringFields as $field) {
-                        if (isset($validatedData[$field]) && trim($validatedData[$field]) === '') {
-                            unset($validatedData[$field]); // Remove empty fields to allow null
-                        }
-                    }
-
-                    $data->update($validatedData);
-                }
-            } catch (\Exception $e) {
-            }
-
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput()
-                ->with('partial_success', 'Data valid telah disimpan. Silakan perbaiki field yang bermasalah.');
+                ->with('error', 'Silakan perbaiki data yang bermasalah.');
         }
 
         try {
             $data = Catatan::findOrFail($id);
-            $updateData = $request->all();
+
+            // Only take allowed fields (whitelist approach)
+            $updateData = $request->only([
+                'nama_upt',
+                'spam_vpas_kartu_baru',
+                'spam_vpas_kartu_bekas',
+                'spam_vpas_kartu_goip',
+                'kartu_belum_teregister',
+                'whatsapp_telah_terpakai',
+                'card_supporting',
+                'pic',
+                'jumlah_kartu_terpakai_perhari',
+                'tanggal',
+                'status'
+            ]);
 
             // Remove empty string fields to allow null values
             $stringFields = [
-                'spam_vpas_kartu_baru', 'spam_vpas_kartu_bekas', 'spam_vpas_kartu_goip',
-                'kartu_belum_teregister', 'whatsapp_telah_terpakai',
+                'spam_vpas_kartu_baru',
+                'spam_vpas_kartu_bekas',
+                'spam_vpas_kartu_goip',
+                'kartu_belum_teregister',
+                'whatsapp_telah_terpakai',
                 'jumlah_kartu_terpakai_perhari'
             ];
 
             foreach ($stringFields as $field) {
                 if (isset($updateData[$field]) && trim($updateData[$field]) === '') {
-                    unset($updateData[$field]); // Remove empty fields to allow null
+                    unset($updateData[$field]);
                 }
             }
 
+            // Single update
             $data->update($updateData);
 
             return redirect()->back()->with('success', 'Data catatan kartu berhasil diupdate!');
@@ -226,11 +272,105 @@ class CatatanController extends Controller
         }
     }
 
+    public function exportListPdf(Request $request)
+    {
+        $query = Catatan::query();
+        $query = $this->applyFilters($query, $request);
+
+        // Add date sorting when date filters are applied
+        if (
+            $request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')
+        ) {
+            $query = $query->orderBy('tanggal', 'asc');
+        }
+
+        $data = $query->orderBy('created_at', 'desc')->get();
+
+        $pdfData = [
+            'title' => 'List Data Catatan Kartu Vpas',
+            'data' => $data,
+            'generated_at' => Carbon::now()->format('d M Y H:i:s')
+        ];
+
+        $pdf = Pdf::loadView('export.public.catatanKartuVpas.indexVpas', $pdfData);
+        $filename = 'list_catatan_kartu_vpas_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
+
+        return $pdf->download($filename);
+    }
+
+    public function exportListCsv(Request $request): StreamedResponse
+    {
+        $query = Catatan::query();
+        $query = $this->applyFilters($query, $request);
+
+        // Add date sorting when date filters are applied
+        if (
+            $request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')
+        ) {
+            $query = $query->orderBy('tanggal', 'asc');
+        }
+
+        $data = $query->orderBy('created_at', 'desc')->get();
+
+        $filename = 'list_catatan_kartu_vpas_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
+
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+
+        $rows = [[
+            'No',
+            'Nama UPT',
+            'Spam VPAS Kartu Baru',
+            'Spam VPAS Kartu Bekas',
+            'Spam VPAS Kartu GOIP',
+            'Kartu Belum Teregister',
+            'WhatsApp Telah Terpakai',
+            'Card Supporting',
+            'PIC',
+            'Jumlah Kartu Terpakai Per Hari',
+            'Tanggal',
+            'Dibuat Pada'
+        ]];
+
+        $no = 1;
+        foreach ($data as $row) {
+            $rows[] = [
+                $no++,
+                $row->nama_upt,
+                $row->spam_vpas_kartu_baru ?? '',
+                $row->spam_vpas_kartu_bekas ?? '',
+                $row->spam_vpas_kartu_goip ?? '',
+                $row->kartu_belum_teregister ?? '',
+                $row->whatsapp_telah_terpakai ?? '',
+                $row->card_supporting ?? '',
+                $row->pic ?? '',
+                $row->jumlah_kartu_terpakai_perhari ?? '',
+                $row->tanggal ? Carbon::parse($row->tanggal)->format('Y-m-d') : '',
+                $row->created_at ? Carbon::parse($row->created_at)->format('Y-m-d H:i:s') : ''
+            ];
+        }
+
+        $callback = function () use ($rows) {
+            $file = fopen('php://output', 'w');
+            foreach ($rows as $row) {
+                fputcsv($file, $row);
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
     public function exportCsv()
     {
         $data = Catatan::orderBy('created_at', 'desc')->get();
 
-        $filename = 'catatan_kartu_' . date('Y-m-d_H-i-s') . '.csv';
+        $filename = 'catatan_kartu_vpas_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
 
         $headers = [
             "Content-type" => "text/csv",
@@ -259,21 +399,23 @@ class CatatanController extends Controller
                 'Diupdate Pada'
             ]);
 
+            $no = 1;
             foreach ($data as $row) {
                 fputcsv($file, [
+                    $no++,
                     $row->nama_upt,
-                    $row->spam_vpas_kartu_baru,
-                    $row->spam_vpas_kartu_bekas,
-                    $row->spam_vpas_kartu_goip,
-                    $row->kartu_belum_teregister,
-                    $row->whatsapp_telah_terpakai,
-                    $row->card_supporting,
-                    $row->pic,
-                    $row->jumlah_kartu_terpakai_perhari,
-                    $row->tanggal ? $row->tanggal->format('Y-m-d') : '',
-                    $row->status,
-                    $row->created_at ? $row->created_at->format('Y-m-d H:i:s') : '',
-                    $row->updated_at ? $row->updated_at->format('Y-m-d H:i:s') : ''
+                    $row->spam_vpas_kartu_baru ?? '',
+                    $row->spam_vpas_kartu_bekas ?? '',
+                    $row->spam_vpas_kartu_goip ?? '',
+                    $row->kartu_belum_teregister ?? '',
+                    $row->whatsapp_telah_terpakai ?? '',
+                    $row->card_supporting ?? '',
+                    $row->pic ?? '',
+                    $row->jumlah_kartu_terpakai_perhari ?? '',
+                    $row->tanggal ? Carbon::parse($row->tanggal)->format('Y-m-d') : '',
+                    $row->status ?? '',
+                    $row->created_at ? Carbon::parse($row->created_at)->format('Y-m-d H:i:s') : '',
+                    $row->updated_at ? Carbon::parse($row->updated_at)->format('Y-m-d H:i:s') : ''
                 ]);
             }
 
@@ -296,9 +438,9 @@ class CatatanController extends Controller
             ->count();
 
         $totalSpamTertangani = Catatan::get()->sum(function ($item) {
-            return intval($item->spam_vpas_kartu_baru ?? '0') + 
-                   intval($item->spam_vpas_kartu_bekas ?? '0') + 
-                   intval($item->spam_vpas_kartu_goip ?? '0');
+            return intval($item->spam_vpas_kartu_baru ?? '0') +
+                intval($item->spam_vpas_kartu_bekas ?? '0') +
+                intval($item->spam_vpas_kartu_goip ?? '0');
         });
 
         $totalKartuTerpakai = Catatan::get()->sum(function ($item) {

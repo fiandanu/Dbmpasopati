@@ -128,7 +128,7 @@
                                 <table class="table table-hover text-nowrap" id="Table">
                                     <thead>
                                         <tr>
-                                            <th class="text-center">
+                                            <th class="text-center align-top">
                                                 <div class="d-flex flex-column gap-12">
                                                     <span>No</span>
                                                     <div class="d-flex justify-content-center align-items-center gap-12">
