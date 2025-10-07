@@ -95,15 +95,15 @@
                 <tr>
                     <th style="width: 5%;">No</th>
                     <th style="width: 15%;">Nama Ponpes</th>
-                    <th style="width: 10%;">Kartu Baru</th>
-                    <th style="width: 10%;">Kartu Bekas</th>
-                    <th style="width: 10%;">Kartu GOIP</th>
-                    <th style="width: 10%;">Kartu Belum Register</th>
-                    <th style="width: 10%;">WhatsApp Terpakai</th>
+                    <th style="width: 5%;">Kartu Baru</th>
+                    <th style="width: 5%;">Kartu Bekas</th>
+                    <th style="width: 5%;">Kartu GOIP</th>
+                    <th style="width: 5%;">Kartu Belum Register</th>
+                    <th style="width: 10%;">WhatsApp</th>
                     <th style="width: 10%;">Card Supporting</th>
-                    <th style="width: 10%;">PIC</th>
-                    <th style="width: 10%;">Kartu Terpakai/Hari</th>
-                    <th style="width: 10%;">Tanggal</th>
+                    <th style="width: 5%;">PIC</th>
+                    <th style="width: 5%;">Kartu Terpakai</th>
+                    <th style="width: 15%;">Tanggal</th>
                 </tr>
             </thead>
             <tbody>
@@ -118,7 +118,7 @@
                         <td class="text-center">{{ $d->kartu_belum_teregister ?? '-' }}</td>
                         <td class="text-center">{{ $d->whatsapp_telah_terpakai ?? '-' }}</td>
                         <td class="text-center">{{ $d->card_supporting ?? '-' }}</td>
-                        <td>{{ $d->pic ?? '-' }}</td>
+                        <td class="text-center">{{ $d->pic ?? '-' }}</td>
                         <td class="text-center">{{ $d->jumlah_kartu_terpakai_perhari ?? '-' }}</td>
                         <td class="text-center">
                             {{ $d->tanggal ? \Carbon\Carbon::parse($d->tanggal)->format('d M Y') : '-' }}

@@ -6,30 +6,15 @@
             <div class="container-fluid">
                 <div class="row mb-2 py-3 align-items-center">
                     <div class="col d-flex justify-content-between align-items-center">
-                        <h1 class="headline-large-32">List Data Kanwil/Nama Wilayah</h1>
+                        {{-- left navbar --}}
+                        <div class="d-flex justify-content-center align-items-center gap-12">
+                            <button class="btn-pushmenu" data-widget="pushmenu" href="#" role="button">
+                                <i class="fas fa-bars"></i></button>
+                            <h1 class="headline-large-32">List Data Kanwil dan Nama Wilayah</h1>
+                        </div>
+
+                        {{-- left navbar --}}
                         <div class="d-flex align-items-center gap-2 flex-wrap">
-                            <!-- Export Buttons for Kanwil -->
-                            <div class="d-flex gap-2" id="export-buttons-kanwil">
-                                <button onclick="downloadKanwilCsv()"
-                                    class="btn-page d-flex justify-content-center align-items-center" title="Download Kanwil CSV">
-                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export Kanwil CSV
-                                </button>
-                                <button onclick="downloadKanwilPdf()"
-                                    class="btn-page d-flex justify-content-center align-items-center" title="Download Kanwil PDF">
-                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export Kanwil PDF
-                                </button>
-                            </div>
-                            <!-- Export Buttons for Nama Wilayah -->
-                            <div class="d-flex gap-2" id="export-buttons-namawilayah">
-                                <button onclick="downloadNamaWilayahCsv()"
-                                    class="btn-page d-flex justify-content-center align-items-center" title="Download Nama Wilayah CSV">
-                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export Nama Wilayah CSV
-                                </button>
-                                <button onclick="downloadNamaWilayahPdf()"
-                                    class="btn-page d-flex justify-content-center align-items-center" title="Download Nama Wilayah PDF">
-                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export Nama Wilayah PDF
-                                </button>
-                            </div>
                             <button class="btn-purple" data-bs-toggle="modal" data-bs-target="#addDataModal">
                                 <i class="fa fa-plus"></i> Add Data
                             </button>
@@ -85,6 +70,21 @@
                 <div class="row">
                     <!-- Tabel Kanwil -->
                     <div class="col-md-6">
+                        <div class="mb-3 d-flex justify-end">
+                            <!-- Export Buttons for Kanwil -->
+                            <div class="d-flex gap-2" id="export-buttons-kanwil">
+                                <button onclick="downloadKanwilCsv()"
+                                    class="btn-page d-flex justify-content-center align-items-center"
+                                    title="Download Kanwil CSV">
+                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export CSV
+                                </button>
+                                <button onclick="downloadKanwilPdf()"
+                                    class="btn-page d-flex justify-content-center align-items-center"
+                                    title="Download Kanwil PDF">
+                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PDF
+                                </button>
+                            </div>
+                        </div>
                         <div class="card">
                             <div class="card-body table-responsive p-0">
                                 <table class="table table-hover text-nowrap">
@@ -102,15 +102,13 @@
                                                     {{-- Edit Button --}}
                                                     <button href="#editKanwilModal{{ $k->id }}"
                                                         data-bs-toggle="modal"
-                                                        data-bs-target="#editKanwilModal{{ $k->id }}"
-                                                        title="Edit">
+                                                        data-bs-target="#editKanwilModal{{ $k->id }}" title="Edit">
                                                         <ion-icon name="pencil-outline"></ion-icon>
                                                     </button>
 
                                                     {{-- Delete Button --}}
                                                     <button data-toggle="modal"
-                                                        data-target="#deleteKanwilModal{{ $k->id }}"
-                                                        title="Hapus">
+                                                        data-target="#deleteKanwilModal{{ $k->id }}" title="Hapus">
                                                         <ion-icon name="trash-outline"></ion-icon>
                                                     </button>
                                                 </td>
@@ -130,8 +128,7 @@
                                                         <div class="modal-footer flex-row-reverse justify-content-between">
                                                             <button type="button" class="btn-cancel-modal"
                                                                 data-dismiss="modal">Cancel</button>
-                                                            <form
-                                                                action="{{ route('kanwil.KanwilPageDestroy', $k->id) }}"
+                                                            <form action="{{ route('kanwil.KanwilPageDestroy', $k->id) }}"
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
@@ -162,8 +159,9 @@
                                                             <div class="modal-body">
                                                                 <div class="mb-3">
                                                                     <label for="kanwil">Kanwil</label>
-                                                                    <input type="text" class="form-control" id="kanwil"
-                                                                        name="kanwil" value="{{ $k->kanwil }}">
+                                                                    <input type="text" class="form-control"
+                                                                        id="kanwil" name="kanwil"
+                                                                        value="{{ $k->kanwil }}">
                                                                 </div>
                                                             </div>
                                                             <div class="modal-footer">
@@ -183,6 +181,21 @@
                     </div>
                     <!-- Tabel Nama Wilayah -->
                     <div class="col-md-6">
+                        <div class="mb-3 d-flex justify-end">
+                            <!-- Export Buttons for Nama Wilayah -->
+                            <div class="d-flex gap-2" id="export-buttons-namawilayah">
+                                <button onclick="downloadNamaWilayahCsv()"
+                                    class="btn-page d-flex justify-content-center align-items-center"
+                                    title="Download Nama Wilayah CSV">
+                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export CSV
+                                </button>
+                                <button onclick="downloadNamaWilayahPdf()"
+                                    class="btn-page d-flex justify-content-center align-items-center"
+                                    title="Download Nama Wilayah PDF">
+                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PDF
+                                </button>
+                            </div>
+                        </div>
                         <div class="card">
                             <div class="card-body table-responsive p-0">
                                 <table class="table table-hover text-nowrap">
@@ -240,8 +253,9 @@
                                                 </div>
                                             </div>
                                             <!-- Edit Modal Nama Wilayah -->
-                                            <div class="modal fade" id="editNamaWilayahModal{{ $n->id }}" tabindex="-1"
-                                                aria-labelledby="editNamaWilayahModalLabel" aria-hidden="true">
+                                            <div class="modal fade" id="editNamaWilayahModal{{ $n->id }}"
+                                                tabindex="-1" aria-labelledby="editNamaWilayahModalLabel"
+                                                aria-hidden="true">
                                                 <form id="editNamaWilayahForm"
                                                     action="{{ route('namawilayah.NamaWilayahPageUpdate', ['id' => $n->id]) }}"
                                                     method="POST">
@@ -311,7 +325,8 @@
                                 <div id="nama_wilayah_form" style="display: none;">
                                     <div class="mb-3">
                                         <label for="nama_wilayah">Nama Wilayah</label>
-                                        <input type="text" class="form-control" id="nama_wilayah" name="nama_wilayah">
+                                        <input type="text" class="form-control" id="nama_wilayah"
+                                            name="nama_wilayah">
                                     </div>
                                 </div>
                             </div>
@@ -326,7 +341,7 @@
         </section>
     </div>
 
-    {{-- JS --}}
+    {{-- JS Modal tambah Data dan export Data --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Get radio buttons
@@ -340,18 +355,47 @@
             // Get save button
             const saveBtn = document.getElementById('save_btn');
 
+
+            // Function hanlde enter key 
+            const kanwilFormInput = kanwilForm.querySelector('input[name="kanwil"]');
+            const namaWilayahFormInput = namaWilayahForm.querySelector('input[name="nama_wilayah"]');
+
+            if (kanwilFormInput) {
+                kanwilFormInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        saveBtn.click();
+                    }
+                });
+            }
+
+            if (namaWilayahFormInput) {
+                namaWilayahFormInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        saveBtn.click();
+                    }
+                });
+            }
+            // Function hanlde enter key 
+
+
             // Function to toggle forms
             function toggleForms() {
                 if (kanwilRadio.checked) {
                     kanwilForm.style.display = 'block';
                     namaWilayahForm.style.display = 'none';
                     // Clear Nama Wilayah form
-                    document.getElementById('nama_wilayah').value = '';
+                    const kanwilInput = kanwilForm.querySelector('input[name="kanwil"]');
+                    if (kanwilInput) kanwilInput.value = '';
+                    // document.getElementById('nama_wilayah').value = '';
                 } else if (namaWilayahRadio.checked) {
                     kanwilForm.style.display = 'none';
                     namaWilayahForm.style.display = 'block';
                     // Clear Kanwil form
-                    document.getElementById('kanwil').value = '';
+                    const namaWilayahInput = namaWilayahForm.querySelector('input[name="nama_wilayah"]');
+                    if (namaWilayahInput) namaWilayahInput.value = '';
+                    // document.getElementById('kanwil').value = '';
                 }
             }
 
@@ -366,7 +410,9 @@
 
                 if (isKanwil) {
                     // Create kanwil form
-                    const kanwil = document.getElementById('kanwil').value;
+                    const formKanwilInput = kanwilForm.querySelector('input[name="kanwil"]');
+                    const kanwil = formKanwilInput ? formKanwilInput.value : '';
+                    // const kanwil = document.getElementById('kanwil').value;
                     if (!kanwil.trim()) {
                         alert('Kanwil harus diisi!');
                         return;
@@ -392,7 +438,9 @@
 
                 } else {
                     // Create Nama Wilayah form
-                    const namaWilayah = document.getElementById('nama_wilayah').value;
+                    const namawilayahInput = namaWilayahForm.querySelector('input[name="nama_wilayah"]');
+                    const namaWilayah = namawilayahInput ? namawilayahInput.value : '';
+                    // const namaWilayah = document.getElementById('nama_wilayah').value;
                     if (!namaWilayah.trim()) {
                         alert('Nama Wilayah harus diisi!');
                         return;
@@ -437,7 +485,7 @@
             });
 
             // Download functions for Kanwil
-            window.downloadKanwilCsv = function () {
+            window.downloadKanwilCsv = function() {
                 let form = document.createElement('form');
                 form.method = 'GET';
                 form.action = '{{ route('kanwil.export.kanwil.list.csv') }}';
@@ -447,7 +495,7 @@
                 document.body.removeChild(form);
             };
 
-            window.downloadKanwilPdf = function () {
+            window.downloadKanwilPdf = function() {
                 let form = document.createElement('form');
                 form.method = 'GET';
                 form.action = '{{ route('kanwil.export.kanwil.list.pdf') }}';
@@ -458,7 +506,7 @@
             };
 
             // Download functions for Nama Wilayah
-            window.downloadNamaWilayahCsv = function () {
+            window.downloadNamaWilayahCsv = function() {
                 let form = document.createElement('form');
                 form.method = 'GET';
                 form.action = '{{ route('namawilayah.export.namawilayah.list.csv') }}';
@@ -468,7 +516,7 @@
                 document.body.removeChild(form);
             };
 
-            window.downloadNamaWilayahPdf = function () {
+            window.downloadNamaWilayahPdf = function() {
                 let form = document.createElement('form');
                 form.method = 'GET';
                 form.action = '{{ route('namawilayah.export.namawilayah.list.pdf') }}';

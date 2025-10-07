@@ -13,28 +13,6 @@
                             <h1 class="headline-large-32 mb-0">Provider dan Vpn</h1>
                         </div>
                         <div class="d-flex align-items-center gap-2 flex-wrap">
-                            <!-- Export Buttons for Provider -->
-                            <div class="d-flex gap-2" id="export-buttons-provider">
-                                <button onclick="downloadProviderCsv()"
-                                    class="btn-page d-flex justify-content-center align-items-center" title="Download Provider CSV">
-                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export Provider CSV
-                                </button>
-                                <button onclick="downloadProviderPdf()"
-                                    class="btn-page d-flex justify-content-center align-items-center" title="Download Provider PDF">
-                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export Provider PDF
-                                </button>
-                            </div>
-                            <!-- Export Buttons for VPN -->
-                            <div class="d-flex gap-2" id="export-buttons-vpn">
-                                <button onclick="downloadVpnCsv()"
-                                    class="btn-page d-flex justify-content-center align-items-center" title="Download VPN CSV">
-                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export VPN CSV
-                                </button>
-                                <button onclick="downloadVpnPdf()"
-                                    class="btn-page d-flex justify-content-center align-items-center" title="Download VPN PDF">
-                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export VPN PDF
-                                </button>
-                            </div>
                             <button class="btn-purple" data-bs-toggle="modal" data-bs-target="#addDataModal">
                                 <i class="fa fa-plus"></i> Add Data
                             </button>
@@ -91,6 +69,21 @@
                 <div class="row">
                     <!-- Tabel Provider -->
                     <div class="col-md-6">
+                        <div class="d-flex mb-3 justify-end">
+                            <!-- Export Buttons for Provider -->
+                            <div class="d-flex gap-2" id="export-buttons-provider">
+                                <button onclick="downloadProviderCsv()"
+                                    class="btn-page d-flex justify-content-center align-items-center"
+                                    title="Download Provider CSV">
+                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export CSV
+                                </button>
+                                <button onclick="downloadProviderPdf()"
+                                    class="btn-page d-flex justify-content-center align-items-center"
+                                    title="Download Provider PDF">
+                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PDF
+                                </button>
+                            </div>
+                        </div>
                         <div class="card">
                             <div class="card-body table-responsive p-0">
                                 <table class="table table-hover text-nowrap">
@@ -150,8 +143,8 @@
                                                 </div>
                                             </div>
                                             <!-- Edit Modal Provider -->
-                                            <div class="modal fade" id="editProviderModal{{ $d->id }}" tabindex="-1"
-                                                aria-labelledby="editProviderModalLabel" aria-hidden="true">
+                                            <div class="modal fade" id="editProviderModal{{ $d->id }}"
+                                                tabindex="-1" aria-labelledby="editProviderModalLabel" aria-hidden="true">
                                                 <form id="editProviderForm"
                                                     action="{{ route('provider.ProviderPageUpdate', ['id' => $d->id]) }}"
                                                     method="POST">
@@ -160,7 +153,8 @@
                                                     <div class="modal-dialog">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
-                                                                <label class="modal-title" id="editProviderModalLabel">Edit
+                                                                <label class="modal-title"
+                                                                    id="editProviderModalLabel">Edit
                                                                     Data Provider</label>
                                                                 <button type="button" class="btn-close-custom"
                                                                     data-bs-dismiss="modal" aria-label="Close">
@@ -192,6 +186,21 @@
                     </div>
                     <!-- Tabel VPN -->
                     <div class="col-md-6">
+                        <div class="d-flex mb-3 justify-end">
+                            <!-- Export Buttons for VPN -->
+                            <div class="d-flex gap-2" id="export-buttons-vpn">
+                                <button onclick="downloadVpnCsv()"
+                                    class="btn-page d-flex justify-content-center align-items-center"
+                                    title="Download VPN CSV">
+                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export CSV
+                                </button>
+                                <button onclick="downloadVpnPdf()"
+                                    class="btn-page d-flex justify-content-center align-items-center"
+                                    title="Download VPN PDF">
+                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PDF
+                                </button>
+                            </div>
+                        </div>
                         <div class="card">
                             <div class="card-body table-responsive p-0">
                                 <table class="table table-hover text-nowrap">
@@ -211,15 +220,13 @@
                                                     {{-- Edit Button --}}
                                                     <button href="#editVpnModal{{ $v->id }}"
                                                         data-bs-toggle="modal"
-                                                        data-bs-target="#editVpnModal{{ $v->id }}"
-                                                        title="Edit">
+                                                        data-bs-target="#editVpnModal{{ $v->id }}" title="Edit">
                                                         <ion-icon name="pencil-outline"></ion-icon>
                                                     </button>
 
                                                     {{-- Delete Button --}}
                                                     <button data-toggle="modal"
-                                                        data-target="#deleteVpnModal{{ $v->id }}"
-                                                        title="Hapus">
+                                                        data-target="#deleteVpnModal{{ $v->id }}" title="Hapus">
                                                         <ion-icon name="trash-outline"></ion-icon>
                                                     </button>
                                                 </td>
@@ -239,8 +246,7 @@
                                                         <div class="modal-footer flex-row-reverse justify-content-between">
                                                             <button type="button" class="btn-cancel-modal"
                                                                 data-dismiss="modal">Cancel</button>
-                                                            <form
-                                                                action="{{ route('vpn.VpnPageDestroy', $v->id) }}"
+                                                            <form action="{{ route('vpn.VpnPageDestroy', $v->id) }}"
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
@@ -280,7 +286,8 @@
                                 <div id="provider_form">
                                     <div class="mb-3">
                                         <label for="nama_provider">Nama Provider</label>
-                                        <input type="text" class="form-control" id="nama_provider" name="nama_provider">
+                                        <input type="text" class="form-control" id="nama_provider"
+                                            name="nama_provider">
                                     </div>
                                 </div>
                                 <div id="vpn_form" style="display: none;">
@@ -323,7 +330,8 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn-cancel-modal" data-bs-dismiss="modal">Cancel</button>
+                                        <button type="button" class="btn-cancel-modal"
+                                            data-bs-dismiss="modal">Cancel</button>
                                         <button type="submit" class="btn-purple">Update</button>
                                     </div>
                                 </div>
@@ -335,9 +343,9 @@
         </section>
     </div>
 
-    {{-- JS --}}
+    {{-- JS Modal tambah Data dan export Data --}}
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             // Get checkboxes
             const providerCheckbox = document.getElementById('provider_type');
             const vpnCheckbox = document.getElementById('vpn_type');
@@ -348,6 +356,30 @@
 
             // Get save button
             const saveBtn = document.getElementById('save_btn');
+
+
+            // Function untuk handle enter key add and edit
+            const providerFormInput = providerForm.querySelector('input[name="nama_provider"]');
+            const vpnFormInput = vpnForm.querySelector('input[name="jenis_vpn"]');
+
+            if (providerFormInput) {
+                providerFormInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        saveBtn.click();
+                    }
+                });
+            }
+
+            if (vpnFormInput) {
+                vpnFormInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        saveBtn.click();
+                    }
+                });
+            }
+            // Function Untuk Handle enter key add and edit
 
             // Function to ensure only one checkbox is checked at a time
             function handleCheckboxSelection() {
@@ -388,13 +420,15 @@
             vpnCheckbox.addEventListener('change', handleCheckboxSelection);
 
             // Save button click event
-            saveBtn.addEventListener('click', function () {
+            saveBtn.addEventListener('click', function() {
                 const isProvider = providerCheckbox.checked;
                 let form;
 
+
                 if (isProvider) {
                     // Create provider form
-                    const namaProvider = document.getElementById('nama_provider').value;
+                    const namaProviderInput = providerForm.querySelector('input[name="nama_provider"]');
+                    const namaProvider = namaProviderInput ? namaProviderInput.value : '';
                     if (!namaProvider.trim()) {
                         alert('Nama Provider harus diisi!');
                         return;
@@ -420,7 +454,9 @@
 
                 } else {
                     // Create VPN form
-                    const jenisVpn = document.getElementById('jenis_vpn').value;
+                    const jenisVpnInput = vpnForm.querySelector('input[name="jenis_vpn"]');
+                    const jenisVpn = jenisVpnInput ? jenisVpnInput.value : '';
+                    // const jenisVpn = document.getElementById('jenis_vpn').value;
                     if (!jenisVpn.trim()) {
                         alert('Jenis VPN harus diisi!');
                         return;
@@ -451,7 +487,7 @@
             });
 
             // Reset form when modal is closed
-            document.getElementById('addDataModal').addEventListener('hidden.bs.modal', function () {
+            document.getElementById('addDataModal').addEventListener('hidden.bs.modal', function() {
                 // Reset checkbox to provider
                 providerCheckbox.checked = true;
                 vpnCheckbox.checked = false;
@@ -465,7 +501,7 @@
             });
 
             // Download functions for Provider
-            window.downloadProviderCsv = function () {
+            window.downloadProviderCsv = function() {
                 let form = document.createElement('form');
                 form.method = 'GET';
                 form.action = '{{ route('provider.export.provider.list.csv') }}';
@@ -475,7 +511,7 @@
                 document.body.removeChild(form);
             };
 
-            window.downloadProviderPdf = function () {
+            window.downloadProviderPdf = function() {
                 let form = document.createElement('form');
                 form.method = 'GET';
                 form.action = '{{ route('provider.export.provider.list.pdf') }}';
@@ -486,7 +522,7 @@
             };
 
             // Download functions for VPN
-            window.downloadVpnCsv = function () {
+            window.downloadVpnCsv = function() {
                 let form = document.createElement('form');
                 form.method = 'GET';
                 form.action = '{{ route('vpn.export.vpn.list.csv') }}';
@@ -496,7 +532,7 @@
                 document.body.removeChild(form);
             };
 
-            window.downloadVpnPdf = function () {
+            window.downloadVpnPdf = function() {
                 let form = document.createElement('form');
                 form.method = 'GET';
                 form.action = '{{ route('vpn.export.vpn.list.pdf') }}';
@@ -519,4 +555,5 @@
             }
         });
     </script>
+
 @endsection

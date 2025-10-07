@@ -28,6 +28,15 @@
                         </div>
                     </div>
                 </div>
+                <div class="d-flex justify-start align-items-center gap-12 mb-2">
+                    <div class="btn-searchbar column-search">
+                        <input type="date" id="search-tanggal-dari" name="search_tanggal_dari" title="Tanggal Dari">
+                    </div>
+                    <div class="btn-searchbar column-search">
+                        <input type="date" id="search-tanggal-sampai" name="search_tanggal_sampai"
+                            title="Tanggal Sampai">
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -159,20 +168,8 @@
                                             </div>
                                         </div>
                                     </th>
-                                    <th class="text-center">
-                                        <div class="d-flex flex-column gap-12">
-                                            <span>Tanggal</span>
-                                            <div class="d-flex flex-column justify-content-center align-items-center gap-12">
-                                                <div class="btn-searchbar column-search">
-                                                    <input type="date" id="search-tanggal-dari" name="search_tanggal_dari"
-                                                        title="Tanggal Dari">
-                                                </div>
-                                                <div class="btn-searchbar column-search">
-                                                    <input type="date" id="search-tanggal-sampai"
-                                                        name="search_tanggal_sampai" title="Tanggal Sampai">
-                                                </div>
-                                            </div>
-                                        </div>
+                                    <th class="text-center align-top">
+                                        <span>Tanggal</span>
                                     </th>
                                     <th class="text-center align-top">
                                         <div class="d-flex justify-content-center align-items-center flex-column gap-12">
@@ -205,8 +202,7 @@
                                         <td class="text-center">
                                             <span
                                                 class="@if ($d->tipe == 'reguler') Tipereguller
-                                                @elseif($d->tipe == 'vpas') Tipevpas
-                                                @endif">
+                                                @elseif($d->tipe == 'vpas') Tipevpas @endif">
                                                 {{ ucfirst($d->tipe) }}
                                             </span>
                                         </td>
@@ -243,8 +239,7 @@
                                         </td>
                                         <td class="text-center">
                                             <div class="btn-group" role="group">
-                                                <button data-toggle="modal"
-                                                    data-target="#uploadModal{{ $d->id }}"
+                                                <button data-toggle="modal" data-target="#uploadModal{{ $d->id }}"
                                                     title="Upload PDF">
                                                     <ion-icon name="folder-outline"></ion-icon>
                                                 </button>
@@ -276,8 +271,7 @@
                                                             <label for="folderSelect{{ $d->id }}">Pilih
                                                                 Folder</label>
                                                             <select class="form-control"
-                                                                id="folderSelect{{ $d->id }}"
-                                                                name="folder"
+                                                                id="folderSelect{{ $d->id }}" name="folder"
                                                                 onchange="updateFolder({{ $d->id }}, this.value)">
                                                                 @for ($i = 1; $i <= 10; $i++)
                                                                     @php
@@ -287,9 +281,7 @@
                                                                             $fileName = !empty(
                                                                                 $d->uploadFolder->$column
                                                                             )
-                                                                                ? basename(
-                                                                                    $d->uploadFolder->$column,
-                                                                                )
+                                                                                ? basename($d->uploadFolder->$column)
                                                                                 : null;
                                                                         }
                                                                     @endphp
@@ -318,14 +310,10 @@
                                                                             $firstFileName = null;
                                                                             if (
                                                                                 $d->uploadFolder &&
-                                                                                !empty(
-                                                                                    $d->uploadFolder
-                                                                                        ->pdf_folder_1
-                                                                                )
+                                                                                !empty($d->uploadFolder->pdf_folder_1)
                                                                             ) {
                                                                                 $firstFileName = basename(
-                                                                                    $d->uploadFolder
-                                                                                        ->pdf_folder_1,
+                                                                                    $d->uploadFolder->pdf_folder_1,
                                                                                 );
                                                                             }
                                                                         @endphp
@@ -346,20 +334,16 @@
                                                                             @php
                                                                                 $hasFile = false;
                                                                                 if ($d->uploadFolder) {
-                                                                                    $column =
-                                                                                        'pdf_folder_' . $i;
+                                                                                    $column = 'pdf_folder_' . $i;
                                                                                     $hasFile = !empty(
-                                                                                        $d->uploadFolder
-                                                                                            ->$column
+                                                                                        $d->uploadFolder->$column
                                                                                     );
                                                                                 }
                                                                             @endphp
 
                                                                             @if ($hasFile)
-                                                                                <div
-                                                                                    class="badge-succes mb-3 text-center">
-                                                                                    <i
-                                                                                        class="fas fa-check-circle"></i>
+                                                                                <div class="badge-succes mb-3 text-center">
+                                                                                    <i class="fas fa-check-circle"></i>
                                                                                     PDF sudah tersedia untuk Folder
                                                                                     {{ $i }}
                                                                                 </div>
@@ -377,14 +361,12 @@
                                                                                         data-toggle="modal"
                                                                                         data-target="#deletePdfModal{{ $d->id }}_{{ $i }}"
                                                                                         title="Hapus File PDF Folder {{ $i }}">
-                                                                                        <i
-                                                                                            class="fas fa-trash"></i>
+                                                                                        <i class="fas fa-trash"></i>
                                                                                         Delete
                                                                                     </button>
                                                                                 </div>
                                                                             @else
-                                                                                <div
-                                                                                    class="badge-prosses text-center">
+                                                                                <div class="badge-prosses text-center">
                                                                                     <i
                                                                                         class="fas fa-exclamation-triangle"></i>
                                                                                     Belum Upload Folder
@@ -401,8 +383,7 @@
                                                                 class="btn-upload">
                                                                 Upload PDF
                                                             </label>
-                                                            <input type="file"
-                                                                id="uploaded_pdf{{ $d->id }}"
+                                                            <input type="file" id="uploaded_pdf{{ $d->id }}"
                                                                 name="uploaded_pdf" accept=".pdf"
                                                                 style="display: none;">
                                                             <span id="fileNameDisplay{{ $d->id }}"
@@ -426,8 +407,8 @@
                                     {{-- Delete PDF Modals for Each Folder --}}
                                     @for ($i = 1; $i <= 10; $i++)
                                         <div class="modal fade"
-                                            id="deletePdfModal{{ $d->id }}_{{ $i }}"
-                                            tabindex="-1" role="dialog"
+                                            id="deletePdfModal{{ $d->id }}_{{ $i }}" tabindex="-1"
+                                            role="dialog"
                                             aria-labelledby="deletePdfModalLabel{{ $d->id }}_{{ $i }}"
                                             aria-hidden="true">
                                             <div class="modal-dialog">
@@ -440,17 +421,15 @@
                                                             ingin
                                                             dihapus?</label>
                                                     </div>
-                                                    <div
-                                                        class="modal-footer flex-row-reverse justify-content-between">
+                                                    <div class="modal-footer flex-row-reverse justify-content-between">
                                                         <button type="button" class="btn-cancel-modal"
                                                             data-dismiss="modal">Batal</button>
-                                                        <form
-                                                            action="{{ route('spp.deleteFilePDF', [$d->id, $i]) }}"
+                                                        <form action="{{ route('spp.deleteFilePDF', [$d->id, $i]) }}"
                                                             method="POST" style="display: inline;">
                                                             @csrf
                                                             @method('DELETE')
                                                             <button type="submit" class="btn-delete">
-                                                                Hapus 
+                                                                Hapus
                                                             </button>
                                                         </form>
                                                     </div>
@@ -502,8 +481,8 @@
                                 @endif
 
                                 <div class="d-flex align-items-center">
-                                    <select name="per_page" class="form-control form-control-sm pr-2" style="width: auto;"
-                                        onchange="this.form.submit()">
+                                    <select name="per_page" class="form-control form-control-sm pr-2"
+                                        style="width: auto;" onchange="this.form.submit()">
                                         <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10
                                         </option>
                                         <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>15
@@ -619,7 +598,7 @@
 
     {{-- Search By Column JavaScript --}}
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
             // Function to get current filter values
             function getFilters() {
                 return {
@@ -634,7 +613,7 @@
             }
 
             // Function to apply filters and redirect (GLOBAL - bisa dipanggil dari tombol)
-            window.applyFilters = function () {
+            window.applyFilters = function() {
                 let filters = getFilters();
                 let url = new URL(window.location.href);
 
@@ -658,7 +637,7 @@
             };
 
             // Function to clear all search filters (GLOBAL - bisa dipanggil dari tombol Reset)
-            window.clearAllFilters = function () {
+            window.clearAllFilters = function() {
                 // Clear semua input field dulu
                 $('#search-namaupt').val('');
                 $('#search-kanwil').val('');
@@ -681,21 +660,21 @@
             };
 
             // Bind keypress event to all search input fields (Enter masih berfungsi)
-            $('.column-search input').on('keypress', function (e) {
+            $('.column-search input').on('keypress', function(e) {
                 if (e.which === 13) { // Enter key
                     applyFilters();
                 }
             });
 
             // Clear individual column search when input is emptied
-            $('.column-search input').on('keyup', function (e) {
+            $('.column-search input').on('keyup', function(e) {
                 if (e.which === 13 && $(this).val().trim() === '') {
                     applyFilters(); // Apply filters to update URL (removing empty filter)
                 }
             });
 
             // Download functions with current filters
-            window.downloadCsv = function () {
+            window.downloadCsv = function() {
                 let filters = getFilters();
                 let form = document.createElement('form');
                 form.method = 'GET';
@@ -717,7 +696,7 @@
                 document.body.removeChild(form);
             };
 
-            window.downloadPdf = function () {
+            window.downloadPdf = function() {
                 let filters = getFilters();
                 let form = document.createElement('form');
                 form.method = 'GET';

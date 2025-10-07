@@ -28,6 +28,15 @@
                         </div>
                     </div>
                 </div>
+                <div class="d-flex justify-start align-items-center gap-12 mb-2">
+                    <div class="btn-searchbar column-search">
+                        <input type="date" id="search-tanggal-dari" name="search_tanggal_dari" title="Tanggal Dari">
+                    </div>
+                    <div class="btn-searchbar column-search">
+                        <input type="date" id="search-tanggal-sampai" name="search_tanggal_sampai"
+                            title="Tanggal Sampai">
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -159,20 +168,8 @@
                                             </div>
                                         </div>
                                     </th>
-                                    <th class="text-center">
-                                        <div class="d-flex flex-column gap-12">
-                                            <span>Tanggal Dibuat</span>
-                                            <div class="d-flex flex-column justify-content-center align-items-center gap-12">
-                                                <div class="btn-searchbar column-search">
-                                                    <input type="date" id="search-tanggal-dari"
-                                                        name="search_tanggal_dari" title="Tanggal Dari">
-                                                </div>
-                                                <div class="btn-searchbar column-search">
-                                                    <input type="date" id="search-tanggal-sampai"
-                                                        name="search_tanggal_sampai" title="Tanggal Sampai">
-                                                </div>
-                                            </div>
-                                        </div>
+                                    <th class="text-center align-top">
+                                        <span>Tanggal Dibuat</span>
                                     </th>
                                     <th class="text-center align-top">
                                         <div class="d-flex justify-content-center align-items-center flex-column gap-12">
@@ -207,7 +204,7 @@
                                             <span
                                                 class="@if ($d->tipe == 'reguler') Tipereguller
                                                 @elseif($d->tipe == 'vtren') Tipevpas @endif">
-                                                {{ ucfirst($d->tipe)}}</span>
+                                                {{ ucfirst($d->tipe) }}</span>
                                         </td>
                                         <td class="text-center">
                                             {{ \Carbon\Carbon::parse($d->tanggal)->translatedFormat('M d Y') }}

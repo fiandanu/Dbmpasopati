@@ -8,28 +8,6 @@
                     <div class="col d-flex justify-content-between align-items-center">
                         <h1 class="headline-large-32">List Data Kendala/PIC</h1>
                         <div class="d-flex align-items-center gap-2 flex-wrap">
-                            <!-- Export Buttons for Kendala -->
-                            <div class="d-flex gap-2" id="export-buttons-kendala">
-                                <button onclick="downloadKendalaCsv()"
-                                    class="btn-page d-flex justify-content-center align-items-center" title="Download Kendala CSV">
-                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export Kendala CSV
-                                </button>
-                                <button onclick="downloadKendalaPdf()"
-                                    class="btn-page d-flex justify-content-center align-items-center" title="Download Kendala PDF">
-                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export Kendala PDF
-                                </button>
-                            </div>
-                            <!-- Export Buttons for PIC -->
-                            <div class="d-flex gap-2" id="export-buttons-pic">
-                                <button onclick="downloadPicCsv()"
-                                    class="btn-page d-flex justify-content-center align-items-center" title="Download PIC CSV">
-                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PIC CSV
-                                </button>
-                                <button onclick="downloadPicPdf()"
-                                    class="btn-page d-flex justify-content-center align-items-center" title="Download PIC PDF">
-                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PIC PDF
-                                </button>
-                            </div>
                             <button class="btn-purple" data-bs-toggle="modal" data-bs-target="#addDataModal">
                                 <i class="fa fa-plus"></i> Add Data
                             </button>
@@ -85,6 +63,21 @@
                 <div class="row">
                     <!-- Tabel Kendala -->
                     <div class="col-md-6">
+                        <div class="mb-3 d-flex justify-end">
+                            <!-- Export Buttons for Kendala -->
+                            <div class="d-flex gap-2" id="export-buttons-kendala">
+                                <button onclick="downloadKendalaCsv()"
+                                    class="btn-page d-flex justify-content-center align-items-center"
+                                    title="Download Kendala CSV">
+                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export Kendala CSV
+                                </button>
+                                <button onclick="downloadKendalaPdf()"
+                                    class="btn-page d-flex justify-content-center align-items-center"
+                                    title="Download Kendala PDF">
+                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export Kendala PDF
+                                </button>
+                            </div>
+                        </div>
                         <div class="card">
                             <div class="card-body table-responsive p-0">
                                 <table class="table table-hover text-nowrap">
@@ -129,8 +122,7 @@
                                                         <div class="modal-footer flex-row-reverse justify-content-between">
                                                             <button type="button" class="btn-cancel-modal"
                                                                 data-dismiss="modal">Cancel</button>
-                                                            <form
-                                                                action="{{ route('kendala.KendalaPageDestroy', $k->id) }}"
+                                                            <form action="{{ route('kendala.KendalaPageDestroy', $k->id) }}"
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
@@ -151,8 +143,8 @@
                                                     <div class="modal-dialog">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
-                                                                <label class="modal-title"
-                                                                    id="editKendalaModalLabel">Edit Data
+                                                                <label class="modal-title" id="editKendalaModalLabel">Edit
+                                                                    Data
                                                                     Kendala</label>
                                                                 <button type="button" class="btn-close-custom"
                                                                     data-bs-dismiss="modal" aria-label="Close">
@@ -184,6 +176,21 @@
                     </div>
                     <!-- Tabel PIC -->
                     <div class="col-md-6">
+                        <div class="d-flex mb-3 justify-end">
+                            <!-- Export Buttons for PIC -->
+                            <div class="d-flex gap-2" id="export-buttons-pic">
+                                <button onclick="downloadPicCsv()"
+                                    class="btn-page d-flex justify-content-center align-items-center"
+                                    title="Download PIC CSV">
+                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PIC CSV
+                                </button>
+                                <button onclick="downloadPicPdf()"
+                                    class="btn-page d-flex justify-content-center align-items-center"
+                                    title="Download PIC PDF">
+                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PIC PDF
+                                </button>
+                            </div>
+                        </div>
                         <div class="card">
                             <div class="card-body table-responsive p-0">
                                 <table class="table table-hover text-nowrap">
@@ -199,14 +206,15 @@
                                                 <td>{{ $p->nama_pic }}</td>
                                                 <td class="text-center">
                                                     {{-- Edit Button --}}
-                                                    <button href="#editPicModal{{ $p->id }}" data-bs-toggle="modal"
+                                                    <button href="#editPicModal{{ $p->id }}"
+                                                        data-bs-toggle="modal"
                                                         data-bs-target="#editPicModal{{ $p->id }}" title="Edit">
                                                         <ion-icon name="pencil-outline"></ion-icon>
                                                     </button>
 
                                                     {{-- Delete Button --}}
-                                                    <button data-toggle="modal" data-target="#deletePicModal{{ $p->id }}"
-                                                        title="Hapus">
+                                                    <button data-toggle="modal"
+                                                        data-target="#deletePicModal{{ $p->id }}" title="Hapus">
                                                         <ion-icon name="trash-outline"></ion-icon>
                                                     </button>
                                                 </td>
@@ -301,7 +309,8 @@
                                 <div id="kendala_form">
                                     <div class="mb-3">
                                         <label for="jenis_kendala">Jenis Kendala</label>
-                                        <input type="text" class="form-control" id="jenis_kendala" name="jenis_kendala">
+                                        <input type="text" class="form-control" id="jenis_kendala"
+                                            name="jenis_kendala">
                                     </div>
                                 </div>
                                 <div id="pic_form" style="display: none;">
@@ -322,11 +331,10 @@
         </section>
     </div>
 
-
-
-    {{-- JS --}}
+    {{-- JS Modal tambah Data dan export Data --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+
             // Get radio buttons
             const kendalaRadio = document.getElementById('kendala_type');
             const picRadio = document.getElementById('pic_type');
@@ -338,18 +346,45 @@
             // Get save button
             const saveBtn = document.getElementById('save_btn');
 
+
+            // Function Untuk Handle enter key add and edit
+            const kendalaFormInput = kendalaForm.querySelector('input[name="jenis_kendala"]');
+            const picFormInput = picForm.querySelector('input[name="nama_pic"]');
+
+            if (kendalaFormInput) {
+                kendalaFormInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        saveBtn.click(); // Optional: trigger tombol Save
+                    }
+                });
+            }
+
+            if (picFormInput) {
+                picFormInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        saveBtn.click(); // Optional: trigger tombol Save
+                    }
+                });
+            }
+            // Function Untuk Handle enter key add and edit
+
+
             // Function to toggle forms
             function toggleForms() {
                 if (kendalaRadio.checked) {
                     kendalaForm.style.display = 'block';
                     picForm.style.display = 'none';
                     // Clear PIC form
-                    document.getElementById('nama_pic').value = '';
+                    const namaPicInput = picForm.querySelector('input[name="nama_pic"]');
+                    if (namaPicInput) namaPicInput.value = '';
                 } else if (picRadio.checked) {
                     kendalaForm.style.display = 'none';
                     picForm.style.display = 'block';
                     // Clear Kendala form
-                    document.getElementById('jenis_kendala').value = '';
+                    const jenisKendalaInput = kendalaForm.querySelector('input[name="jenis_kendala"]');
+                    if (jenisKendalaInput) jenisKendalaInput.value = '';
                 }
             }
 
@@ -364,7 +399,9 @@
 
                 if (isKendala) {
                     // Create kendala form
-                    const jenisKendala = document.getElementById('jenis_kendala').value;
+                    const jenisKendalaInput = kendalaForm.querySelector('input[name="jenis_kendala"]');
+                    const jenisKendala = jenisKendalaInput ? jenisKendalaInput.value : '';
+
                     if (!jenisKendala.trim()) {
                         alert('Jenis Kendala harus diisi!');
                         return;
@@ -390,7 +427,9 @@
 
                 } else {
                     // Create PIC form
-                    const namaPic = document.getElementById('nama_pic').value;
+                    const namaPicInput = picForm.querySelector('input[name="nama_pic"]');
+                    const namaPic = namaPicInput ? namaPicInput.value : '';
+
                     if (!namaPic.trim()) {
                         alert('Nama PIC harus diisi!');
                         return;
@@ -435,7 +474,7 @@
             });
 
             // Download functions for Kendala
-            window.downloadKendalaCsv = function () {
+            window.downloadKendalaCsv = function() {
                 let form = document.createElement('form');
                 form.method = 'GET';
                 form.action = '{{ route('kendala.export.kendala.list.csv') }}';
@@ -445,7 +484,7 @@
                 document.body.removeChild(form);
             };
 
-            window.downloadKendalaPdf = function () {
+            window.downloadKendalaPdf = function() {
                 let form = document.createElement('form');
                 form.method = 'GET';
                 form.action = '{{ route('kendala.export.kendala.list.pdf') }}';
@@ -456,7 +495,7 @@
             };
 
             // Download functions for PIC
-            window.downloadPicCsv = function () {
+            window.downloadPicCsv = function() {
                 let form = document.createElement('form');
                 form.method = 'GET';
                 form.action = '{{ route('pic.export.pic.list.csv') }}';
@@ -466,7 +505,7 @@
                 document.body.removeChild(form);
             };
 
-            window.downloadPicPdf = function () {
+            window.downloadPicPdf = function() {
                 let form = document.createElement('form');
                 form.method = 'GET';
                 form.action = '{{ route('pic.export.pic.list.pdf') }}';

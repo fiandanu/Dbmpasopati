@@ -95,14 +95,14 @@
                 <tr>
                     <th style="width: 5%;">No</th>
                     <th style="width: 15%;">Nama UPT</th>
-                    <th style="width: 10%;">Kartu Baru</th>
-                    <th style="width: 10%;">Kartu Bekas</th>
-                    <th style="width: 10%;">Kartu GOIP</th>
-                    <th style="width: 10%;">Kartu Belum Register</th>
-                    <th style="width: 10%;">WhatsApp Terpakai</th>
+                    <th style="width: 5%;">Kartu Baru</th>
+                    <th style="width: 5%;">Kartu Bekas</th>
+                    <th style="width: 5%;">Kartu GOIP</th>
+                    <th style="width: 5%;">Kartu Belum Register</th>
+                    <th style="width: 10%;">WhatsApp</th>
                     <th style="width: 10%;">Card Supporting</th>
-                    <th style="width: 10%;">PIC</th>
-                    <th style="width: 10%;">Kartu Terpakai/Hari</th>
+                    <th style="width: 5%;">PIC</th>
+                    <th style="width: 5%;">Kartu Terpakai</th>
                     <th style="width: 10%;">Tanggal</th>
                 </tr>
             </thead>

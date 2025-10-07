@@ -23,7 +23,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <!-- Kategori VTREN -->
-                    <div class="col-md-3">
+                    <div class="col-md-3 mb-3">
                         <div class="card-kategori">
                             <h3>VTREN</h3>
                             <p class="text-kategori mb-2">Layanan VTREN</p>
@@ -36,7 +36,7 @@
                     </div>
 
                     <!-- Kategori Reguller -->
-                    <div class="col-md-3">
+                    <div class="col-md-3 mb-3">
                         <div class="card-kategori">
                             <h3>Reguller</h3>
                             <p class="text-kategori mb-2">Layanan Reguller</p>
@@ -50,7 +50,7 @@
                     </div>
 
                     <!-- Kategori Kunjungan Ponpes -->
-                    <div class="col-md-3">
+                    <div class="col-md-3 mb-3">
                         <div class="card-kategori">
                             <h3>Kunjungan Ponpes</h3>
                             <p class="text-kategori mb-2">Layanan Kunjungan Ponpes</p>
@@ -62,7 +62,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-3">
+                    <div class="col-md-3 mb-3">
                         <div class="card-kategori">
                             <h3>Setting Ponpes</h3>
                             <p class="text-kategori mb-2">Layanan Setting Ponpes</p>
@@ -75,7 +75,7 @@
                     </div>
 
                     <!-- Kategori Pengiriman Alat Ponpes -->
-                    <div class="col-md-3">
+                    <div class="col-md-3 mb-3">
                         <div class="card-kategori">
                             <h3>Pengiriman Alat Ponpes</h3>
                             <p class="text-kategori mb-2">Layanan Pengiriman Alat Ponpes</p>
@@ -86,6 +86,7 @@
                             <a href="{{ route('mclientpengirimanponpes.ListDataMclientPonpesPengiriman') }}" class="list-button">Pengiriman Alat Ponpes</a>
                         </div>
                     </div>
+                    
                 </div>
             </div>
         </div>

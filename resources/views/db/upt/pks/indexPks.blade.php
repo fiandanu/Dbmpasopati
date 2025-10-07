@@ -28,6 +28,15 @@
                         </div>
                     </div>
                 </div>
+                <div class="d-flex justify-start align-items-center gap-12 mb-2">
+                    <div class="btn-searchbar column-search">
+                        <input type="date" id="search-tanggal-dari" name="search_tanggal_dari" title="Tanggal Dari">
+                    </div>
+                    <div class="btn-searchbar column-search">
+                        <input type="date" id="search-tanggal-sampai" name="search_tanggal_sampai"
+                            title="Tanggal Sampai">
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -149,30 +158,7 @@
                                         </div>
                                     </th>
                                     <th class="text-center align-top">
-                                        <div class="d-flex flex-column gap-12">
-                                            <span>Tipe</span>
-                                            <div class="btn-searchbar column-search">
-                                                <span>
-                                                    <i class="fas fa-search"></i>
-                                                </span>
-                                                <input type="text" id="search-tipe" name="search_tipe">
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <th class="text-center">
-                                        <div class="d-flex flex-column gap-12">
-                                            <span>Tanggal</span>
-                                            <div class="d-flex flex-column justify-content-center align-items-center gap-12">
-                                                <div class="btn-searchbar column-search">
-                                                    <input type="date" id="search-tanggal-dari"
-                                                        name="search_tanggal_dari" title="Tanggal Dari">
-                                                </div>
-                                                <div class="btn-searchbar column-search">
-                                                    <input type="date" id="search-tanggal-sampai"
-                                                        name="search_tanggal_sampai" title="Tanggal Sampai">
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <span>Tanggal</span>
                                     </th>
                                     <th class="text-center align-top">
                                         <div class="d-flex justify-content-center align-items-center flex-column gap-12">
@@ -203,13 +189,6 @@
                                         <td class="text-center">{{ $no++ }}</td>
                                         <td>{{ $d->namaupt }}</td>
                                         <td><span class="tag tag-success">{{ $d->kanwil }}</span></td>
-                                        <td class="text-center">
-                                            <span
-                                                class="@if ($d->tipe == 'reguler') Tipereguller
-                                            @elseif($d->tipe == 'vpas') Tipevpas @endif">
-                                                {{ ucfirst($d->tipe) }}
-                                            </span>
-                                        </td>
                                         <td class="text-center">
                                             {{ \Carbon\Carbon::parse($d->tanggal)->translatedFormat('M d Y') }}
                                         </td>
@@ -393,9 +372,6 @@
                                 @if (request('search_kanwil'))
                                     <input type="hidden" name="search_kanwil" value="{{ request('search_kanwil') }}">
                                 @endif
-                                @if (request('search_tipe'))
-                                    <input type="hidden" name="search_tipe" value="{{ request('search_tipe') }}">
-                                @endif
                                 @if (request('search_tanggal_dari'))
                                     <input type="hidden" name="search_tanggal_dari"
                                         value="{{ request('search_tanggal_dari') }}">
@@ -479,7 +455,6 @@
                 return {
                     search_namaupt: $('#search-namaupt').val().trim(),
                     search_kanwil: $('#search-kanwil').val().trim(),
-                    search_tipe: $('#search-tipe').val().trim(),
                     search_tanggal_dari: $('#search-tanggal-dari').val().trim(),
                     search_tanggal_sampai: $('#search-tanggal-sampai').val().trim(),
                     search_status: $('#search-status').val().trim(),
@@ -525,7 +500,6 @@
                 // Remove all search parameters
                 url.searchParams.delete('search_namaupt');
                 url.searchParams.delete('search_kanwil');
-                url.searchParams.delete('search_tipe');
                 url.searchParams.delete('search_tanggal_dari');
                 url.searchParams.delete('search_tanggal_sampai');
                 url.searchParams.delete('search_status');
@@ -601,9 +575,6 @@
             }
             if (urlParams.get('search_kanwil')) {
                 $('#search-kanwil').val(urlParams.get('search_kanwil'));
-            }
-            if (urlParams.get('search_tipe')) {
-                $('#search-tipe').val(urlParams.get('search_tipe'));
             }
             if (urlParams.get('search_tanggal_dari')) {
                 $('#search-tanggal-dari').val(urlParams.get('search_tanggal_dari'));

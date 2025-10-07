@@ -124,4 +124,5 @@ class KendalaController extends Controller
 
         return $pdf->download($filename);
     }
+
 }

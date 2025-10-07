@@ -72,7 +72,7 @@
                                 100 Data
                             </div>
                             <a href="{{ route('ponpes.ListDataPonpes') }}" class="list-button">
-                                List Data PKS
+                                List Data Reguler
                             </a>
                         </div>
                     </div>

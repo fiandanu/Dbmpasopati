@@ -32,6 +32,7 @@
                         </div>
                     </div>
                 </div>
+
             </div>
         </section>
 
@@ -118,6 +119,42 @@
                 <!-- /.row -->
                 <div class="row">
                     <div class="col-12">
+                        <div class="d-flex gap-12">
+                            <div class="gap-12 w-fit text-center">
+                                <h3>Tanggal Terlapor</h3>
+                                <div class="d-flex justify-start align-items-center gap-12">
+                                    <div class="flex-column btn-searchbar column-search w-auto">
+                                        <label for="search-tanggal-terlapor-dari"
+                                            style="display: block; margin-bottom: 4px; font-size: 14px;"> Awal</label>
+                                        <input type="date" id="search-tanggal-terlapor-dari"
+                                            name="search_tanggal_terlapor_dari" title="Tanggal Dari">
+                                    </div>
+                                    <div class="flex-column btn-searchbar column-search w-auto">
+                                        <label for="search-tanggal-terlapor-sampai"
+                                            style="display: block; margin-bottom: 4px; font-size: 14px;"> Akhir</label>
+                                        <input type="date" id="search-tanggal-terlapor-sampai"
+                                            name="search_tanggal_terlapor_sampai" title="Tanggal Sampai">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="gap-12 w-fit text-center">
+                                <h3>Tanggal Selesai</h3>
+                                <div class="d-flex justify-start align-items-center gap-12">
+                                    <div class="flex-column btn-searchbar column-search w-auto">
+                                        <label for="search-tanggal-selesai-dari"
+                                            style="display: block; margin-bottom: 4px; font-size: 14px;"> Awal</label>
+                                        <input type="date" id="search-tanggal-selesai-dari"
+                                            name="search_tanggal_selesai_dari" title="Tanggal Dari">
+                                    </div>
+                                    <div class="flex-column btn-searchbar column-search w-auto">
+                                        <label for="search-tanggal-selesai-sampai"
+                                            style="display: block; margin-bottom: 4px; font-size: 14px;"> Akhir</label>
+                                        <input type="date" id="search-tanggal-selesai-sampai"
+                                            name="search_tanggal_selesai_sampai" title="Tanggal Sampai">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="card mt-3">
                             <!-- /.card-header -->
                             <div class="card-body table-responsive p-0">
@@ -135,7 +172,7 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th>
+                                            <th class="align-top">
                                                 <div class="d-flex flex-column gap-12">
                                                     <span>Nama UPT</span>
                                                     <div class="btn-searchbar column-search">
@@ -147,7 +184,7 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th>
+                                            <th class="align-top">
                                                 <div class="d-flex flex-column gap-12">
                                                     <span>Kanwil</span>
                                                     <div class="btn-searchbar column-search">
@@ -158,7 +195,7 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th>
+                                            <th class="align-top">
                                                 <div class="d-flex flex-column gap-12">
                                                     <span>Jenis Kendala</span>
                                                     <div class="btn-searchbar column-search">
@@ -170,40 +207,16 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th class="text-center">
-                                                <div class="d-flex flex-column gap-12">
-                                                    <span>Tanggal Terlapor</span>
-                                                    <div class="d-flex justify-content-center align-items-center gap-12">
-                                                        <div class="btn-searchbar column-search">
-                                                            <input type="date" id="search-tanggal-terlapor-dari"
-                                                                name="search_tanggal_terlapor_dari" title="Tanggal Dari">
-                                                        </div>
-                                                        <div class="btn-searchbar column-search">
-                                                            <input type="date" id="search-tanggal-terlapor-sampai"
-                                                                name="search_tanggal_terlapor_sampai"
-                                                                title="Tanggal Sampai">
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                            <th class="text-center align-top">
+                                                <span>Tanggal Terlapor</span>
                                             </th>
-                                            <th class="text-center">
+                                            <th class="text-center align-top">
                                                 <div class="d-flex flex-column gap-12">
                                                     <span>Tanggal Selesai</span>
-                                                    <div class="d-flex justify-content-center align-items-center gap-12">
-                                                        <div class="btn-searchbar column-search">
-                                                            <input type="date" id="search-tanggal-selesai-dari"
-                                                                name="search_tanggal_selesai_dari" title="Tanggal Dari">
-                                                        </div>
-                                                        <div class="btn-searchbar column-search">
-                                                            <input type="date" id="search-tanggal-selesai-sampai"
-                                                                name="search_tanggal_selesai_sampai"
-                                                                title="Tanggal Sampai">
-                                                        </div>
-                                                    </div>
                                                 </div>
                                             </th>
                                             <th class="text-center align-top">Durasi (Hari)</th>
-                                            <th class="text-center">
+                                            <th class="text-center align-top">
                                                 <div
                                                     class="d-flex justify-content-center align-items-center flex-column gap-12">
                                                     <span>Status</span>
@@ -215,7 +228,7 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th>
+                                            <th class="align-top">
                                                 <div class="d-flex flex-column gap-12">
                                                     <span>PIC 1</span>
                                                     <div class="btn-searchbar column-search">
@@ -226,7 +239,7 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th>
+                                            <th class="align-top">
                                                 <div class="d-flex flex-column gap-12">
                                                     <span>PIC 2</span>
                                                     <div class="btn-searchbar column-search">
@@ -644,7 +657,9 @@
 
                                                     <div class="mb-3">
                                                         <label for="durasi_hari{{ $d->id }}"
-                                                            class="form-label">Durasi (Hari)</label>
+                                                            class="form-label">Durasi
+                                                            (Hari)
+                                                        </label>
                                                         <input type="number" class="form-control"
                                                             id="durasi_hari{{ $d->id }}" name="durasi_hari"
                                                             min="0" value="{{ $d->durasi_hari }}"

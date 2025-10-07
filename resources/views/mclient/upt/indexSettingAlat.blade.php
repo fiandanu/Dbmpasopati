@@ -117,6 +117,45 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
+
+                        <div class="d-flex gap-12">
+
+                            <div class="gap-12 w-fit text-center">
+                                <h3>Terlapor</h3>
+                                <div class="d-flex justify-content-center align-items-center gap-12">
+                                    <div class="flex-column btn-searchbar column-search">
+                                        <label for="search-tanggal-terlapor-dari"
+                                            style="display: block; margin-bottom: 4px; font-size: 14px;">Awal</label>
+                                        <input type="date" id="search-tanggal-terlapor-dari"
+                                            name="search_tanggal_terlapor_dari" title="Tanggal Dari">
+                                    </div>
+                                    <div class="flex-column btn-searchbar column-search">
+                                        <label for="search-tanggal-terlapor-sampai"
+                                            style="display: block; margin-bottom: 4px; font-size: 14px;">Akhir</label>
+                                        <input type="date" id="search-tanggal-terlapor-sampai"
+                                            name="search_tanggal_terlapor_sampai" title="Tanggal Sampai">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="gap-12 w-fit text-center">
+                                <h3>Selesai</h3>
+                                <div class="d-flex justify-content-center align-items-center gap-12">
+                                    <div class="flex-column btn-searchbar column-search">
+                                        <label for="search-tanggal-selesai-dari" style="display: block; margin-bottom: 4px; font-size: 14px;">Awal</label>
+                                        <input type="date" id="search-tanggal-selesai-dari"
+                                            name="search_tanggal_selesai_dari" title="Tanggal Dari">
+                                    </div>
+                                    <div class="flex-column btn-searchbar column-search">
+                                        <label for="search-tanggal-selesai-sampai" style="display: block; margin-bottom: 4px; font-size: 14px;">Akhir</label>
+                                        <input type="date" id="search-tanggal-selesai-sampai"
+                                            name="search_tanggal_selesai_sampai" title="Tanggal Sampai">
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
                         <div class="card mt-3">
                             <div class="card-body table-responsive p-0">
                                 <table class="table table-hover text-nowrap" id="Table">
@@ -133,7 +172,7 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th>
+                                            <th class="align-top">
                                                 <div class="d-flex flex-column gap-12">
                                                     <span>Nama UPT</span>
                                                     <div class="btn-searchbar column-search">
@@ -145,7 +184,7 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th class="text-center">
+                                            <th class="text-center align-top">
                                                 <div
                                                     class="d-flex justify-content-center align-items-center flex-column gap-12">
                                                     <span>Jenis Layanan</span>
@@ -158,7 +197,7 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th class="text-center">
+                                            <th class="text-center align-top">
                                                 <div
                                                     class="d-flex justify-content-center align-items-center flex-column gap-12">
                                                     <span>Keterangan</span>
@@ -171,40 +210,14 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th class="text-center">
-                                                <div class="d-flex flex-column gap-12">
-                                                    <span>Tanggal Terlapor</span>
-                                                    <div class="d-flex justify-content-center align-items-center gap-12">
-                                                        <div class="btn-searchbar column-search">
-                                                            <input type="date" id="search-tanggal-terlapor-dari"
-                                                                name="search_tanggal_terlapor_dari" title="Tanggal Dari">
-                                                        </div>
-                                                        <div class="btn-searchbar column-search">
-                                                            <input type="date" id="search-tanggal-terlapor-sampai"
-                                                                name="search_tanggal_terlapor_sampai"
-                                                                title="Tanggal Sampai">
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                            <th class="text-center align-top">
+                                                <span>Tanggal Terlapor</span>
                                             </th>
-                                            <th class="text-center">
-                                                <div class="d-flex flex-column gap-12">
-                                                    <span>Tanggal Selesai</span>
-                                                    <div class="d-flex justify-content-center align-items-center gap-12">
-                                                        <div class="btn-searchbar column-search">
-                                                            <input type="date" id="search-tanggal-selesai-dari"
-                                                                name="search_tanggal_selesai_dari" title="Tanggal Dari">
-                                                        </div>
-                                                        <div class="btn-searchbar column-search">
-                                                            <input type="date" id="search-tanggal-selesai-sampai"
-                                                                name="search_tanggal_selesai_sampai"
-                                                                title="Tanggal Sampai">
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                            <th class="text-center align-top">
+                                                <span>Tanggal Selesai</span>
                                             </th>
                                             <th class="text-center align-top">Durasi (Hari)</th>
-                                            <th class="text-center">
+                                            <th class="text-center align-top">
                                                 <div
                                                     class="d-flex justify-content-center align-items-center flex-column gap-12">
                                                     <span>Status</span>
@@ -217,7 +230,7 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th class="text-center">
+                                            <th class="text-center align-top">
                                                 <div class="d-flex flex-column gap-12">
                                                     <span>PIC 1</span>
                                                     <div class="btn-searchbar column-search">
@@ -229,7 +242,7 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th class="text-center">
+                                            <th class="text-center align-top">
                                                 <div class="d-flex flex-column gap-12">
                                                     <span>PIC 2</span>
                                                     <div class="btn-searchbar column-search">
@@ -361,7 +374,8 @@
                         {{-- Add Modal --}}
                         <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel"
                             aria-hidden="true">
-                            <form id="addForm" action="{{ route('mclientsettingalatupt.MclientSettingAlatStore') }}" method="POST">
+                            <form id="addForm" action="{{ route('mclientsettingalatupt.MclientSettingAlatStore') }}"
+                                method="POST">
                                 @csrf
                                 <div class="modal-dialog modal-lg">
                                     <div class="modal-content">
@@ -522,7 +536,8 @@
                             <div class="modal fade" id="editModal{{ $d->id }}" tabindex="-1"
                                 aria-labelledby="editModalLabel{{ $d->id }}" aria-hidden="true">
                                 <form id="editForm{{ $d->id }}"
-                                    action="{{ route('mclientsettingalatupt.MclientSettingAlatUpdate', ['id' => $d->id]) }}" method="POST">
+                                    action="{{ route('mclientsettingalatupt.MclientSettingAlatUpdate', ['id' => $d->id]) }}"
+                                    method="POST">
                                     @csrf
                                     @method('PUT')
                                     <div class="modal-dialog modal-lg">

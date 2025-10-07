@@ -114,6 +114,27 @@
                 <!-- /.row -->
                 <div class="row">
                     <div class="col-12">
+
+                        <div class="d-flex gap-12">
+                            <div class="gap-12 w-fit text-center">
+                                <h3>Tanggal</h3>
+                                <div class="d-flex justify-content-center align-items-center gap-12">
+                                    <div class="flex-column btn-searchbar column-search">
+                                        <label for="search-tanggal-dari"
+                                            style="display: block; margin-bottom: 4px; font-size: 14px;">Awal</label>
+                                        <input type="date" id="search-tanggal-dari" name="search_tanggal_dari"
+                                            title="Tanggal Dari">
+                                    </div>
+                                    <div class="flex-column btn-searchbar column-search">
+                                        <label for="search-tanggal-sampai"
+                                            style="display: block; margin-bottom: 4px; font-size: 14px;">Akhir</label>
+                                        <input type="date" id="search-tanggal-sampai" name="search_tanggal_sampai"
+                                            title="Tanggal Sampai">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="card mt-3">
                             <!-- /.card-header -->
                             <div class="card-body table-responsive p-0">
@@ -240,20 +261,7 @@
                                                 </div>
                                             </th>
                                             <th class="text-center align-top">
-                                                <div class="d-flex flex-column gap-12">
-                                                    <span>Tanggal</span>
-                                                    <div
-                                                        class="d-flex flex-column justify-content-center align-items-center gap-12">
-                                                        <div class="btn-searchbar column-search">
-                                                            <input type="date" id="search-tanggal-dari"
-                                                                name="search_tanggal_dari" title="Tanggal Dari">
-                                                        </div>
-                                                        <div class="btn-searchbar column-search">
-                                                            <input type="date" id="search-tanggal-sampai"
-                                                                name="search_tanggal_sampai" title="Tanggal Sampai">
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                <span>Tanggal</span>
                                             </th>
                                             <th class="text-center align-top">Action</th>
                                         </tr>

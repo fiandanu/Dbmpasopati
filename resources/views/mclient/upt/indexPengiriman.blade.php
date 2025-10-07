@@ -117,6 +117,47 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
+
+                        <div class="d-flex gap-12">
+
+                            <div class="gap-12 w-fit text-center">
+                                <h3>Pengiriman</h3>
+                                <div class="d-flex justify-content-center align-items-center gap-12">
+                                    <div class="flex-column btn-searchbar column-search">
+                                        <label for="search-tanggal-pengiriman-dari"
+                                            style="display: block; margin-bottom: 4px; font-size: 14px;">Awal</label>
+                                        <input type="date" id="search-tanggal-pengiriman-dari"
+                                            name="search_tanggal_pengiriman_dari" title="Tanggal Dari">
+                                    </div>
+                                    <div class="flex-column btn-searchbar column-search">
+                                        <label for="search-tanggal-pengiriman-sampai"
+                                            style="display: block; margin-bottom: 4px; font-size: 14px;">Akhir</label>
+                                        <input type="date" id="search-tanggal-pengiriman-sampai"
+                                            name="search_tanggal_pengiriman_sampai" title="Tanggal Sampai">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="gap-12 w-fit text-center">
+                                <h3>Diterima</h3>
+                                <div class="d-flex justify-content-center align-items-center gap-12">
+                                    <div class="flex-column btn-searchbar column-search">
+                                        <label for="search-tanggal-selesai-dari"
+                                            style="display: block; margin-bottom: 4px; font-size: 14px;">Awal</label>
+                                        <input type="date" id="search-tanggal-selesai-dari"
+                                            name="search_tanggal_selesai_dari" title="Tanggal Dari">
+                                    </div>
+                                    <div class="flex-column btn-searchbar column-search">
+                                        <label for="search-tanggal-selesai-sampai"
+                                            style="display: block; margin-bottom: 4px; font-size: 14px;">Akhir</label>
+                                        <input type="date" id="search-tanggal-selesai-sampai"
+                                            name="search_tanggal_selesai_sampai" title="Tanggal Sampai">
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
                         <div class="card mt-3">
                             <div class="card-body table-responsive p-0">
                                 <table class="table table-hover text-nowrap" id="Table">
@@ -133,7 +174,7 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th>
+                                            <th class="align-top">
                                                 <div class="d-flex flex-column gap-12">
                                                     <span>Nama UPT</span>
                                                     <div class="btn-searchbar column-search">
@@ -145,7 +186,7 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th class="text-center">
+                                            <th class="text-center align-top">
                                                 <div
                                                     class="d-flex justify-content-center align-items-center flex-column gap-12">
                                                     <span>Jenis Layanan</span>
@@ -158,7 +199,7 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th class="text-center">
+                                            <th class="text-center align-top">
                                                 <div
                                                     class="d-flex justify-content-center align-items-center flex-column gap-12">
                                                     <span>Keterangan</span>
@@ -171,41 +212,14 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th class="text-center">
-                                                <div class="d-flex flex-column gap-12">
-                                                    <span>Tanggal Pengiriman</span>
-                                                    <div class="d-flex justify-content-center align-items-center gap-12">
-                                                        <div class="btn-searchbar column-search">
-                                                            <input type="date" id="search-tanggal-pengiriman-dari"
-                                                                name="search_tanggal_pengiriman_dari"
-                                                                title="Tanggal Dari">
-                                                        </div>
-                                                        <div class="btn-searchbar column-search">
-                                                            <input type="date" id="search-tanggal-pengiriman-sampai"
-                                                                name="search_tanggal_pengiriman_sampai"
-                                                                title="Tanggal Sampai">
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                            <th class="text-center align-top">
+                                                <span>Tanggal Pengiriman</span>
                                             </th>
-                                            <th class="text-center">
-                                                <div class="d-flex flex-column gap-12">
-                                                    <span>Tanggal Sampai</span>
-                                                    <div class="d-flex justify-content-center align-items-center gap-12">
-                                                        <div class="btn-searchbar column-search">
-                                                            <input type="date" id="search-tanggal-selesai-dari"
-                                                                name="search_tanggal_selesai_dari" title="Tanggal Dari">
-                                                        </div>
-                                                        <div class="btn-searchbar column-search">
-                                                            <input type="date" id="search-tanggal-selesai-sampai"
-                                                                name="search_tanggal_selesai_sampai"
-                                                                title="Tanggal Sampai">
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                            <th class="text-center align-top">
+                                                <span>Tanggal Diterima</span>
                                             </th>
                                             <th class="text-center align-top">Durasi (Hari)</th>
-                                            <th class="text-center">
+                                            <th class="text-center align-top">
                                                 <div
                                                     class="d-flex justify-content-center align-items-center flex-column gap-12">
                                                     <span>Status</span>
@@ -218,9 +232,9 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th class="text-center">
+                                            <th class="text-center align-top">
                                                 <div class="d-flex flex-column gap-12">
-                                                    <span>PIC 1</span>
+                                                    <span>PIC</span>
                                                     <div class="btn-searchbar column-search">
                                                         <span>
                                                             <i class="fas fa-search"></i>
@@ -230,9 +244,9 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th class="text-center">
+                                            <th class="text-center align-top">
                                                 <div class="d-flex flex-column gap-12">
-                                                    <span>PIC 2</span>
+                                                    <span>Pengiriman</span>
                                                     <div class="btn-searchbar column-search">
                                                         <span>
                                                             <i class="fas fa-search"></i>
@@ -362,7 +376,8 @@
                         {{-- Add Modal --}}
                         <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel"
                             aria-hidden="true">
-                            <form id="addForm" action="{{ route('mclientpengirimanupt.MclientPengirimanStoreUpt') }}" method="POST">
+                            <form id="addForm" action="{{ route('mclientpengirimanupt.MclientPengirimanStoreUpt') }}"
+                                method="POST">
                                 @csrf
                                 <div class="modal-dialog modal-lg">
                                     <div class="modal-content">
@@ -523,7 +538,8 @@
                             <div class="modal fade" id="editModal{{ $d->id }}" tabindex="-1"
                                 aria-labelledby="editModalLabel{{ $d->id }}" aria-hidden="true">
                                 <form id="editForm{{ $d->id }}"
-                                    action="{{ route('mclientpengirimanupt.MclientPengirimanUpdateUpt', ['id' => $d->id]) }}" method="POST">
+                                    action="{{ route('mclientpengirimanupt.MclientPengirimanUpdateUpt', ['id' => $d->id]) }}"
+                                    method="POST">
                                     @csrf
                                     @method('PUT')
                                     <div class="modal-dialog modal-lg">
@@ -616,7 +632,8 @@
                                                     <div class="column">
                                                         <div class="mb-3">
                                                             <label for="durasi_hari{{ $d->id }}">Durasi
-                                                                (Hari)</label>
+                                                                (Hari)
+                                                            </label>
                                                             <input type="number" class="form-control"
                                                                 id="durasi_hari{{ $d->id }}" name="durasi_hari"
                                                                 min="0" value="{{ $d->durasi_hari }}"
