@@ -5,8 +5,12 @@ use App\Http\Controllers\user\ponpes\pks\PksController;
 
 // PKS Ponpes
 Route::prefix('DbPonpes.pks.')->name('DbPonpes.pks.')->group(function () {
-    
+
     Route::get('/ListDataPks', [PksController::class, 'ListDataPks'])->name('ListDataPks');
+
+    // CRUD Operations
+    Route::post('/store', [PksController::class, 'store'])->name('store');
+    Route::put('/update/{id}', [PksController::class, 'update'])->name('update');
     Route::delete('/DataBasePageDestroy/{id}', [PksController::class, 'DataBasePageDestroy'])->name('DataBasePageDestroy');
 
     // Upload PDF

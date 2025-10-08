@@ -95,7 +95,7 @@ class PengirimanController extends Controller
     {
         return [
             'vtren' => 'VTREN',
-            'reguler' => 'Reguler', 
+            'reguler' => 'Reguler',
             'vtrenreg' => 'VTREN + Reguler'
         ];
     }
@@ -137,7 +137,7 @@ class PengirimanController extends Controller
             ->where('tipe', 'vtren')
             ->orderBy('nama_ponpes')
             ->get();
-            
+
         $ponpesListReguler = Ponpes::select('nama_ponpes', 'nama_wilayah', 'tipe')
             ->where('tipe', 'reguler')
             ->orderBy('nama_ponpes')
@@ -149,10 +149,10 @@ class PengirimanController extends Controller
         $jenisLayananOptions = $this->getJenisLayanan();
 
         return view('mclient.ponpes.indexPengiriman', compact(
-            'data', 
-            'picList', 
-            'ponpesListVtren', 
-            'ponpesListReguler', 
+            'data',
+            'picList',
+            'ponpesListVtren',
+            'ponpesListReguler',
             'ponpesListAll',
             'jenisLayananOptions'
         ));
@@ -187,7 +187,7 @@ class PengirimanController extends Controller
         if ($request->has('search_tanggal_pengiriman_sampai') && !empty($request->search_tanggal_pengiriman_sampai)) {
             $query->whereDate('tanggal_pengiriman', '<=', $request->search_tanggal_pengiriman_sampai);
         }
-        
+
         // Date range filtering for tanggal_sampai
         if ($request->has('search_tanggal_sampai_dari') && !empty($request->search_tanggal_sampai_dari)) {
             $query->whereDate('tanggal_sampai', '>=', $request->search_tanggal_sampai_dari);
@@ -199,152 +199,129 @@ class PengirimanController extends Controller
         return $query;
     }
 
-    public function MclientPonpesPengirimanStore(Request $request)
-    {
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'nama_ponpes' => 'required|string|max:255',
-                'jenis_layanan' => 'required|string|in:vtren,reguler,vtrenreg',
-                'keterangan' => 'nullable|string',
-                'tanggal_pengiriman' => 'nullable|date',
-                'tanggal_sampai' => 'nullable|date|after_or_equal:tanggal_pengiriman',
-                'durasi_hari' => 'nullable|integer|min:0',
-                'status' => 'nullable|string|in:pending,proses,selesai,terjadwal',
-                'pic_1' => 'nullable|string|max:255',
-                'pic_2' => 'nullable|string|max:255',
-            ],
-            [
-                'nama_ponpes.required' => 'Nama Ponpes harus diisi.',
-                'nama_ponpes.string' => 'Nama Ponpes harus berupa teks.',
-                'nama_ponpes.max' => 'Nama Ponpes tidak boleh lebih dari 255 karakter.',
-                'jenis_layanan.required' => 'Jenis layanan harus dipilih.',
-                'jenis_layanan.in' => 'Jenis layanan harus salah satu dari: VTREN, Reguler, atau VTREN + Reguler.',
-                'keterangan.string' => 'Keterangan harus berupa teks.',
-                'tanggal_pengiriman.date' => 'Format tanggal pengiriman harus valid.',
-                'tanggal_sampai.date' => 'Format tanggal sampai harus valid.',
-                'tanggal_sampai.after_or_equal' => 'Tanggal sampai tidak boleh lebih awal dari tanggal pengiriman.',
-                'durasi_hari.integer' => 'Durasi hari harus berupa angka.',
-                'durasi_hari.min' => 'Durasi hari tidak boleh negatif.',
-                'status.in' => 'Status harus salah satu dari: pending, proses, selesai, atau terjadwal.',
-                'pic_1.string' => 'PIC 1 harus berupa teks.',
-                'pic_1.max' => 'PIC 1 tidak boleh lebih dari 255 karakter.',
-                'pic_2.string' => 'PIC 2 harus berupa teks.',
-                'pic_2.max' => 'PIC 2 tidak boleh lebih dari 255 karakter.',
-            ]
-        );
+public function MclientPonpesPengirimanStore(Request $request)
+{
+    $validator = Validator::make(
+        $request->all(),
+        [
+            'nama_ponpes' => 'required|string|max:255',
+            'jenis_layanan' => 'required|string|in:vtren,reguler,vtrenreg',
+            'keterangan' => 'nullable|string',
+            'tanggal_pengiriman' => 'nullable|date',
+            'tanggal_sampai' => 'nullable|date|after_or_equal:tanggal_pengiriman',
+            'durasi_hari' => 'nullable|integer|min:0',
+            'status' => 'nullable|string|in:pending,proses,selesai,terjadwal',
+            'pic_1' => 'nullable|string|max:255',
+            'pic_2' => 'nullable|string|max:255',
+        ],
+        [
+            'nama_ponpes.required' => 'Nama Ponpes harus diisi.',
+            'nama_ponpes.string' => 'Nama Ponpes harus berupa teks.',
+            'nama_ponpes.max' => 'Nama Ponpes tidak boleh lebih dari 255 karakter.',
+            'jenis_layanan.required' => 'Jenis layanan harus dipilih.',
+            'jenis_layanan.in' => 'Jenis layanan harus salah satu dari: VTREN, Reguler, atau VTREN + Reguler.',
+            'keterangan.string' => 'Keterangan harus berupa teks.',
+            'tanggal_pengiriman.date' => 'Format tanggal pengiriman harus valid.',
+            'tanggal_sampai.date' => 'Format tanggal sampai harus valid.',
+            'tanggal_sampai.after_or_equal' => 'Tanggal sampai tidak boleh lebih awal dari tanggal pengiriman.',
+            'durasi_hari.integer' => 'Durasi hari harus berupa angka.',
+            'durasi_hari.min' => 'Durasi hari tidak boleh negatif.',
+            'status.in' => 'Status harus salah satu dari: pending, proses, selesai, atau terjadwal.',
+            'pic_1.string' => 'PIC 1 harus berupa teks.',
+            'pic_1.max' => 'PIC 1 tidak boleh lebih dari 255 karakter.',
+            'pic_2.string' => 'PIC 2 harus berupa teks.',
+            'pic_2.max' => 'PIC 2 tidak boleh lebih dari 255 karakter.',
+        ]
+    );
 
-        if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput()
-                ->with('error', 'Silakan periksa kembali data yang dimasukkan.');
-        }
-
-        try {
-            $data = $request->all();
-
-            if ($request->tanggal_pengiriman && $request->tanggal_sampai) {
-                $tanggalPengiriman = Carbon::parse($request->tanggal_pengiriman);
-                $tanggalSampai = Carbon::parse($request->tanggal_sampai);
-                $data['durasi_hari'] = $tanggalSampai->diffInDays($tanggalPengiriman);
-            }
-
-            Pengiriman::create($data);
-
-            return redirect()->back()->with('success', 'Data pengiriman monitoring client Ponpes berhasil ditambahkan!');
-        } catch (\Exception $e) {
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'Gagal menambahkan data: ' . $e->getMessage());
-        }
+    if ($validator->fails()) {
+        return redirect()->back()
+            ->withErrors($validator)
+            ->withInput()
+            ->with('error', 'Silakan periksa kembali data yang dimasukkan.');
     }
 
-    public function MclientPonpesPengirimanUpdatePonpes(Request $request, $id)
-    {
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'nama_ponpes' => 'required|string|max:255',
-                'jenis_layanan' => 'required|string|in:vtren,reguler,vtrenreg',
-                'keterangan' => 'nullable|string',
-                'tanggal_pengiriman' => 'nullable|date',
-                'tanggal_sampai' => 'nullable|date|after_or_equal:tanggal_pengiriman',
-                'durasi_hari' => 'nullable|integer|min:0',
-                'status' => 'nullable|string|in:pending,proses,selesai,terjadwal',
-                'pic_1' => 'nullable|string|max:255',
-                'pic_2' => 'nullable|string|max:255',
-            ],
-            [
-                'nama_ponpes.required' => 'Nama Ponpes harus diisi.',
-                'nama_ponpes.string' => 'Nama Ponpes harus berupa teks.',
-                'nama_ponpes.max' => 'Nama Ponpes tidak boleh lebih dari 255 karakter.',
-                'jenis_layanan.required' => 'Jenis layanan harus dipilih.',
-                'jenis_layanan.in' => 'Jenis layanan harus salah satu dari: VTREN, Reguler, atau VTREN + Reguler.',
-                'keterangan.string' => 'Keterangan harus berupa teks.',
-                'tanggal_pengiriman.date' => 'Format tanggal pengiriman harus valid.',
-                'tanggal_sampai.date' => 'Format tanggal sampai harus valid.',
-                'tanggal_sampai.after_or_equal' => 'Tanggal sampai tidak boleh lebih awal dari tanggal pengiriman.',
-                'durasi_hari.integer' => 'Durasi hari harus berupa angka.',
-                'durasi_hari.min' => 'Durasi hari tidak boleh negatif.',
-                'status.in' => 'Status harus salah satu dari: pending, proses, selesai, atau terjadwal.',
-                'pic_1.string' => 'PIC 1 harus berupa teks.',
-                'pic_1.max' => 'PIC 1 tidak boleh lebih dari 255 karakter.',
-                'pic_2.string' => 'PIC 2 harus berupa teks.',
-                'pic_2.max' => 'PIC 2 tidak boleh lebih dari 255 karakter.',
-            ]
-        );
+    try {
+        $data = $request->all();
 
-        if ($validator->fails()) {
-            $validatedData = [];
-            $invalidFields = array_keys($validator->errors()->messages());
-
-            foreach ($request->all() as $key => $value) {
-                if (!in_array($key, $invalidFields)) {
-                    $validatedData[$key] = $value;
-                }
-            }
-
-            try {
-                if (!empty($validatedData)) {
-                    $data = Pengiriman::findOrFail($id);
-
-                    if (isset($validatedData['tanggal_pengiriman']) && isset($validatedData['tanggal_sampai'])) {
-                        $tanggalPengiriman = Carbon::parse($validatedData['tanggal_pengiriman']);
-                        $tanggalSampai = Carbon::parse($validatedData['tanggal_sampai']);
-                        $validatedData['durasi_hari'] = $tanggalSampai->diffInDays($tanggalPengiriman);
-                    }
-
-                    $data->update($validatedData);
-                }
-            } catch (\Exception $e) {
-            }
-
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput()
-                ->with('partial_success', 'Data valid telah disimpan. Silakan perbaiki field yang bermasalah.');
+        // Hitung durasi HANYA jika tanggal_sampai ada
+        if ($request->tanggal_sampai && $request->tanggal_pengiriman) {
+            $tanggalPengiriman = Carbon::parse($request->tanggal_pengiriman);
+            $tanggalSampai = Carbon::parse($request->tanggal_sampai);
+            $data['durasi_hari'] = $tanggalPengiriman->diffInDays($tanggalSampai);
+        } else {
+            // Jika belum ada tanggal_sampai, set null (akan dihitung dinamis)
+            $data['durasi_hari'] = null;
         }
 
-        try {
-            $data = Pengiriman::findOrFail($id);
-            $updateData = $request->all();
+        Pengiriman::create($data);
 
-            if ($request->tanggal_pengiriman && $request->tanggal_sampai) {
-                $tanggalPengiriman = Carbon::parse($request->tanggal_pengiriman);
-                $tanggalSampai = Carbon::parse($request->tanggal_sampai);
-                $updateData['durasi_hari'] = $tanggalSampai->diffInDays($tanggalPengiriman);
-            }
-
-            $data->update($updateData);
-
-            return redirect()->back()->with('success', 'Data pengiriman monitoring client Ponpes berhasil diupdate!');
-        } catch (\Exception $e) {
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'Gagal update data: ' . $e->getMessage());
-        }
+        return redirect()->back()->with('success', 'Data pengiriman monitoring client Ponpes berhasil ditambahkan!');
+    } catch (\Exception $e) {
+        return redirect()->back()
+            ->withInput()
+            ->with('error', 'Gagal menambahkan data: ' . $e->getMessage());
     }
+}
+
+public function MclientPonpesPengirimanUpdatePonpes(Request $request, $id)
+{
+    $validator = Validator::make(
+        $request->all(),
+        [
+            'nama_ponpes' => 'required|string|max:255',
+            'jenis_layanan' => 'required|string|in:vtren,reguler,vtrenreg',
+            'keterangan' => 'nullable|string',
+            'tanggal_pengiriman' => 'nullable|date',
+            'tanggal_sampai' => 'nullable|date|after_or_equal:tanggal_pengiriman',
+            'durasi_hari' => 'nullable|integer|min:0',
+            'status' => 'nullable|string|in:pending,proses,selesai,terjadwal',
+            'pic_1' => 'nullable|string|max:255',
+            'pic_2' => 'nullable|string|max:255',
+        ],
+        [
+            'nama_ponpes.required' => 'Nama Ponpes harus diisi.',
+            'nama_ponpes.string' => 'Nama Ponpes harus berupa teks.',
+            'nama_ponpes.max' => 'Nama Ponpes tidak boleh lebih dari 255 karakter.',
+            'jenis_layanan.required' => 'Jenis layanan harus dipilih.',
+            'jenis_layanan.in' => 'Jenis layanan harus salah satu dari: VTREN, Reguler, atau VTREN + Reguler.',
+            'keterangan.string' => 'Keterangan harus berupa teks.',
+            'tanggal_pengiriman.date' => 'Format tanggal pengiriman harus valid.',
+            'tanggal_sampai.date' => 'Format tanggal sampai harus valid.',
+            'tanggal_sampai.after_or_equal' => 'Tanggal sampai tidak boleh lebih awal dari tanggal pengiriman.',
+            'durasi_hari.integer' => 'Durasi hari harus berupa angka.',
+            'durasi_hari.min' => 'Durasi hari tidak boleh negatif.',
+            'status.in' => 'Status harus salah satu dari: pending, proses, selesai, atau terjadwal.',
+            'pic_1.string' => 'PIC 1 harus berupa teks.',
+            'pic_1.max' => 'PIC 1 tidak boleh lebih dari 255 karakter.',
+            'pic_2.string' => 'PIC 2 harus berupa teks.',
+            'pic_2.max' => 'PIC 2 tidak boleh lebih dari 255 karakter.',
+        ]
+    );
+
+    try {
+        $data = Pengiriman::findOrFail($id);
+        $updateData = $request->all();
+
+        // Hitung dan simpan durasi HANYA jika tanggal_sampai baru ditentukan
+        if ($request->tanggal_sampai && $request->tanggal_pengiriman) {
+            $tanggalPengiriman = Carbon::parse($request->tanggal_pengiriman);
+            $tanggalSampai = Carbon::parse($request->tanggal_sampai);
+            $updateData['durasi_hari'] = $tanggalPengiriman->diffInDays($tanggalSampai);
+        } elseif ($request->has('tanggal_sampai') && empty($request->tanggal_sampai)) {
+            // Jika tanggal_sampai dihapus, set durasi ke null
+            $updateData['durasi_hari'] = null;
+        }
+
+        $data->update($updateData);
+
+        return redirect()->back()->with('success', 'Data pengiriman monitoring client Ponpes berhasil diupdate!');
+    } catch (\Exception $e) {
+        return redirect()->back()
+            ->withInput()
+            ->with('error', 'Gagal update data: ' . $e->getMessage());
+    }
+}
 
     public function MclientPonpesPengirimanDestroyPonpes($id)
     {

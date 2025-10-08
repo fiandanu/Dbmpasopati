@@ -32,6 +32,9 @@ return new class extends Migration
             $table->string('pin_tes')->nullable();
             $table->string('no_extension')->nullable();
             $table->string('extension_password')->nullable();
+            $table->string('no_pemanggil')->nullable();
+            $table->string('email_airdroid')->nullable();
+            $table->string('password')->nullable();
             $table->timestamps();
         });
     }

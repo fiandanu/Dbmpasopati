@@ -38,7 +38,10 @@ class ListDataPonpesController extends Controller
         'jumlah_extension',
         'no_extension',
         'extension_password',
-        'pin_tes'
+        'pin_tes',
+        'no_pemanggil',
+        'email_airdroid',
+        'password'
     ];
 
     private function calculateStatus($dataOpsional)

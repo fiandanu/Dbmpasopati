@@ -14,6 +14,8 @@ class UploadFolderPonpes extends Model
 
     protected $fillable = [
         'ponpes_id',
+        'tanggal_kontrak',
+        'tanggal_jatuh_tempo',
         'uploaded_pdf',
         'pdf_folder_1',
         'pdf_folder_2',
@@ -25,6 +27,11 @@ class UploadFolderPonpes extends Model
         'pdf_folder_8',
         'pdf_folder_9',
         'pdf_folder_10'
+    ];
+
+    protected $casts = [
+        'tanggal_kontrak' => 'date',
+        'tanggal_jatuh_tempo' => 'date',
     ];
 
     public function ponpes()

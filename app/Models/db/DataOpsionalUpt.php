@@ -36,7 +36,10 @@ class DataOpsionalUpt extends Model
         'jumlah_extension',
         'pin_tes',
         'no_extension',
-        'extension_password'
+        'extension_password',
+        'no_pemanggil',
+        'email_airdroid',
+        'password'
     ];
 
     protected $casts = [
@@ -69,7 +72,10 @@ class DataOpsionalUpt extends Model
             'jumlah_extension',
             'no_extension',
             'extension_password',
-            'pin_tes'
+            'pin_tes',
+            'no_pemanggil',
+            'email_airdroid',
+            'password'
         ];
         $dataOpsional = $this->dataOpsional;
         if (!$dataOpsional) {

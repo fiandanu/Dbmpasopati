@@ -35,8 +35,9 @@ class VpasController extends Controller
         'vpn_password',
         'jenis_vpn',
         'jumlah_extension',
-        'no_extension',
-        'extension_password',
+        'no_pemanggil',
+        'email_airdroid',
+        'password',
         'pin_tes'
     ];
 
@@ -308,8 +309,9 @@ class VpasController extends Controller
 
                 // Extension VPAS
                 'jumlah_extension' => 'nullable|integer|min:0',
-                'no_extension' => 'nullable|string',
-                'extension_password' => 'nullable|string',
+                'no_pemanggil' => 'nullable|string',
+                'email_airdroid' => 'nullable|string',
+                'password' => 'nullable|string',
                 'pin_tes' => 'nullable|string|max:255',
             ],
             // Pesan Validasi
@@ -342,8 +344,9 @@ class VpasController extends Controller
                 // Extension VPAS
                 'jumlah_extension.integer' => 'Jumlah extension harus berupa angka.',
                 'jumlah_extension.min' => 'Jumlah extension tidak boleh negatif.',
-                'no_extension.string' => 'Nomor extension harus berupa teks.',
-                'extension_password.string' => 'Password extension harus berupa teks.',
+                'no_pemanggil.string' => 'Nomor pemanggil harus berupa teks.',
+                'email_airdroid.string' => 'Email AirDroid harus berupa teks.',
+                'password.string' => 'Password harus berupa teks.',
                 'pin_tes.string' => 'PIN Tes harus berupa teks.',
             ]
         );
@@ -383,8 +386,9 @@ class VpasController extends Controller
                 'vpn_password' => $request->vpn_password,
                 'jenis_vpn' => $request->jenis_vpn,
                 'jumlah_extension' => $request->jumlah_extension,
-                'no_extension' => $request->no_extension,
-                'extension_password' => $request->extension_password,
+                'no_pemanggil' => $request->no_pemanggil,
+                'email_airdroid' => $request->email_airdroid,
+                'password' => $request->password,
                 'pin_tes' => $request->pin_tes,
             ];
 
@@ -615,8 +619,9 @@ class VpasController extends Controller
             ['VPN Password', $dataOpsional->vpn_password ?? ''],
             ['Jenis VPN', $dataOpsional->jenis_vpn ?? ''],
             ['Jumlah Extension', $dataOpsional->jumlah_extension ?? ''],
-            ['No Extension', $dataOpsional->no_extension ?? ''],
-            ['Extension Password', $dataOpsional->extension_password ?? ''],
+            ['No Pemanggil', $dataOpsional->no_pemanggil ?? ''],
+            ['Email AirDroid', $dataOpsional->email_airdroid ?? ''],
+            ['Password', $dataOpsional->password ?? ''],
             ['PIN Tes', $dataOpsional->pin_tes ?? ''],
         ];
 

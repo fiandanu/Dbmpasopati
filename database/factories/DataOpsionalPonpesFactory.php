@@ -46,6 +46,9 @@ class DataOpsionalPonpesFactory extends Factory
             'pin_tes' => $this->faker->numerify('####'),
             'no_extension' => $this->faker->numerify('###'),
             'extension_password' => $this->faker->numerify('######'),
+            'no_pemanggil' => $this->faker->phoneNumber,
+            'email_airdroid' => $this->faker->unique()->safeEmail,
+            'password' => $this->faker->password(8, 16),
         ];
     }
 

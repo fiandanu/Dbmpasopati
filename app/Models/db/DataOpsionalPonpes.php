@@ -34,7 +34,10 @@ class DataOpsionalPonpes extends Model
         'jumlah_extension',
         'pin_tes',
         'no_extension',
-        'extension_password'
+        'extension_password',   
+        'no_pemanggil',
+        'email_airdroid',
+        'password'
     ];
 
     protected $casts = [
