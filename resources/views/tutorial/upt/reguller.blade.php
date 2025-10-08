@@ -121,6 +121,22 @@
                 <!-- /.row -->
                 <div class="row">
                     <div class="col-12">
+
+                        <div class="d-flex gap-12">
+                            <div class="gap-12 w-fit text-center">
+                                <div class="d-flex justify-content-center align-items-center gap-12">
+                                    <div class=" d-flex justify-content-center btn-searchbar column-search w-auto">
+                                        <input type="date" id="search-tanggal-dibuat-dari"
+                                            name="search_tanggal_dibuat_dari" title="Tanggal Dibuat Dari">
+                                    </div>
+                                    <div class="btn-searchbar column-search">
+                                        <input type="date" id="search-tanggal-dibuat-sampai"
+                                            name="search_tanggal_dibuat_sampai" title="Tanggal Dibuat Sampai">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="card mt-3">
                             <!-- /.card-header -->
                             <div class="card-body table-responsive p-0">
@@ -150,23 +166,8 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th class="text-center">
-                                                <div class="d-flex flex-column gap-12">
-                                                    <span>Tanggal Dibuat</span>
-                                                    <div class="d-flex flex-column justify-content-center align-items-center gap-12">
-                                                        <div
-                                                            class=" d-flex justify-content-center btn-searchbar column-search w-auto">
-                                                            <input type="date" id="search-tanggal-dibuat-dari"
-                                                                name="search_tanggal_dibuat_dari"
-                                                                title="Tanggal Dibuat Dari">
-                                                        </div>
-                                                        <div class="btn-searchbar column-search">
-                                                            <input type="date" id="search-tanggal-dibuat-sampai"
-                                                                name="search_tanggal_dibuat_sampai"
-                                                                title="Tanggal Dibuat Sampai">
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                            <th class="text-center align-top">
+                                                <span>Tanggal Dibuat</span>
                                             </th>
                                             <th class="text-center align-top">
                                                 <div class="d-flex flex-column gap-12">
@@ -593,7 +594,7 @@
                         </div>
                     @endif
                 </div>
-                
+
             </div><!-- /.container-fluid -->
         </section>
         <!-- /.content -->
@@ -603,6 +604,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
         integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 
     {{-- Update Folder --}}
     <script>

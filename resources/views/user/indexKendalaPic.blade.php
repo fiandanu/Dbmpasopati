@@ -69,12 +69,12 @@
                                 <button onclick="downloadKendalaCsv()"
                                     class="btn-page d-flex justify-content-center align-items-center"
                                     title="Download Kendala CSV">
-                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export Kendala CSV
+                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export CSV
                                 </button>
                                 <button onclick="downloadKendalaPdf()"
                                     class="btn-page d-flex justify-content-center align-items-center"
                                     title="Download Kendala PDF">
-                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export Kendala PDF
+                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PDF
                                 </button>
                             </div>
                         </div>

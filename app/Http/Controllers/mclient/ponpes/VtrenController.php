@@ -132,7 +132,7 @@ class VtrenController extends Controller
                 'pic_2' => 'nullable|string|max:255',
             ],
             [
-                // pesan validasi tetap sama
+                // pesan validasi 
             ]
         );
 
@@ -148,49 +148,57 @@ class VtrenController extends Controller
 
             // Hitung durasi HANYA jika tanggal_selesai ada
             if ($request->tanggal_selesai) {
-                $createdAt = Carbon::now();
+                // ✅ Gunakan tanggal_terlapor sebagai acuan
+                if ($request->tanggal_terlapor) {
+                    $tanggalTerlapor = Carbon::parse($request->tanggal_terlapor);
+                } else {
+                    // Jika tanggal_terlapor kosong, gunakan waktu sekarang
+                    $tanggalTerlapor = Carbon::now();
+                    $data['tanggal_terlapor'] = $tanggalTerlapor;
+                }
+
                 $tanggalSelesai = Carbon::parse($request->tanggal_selesai);
-                $data['durasi_hari'] = $createdAt->diffInDays($tanggalSelesai);
+                $data['durasi_hari'] = $tanggalTerlapor->diffInDays($tanggalSelesai);
             } else {
-                // Jika belum ada tanggal_selesai, set null (akan dihitung dinamis oleh accessor)
                 $data['durasi_hari'] = null;
             }
 
             Vtren::create($data);
 
-            return redirect()->back()->with('success', 'Data monitoring client Vtren berhasil ditambahkan!');
+            return redirect()->back()->with('success', 'Data berhasil ditambahkan!');
         } catch (\Exception $e) {
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'Gagal menambahkan data: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal: ' . $e->getMessage());
         }
     }
 
     public function MclientVtrenUpdate(Request $request, $id)
     {
-        // ... validasi tetap sama ...
-
         try {
             $data = Vtren::findOrFail($id);
             $updateData = $request->all();
 
-            // Hitung dan simpan durasi HANYA jika tanggal_selesai baru ditentukan
+            // Hitung durasi jika tanggal_selesai ada
             if ($request->tanggal_selesai) {
-                $createdAt = Carbon::parse($data->created_at);
+                // ✅ Gunakan tanggal_terlapor dari data yang sudah ada atau yang baru
+                if ($request->tanggal_terlapor) {
+                    $tanggalTerlapor = Carbon::parse($request->tanggal_terlapor);
+                } else {
+                    // Jika tidak ada input tanggal_terlapor baru, pakai yang lama
+                    $tanggalTerlapor = Carbon::parse($data->tanggal_terlapor ?? $data->created_at);
+                }
+
                 $tanggalSelesai = Carbon::parse($request->tanggal_selesai);
-                $updateData['durasi_hari'] = $createdAt->diffInDays($tanggalSelesai);
+                $updateData['durasi_hari'] = $tanggalTerlapor->diffInDays($tanggalSelesai);
             } elseif ($request->has('tanggal_selesai') && empty($request->tanggal_selesai)) {
-                // Jika tanggal_selesai dihapus, set durasi ke null
+                // Jika tanggal_selesai dihapus, reset durasi
                 $updateData['durasi_hari'] = null;
             }
 
             $data->update($updateData);
 
-            return redirect()->back()->with('success', 'Data monitoring client Vtren berhasil diupdate!');
+            return redirect()->back()->with('success', 'Data berhasil diupdate!');
         } catch (\Exception $e) {
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'Gagal update data: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal: ' . $e->getMessage());
         }
     }
 
@@ -290,5 +298,4 @@ class VtrenController extends Controller
 
         return response()->stream($callback, 200, $headers);
     }
-
 }

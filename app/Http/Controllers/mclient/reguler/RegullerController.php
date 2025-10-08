@@ -143,10 +143,18 @@ class RegullerController extends Controller
         try {
             $data = $request->all();
 
-            if ($request->tanggal_terlapor && $request->tanggal_selesai) {
-                $tanggalTerlapor = Carbon::parse($request->tanggal_terlapor);
+            if ($request->tanggal_selesai) {
+                if ($request->tanggal_terlapor) {
+                    $tanggalTerlapor = Carbon::parse($request->tanggal_terlapor);
+                } else {
+                    $tanggalTerlapor = Carbon::now();
+                    $data['tanggal_terlapor'] = $tanggalTerlapor;
+                }
+
                 $tanggalSelesai = Carbon::parse($request->tanggal_selesai);
-                $data['durasi_hari'] = $tanggalSelesai->diffInDays($tanggalTerlapor);
+                $data['durasi_hari'] = $tanggalTerlapor->diffInDays($tanggalSelesai);
+            } else {
+                $data['durasi_hari'] = null;
             }
 
             Reguller::create($data);
@@ -206,29 +214,20 @@ class RegullerController extends Controller
 
         try {
             $data = Reguller::findOrFail($id);
+            $updateData = $request->all();
 
-            // Cuma ambil field yang diizinkan (whitelist approach)
-            $updateData = $request->only([
-                'nama_upt',
-                'kanwil',
-                'jenis_kendala',
-                'detail_kendala',
-                'tanggal_terlapor',
-                'tanggal_selesai',
-                'durasi_hari',
-                'status',
-                'pic_1',
-                'pic_2'
-            ]);
-
-            // Auto-calculate durasi jika ada tanggal
-            if ($request->filled('tanggal_terlapor') && $request->filled('tanggal_selesai')) {
-                $tanggalTerlapor = Carbon::parse($request->tanggal_terlapor);
+            if ($request->tanggal_selesai) {
+                if ($request->tanggal_terlapor) {
+                    $tanggalTerlapor = Carbon::parse($request->tanggal_terlapor);
+                } else {
+                    $tanggalTerlapor = Carbon::parse($data->tanggal_terlapor ?? $data->created_at);
+                }
                 $tanggalSelesai = Carbon::parse($request->tanggal_selesai);
-                $updateData['durasi_hari'] = $tanggalSelesai->diffInDays($tanggalTerlapor);
+                $updateData['durasi_hari'] = $tanggalTerlapor->diffInDays($tanggalSelesai);
+            } elseif ($request->has('tanggal_selesai') && empty($request->tanggal_selesai)) {
+                $updateData['durasi_hari'] = null;
             }
 
-            // SINGLE UPDATE - tidak ada double update
             $data->update($updateData);
 
             return redirect()->back()->with('success', 'Data monitoring client Reguller berhasil diupdate!');
@@ -437,5 +436,4 @@ class RegullerController extends Controller
             'message' => 'UPT not found'
         ]);
     }
-    
 }

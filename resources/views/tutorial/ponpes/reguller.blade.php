@@ -111,19 +111,23 @@
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
-                @if (request('table_search'))
-                    <div>
-                        <div class="alert alert-info">
-                            <i class="fas fa-info-circle"></i>
-                            Hasil pencarian untuk: "<strong>{{ request('table_search') }}</strong>"
-                            <a href="{{ route('tutor_ponpes_reguller.ListDataSpp') }}" class="btn btn-sm btn-secondary ml-2">
-                                <i class="fas fa-times"></i> Clear
-                            </a>
+
+                <div class="d-flex gap-12">
+                    <div class="gap-12 w-fit">
+                        <div class="d-flex justify-content-center align-items-center gap-12">
+                            <div class="btn-searchbar column-search">
+                                <input type="date" id="search-tanggal-dari" name="search_tanggal_dari"
+                                    title="Tanggal Dari">
+                            </div>
+                            <div class="btn-searchbar column-search">
+                                <input type="date" id="search-tanggal-sampai" name="search_tanggal_sampai"
+                                    title="Tanggal Sampai">
+                            </div>
                         </div>
                     </div>
-                @endif
+                </div>
 
-                <div class="card">
+                <div class="card mt-3">
                     <div class="card-body table-responsive p-0">
                         <table class="table table-hover text-nowrap" id="Table">
                             <thead>
@@ -151,19 +155,7 @@
                                         </div>
                                     </th>
                                     <th class="text-center">
-                                        <div class="d-flex flex-column gap-12">
-                                            <span>Tanggal</span>
-                                            <div class="d-flex flex-column justify-content-center align-items-center gap-12">
-                                                <div class="btn-searchbar column-search">
-                                                    <input type="date" id="search-tanggal-dari"
-                                                        name="search_tanggal_dari" title="Tanggal Dari">
-                                                </div>
-                                                <div class="btn-searchbar column-search">
-                                                    <input type="date" id="search-tanggal-sampai"
-                                                        name="search_tanggal_sampai" title="Tanggal Sampai">
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <span>Tanggal</span>
                                     </th>
                                     <th class="text-center align-top">
                                         <div class="d-flex justify-content-center align-items-center flex-column gap-12">
@@ -223,15 +215,13 @@
                                         </td>
                                         <td class="text-center">
                                             <div class="btn-group" role="group">
-                                                <button data-toggle="modal"
-                                                    data-target="#uploadModal{{ $d->id }}"
+                                                <button data-toggle="modal" data-target="#uploadModal{{ $d->id }}"
                                                     title="Upload PDF">
                                                     <ion-icon name="folder-outline"></ion-icon>
                                                 </button>
 
                                                 <button data-toggle="modal"
-                                                    data-target="#modal-default{{ $d->id }}"
-                                                    title="Hapus Data">
+                                                    data-target="#modal-default{{ $d->id }}" title="Hapus Data">
                                                     <ion-icon name="trash-outline"></ion-icon>
                                                 </button>
                                             </div>
@@ -263,8 +253,7 @@
                                                             <label for="folderSelect{{ $d->id }}">Pilih
                                                                 Folder</label>
                                                             <select class="form-control"
-                                                                id="folderSelect{{ $d->id }}"
-                                                                name="folder"
+                                                                id="folderSelect{{ $d->id }}" name="folder"
                                                                 onchange="updateFolder({{ $d->id }}, this.value)">
                                                                 @for ($i = 1; $i <= 10; $i++)
                                                                     @php
@@ -291,17 +280,14 @@
                                                             <div class="card-header">
                                                                 <div class="label-medium-14">
                                                                     Status dan Aksi
-                                                                    <span
-                                                                        id="currentFolder{{ $d->id }}">1</span>
+                                                                    <span id="currentFolder{{ $d->id }}">1</span>
                                                                     <span id="currentFileName{{ $d->id }}"
                                                                         class="text-muted">
                                                                         @php
                                                                             $firstFileName = null;
                                                                             $column = 'pdf_folder_1';
                                                                             if (!empty($d->$column)) {
-                                                                                $firstFileName = basename(
-                                                                                    $d->$column,
-                                                                                );
+                                                                                $firstFileName = basename($d->$column);
                                                                             }
                                                                         @endphp
                                                                         @if ($firstFileName)
@@ -324,10 +310,8 @@
                                                                             @endphp
 
                                                                             @if ($hasFile)
-                                                                                <div
-                                                                                    class="badge-succes mb-3 text-center">
-                                                                                    <i
-                                                                                        class="fas fa-check-circle"></i>
+                                                                                <div class="badge-succes mb-3 text-center">
+                                                                                    <i class="fas fa-check-circle"></i>
                                                                                     PDF sudah tersedia untuk Folder
                                                                                     {{ $i }}
                                                                                 </div>
@@ -345,14 +329,12 @@
                                                                                         data-toggle="modal"
                                                                                         data-target="#deletePdfModal{{ $d->id }}_{{ $i }}"
                                                                                         title="Hapus File PDF Folder {{ $i }}">
-                                                                                        <i
-                                                                                            class="fas fa-trash"></i>
+                                                                                        <i class="fas fa-trash"></i>
                                                                                         Delete
                                                                                     </button>
                                                                                 </div>
                                                                             @else
-                                                                                <div
-                                                                                    class="badge-prosses text-center">
+                                                                                <div class="badge-prosses text-center">
                                                                                     <i
                                                                                         class="fas fa-exclamation-triangle"></i>
                                                                                     Belum Upload Folder
@@ -369,8 +351,7 @@
                                                                 class="btn-upload">
                                                                 Upload PDF
                                                             </label>
-                                                            <input type="file"
-                                                                id="uploaded_pdf{{ $d->id }}"
+                                                            <input type="file" id="uploaded_pdf{{ $d->id }}"
                                                                 name="uploaded_pdf" accept=".pdf"
                                                                 style="display: none;">
                                                             <span id="fileNameDisplay{{ $d->id }}"
@@ -393,8 +374,8 @@
                                     {{-- Delete PDF Modals for Each Folder --}}
                                     @for ($i = 1; $i <= 10; $i++)
                                         <div class="modal fade"
-                                            id="deletePdfModal{{ $d->id }}_{{ $i }}"
-                                            tabindex="-1" role="dialog"
+                                            id="deletePdfModal{{ $d->id }}_{{ $i }}" tabindex="-1"
+                                            role="dialog"
                                             aria-labelledby="deletePdfModalLabel{{ $d->id }}_{{ $i }}"
                                             aria-hidden="true">
                                             <div class="modal-dialog">
@@ -406,8 +387,7 @@
                                                         <label>Apakah Folder <b> {{ $i }} </b> ingin
                                                             dihapus?</label>
                                                     </div>
-                                                    <div
-                                                        class="modal-footer flex-row-reverse justify-content-between">
+                                                    <div class="modal-footer flex-row-reverse justify-content-between">
                                                         <button type="button" class="btn-cancel-modal"
                                                             data-dismiss="modal">Batal</button>
                                                         <form
@@ -475,9 +455,7 @@
                         <div class="btn-datakolom">
                             <form method="GET" class="d-flex align-items-center">
                                 <!-- Preserve all search parameters -->
-                                @if (request('table_search'))
-                                    <input type="hidden" name="table_search" value="{{ request('table_search') }}">
-                                @endif
+
                                 @if (request('search_judul'))
                                     <input type="hidden" name="search_judul" value="{{ request('search_judul') }}">
                                 @endif
@@ -552,17 +530,14 @@
     <!-- /.content-wrapper -->
 
     {{-- User Create Modal --}}
-    <div class="modal fade" id="addModal" tabindex="-1"
-        aria-labelledby="addModalLabel" aria-hidden="true">
-        <form id="addForm" action="{{ route('tutor_ponpes_reguller.store') }}"
-            method="POST">
+    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+        <form id="addForm" action="{{ route('tutor_ponpes_reguller.store') }}" method="POST">
             @csrf
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
                         <label id="addModalLabel">Tambah Data</label>
-                        <button type="button" class="btn-close-custom"
-                            data-bs-dismiss="modal" aria-label="Close">
+                        <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close">
                             <i class="bi bi-x"></i>
                         </button>
                     </div>
@@ -572,9 +547,8 @@
                         <div class="mb-3">
                             <label for="tutor_ponpes_reguller">Judul
                                 Tutorial</label>
-                            <input type="text" class="form-control"
-                                id="tutor_ponpes_reguller" name="tutor_ponpes_reguller" required
-                                placeholder="Masukan Judul">
+                            <input type="text" class="form-control" id="tutor_ponpes_reguller"
+                                name="tutor_ponpes_reguller" required placeholder="Masukan Judul">
                         </div>
                         @error('tutor_ponpes_reguller')
                             <small class="text-danger">{{ $message }}</small>
@@ -586,8 +560,7 @@
                         {{-- Input Tanggal Hidden --}}
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn-cancel-modal"
-                            data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn-cancel-modal" data-bs-dismiss="modal">Cancel</button>
                         <button type="submit" class="btn-purple">Simpan</button>
                     </div>
                 </div>
@@ -648,7 +621,6 @@
                 let url = new URL(window.location.href);
 
                 // Remove all search parameters
-                url.searchParams.delete('table_search');
                 url.searchParams.delete('search_judul');
                 url.searchParams.delete('search_tanggal_dari');
                 url.searchParams.delete('search_tanggal_sampai');

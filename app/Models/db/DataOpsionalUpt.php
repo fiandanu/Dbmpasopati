@@ -12,8 +12,6 @@ class DataOpsionalUpt extends Model
 
     protected $table = 'data_opsional_upt';
 
-
-
     protected $fillable = [
         'upt_id',
         'pic_upt',

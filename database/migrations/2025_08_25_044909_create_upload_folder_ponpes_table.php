@@ -12,6 +12,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('ponpes_id')->constrained('data_ponpes')->onDelete('cascade');
             $table->string('uploaded_pdf')->nullable();
+            $table->string('tanggal_kontrak')->nullable();
+            $table->string('jatuh_tempo')->nullable();
             $table->string('pdf_folder_1')->nullable();
             $table->string('pdf_folder_2')->nullable();
             $table->string('pdf_folder_3')->nullable();

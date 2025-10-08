@@ -113,17 +113,12 @@
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
-                @if (request('table_search'))
-                    <div>
-                        <div class="alert alert-info">
-                            <i class="fas fa-info-circle"></i>
-                            Hasil pencarian untuk: "<strong>{{ request('table_search') }}</strong>"
-                            <a href="{{ route('UserPonpes.UserPage') }}" class="btn btn-sm btn-secondary ml-2">
-                                <i class="fas fa-times"></i> Clear
-                            </a>
-                        </div>
+
+                <div class="d-flex gap-12">
+                    <div class="gap-12 w-fit">
+
                     </div>
-                @endif
+                </div>
 
                 <div class="card">
                     <div class="card-body table-responsive p-0">
@@ -174,21 +169,8 @@
                                             </div>
                                         </div>
                                     </th>
-                                    <th class="text-center">
-                                        <div class="d-flex flex-column gap-12">
-                                            <span>Tanggal</span>
-                                            <div
-                                                class="d-flex flex-column justify-content-center align-items-center gap-12">
-                                                <div class="btn-searchbar column-search">
-                                                    <input type="date" id="search-tanggal-dari"
-                                                        name="search_tanggal_dari" title="Tanggal Dari">
-                                                </div>
-                                                <div class="btn-searchbar column-search">
-                                                    <input type="date" id="search-tanggal-sampai"
-                                                        name="search_tanggal_sampai" title="Tanggal Sampai">
-                                                </div>
-                                            </div>
-                                        </div>
+                                    <th class="text-center align-top">
+                                        <span>Tanggal</span>
                                     </th>
                                     <th class="text-center align-top">Action</th>
                                 </tr>
@@ -425,9 +407,6 @@
                     <div class="d-flex align-items-center gap-3">
                         <div class="btn-datakolom">
                             <form method="GET" class="d-flex align-items-center">
-                                @if (request('table_search'))
-                                    <input type="hidden" name="table_search" value="{{ request('table_search') }}">
-                                @endif
                                 @if (request('search_namaponpes'))
                                     <input type="hidden" name="search_namaponpes"
                                         value="{{ request('search_namaponpes') }}">
@@ -503,7 +482,7 @@
         integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-    
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const tipeCheckboxes = document.querySelectorAll('input[name="tipe[]"]');
@@ -593,7 +572,7 @@
 
                 let url = new URL(window.location.href);
 
-                url.searchParams.delete('table_search');
+
                 url.searchParams.delete('search_namaponpes');
                 url.searchParams.delete('search_wilayah');
                 url.searchParams.delete('search_tipe');

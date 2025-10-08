@@ -297,10 +297,13 @@
                                                     {{ $d->tanggal_sampai ? \Carbon\Carbon::parse($d->tanggal_sampai)->translatedFormat('d M Y') : '-' }}
                                                 </td>
                                                 <td class="text-center">
-                                                    @if ($d->durasi_hari)
+                                                    @if ($d->tanggal_sampai)
                                                         <span class="Tipereguller">{{ $d->durasi_hari }} hari</span>
                                                     @else
-                                                        -
+                                                        <span class="Tipereguller durasi-realtime"
+                                                            data-created="{{ $d->created_at->format('Y-m-d H:i:s') }}">
+                                                            <span class="durasi-text">Menghitung...</span>
+                                                        </span>
                                                     @endif
                                                 </td>
                                                 <td class="text-center">
@@ -835,6 +838,86 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
         integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    {{-- JS Real-time Duration Counter --}}
+    <script>
+        // Fungsi untuk menghitung dan format durasi real-time
+        function calculateDuration(createdAtStr) {
+            // Parse sebagai UTC untuk menghindari timezone offset
+            const createdAt = new Date(createdAtStr + ' UTC');
+            const now = new Date();
+            const diffMs = now - createdAt;
+
+            // Hitung komponen waktu
+            const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diffMs % (1000 * 60)) / 1000);
+
+            return {
+                days: days,
+                hours: hours,
+                minutes: minutes,
+                seconds: seconds,
+                formatted: `${days} hari ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+            };
+        }
+
+        // Update semua durasi yang masih berjalan di tabel
+        function updateDurasiRealtime() {
+            document.querySelectorAll('.durasi-realtime').forEach(function(element) {
+                const createdAtStr = element.getAttribute('data-created');
+
+                if (createdAtStr) {
+                    const duration = calculateDuration(createdAtStr);
+                    const textElement = element.querySelector('.durasi-text');
+
+                    if (textElement) {
+                        textElement.textContent = duration.formatted;
+                    }
+                }
+            });
+        }
+
+        // Update durasi di modal edit yang terbuka
+        function updateDurasiModal() {
+            document.querySelectorAll('.durasi-realtime-modal').forEach(function(element) {
+                const createdAtStr = element.getAttribute('data-created');
+
+                if (createdAtStr) {
+                    const duration = calculateDuration(createdAtStr);
+                    element.value = duration.formatted;
+                }
+            });
+        }
+
+        // Update setiap 1 detik
+        let durasiInterval;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update pertama kali
+            updateDurasiRealtime();
+            updateDurasiModal();
+
+            // Set interval untuk update setiap detik
+            durasiInterval = setInterval(function() {
+                updateDurasiRealtime();
+                updateDurasiModal();
+            }, 1000);
+        });
+
+        // Update saat modal dibuka
+        $('.modal').on('shown.bs.modal', function() {
+            updateDurasiModal();
+        });
+
+        // Bersihkan interval saat halaman di-unload
+        window.addEventListener('beforeunload', function() {
+            if (durasiInterval) {
+                clearInterval(durasiInterval);
+            }
+        });
+    </script>
 
     {{-- DROPDOWN UNTUK ADD MODAL --}}
     <script>

@@ -21,6 +21,29 @@ class CatatanController extends Controller
         // Apply filter
         $query = $this->applyFilters($query, $request);
 
+        // Calculate totals from ALL filtered data (before pagination)
+        $allFilteredData = $query->get();
+        $totals = [
+            'kartu_baru' => $allFilteredData->sum(function ($item) {
+                return intval($item->spam_vpas_kartu_baru ?? '0');
+            }),
+            'kartu_bekas' => $allFilteredData->sum(function ($item) {
+                return intval($item->spam_vpas_kartu_bekas ?? '0');
+            }),
+            'kartu_goip' => $allFilteredData->sum(function ($item) {
+                return intval($item->spam_vpas_kartu_goip ?? '0');
+            }),
+            'kartu_belum_register' => $allFilteredData->sum(function ($item) {
+                return intval($item->kartu_belum_teregister ?? '0');
+            }),
+            'whatsapp_terpakai' => $allFilteredData->sum(function ($item) {
+                return intval($item->whatsapp_telah_terpakai ?? '0');
+            }),
+            'kartu_terpakai_perhari' => $allFilteredData->sum(function ($item) {
+                return intval($item->jumlah_kartu_terpakai_perhari ?? '0');
+            })
+        ];
+
         // Get per_page from request, default 10
         $perPage = $request->get('per_page', 10);
 
@@ -52,7 +75,7 @@ class CatatanController extends Controller
             ->orderBy('namaupt')
             ->get();
 
-        return view('mclient.catatankartu.catatan', compact('data', 'picList', 'cardSupportingList', 'uptList'));
+        return view('mclient.catatankartu.catatan', compact('data', 'picList', 'cardSupportingList', 'uptList', 'totals'));
     }
 
     private function applyFilters($query, Request $request)
@@ -278,21 +301,47 @@ class CatatanController extends Controller
         $query = $this->applyFilters($query, $request);
 
         // Add date sorting when date filters are applied
-        if (
-            $request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')
-        ) {
+        if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
             $query = $query->orderBy('tanggal', 'asc');
         }
 
         $data = $query->orderBy('created_at', 'desc')->get();
 
+        // Calculate totals for summary cards
+        $totals = [
+            'kartu_baru' => $data->sum(function ($item) {
+                return intval($item->spam_vpas_kartu_baru ?? '0');
+            }),
+            'kartu_bekas' => $data->sum(function ($item) {
+                return intval($item->spam_vpas_kartu_bekas ?? '0');
+            }),
+            'kartu_goip' => $data->sum(function ($item) {
+                return intval($item->spam_vpas_kartu_goip ?? '0');
+            }),
+            'kartu_belum_register' => $data->sum(function ($item) {
+                return intval($item->kartu_belum_teregister ?? '0');
+            }),
+            'whatsapp_terpakai' => $data->sum(function ($item) {
+                return intval($item->whatsapp_telah_terpakai ?? '0');
+            }),
+            'kartu_terpakai_perhari' => $data->sum(function ($item) {
+                return intval($item->jumlah_kartu_terpakai_perhari ?? '0');
+            })
+        ];
+
         $pdfData = [
             'title' => 'List Data Catatan Kartu Vpas',
             'data' => $data,
-            'generated_at' => Carbon::now()->format('d M Y H:i:s')
+            'totals' => $totals, // Add totals to PDF data
+            'generated_at' => Carbon::now()->format('d M Y H:i:s'),
+            'total_records' => $data->count() // Optional: total count
         ];
 
         $pdf = Pdf::loadView('export.public.catatanKartuVpas.indexVpas', $pdfData);
+
+        // Optional: Set paper size and orientation
+        $pdf->setPaper('A4', 'landscape'); // Landscape lebih baik untuk tabel lebar
+
         $filename = 'list_catatan_kartu_vpas_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
 
         return $pdf->download($filename);

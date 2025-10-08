@@ -245,10 +245,18 @@ class PengirimanController extends Controller
         try {
             $data = $request->all();
 
-            if ($request->tanggal_pengiriman && $request->tanggal_sampai) {
-                $tanggalPengiriman = Carbon::parse($request->tanggal_pengiriman);
+            if ($request->tanggal_pengiriman) {
+                if ($request->tanggal_sampai) {
+                    $tanggalSampai = Carbon::parse($request->tanggal_sampai);
+                } else {
+                    $tanggalSampai = Carbon::now();
+                    $data['tanggal_sampai'] = $tanggalSampai;
+                }
+
                 $tanggalSampai = Carbon::parse($request->tanggal_sampai);
-                $data['durasi_hari'] = $tanggalSampai->diffInDays($tanggalPengiriman);
+                $data['durasi_hari'] = $tanggalSampai->diffInDays(Carbon::parse($request->tanggal_pengiriman));
+            } else {
+                $data['durasi_hari'] = null;
             }
 
             Pengiriman::create($data);
@@ -297,44 +305,30 @@ class PengirimanController extends Controller
         );
 
         if ($validator->fails()) {
-            $validatedData = [];
-            $invalidFields = array_keys($validator->errors()->messages());
-
-            foreach ($request->all() as $key => $value) {
-                if (!in_array($key, $invalidFields)) {
-                    $validatedData[$key] = $value;
-                }
-            }
-
-            try {
-                if (!empty($validatedData)) {
-                    $data = Pengiriman::findOrFail($id);
-
-                    if (isset($validatedData['tanggal_pengiriman']) && isset($validatedData['tanggal_sampai'])) {
-                        $tanggalPengiriman = Carbon::parse($validatedData['tanggal_pengiriman']);
-                        $tanggalSampai = Carbon::parse($validatedData['tanggal_sampai']);
-                        $validatedData['durasi_hari'] = $tanggalSampai->diffInDays($tanggalPengiriman);
-                    }
-
-                    $data->update($validatedData);
-                }
-            } catch (\Exception $e) {
-            }
-
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput()
-                ->with('partial_success', 'Data valid telah disimpan. Silakan perbaiki field yang bermasalah.');
+                ->with('error', 'Silakan periksa kembali data yang dimasukkan.');
         }
 
         try {
             $data = Pengiriman::findOrFail($id);
             $updateData = $request->all();
 
-            if ($request->tanggal_pengiriman && $request->tanggal_sampai) {
-                $tanggalPengiriman = Carbon::parse($request->tanggal_pengiriman);
+            // Kalkulasi durasi_hari jika tanggal_sampai diisi
+            if ($request->tanggal_sampai) {
+                // Gunakan tanggal_pengiriman dari request atau fallback ke data existing
+                if ($request->tanggal_pengiriman) {
+                    $tanggalPengiriman = Carbon::parse($request->tanggal_pengiriman);
+                } else {
+                    $tanggalPengiriman = Carbon::parse($data->tanggal_pengiriman ?? $data->created_at);
+                }
+
                 $tanggalSampai = Carbon::parse($request->tanggal_sampai);
-                $updateData['durasi_hari'] = $tanggalSampai->diffInDays($tanggalPengiriman);
+                $updateData['durasi_hari'] = $tanggalPengiriman->diffInDays($tanggalSampai);
+            } elseif ($request->has('tanggal_sampai') && empty($request->tanggal_sampai)) {
+                // Reset durasi_hari jika tanggal_sampai dikosongkan
+                $updateData['durasi_hari'] = null;
             }
 
             $data->update($updateData);

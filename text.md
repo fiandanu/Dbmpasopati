@@ -55,35 +55,33 @@ Auto Functions:
 =============================================================
 
 
-🔄 Di kolom Tanggal menjadi 1 flex column ----- done
-🔄 provider kendala  sama kanwil/nama wilayah dibuat export public all data Csv dan PDF
-🔄 sidebar untuk memilih kategori tidak ketutup
-
-- Tanggal dibuat Format menjadi Angka saja 
+-- Check Ulang
+✅ Di kolom Tanggal menjadi 1 flex column ----- done
+✅ provider kendala  sama kanwil/nama wilayah dibuat export public all data Csv dan PDF
+✅ sidebar untuk memilih kategori tidak ketutup
 ✅ Di setiap jenis kendala ditambahkan keterangan dan pdf/csv (limit 10 karakter) ----- done 
 ✅ Kanwil dan Nama Wilayah dibuat menjadi dropdown saja ------- done
 ✅ pada saat menentukan tanggal terlapor maka otomatis hari akan berjalan 
+✅ Nerapin Durasi Hari ke halaman yang pake ini di mclient Ponpes/UPT
+✅ pemindahan layout pencarian by tanggal keseluruhan 100%
+✅ pic 1 menjadi pic dan pic 2 menjadi penerima di bagian pengiriman alat ponpes 
+- (Nama Db Belum Diubah)
+✅ tanggal selesai di ganti menjadi tnaggal diterima di bagian pengiriman alat ponpes
+✅ perbaikan spasi bagian add data di user ponpes
 
 
 
 -- On Prosses
 
-🔄 Nerapin Durasi Hari ke halaman yang pake ini di mclient Ponpes/UPT
 
+🔄 menampilkan keseluruhan total data di bawah perncarian kartu gsm vpas vtren
+   (Pembenaran Layout Dan Penambahan"Opsional")
 
-(daffa dalam pengerjaan)
-🔄 pemindahan layout pencarian by tanggal keseluruhan
-80%
-
-🔄 pic 1 menjadi pic dan pic 2 menjadi penerima di bagian pengiriman alat ponpes 
-- (Nama Db Belum Diubah)
-
-
+(Daffa Dalam Pengerjaan)
 - Di Page DB UPT Dan Ponpes di Pks dan spp ditambahkan data mirip seperti di Mclient reguller 
 
 
-✅ tanggal selesai di ganti menjadi tnaggal diterima di bagian pengiriman alat ponpes
-✅ perbaikan spasi bagian add data di user ponpes
+
 
 
 -- On Discuss
@@ -91,11 +89,7 @@ Auto Functions:
 - Jumlah SST Reguller Diambil dari jumlah extension
 - Jumlah SST Vpas Diambil dari jumlah extension
 - perbaikan pencarian status upload pdf di spp di bagian database upt dan ponpes
-- menu user di limit 1000 data 
-- menampilkan keseluruhan total data di bawah perncarian kartu gsm vpas vtren
-- total data keseluruhan (?)
-- catatan kartu per bulan
-- kolom total kalkulasi data  
+- menu user di limit 1000 data  
 
 - kartu terpakai/hari menjadi kartu terpakai dibahian kartu
 - susunan tanggal di samping nama upt
@@ -106,8 +100,10 @@ dibuatkan tombol edit penambahan tanggal kontrak dan tanggal selesai kontrak di 
 
 
 
+
 Di Upt Pks
 add Column
+
 - Tanggal Kontrak dan Jatuh Tempo
 
 Di List Data Pks Upt

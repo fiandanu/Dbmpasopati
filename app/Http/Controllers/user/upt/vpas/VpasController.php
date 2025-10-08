@@ -173,106 +173,6 @@ class VpasController extends Controller
         return view('db.upt.vpas.indexVpas', compact('data', 'providers', 'vpns'));
     }
 
-    public function exportListCsv(Request $request): StreamedResponse
-    {
-        $query = Upt::with('dataOpsional')->where('tipe', 'vpas');
-        $query = $this->applyFilters($query, $request);
-
-        // Add date sorting when date filters are applied
-        if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
-            $query = $query->orderBy('tanggal', 'asc');
-        }
-
-        $data = $query->get();
-
-        // Apply status filter
-        $data = $this->applyStatusFilter($data, $request);
-
-        // Additional sorting if date filter is applied
-        if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
-            $data = $data->sortBy('tanggal')->values();
-        }
-
-        $filename = 'list_upt_vpas_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
-
-        $headers = [
-            "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
-        ];
-
-        $rows = [['No', 'Nama UPT', 'Kanwil', 'Tipe', 'Tanggal Dibuat', 'Status Update']];
-        $no = 1;
-        foreach ($data as $d) {
-            $status = $this->calculateStatus($d->dataOpsional);
-            $rows[] = [
-                $no++,
-                $d->namaupt,
-                $d->kanwil,
-                ucfirst($d->tipe),
-                \Carbon\Carbon::parse($d->tanggal)->format('d M Y'),
-                $status
-            ];
-        }
-
-        $callback = function () use ($rows) {
-            $file = fopen('php://output', 'w');
-            foreach ($rows as $row) {
-                fputcsv($file, $row);
-            }
-            fclose($file);
-        };
-
-        return response()->stream($callback, 200, $headers);
-    }
-
-    public function exportListPdf(Request $request)
-    {
-        $query = Upt::with('dataOpsional')->where('tipe', 'vpas');
-        $query = $this->applyFilters($query, $request);
-
-        // Add date sorting when date filters are applied
-        if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
-            $query = $query->orderBy('tanggal', 'asc');
-        }
-
-        $data = $query->get();
-
-        // Apply status filter
-        $data = $this->applyStatusFilter($data, $request);
-
-        // Convert collection to array with calculated status
-        $dataArray = [];
-        foreach ($data as $d) {
-            $dataItem = $d->toArray();
-            $dataItem['calculated_status'] = $this->calculateStatus($d->dataOpsional);
-            $dataArray[] = $dataItem;
-        }
-
-        // Additional sorting using correct field name
-        if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
-            usort($dataArray, function ($a, $b) {
-                $dateA = strtotime($a['tanggal']);
-                $dateB = strtotime($b['tanggal']);
-                return $dateA - $dateB;
-            });
-        }
-
-        $pdfData = [
-            'title' => 'List Data UPT VPAS',
-            'data' => $dataArray,
-            'optionalFields' => $this->optionalFields,
-            'generated_at' => Carbon::now()->format('d M Y H:i:s')
-        ];
-
-        $pdf = Pdf::loadView('export.public.db.upt.indexVpas', $pdfData);
-        $filename = 'list_upt_vpas_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
-
-        return $pdf->download($filename);
-    }
-
     public function ListUpdateVpas(Request $request, $id)
     {
         $validator = Validator::make(
@@ -402,12 +302,106 @@ class VpasController extends Controller
         }
     }
 
-    public function UserPage(Request $request)
+    public function exportListCsv(Request $request): StreamedResponse
     {
-        $dataupt = Upt::with(['dataOpsional', 'uploadFolder'])->get();
+        $query = Upt::with('dataOpsional')->where('tipe', 'vpas');
+        $query = $this->applyFilters($query, $request);
 
-        return view('user.indexUser', compact('dataupt'));
+        // Add date sorting when date filters are applied
+        if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
+            $query = $query->orderBy('tanggal', 'asc');
+        }
+
+        $data = $query->get();
+
+        // Apply status filter
+        $data = $this->applyStatusFilter($data, $request);
+
+        // Additional sorting if date filter is applied
+        if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
+            $data = $data->sortBy('tanggal')->values();
+        }
+
+        $filename = 'list_upt_vpas_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
+
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+
+        $rows = [['No', 'Nama UPT', 'Kanwil', 'Tipe', 'Tanggal Dibuat', 'Status Update']];
+        $no = 1;
+        foreach ($data as $d) {
+            $status = $this->calculateStatus($d->dataOpsional);
+            $rows[] = [
+                $no++,
+                $d->namaupt,
+                $d->kanwil,
+                ucfirst($d->tipe),
+                \Carbon\Carbon::parse($d->tanggal)->format('d M Y'),
+                $status
+            ];
+        }
+
+        $callback = function () use ($rows) {
+            $file = fopen('php://output', 'w');
+            foreach ($rows as $row) {
+                fputcsv($file, $row);
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
+
+    public function exportListPdf(Request $request)
+    {
+        $query = Upt::with('dataOpsional')->where('tipe', 'vpas');
+        $query = $this->applyFilters($query, $request);
+
+        // Add date sorting when date filters are applied
+        if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
+            $query = $query->orderBy('tanggal', 'asc');
+        }
+
+        $data = $query->get();
+
+        // Apply status filter
+        $data = $this->applyStatusFilter($data, $request);
+
+        // Convert collection to array with calculated status
+        $dataArray = [];
+        foreach ($data as $d) {
+            $dataItem = $d->toArray();
+            $dataItem['calculated_status'] = $this->calculateStatus($d->dataOpsional);
+            $dataArray[] = $dataItem;
+        }
+
+        // Additional sorting using correct field name
+        if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
+            usort($dataArray, function ($a, $b) {
+                $dateA = strtotime($a['tanggal']);
+                $dateB = strtotime($b['tanggal']);
+                return $dateA - $dateB;
+            });
+        }
+
+        $pdfData = [
+            'title' => 'List Data UPT VPAS',
+            'data' => $dataArray,
+            'optionalFields' => $this->optionalFields,
+            'generated_at' => Carbon::now()->format('d M Y H:i:s')
+        ];
+
+        $pdf = Pdf::loadView('export.public.db.upt.indexVpas', $pdfData);
+        $filename = 'list_upt_vpas_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
+
+        return $pdf->download($filename);
+    }
+
 
     public function DataBasePageDestroy($id)
     {
@@ -429,125 +423,6 @@ class VpasController extends Controller
         return redirect()->route('vpas.ListDataVpas')->with('success', 'Data berhasil dihapus!');
     }
 
-    public function UserPageStore(Request $request)
-    {
-        // Validasi input
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'namaupt' => 'required|string',
-                'kanwil' => 'required|string',
-                'tipe' => 'required|array|min:1',
-                'tipe.*' => 'in:reguler,vpas',
-            ],
-            [
-                'namaupt.required' => 'Nama UPT harus diisi',
-                'kanwil.required' => 'Kanwil harus diisi',
-                'tipe.required' => 'Tipe harus dipilih minimal satu',
-                'tipe.array' => 'Tipe harus berupa array',
-                'tipe.min' => 'Pilih minimal satu tipe',
-                'tipe.*.in' => 'Tipe hanya boleh reguler atau vpas',
-            ]
-        );
-
-        if ($validator->fails()) {
-            return redirect()->back()->withInput()->withErrors($validator);
-        }
-
-        // Ambil data tipe yang dipilih
-        $selectedTypes = $request->tipe;
-        $createdRecords = [];
-
-        // Bersihkan nama UPT dari suffix ganda yang mungkin ada
-        $cleanNamaUpt = $this->removeVpasRegSuffix($request->namaupt);
-
-        // Tentukan nama UPT berdasarkan jumlah tipe yang dipilih
-        $namaUpt = $cleanNamaUpt;
-        if (count($selectedTypes) == 2 && in_array('reguler', $selectedTypes) && in_array('vpas', $selectedTypes)) {
-            $namaUpt = $cleanNamaUpt . ' (VpasReg)';
-        }
-
-        // Validasi manual untuk kombinasi nama UPT + tipe
-        foreach ($selectedTypes as $tipeValue) {
-            $existingRecord = Upt::where('namaupt', $namaUpt)
-                ->where('tipe', $tipeValue)
-                ->first();
-
-            if ($existingRecord) {
-                return redirect()->back()
-                    ->withInput()
-                    ->with('error', "Data UPT '{$namaUpt}' dengan tipe '{$tipeValue}' sudah ada!");
-            }
-        }
-
-        // Loop untuk setiap tipe yang dipilih
-        foreach ($selectedTypes as $tipeValue) {
-            // Buat record baru untuk setiap tipe
-            $dataupt = [
-                'namaupt' => $namaUpt,
-                'kanwil' => $request->kanwil,
-                'tipe' => $tipeValue,
-                'tanggal' => Carbon::now()->format('Y-m-d'),
-            ];
-
-            $newRecord = Upt::create($dataupt);
-            $createdRecords[] = $tipeValue;
-        }
-
-        // Berikan pesan berdasarkan hasil
-        if (count($createdRecords) > 0) {
-            $message = 'Data UPT berhasil ditambahkan untuk tipe: ' . implode(', ', $createdRecords);
-            return redirect()->route('vpas.UserPage')->with('success', $message);
-        } else {
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'Gagal menambahkan data UPT');
-        }
-    }
-
-    public function UserPageUpdate(Request $request, $id)
-    {
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'namaupt' => [
-                    'required',
-                    'string',
-                    function ($attribute, $value, $fail) use ($id, $request) {
-                        // Cek apakah ada record lain dengan nama yang sama dan tipe yang sama
-                        $existingRecord = Upt::where('namaupt', $value)
-                            ->where('id', '!=', $id)
-                            ->where('tipe', $request->tipe)
-                            ->first();
-
-                        if ($existingRecord) {
-                            $fail("Nama UPT '{$value}' dengan tipe '{$request->tipe}' sudah ada.");
-                        }
-                    }
-                ],
-                'kanwil' => 'required|string',
-                'tipe' => 'required|string|in:reguler,vpas',
-            ],
-            [
-                'namaupt.required' => 'Nama UPT harus diisi',
-                'kanwil.required' => 'Kanwil harus diisi',
-                'tipe.required' => 'Tipe harus diisi',
-                'tipe.in' => 'Tipe hanya boleh reguler atau vpas',
-            ]
-        );
-
-        if ($validator->fails()) {
-            return redirect()->back()->withInput()->withErrors($validator);
-        }
-
-        $dataupt = Upt::findOrFail($id);
-        $dataupt->namaupt = $request->namaupt;
-        $dataupt->kanwil = $request->kanwil;
-        $dataupt->tipe = $request->tipe;
-        $dataupt->save();
-
-        return redirect()->route('vpas.UserPage')->with('success', 'Data UPT berhasil diupdate!');
-    }
 
     private function removeVpasRegSuffix($namaUpt)
     {
@@ -630,6 +505,7 @@ class VpasController extends Controller
 
         return response()->stream($callback, 200, $headers);
     }
+    
     private function formatStatusWartel($status)
     {
         if (empty($status)) {

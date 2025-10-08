@@ -323,11 +323,8 @@
                                                 </td>
                                                 <td class="text-center">
                                                     @if ($d->tanggal_selesai)
-                                                        {{-- Jika sudah selesai, tampilkan durasi final dalam hari saja --}}
                                                         <span class="Tipereguller">{{ $d->durasi_hari }} hari</span>
                                                     @else
-                                                        {{-- Jika belum selesai, tampilkan durasi real-time dengan jam:menit:detik
-                                                        --}}
                                                         <span class="Tipereguller durasi-realtime"
                                                             data-created="{{ $d->created_at->format('Y-m-d H:i:s') }}">
                                                             <span class="durasi-text">Menghitung...</span>

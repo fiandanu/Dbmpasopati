@@ -117,18 +117,23 @@
                 <!-- /.row -->
                 <div class="row">
                     <div class="col-12">
-                        @if (request('table_search'))
-                            <div class="card-body">
-                                <div class="alert alert-info">
-                                    <i class="fas fa-info-circle"></i>
-                                    Hasil pencarian untuk: "<strong>{{ request('table_search') }}</strong>"
-                                    <a href="{{ route('mikrotik_page.ListDataSpp') }}" class="btn btn-sm btn-secondary ml-2">
-                                        <i class="fas fa-times"></i> Clear
-                                    </a>
+
+                        <div class="d-flex gap-12">
+                            <div class="gap-12 w-fit">
+                                <div class="d-flex justify-content-center align-items-center gap-12">
+                                    <div class="btn-searchbar column-search">
+                                        <input type="date" id="search-tanggal-dari" name="search_tanggal_dari"
+                                            title="Tanggal Dari">
+                                    </div>
+                                    <div class="btn-searchbar column-search">
+                                        <input type="date" id="search-tanggal-sampai" name="search_tanggal_sampai"
+                                            title="Tanggal Sampai">
+                                    </div>
                                 </div>
                             </div>
-                        @endif
-                        <div class="card">
+                        </div>
+
+                        <div class="card mt-3">
                             <!-- /.card-header -->
                             <div class="card-body table-responsive p-0">
                                 <table class="table table-hover text-nowrap" id="Table">
@@ -156,20 +161,8 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th class="text-center">
-                                                <div class="d-flex flex-column gap-12">
-                                                    <span>Tanggal</span>
-                                                    <div class="d-flex justify-content-center align-items-center gap-12">
-                                                        <div class="btn-searchbar column-search">
-                                                            <input type="date" id="search-tanggal-dari"
-                                                                name="search_tanggal_dari" title="Tanggal Dari">
-                                                        </div>
-                                                        <div class="btn-searchbar column-search">
-                                                            <input type="date" id="search-tanggal-sampai"
-                                                                name="search_tanggal_sampai" title="Tanggal Sampai">
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                            <th class="text-center align-top">
+                                                <span>Tanggal</span>
                                             </th>
                                             <th class="text-center">
                                                 <div
@@ -231,12 +224,14 @@
                                                 </td>
                                                 <td class="text-center">
                                                     <div class="btn-group" role="group">
-                                                        <button data-toggle="modal" data-target="#uploadModal{{ $d->id }}"
+                                                        <button data-toggle="modal"
+                                                            data-target="#uploadModal{{ $d->id }}"
                                                             title="Upload PDF">
                                                             <ion-icon name="folder-outline"></ion-icon>
                                                         </button>
 
-                                                        <button data-toggle="modal" data-target="#modal-default{{ $d->id }}"
+                                                        <button data-toggle="modal"
+                                                            data-target="#modal-default{{ $d->id }}"
                                                             title="Hapus Data">
                                                             <ion-icon name="trash-outline"></ion-icon>
                                                         </button>
@@ -249,7 +244,8 @@
                                                 aria-labelledby="uploadModalLabel{{ $d->id }}" aria-hidden="true">
                                                 <div class="modal-dialog modal-lg">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('mikrotik_page.uploadFilePDF', [$d->id, 1]) }}"
+                                                        <form
+                                                            action="{{ route('mikrotik_page.uploadFilePDF', [$d->id, 1]) }}"
                                                             method="POST" enctype="multipart/form-data"
                                                             id="uploadForm{{ $d->id }}">
                                                             @csrf
@@ -267,7 +263,8 @@
                                                                 <div class="form-group">
                                                                     <label for="folderSelect{{ $d->id }}">Pilih
                                                                         Folder</label>
-                                                                    <select class="form-control" id="folderSelect{{ $d->id }}"
+                                                                    <select class="form-control"
+                                                                        id="folderSelect{{ $d->id }}"
                                                                         name="folder"
                                                                         onchange="updateFolder({{ $d->id }}, this.value)">
                                                                         @for ($i = 1; $i <= 10; $i++)
@@ -295,7 +292,8 @@
                                                                     <div class="card-header">
                                                                         <div class="label-medium-14">
                                                                             Status dan Aksi
-                                                                            <span id="currentFolder{{ $d->id }}">1</span>
+                                                                            <span
+                                                                                id="currentFolder{{ $d->id }}">1</span>
                                                                             <span id="currentFileName{{ $d->id }}"
                                                                                 class="text-muted">
                                                                                 @php
@@ -327,29 +325,37 @@
                                                                                     @endphp
 
                                                                                     @if ($hasFile)
-                                                                                        <div class="badge-succes mb-3 text-center">
-                                                                                            <i class="fas fa-check-circle"></i>
+                                                                                        <div
+                                                                                            class="badge-succes mb-3 text-center">
+                                                                                            <i
+                                                                                                class="fas fa-check-circle"></i>
                                                                                             PDF sudah tersedia untuk Folder
                                                                                             {{ $i }}
                                                                                         </div>
-                                                                                        <div class="btn-group mb-3 gap-3" role="group">
+                                                                                        <div class="btn-group mb-3 gap-3"
+                                                                                            role="group">
                                                                                             <a href="{{ route('mikrotik_page.viewpdf', [$d->id, $i]) }}"
-                                                                                                target="_blank" class="view-btn-pdf"
+                                                                                                target="_blank"
+                                                                                                class="view-btn-pdf"
                                                                                                 title="Lihat PDF Folder {{ $i }}">
                                                                                                 <i class="fas fa-eye"></i>
                                                                                                 View PDF
                                                                                             </a>
-                                                                                            <button type="button" class="delete-btn-pdf"
+                                                                                            <button type="button"
+                                                                                                class="delete-btn-pdf"
                                                                                                 data-toggle="modal"
                                                                                                 data-target="#deletePdfModal{{ $d->id }}_{{ $i }}"
                                                                                                 title="Hapus File PDF Folder {{ $i }}">
-                                                                                                <i class="fas fa-trash"></i>
+                                                                                                <i
+                                                                                                    class="fas fa-trash"></i>
                                                                                                 Delete
                                                                                             </button>
                                                                                         </div>
                                                                                     @else
-                                                                                        <div class="badge-prosses text-center">
-                                                                                            <i class="fas fa-exclamation-triangle"></i>
+                                                                                        <div
+                                                                                            class="badge-prosses text-center">
+                                                                                            <i
+                                                                                                class="fas fa-exclamation-triangle"></i>
                                                                                             Belum Upload Folder
                                                                                         </div>
                                                                                     @endif
@@ -360,10 +366,12 @@
                                                                 </div>
 
                                                                 <div>
-                                                                    <label for="uploaded_pdf{{ $d->id }}" class="btn-upload">
+                                                                    <label for="uploaded_pdf{{ $d->id }}"
+                                                                        class="btn-upload">
                                                                         Upload PDF
                                                                     </label>
-                                                                    <input type="file" id="uploaded_pdf{{ $d->id }}"
+                                                                    <input type="file"
+                                                                        id="uploaded_pdf{{ $d->id }}"
                                                                         name="uploaded_pdf" accept=".pdf"
                                                                         style="display: none;">
                                                                     <span id="fileNameDisplay{{ $d->id }}"
@@ -385,8 +393,10 @@
 
                                             {{-- Delete PDF Modals for Each Folder --}}
                                             @for ($i = 1; $i <= 10; $i++)
-                                                <div class="modal fade" id="deletePdfModal{{ $d->id }}_{{ $i }}" tabindex="-1"
-                                                    role="dialog" aria-labelledby="deletePdfModalLabel{{ $d->id }}_{{ $i }}"
+                                                <div class="modal fade"
+                                                    id="deletePdfModal{{ $d->id }}_{{ $i }}"
+                                                    tabindex="-1" role="dialog"
+                                                    aria-labelledby="deletePdfModalLabel{{ $d->id }}_{{ $i }}"
                                                     aria-hidden="true">
                                                     <div class="modal-dialog">
                                                         <div class="modal-content">
@@ -397,7 +407,8 @@
                                                                 <label>Apakah Folder <b> {{ $i }} </b> ingin
                                                                     dihapus?</label>
                                                             </div>
-                                                            <div class="modal-footer flex-row-reverse justify-content-between">
+                                                            <div
+                                                                class="modal-footer flex-row-reverse justify-content-between">
                                                                 <button type="button" class="btn-cancel-modal"
                                                                     data-dismiss="modal">Batal</button>
                                                                 <form
@@ -455,8 +466,8 @@
                                     </tbody>
 
                                     {{-- User Create Modal --}}
-                                    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel"
-                                        aria-hidden="true">
+                                    <div class="modal fade" id="addModal" tabindex="-1"
+                                        aria-labelledby="addModalLabel" aria-hidden="true">
                                         <form id="addForm" action="{{ route('mikrotik_page.store') }}" method="POST">
                                             @csrf
                                             <div class="modal-dialog">
@@ -474,8 +485,9 @@
                                                         <div class="mb-3">
                                                             <label for="tutor_mikrotik">Judul
                                                                 Tutorial</label>
-                                                            <input type="text" class="form-control" id="tutor_mikrotik"
-                                                                name="tutor_mikrotik" required placeholder="Masukan Judul">
+                                                            <input type="text" class="form-control"
+                                                                id="tutor_mikrotik" name="tutor_mikrotik" required
+                                                                placeholder="Masukan Judul">
                                                         </div>
                                                         @error('tutor_mikrotik')
                                                             <small class="text-danger">{{ $message }}</small>
@@ -511,9 +523,6 @@
                         <div class="btn-datakolom">
                             <form method="GET" class="d-flex align-items-center">
                                 <!-- Preserve all search parameters -->
-                                @if (request('table_search'))
-                                    <input type="hidden" name="table_search" value="{{ request('table_search') }}">
-                                @endif
                                 @if (request('search_judul'))
                                     <input type="hidden" name="search_judul" value="{{ request('search_judul') }}">
                                 @endif
@@ -530,8 +539,8 @@
                                 @endif
 
                                 <div class="d-flex align-items-center">
-                                    <select name="per_page" class="form-control form-control-sm pr-2" style="width: auto;"
-                                        onchange="this.form.submit()">
+                                    <select name="per_page" class="form-control form-control-sm pr-2"
+                                        style="width: auto;" onchange="this.form.submit()">
                                         <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10
                                         </option>
                                         <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>15
@@ -585,129 +594,129 @@
         <!-- /.content -->
     </div>
 
-{{-- jQuery Library --}}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
-    integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
-    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    {{-- jQuery Library --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-{{-- Search By Column JavaScript --}}
-<script>
-    $(document).ready(function() {
-        // Function to get current filter values
-        function getFilters() {
-            return {
-                search_judul: $('#search-judul').val().trim(),
-                search_tanggal_dari: $('#search-tanggal-dari').val().trim(),
-                search_tanggal_sampai: $('#search-tanggal-sampai').val().trim(),
-                search_status: $('#search-status').val().trim(),
-                per_page: $('select[name="per_page"]').val()
+    {{-- Search By Column JavaScript --}}
+    <script>
+        $(document).ready(function() {
+            // Function to get current filter values
+            function getFilters() {
+                return {
+                    search_judul: $('#search-judul').val().trim(),
+                    search_tanggal_dari: $('#search-tanggal-dari').val().trim(),
+                    search_tanggal_sampai: $('#search-tanggal-sampai').val().trim(),
+                    search_status: $('#search-status').val().trim(),
+                    per_page: $('select[name="per_page"]').val()
+                };
+            }
+
+            // Function to apply filters and redirect (GLOBAL)
+            window.applyFilters = function() {
+                let filters = getFilters();
+                let url = new URL(window.location.href);
+
+                // Remove existing filter parameters
+                url.searchParams.delete('search_judul');
+                url.searchParams.delete('search_tanggal_dari');
+                url.searchParams.delete('search_tanggal_sampai');
+                url.searchParams.delete('search_status');
+                url.searchParams.delete('page');
+
+                // Add non-empty filters
+                Object.keys(filters).forEach(key => {
+                    if (filters[key] && filters[key].trim() !== '' && key !== 'per_page') {
+                        url.searchParams.set(key, filters[key]);
+                    }
+                });
+
+                window.location.href = url.toString();
             };
-        }
 
-        // Function to apply filters and redirect (GLOBAL)
-        window.applyFilters = function() {
-            let filters = getFilters();
-            let url = new URL(window.location.href);
-
-            // Remove existing filter parameters
-            url.searchParams.delete('search_judul');
-            url.searchParams.delete('search_tanggal_dari');
-            url.searchParams.delete('search_tanggal_sampai');
-            url.searchParams.delete('search_status');
-            url.searchParams.delete('page');
-
-            // Add non-empty filters
-            Object.keys(filters).forEach(key => {
-                if (filters[key] && filters[key].trim() !== '' && key !== 'per_page') {
-                    url.searchParams.set(key, filters[key]);
+            // Bind keypress event to all search input fields
+            $('.column-search input').on('keypress', function(e) {
+                if (e.which === 13) { // Enter key
+                    applyFilters();
                 }
             });
 
-            window.location.href = url.toString();
-        };
+            // Clear individual column search when input is emptied
+            $('.column-search input').on('keyup', function(e) {
+                if (e.which === 13 && $(this).val().trim() === '') {
+                    applyFilters();
+                }
+            });
 
-        // Bind keypress event to all search input fields
-        $('.column-search input').on('keypress', function(e) {
-            if (e.which === 13) { // Enter key
-                applyFilters();
+            // Download functions with current filters
+            window.downloadCsv = function() {
+                let filters = getFilters();
+                let form = document.createElement('form');
+                form.method = 'GET';
+                form.action = '{{ route('mikrotik_page.export.mikrotik.list.csv') }}';
+                form.target = '_blank';
+
+                Object.keys(filters).forEach(key => {
+                    if (filters[key] && key !== 'per_page') {
+                        let input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = key;
+                        input.value = filters[key];
+                        form.appendChild(input);
+                    }
+                });
+
+                document.body.appendChild(form);
+                form.submit();
+                document.body.removeChild(form);
+            };
+
+            window.downloadPdf = function() {
+                let filters = getFilters();
+                let form = document.createElement('form');
+                form.method = 'GET';
+                form.action = '{{ route('mikrotik_page.export.mikrotik.list.pdf') }}';
+                form.target = '_blank';
+
+                Object.keys(filters).forEach(key => {
+                    if (filters[key] && key !== 'per_page') {
+                        let input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = key;
+                        input.value = filters[key];
+                        form.appendChild(input);
+                    }
+                });
+
+                document.body.appendChild(form);
+                form.submit();
+                document.body.removeChild(form);
+            };
+
+            // Load filter values from URL on page load
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('search_judul')) {
+                $('#search-judul').val(urlParams.get('search_judul'));
+            }
+            if (urlParams.get('search_tanggal_dari')) {
+                $('#search-tanggal-dari').val(urlParams.get('search_tanggal_dari'));
+            }
+            if (urlParams.get('search_tanggal_sampai')) {
+                $('#search-tanggal-sampai').val(urlParams.get('search_tanggal_sampai'));
+            }
+            if (urlParams.get('search_status')) {
+                $('#search-status').val(urlParams.get('search_status'));
+            }
+
+            // Show export buttons if there's data
+            if ($("#Table tbody tr").length > 0 && !$("#Table tbody tr").find('td[colspan="5"]').length) {
+                $("#export-buttons").show();
+            } else {
+                $("#export-buttons").hide();
             }
         });
+    </script>
 
-        // Clear individual column search when input is emptied
-        $('.column-search input').on('keyup', function(e) {
-            if (e.which === 13 && $(this).val().trim() === '') {
-                applyFilters();
-            }
-        });
-
-        // Download functions with current filters
-        window.downloadCsv = function() {
-            let filters = getFilters();
-            let form = document.createElement('form');
-            form.method = 'GET';
-            form.action = '{{ route('mikrotik_page.export.mikrotik.list.csv') }}';
-            form.target = '_blank';
-
-            Object.keys(filters).forEach(key => {
-                if (filters[key] && key !== 'per_page') {
-                    let input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = key;
-                    input.value = filters[key];
-                    form.appendChild(input);
-                }
-            });
-
-            document.body.appendChild(form);
-            form.submit();
-            document.body.removeChild(form);
-        };
-
-        window.downloadPdf = function() {
-            let filters = getFilters();
-            let form = document.createElement('form');
-            form.method = 'GET';
-            form.action = '{{ route('mikrotik_page.export.mikrotik.list.pdf') }}';
-            form.target = '_blank';
-
-            Object.keys(filters).forEach(key => {
-                if (filters[key] && key !== 'per_page') {
-                    let input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = key;
-                    input.value = filters[key];
-                    form.appendChild(input);
-                }
-            });
-
-            document.body.appendChild(form);
-            form.submit();
-            document.body.removeChild(form);
-        };
-
-        // Load filter values from URL on page load
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('search_judul')) {
-            $('#search-judul').val(urlParams.get('search_judul'));
-        }
-        if (urlParams.get('search_tanggal_dari')) {
-            $('#search-tanggal-dari').val(urlParams.get('search_tanggal_dari'));
-        }
-        if (urlParams.get('search_tanggal_sampai')) {
-            $('#search-tanggal-sampai').val(urlParams.get('search_tanggal_sampai'));
-        }
-        if (urlParams.get('search_status')) {
-            $('#search-status').val(urlParams.get('search_status'));
-        }
-
-        // Show export buttons if there's data
-        if ($("#Table tbody tr").length > 0 && !$("#Table tbody tr").find('td[colspan="5"]').length) {
-            $("#export-buttons").show();
-        } else {
-            $("#export-buttons").hide();
-        }
-    });
-</script>
-
-{{-- Script yang sudah ada sebelumnya (updateFolder, dll) tetap dipertahankan --}}
+    {{-- Script yang sudah ada sebelumnya (updateFolder, dll) tetap dipertahankan --}}
 @endsection

@@ -122,7 +122,23 @@
                 <!-- /.row -->
                 <div class="row">
                     <div class="col-12">
-                        <div class="card">
+
+                        <div class="d-flex gap-12">
+                            <div class="gap-12 w-fit text-center">
+                                <div class="d-flex justify-content-center align-items-center gap-12">
+                                    <div class="btn-searchbar column-search">
+                                        <input type="date" id="search-tanggal-dibuat-dari"
+                                            name="search_tanggal_dibuat_dari" title="Tanggal Dibuat Dari">
+                                    </div>
+                                    <div class="btn-searchbar column-search">
+                                        <input type="date" id="search-tanggal-dibuat-sampai"
+                                            name="search_tanggal_dibuat_sampai" title="Tanggal Dibuat Sampai">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card mt-3">
                             <!-- /.card-header -->
                             <div class="card-body table-responsive p-0">
                                 <table class="table table-hover text-nowrap" id="Table">
@@ -151,22 +167,8 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th class="text-center">
-                                                <div class="d-flex flex-column gap-12">
-                                                    <span>Tanggal Dibuat</span>
-                                                    <div class="d-flex flex-column justify-content-center align-items-center gap-12">
-                                                        <div class="btn-searchbar column-search">
-                                                            <input type="date" id="search-tanggal-dibuat-dari"
-                                                                name="search_tanggal_dibuat_dari"
-                                                                title="Tanggal Dibuat Dari">
-                                                        </div>
-                                                        <div class="btn-searchbar column-search">
-                                                            <input type="date" id="search-tanggal-dibuat-sampai"
-                                                                name="search_tanggal_dibuat_sampai"
-                                                                title="Tanggal Dibuat Sampai">
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                            <th class="text-center align-top">
+                                                <span>Tanggal Dibuat</span>
                                             </th>
                                             <th class="text-center align-top">
                                                 <div class="d-flex flex-column gap-12">

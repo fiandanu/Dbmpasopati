@@ -5,6 +5,7 @@ use App\Http\Controllers\user\upt\pks\PksController;
 // PKS
 Route::prefix('dbpks')->name('dbpks.')->group(function () {
     Route::get('/ListDataPks', [PksController::class, 'ListDataPks'])->name('ListDataPks');
+    Route::post('/store', [PksController::class, 'dbPksStore'])->name('dbPksStore');
     Route::delete('/DataBasePageDestroy/{id}', [PksController::class, 'DataBasePageDestroy'])->name('DataBasePageDestroy');
 
     // PDF routes

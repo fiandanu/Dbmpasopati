@@ -246,10 +246,18 @@ class KunjunganController extends Controller
         try {
             $data = $request->all();
 
-            if ($request->jadwal && $request->tanggal_selesai) {
-                $jadwal = Carbon::parse($request->jadwal);
+            if ($request->tanggal_selesai) {
+                if ($request->tanggal_terlapor) {
+                    $tanggalTerlapor = Carbon::parse($request->tanggal_terlapor);
+                } else {
+                    $tanggalTerlapor = Carbon::now();
+                    $data['tanggal_terlapor'] = $tanggalTerlapor;
+                }
+
                 $tanggalSelesai = Carbon::parse($request->tanggal_selesai);
-                $data['durasi_hari'] = $tanggalSelesai->diffInDays($jadwal);
+                $data['durasi_hari'] = $tanggalTerlapor->diffInDays($tanggalSelesai);
+            } else {
+                $data['durasi_hari'] = null;
             }
 
             Kunjungan::create($data);
@@ -298,44 +306,26 @@ class KunjunganController extends Controller
         );
 
         if ($validator->fails()) {
-            $validatedData = [];
-            $invalidFields = array_keys($validator->errors()->messages());
-
-            foreach ($request->all() as $key => $value) {
-                if (!in_array($key, $invalidFields)) {
-                    $validatedData[$key] = $value;
-                }
-            }
-
-            try {
-                if (!empty($validatedData)) {
-                    $data = Kunjungan::findOrFail($id);
-
-                    if (isset($validatedData['jadwal']) && isset($validatedData['tanggal_selesai'])) {
-                        $jadwal = Carbon::parse($validatedData['jadwal']);
-                        $tanggalSelesai = Carbon::parse($validatedData['tanggal_selesai']);
-                        $validatedData['durasi_hari'] = $tanggalSelesai->diffInDays($jadwal);
-                    }
-
-                    $data->update($validatedData);
-                }
-            } catch (\Exception $e) {
-            }
-
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput()
-                ->with('partial_success', 'Data valid telah disimpan. Silakan perbaiki field yang bermasalah.');
+                ->with('error', 'Silakan periksa kembali data yang dimasukkan.');
         }
 
         try {
             $data = Kunjungan::findOrFail($id);
             $updateData = $request->all();
 
-            if ($request->jadwal && $request->tanggal_selesai) {
-                $jadwal = Carbon::parse($request->jadwal);
+            if ($request->tanggal_selesai) {
+                if ($request->tanggal_terlapor) {
+                    $tanggalTerlapor = Carbon::parse($request->tanggal_terlapor);
+                } else {
+                    $tanggalTerlapor = Carbon::parse($data->tanggal_terlapor ?? $data->created_at);
+                }
                 $tanggalSelesai = Carbon::parse($request->tanggal_selesai);
-                $updateData['durasi_hari'] = $tanggalSelesai->diffInDays($jadwal);
+                $updateData['durasi_hari'] = $tanggalTerlapor->diffInDays($tanggalSelesai);
+            } elseif ($request->has('tanggal_selesai') && empty($request->tanggal_selesai)) {
+                $updateData['durasi_hari'] = null;
             }
 
             $data->update($updateData);
