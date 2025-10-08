@@ -482,7 +482,7 @@ class RegullerController extends Controller
             'user' => $user,
         ];
 
-        $pdf = Pdf::loadView('export.private.upt.indexUpt', $data);
+        $pdf = Pdf::loadView('export.private.upt.indexReguller', $data);
         return $pdf->download('data_upt_' . $user->namaupt . '.pdf');
     }
 }

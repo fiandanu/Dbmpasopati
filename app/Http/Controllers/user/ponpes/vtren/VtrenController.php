@@ -36,7 +36,10 @@ class VtrenController extends Controller
         'jumlah_extension',
         'no_extension',
         'extension_password',
-        'pin_tes'
+        'pin_tes',
+        'no_pemanggil',
+        'email_airdroid',
+        'password'
     ];
 
     private function calculateStatus($dataOpsional)
@@ -310,7 +313,10 @@ class VtrenController extends Controller
                 'jumlah_extension' => 'nullable|integer|min:0',
                 'no_extension' => 'nullable|string',
                 'extension_password' => 'nullable|string',
-                'pin_tes' => 'nullable|string|max:255',
+                'pin_tes' => 'nullable|string',
+                'no_pemanggil' => 'nullable|string',
+                'email_airdroid' => 'nullable|string',
+                'password' => 'nullable|string',
             ],
             [
                 'nama_ponpes.string' => 'Nama Ponpes harus berupa teks.',
@@ -343,7 +349,10 @@ class VtrenController extends Controller
                 'jumlah_extension.min' => 'Jumlah extension tidak boleh negatif.',
                 'no_extension.string' => 'Nomor extension harus berupa teks.',
                 'extension_password.string' => 'Password extension harus berupa teks.',
-                'pin_tes.string' => 'PIN Tes harus berupa teks.'
+                'pin_tes.string' => 'PIN Tes harus berupa teks.',
+                'no_pemanggil.string' => 'No Pemanggil harus berupa teks.',
+                'email_airdroid.string' => 'Email Airdroid harus berupa teks.',
+                'password.string' => 'Password harus berupa teks.',
             ]
         );
 
@@ -390,6 +399,9 @@ class VtrenController extends Controller
                 'pin_tes' => $request->pin_tes,
                 'no_extension' => $request->no_extension,
                 'extension_password' => $request->extension_password,
+                'no_pemanggil' => $request->no_pemanggil,
+                'email_airdroid' => $request->email_airdroid,
+                'password' => $request->password,
             ];
 
             $ponpes->dataOpsional()->updateOrCreate(
@@ -470,6 +482,9 @@ class VtrenController extends Controller
             ['No Extension', $dataOpsional ? $dataOpsional->no_extension : ''],
             ['Extension Password', $dataOpsional ? $dataOpsional->extension_password : ''],
             ['PIN Tes', $dataOpsional ? $dataOpsional->pin_tes : ''],
+            ['No Pemanggil', $dataOpsional ? $dataOpsional->no_pemanggil : ''],
+            ['Email Airdroid', $dataOpsional ? $dataOpsional->email_airdroid : ''],
+            ['Password', $dataOpsional ? $dataOpsional->password : ''],
         ];
 
         $callback = function () use ($rows) {
@@ -513,7 +528,7 @@ class VtrenController extends Controller
             'ponpes' => $ponpes,
         ];
 
-        $pdf = Pdf::loadView('export.private.ponpes.indexPonpes', $data);
+        $pdf = Pdf::loadView('export.private.ponpes.indexVtren', $data);
 
         $pdf->setPaper('A4', 'portrait');
 

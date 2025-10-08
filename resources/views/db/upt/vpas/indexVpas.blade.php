@@ -219,8 +219,9 @@
                                                     'vpn_password',
                                                     'jenis_vpn',
                                                     'jumlah_extension',
-                                                    'no_extension',
-                                                    'extension_password',
+                                                    'no_pemanggil',
+                                                    'email_airdroid',
+                                                    'password',
                                                     'pin_tes',
                                                 ];
                                                 $filledFields = 0;
@@ -541,23 +542,27 @@
                                                         placeholder="Masukkan Pin Test">
                                                 </div>
                                                 <div class="mb-3">
-                                                    <label for="no_extension{{ $d->id }}" class="form-label">No
-                                                        Extension</label>
-                                                    <small class="text-muted d-block mb-2">Masukkan setiap nomor extension
+                                                    <label for="no_pemanggil{{ $d->id }}" class="form-label">No
+                                                        Pemanggil</label>
+                                                    <small class="text-muted d-block mb-2">Masukkan setiap nomor pemanggil
                                                         pada baris
                                                         terpisah</small>
-                                                    <textarea class="form-control" id="no_extension{{ $d->id }}" name="no_extension" rows="6"
-                                                        placeholder="Contoh:&#10;201&#10;202&#10;203">{{ $dataOpsional->no_extension ?? '' }}</textarea>
+                                                    <textarea class="form-control" id="no_pemanggil{{ $d->id }}" name="no_pemanggil" rows="6"
+                                                        placeholder="Contoh:&#10;201&#10;202&#10;203">{{ $dataOpsional->no_pemanggil ?? '' }}</textarea>
                                                 </div>
                                                 <div class="mb-3">
-                                                    <label for="extension_password{{ $d->id }}"
-                                                        class="form-label">Password
-                                                        Extension</label>
+                                                    <label for="email_airdroid{{ $d->id }}" class="form-label">Email AirDroid</label>
+                                                    <small class="text-muted d-block mb-2">Masukkan setiap email AirDroid pada baris terpisah</small>
+                                                    <textarea class="form-control" id="email_airdroid{{ $d->id }}" name="email_airdroid" rows="6"
+                                                        placeholder="Contoh:&#10;email1@example.com&#10;email2@example.com&#10;email3@example.com">{{ $dataOpsional->email_airdroid ?? '' }}</textarea>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="password{{ $d->id }}" class="form-label">Password
+                                                        </label>
                                                     <small class="text-muted d-block mb-2">Masukkan setiap password
-                                                        extension pada
-                                                        baris terpisah (sesuai urutan nomor extension di atas)</small>
-                                                    <textarea class="form-control" id="extension_password{{ $d->id }}" name="extension_password" rows="6"
-                                                        placeholder="Contoh:&#10;password1&#10;password2&#10;password3">{{ $dataOpsional->extension_password ?? '' }}</textarea>
+                                                        baris terpisah (sesuai urutan nomor AirDroid di atas)</small>
+                                                    <textarea class="form-control" id="password{{ $d->id }}" name="password" rows="6"
+                                                        placeholder="Contoh:&#10;password1&#10;password2&#10;password3">{{ $dataOpsional->password ?? '' }}</textarea>
                                                 </div>
                                             </div>
                                         </div>

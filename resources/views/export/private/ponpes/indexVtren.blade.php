@@ -71,54 +71,58 @@
             <td colspan="2" class="section-header">Data Opsional</td>
         </tr>
         <tr>
-            <td class="nowrap">PIC UPT</td>
-            <td>{{ $user->dataOpsional->pic_upt ?? '' }}</td>
+            <td class="nowrap">PIC PONPES</td>
+            <td>{{ $ponpes->dataOpsional->pic_ponpes ?? '' }}</td>
         </tr>
         <tr>
             <td>No. Telpon</td>
-            <td>{{ $user->dataOpsional->no_telpon ?? '' }}</td>
+            <td>{{ $ponpes->dataOpsional->no_telpon ?? '' }}</td>
         </tr>
         <tr>
             <td>Alamat</td>
-            <td>{{ $user->dataOpsional->alamat ?? '' }}</td>
+            <td>{{ $ponpes->dataOpsional->alamat ?? '' }}</td>
         </tr>
         <tr>
-            <td>Kanwil</td>
-            <td>{{ $user->kanwil }}</td>
+            <td>Wilayah</td>
+            <td>{{ $ponpes->nama_wilayah }}</td>
         </tr>
         <tr>
             <td>Jumlah WBP</td>
-            <td>{{ $user->dataOpsional->jumlah_wbp ?? '' }}</td>
+            <td>{{ $ponpes->dataOpsional->jumlah_wbp ?? '' }}</td>
         </tr>
         <tr>
             <td>Jumlah Line Reguler Terpasang</td>
-            <td>{{ $user->dataOpsional->jumlah_line ?? '' }}</td>
+            <td>{{ $ponpes->dataOpsional->jumlah_line ?? '' }}</td>
         </tr>
         <tr>
             <td>Provider Internet</td>
-            <td>{{ $user->dataOpsional->provider_internet ?? '' }}</td>
+            <td>{{ $ponpes->dataOpsional->provider_internet ?? '' }}</td>
         </tr>
         <tr>
             <td>Kecepatan Internet (mbps)</td>
-            <td>{{ $user->dataOpsional->kecepatan_internet ?? '' }}</td>
+            <td>{{ $ponpes->dataOpsional->kecepatan_internet ?? '' }}</td>
         </tr>
         <tr>
-            <td>Tarif Wartel</td>
-            <td>{{ $user->dataOpsional->tarif_wartel ?? '' }}</td>
+            <td>Tarif Wartel Reguler</td>
+            <td>{{ $ponpes->dataOpsional->tarif_wartel ?? '' }}</td>
         </tr>
-
         <tr>
             <td>Status Wartel</td>
             <td>
                 @php
-                    $status = $user->dataOpsional->status_wartel ?? '';
+                    $status = $ponpes->dataOpsional->status_wartel ?? '';
                     if (empty($status)) {
                         echo '';
                     } else {
                         $status = strtolower(trim($status));
                         if ($status === 'aktif' || $status === '1' || $status === 'active') {
                             echo 'Aktif';
-                        } elseif ($status === 'tidak aktif' || $status === 'nonaktif' || $status === '0' || $status === 'inactive') {
+                        } elseif (
+                            $status === 'tidak aktif' ||
+                            $status === 'nonaktif' ||
+                            $status === '0' ||
+                            $status === 'inactive'
+                        ) {
                             echo 'Tidak Aktif';
                         } else {
                             echo ucfirst($status);
@@ -128,24 +132,25 @@
             </td>
         </tr>
 
+
         <tr>
             <td colspan="2" class="section-header">IMC PAS</td>
         </tr>
         <tr>
             <td>Akses Topup Pulsa</td>
-            <td>{{ $user->dataOpsional->akses_topup_pulsa ?? '' }}</td>
+            <td>{{ $ponpes->dataOpsional->akses_topup_pulsa ?? '' }}</td>
         </tr>
         <tr>
             <td>Password Topup</td>
-            <td>{{ $user->dataOpsional->password_topup ?? '' }}</td>
+            <td>{{ $ponpes->dataOpsional->password_topup ?? '' }}</td>
         </tr>
         <tr>
             <td>Akses Download Rekaman</td>
-            <td>{{ $user->dataOpsional->akses_download_rekaman ?? '' }}</td>
+            <td>{{ $ponpes->dataOpsional->akses_download_rekaman ?? '' }}</td>
         </tr>
         <tr>
             <td>Password Download</td>
-            <td>{{ $user->dataOpsional->password_download ?? '' }}</td>
+            <td>{{ $ponpes->dataOpsional->password_download ?? '' }}</td>
         </tr>
 
         <tr>
@@ -153,31 +158,31 @@
         </tr>
         <tr>
             <td>Internet Protocol</td>
-            <td>{{ $user->dataOpsional->internet_protocol ?? '' }}</td>
+            <td>{{ $ponpes->dataOpsional->internet_protocol ?? '' }}</td>
         </tr>
         <tr>
             <td>VPN User</td>
-            <td>{{ $user->dataOpsional->vpn_user ?? '' }}</td>
+            <td>{{ $ponpes->dataOpsional->vpn_user ?? '' }}</td>
         </tr>
         <tr>
             <td>VPN Password</td>
-            <td>{{ $user->dataOpsional->vpn_password ?? '' }}</td>
+            <td>{{ $ponpes->dataOpsional->vpn_password ?? '' }}</td>
         </tr>
         <tr>
             <td>Jenis VPN</td>
-            <td>{{ $user->dataOpsional->jenis_vpn ?? '' }}</td>
+            <td>{{ $ponpes->dataOpsional->jenis_vpn ?? '' }}</td>
         </tr>
 
         <tr>
-            <td colspan="2" class="section-header">Extension VPAS</td>
+            <td colspan="2" class="section-header">Extension Reguler</td>
         </tr>
         <tr>
             <td>Jumlah Extension</td>
-            <td>{{ $user->dataOpsional->jumlah_extension ?? '' }}</td>
+            <td>{{ $ponpes->dataOpsional->jumlah_extension ?? '' }}</td>
         </tr>
         <tr>
             <td>PIN Tes</td>
-            <td>{{ $user->dataOpsional->pin_tes ?? '' }}</td>
+            <td>{{ $ponpes->dataOpsional->pin_tes ?? '' }}</td>
         </tr>
     </table>
 
@@ -190,20 +195,20 @@
         <thead>
             <tr>
                 <th style="width: 10%;">No</th>
-                <th style="width: 30%;">No Pemanggil</th>
-                <th style="width: 30%;">Email AirDroid</th>
-                <th style="width: 30%;">Password</th>
+                <th style="width: 45%;">No Pemanggil</th>
+                <th style="width: 45%;">Email Airdroid</th>
+                <th style="width: 45%;">Password</th>
             </tr>
         </thead>
         <tbody>
             @php
-                $extensions = explode("\n", $user->dataOpsional->no_pemanggil ?? '');
-                $emails = explode("\n", $user->dataOpsional->email_airdroid ?? '');
-                $passwords = explode("\n", $user->dataOpsional->password ?? '');
+                $extensions = explode("\n", $ponpes->dataOpsional->no_pemanggil ?? '');
+                $emails = explode("\n", $ponpes->dataOpsional->email_airdroid ?? '');
+                $passwords = explode("\n", $ponpes->dataOpsional->password ?? '');
                 $maxRows = max(count($extensions), count($emails), count($passwords));
             @endphp
 
-            @for($i = 0; $i < $maxRows; $i++)
+            @for ($i = 0; $i < $maxRows; $i++)
                 <tr>
                     <td>{{ $i + 1 }}</td>
                     <td>{{ $extensions[$i] ?? '' }}</td>
@@ -212,7 +217,7 @@
                 </tr>
             @endfor
 
-            @if($maxRows == 0)
+            @if ($maxRows == 0)
                 <tr>
                     <td colspan="3" style="text-align: center; font-style: italic;">Tidak ada data extension</td>
                 </tr>

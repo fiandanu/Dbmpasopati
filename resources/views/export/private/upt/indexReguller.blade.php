@@ -184,30 +184,27 @@
     <!-- Tabel Extension Terpisah -->
     <div class="section-header"
         style="text-align: center; font-weight: bold; background-color: #e4e4e4; padding: 8px; margin-bottom: 10px;">
-        Daftar Extension dan Password
+        Daftar Email Airdroid dan Password
     </div>
     <table class="extension-table">
         <thead>
             <tr>
                 <th style="width: 10%;">No</th>
-                <th style="width: 30%;">No Pemanggil</th>
-                <th style="width: 30%;">Email AirDroid</th>
-                <th style="width: 30%;">Password</th>
+                <th style="width: 30%;">No Extension</th>
+                <th style="width: 30%;">Password Extension</th>
             </tr>
         </thead>
         <tbody>
             @php
-                $extensions = explode("\n", $user->dataOpsional->no_pemanggil ?? '');
-                $emails = explode("\n", $user->dataOpsional->email_airdroid ?? '');
-                $passwords = explode("\n", $user->dataOpsional->password ?? '');
-                $maxRows = max(count($extensions), count($emails), count($passwords));
+                $extensions = explode("\n", $user->dataOpsional->no_extension ?? '');
+                $passwords = explode("\n", $user->dataOpsional->extension_password ?? '');
+                $maxRows = max(count($extensions), count($passwords));
             @endphp
 
             @for($i = 0; $i < $maxRows; $i++)
                 <tr>
                     <td>{{ $i + 1 }}</td>
                     <td>{{ $extensions[$i] ?? '' }}</td>
-                    <td>{{ $emails[$i] ?? '' }}</td>
                     <td>{{ $passwords[$i] ?? '' }}</td>
                 </tr>
             @endfor

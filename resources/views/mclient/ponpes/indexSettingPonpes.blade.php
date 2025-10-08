@@ -285,10 +285,30 @@
                                                         {{ $d->formatted_jenis_layanan }}
                                                     </span>
                                                 </td>
-                                                <td class="text-center">
-                                                    <span class="Tipereguller">
-                                                        {{ Str::limit($d->keterangan ?? 'Tidak ada keterangan', 40) }}
-                                                    </span>
+                                                <td>
+                                                    @if ($d->keterangan && strlen($d->keterangan) > 20)
+                                                        <div id="short-text-{{ $d->id }}">
+                                                            <div>{{ Str::limit($d->keterangan, 20) }}</div>
+                                                            <a href="javascript:void(0)"
+                                                                onclick="toggleDetail({{ $d->id }})"
+                                                                class="text-primary">
+                                                                <small>Show</small>
+                                                            </a>
+                                                        </div>
+                                                        <div id="full-text-{{ $d->id }}" style="display: none;">
+                                                            <div
+                                                                style="white-space: pre-wrap; word-wrap: break-word; max-width: 300px;">
+                                                                {{ $d->keterangan }}
+                                                            </div>
+                                                            <a href="javascript:void(0)"
+                                                                onclick="toggleDetail({{ $d->id }})"
+                                                                class="text-primary">
+                                                                <small>Hide</small>
+                                                            </a>
+                                                        </div>
+                                                    @else
+                                                        {{ $d->keterangan ?? '-' }}
+                                                    @endif
                                                 </td>
                                                 <td class="text-center">
                                                     {{ $d->tanggal_terlapor ? \Carbon\Carbon::parse($d->tanggal_terlapor)->translatedFormat('d M Y') : '-' }}
@@ -297,10 +317,15 @@
                                                     {{ $d->tanggal_selesai ? \Carbon\Carbon::parse($d->tanggal_selesai)->translatedFormat('d M Y') : '-' }}
                                                 </td>
                                                 <td class="text-center">
-                                                    @if ($d->durasi_hari)
+                                                    @if ($d->tanggal_selesai)
+                                                        {{-- Jika sudah selesai, tampilkan durasi final dalam hari saja --}}
                                                         <span class="Tipereguller">{{ $d->durasi_hari }} hari</span>
                                                     @else
-                                                        -
+                                                        {{-- Jika belum selesai, tampilkan durasi real-time --}}
+                                                        <span class="Tipereguller durasi-realtime"
+                                                            data-created="{{ $d->created_at->format('Y-m-d H:i:s') }}">
+                                                            <span class="durasi-text">Menghitung...</span>
+                                                        </span>
                                                     @endif
                                                 </td>
                                                 <td class="text-center">
@@ -474,14 +499,12 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="column">
-                                                    <div class="mb-3">
-                                                        <label for="durasi_hari">Durasi (Hari)</label>
-                                                        <input type="number" class="form-control" id="durasi_hari"
-                                                            name="durasi_hari" min="0"
-                                                            placeholder="Masukkan durasi dalam hari">
-                                                    </div>
-                                                </div>
+<div class="mb-3">
+    <label for="durasi_hari" class="form-label">Durasi</label>
+    <input type="text" class="form-control" id="durasi_hari"
+        value="Akan dihitung otomatis" readonly>
+    <small class="form-text text-muted">Durasi akan dihitung otomatis setelah data disimpan</small>
+</div>
                                                 <div class="column">
                                                     <div class="mb-3">
                                                         <label for="status">Status</label>
@@ -638,13 +661,19 @@
 
                                                     <div class="column">
                                                         <div class="mb-3">
-                                                            <label for="durasi_hari{{ $d->id }}">Durasi
-                                                                (Hari)
-                                                            </label>
-                                                            <input type="number" class="form-control"
-                                                                id="durasi_hari{{ $d->id }}" name="durasi_hari"
-                                                                min="0" value="{{ $d->durasi_hari }}"
-                                                                placeholder="Masukkan durasi dalam hari">
+                                                            <label for="durasi_hari{{ $d->id }}" class="form-label">Durasi</label>
+                                                            @if ($d->tanggal_selesai)
+                                                                <input type="text" class="form-control"
+                                                                    id="durasi_hari{{ $d->id }}"
+                                                                    value="{{ $d->durasi_hari }} hari (Final)" readonly>
+                                                                <small class="form-text text-muted">Durasi final telah ditetapkan</small>
+                                                            @else
+                                                                <input type="text" class="form-control durasi-realtime-modal"
+                                                                    id="durasi_hari{{ $d->id }}"
+                                                                    data-created="{{ $d->created_at->format('Y-m-d H:i:s') }}"
+                                                                    value="Menghitung..." readonly>
+                                                                <small class="form-text text-muted">Durasi masih berjalan secara real-time</small>
+                                                            @endif
                                                         </div>
                                                     </div>
                                                     <div class="column">
@@ -841,6 +870,79 @@
         integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+
+    {{-- JS Real-time Duration Counter --}}
+    <script>
+        // Fungsi untuk menghitung dan format durasi real-time
+        function calculateDuration(createdAtStr) {
+            const createdAt = new Date(createdAtStr + ' UTC');
+            const now = new Date();
+            const diffMs = now - createdAt;
+
+            const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diffMs % (1000 * 60)) / 1000);
+
+            return {
+                days: days,
+                hours: hours,
+                minutes: minutes,
+                seconds: seconds,
+                formatted: `${days} hari ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+            };
+        }
+
+        // Update semua durasi yang masih berjalan di tabel
+        function updateDurasiRealtime() {
+            document.querySelectorAll('.durasi-realtime').forEach(function(element) {
+                const createdAtStr = element.getAttribute('data-created');
+                if (createdAtStr) {
+                    const duration = calculateDuration(createdAtStr);
+                    const textElement = element.querySelector('.durasi-text');
+                    if (textElement) {
+                        textElement.textContent = duration.formatted;
+                    }
+                }
+            });
+        }
+
+        // Update durasi di modal edit yang terbuka
+        function updateDurasiModal() {
+            document.querySelectorAll('.durasi-realtime-modal').forEach(function(element) {
+                const createdAtStr = element.getAttribute('data-created');
+                if (createdAtStr) {
+                    const duration = calculateDuration(createdAtStr);
+                    element.value = duration.formatted;
+                }
+            });
+        }
+
+        // Update setiap 1 detik
+        let durasiInterval;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDurasiRealtime();
+            updateDurasiModal();
+
+            durasiInterval = setInterval(function() {
+                updateDurasiRealtime();
+                updateDurasiModal();
+            }, 1000);
+        });
+
+        // Update saat modal dibuka
+        $('.modal').on('shown.bs.modal', function() {
+            updateDurasiModal();
+        });
+
+        // Bersihkan interval saat halaman di-unload
+        window.addEventListener('beforeunload', function() {
+            if (durasiInterval) {
+                clearInterval(durasiInterval);
+            }
+        });
+    </script>
     {{-- DROPDOWN UNTUK ADD MODAL DAN EDIT MODAL --}}
     <script>
         // Ponpes Lists for different service types
@@ -1242,6 +1344,19 @@
                 console.log('Modal is closing');
             });
         });
+
+                function toggleDetail(id) {
+            const shortText = document.getElementById('short-text-' + id);
+            const fullText = document.getElementById('full-text-' + id);
+
+            if (shortText.style.display === 'none') {
+                shortText.style.display = 'inline';
+                fullText.style.display = 'none';
+            } else {
+                shortText.style.display = 'none';
+                fullText.style.display = 'inline';
+            }
+        }
     </script>
 
 @endsection

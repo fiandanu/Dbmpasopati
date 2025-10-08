@@ -47,6 +47,9 @@ class DataOpsionalUptFactory extends Factory
             'pin_tes' => $this->faker->numerify('####'),
             'no_extension' => $this->faker->numerify('###'),
             'extension_password' => $this->faker->numerify('######'),
+            'no_pemanggil' => $this->faker->numerify('###'),
+            'email_airdroid' => $this->faker->email,
+            'password' => $this->faker->password(8, 16),
         ];
     }
 

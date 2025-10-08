@@ -39,6 +39,9 @@ class ListDataUptController extends Controller
         'jumlah_extension',
         'no_extension',
         'extension_password',
+        'no_pemanggil',
+        'email_airdroid',
+        'password',
         'pin_tes'
     ];
 

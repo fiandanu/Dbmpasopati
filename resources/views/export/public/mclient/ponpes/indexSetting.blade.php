@@ -129,7 +129,7 @@
                         <td class="text-center">{{ $no++ }}</td>
                         <td>{{ $d->nama_ponpes ?? '-' }}</td>
                         <td class="text-center">{{ $d->formatted_jenis_layanan ?? '-' }}</td>
-                        <td class="text-center">{{ Str::limit($d->keterangan ?? 'Tidak ada keterangan', 25) }}</td>
+                        <td class="text-center">{{ Str::limit($d->keterangan ?? '=' ) }}</td>
                         <td class="text-center">
                             {{ $d->tanggal_terlapor ? \Carbon\Carbon::parse($d->tanggal_terlapor)->format('d M Y') : '-' }}
                         </td>

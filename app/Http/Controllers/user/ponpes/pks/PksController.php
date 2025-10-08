@@ -30,6 +30,8 @@ class PksController extends Controller
         }
     }
 
+
+
     private function applyFilters($query, Request $request)
     {
         // Global search
@@ -75,8 +77,9 @@ class PksController extends Controller
 
     public function ListDataPks(Request $request)
     {
-        // Menampilkan data PKS Ponpes
-        $query = Ponpes::with('uploadFolder');
+        // Menampilkan data PKS Ponpes - hanya yang sudah dibuat manual
+        $query = Ponpes::with('uploadFolder')
+            ->whereHas('uploadFolder'); // Hanya tampilkan yang sudah punya upload folder (sudah dibuat di PKS)
 
         // Apply database filters
         $query = $this->applyFilters($query, $request);
@@ -127,8 +130,16 @@ class PksController extends Controller
             );
         }
 
-        $providers = Provider::all();
-        return view('db.ponpes.pks.indexPks', compact('data', 'providers'));
+        // Get list ponpes untuk dropdown - ambil dari tabel Ponpes yang belum ada di PKS
+        $ponpesList = Ponpes::whereDoesntHave('uploadFolder')
+            ->orWhereHas('uploadFolder', function ($q) {
+                $q->whereNull('tanggal_kontrak')
+                    ->whereNull('tanggal_jatuh_tempo');
+            })
+            ->orderBy('nama_ponpes')
+            ->get();
+
+        return view('db.ponpes.pks.indexPks', compact('data', 'ponpesList'));
     }
 
     public function exportListCsv(Request $request): StreamedResponse
@@ -161,7 +172,7 @@ class PksController extends Controller
             "Expires" => "0"
         ];
 
-        $rows = [['No', 'Nama Ponpes', 'Nama Wilayah', 'Tanggal Dibuat', 'Status Upload PDF']];
+        $rows = [['No', 'Nama Ponpes', 'Nama Wilayah', 'Tipe', 'Tanggal Dibuat', 'Tanggal Kontrak', 'Tanggal Jatuh Tempo', 'Status Upload PDF']];
         $no = 1;
         foreach ($data as $d) {
             $status = $this->calculatePdfStatus($d->uploadFolder);
@@ -171,6 +182,8 @@ class PksController extends Controller
                 $d->nama_wilayah,
                 ucfirst($d->tipe),
                 \Carbon\Carbon::parse($d->tanggal)->format('d M Y'),
+                $d->uploadFolder && $d->uploadFolder->tanggal_kontrak ? \Carbon\Carbon::parse($d->uploadFolder->tanggal_kontrak)->format('d M Y') : '-',
+                $d->uploadFolder && $d->uploadFolder->tanggal_jatuh_tempo ? \Carbon\Carbon::parse($d->uploadFolder->tanggal_jatuh_tempo)->format('d M Y') : '-',
                 $status
             ];
         }
@@ -376,6 +389,77 @@ class PksController extends Controller
         } catch (\Exception $e) {
             Log::error('Error deleting PDF Ponpes PKS: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Gagal menghapus file: ' . $e->getMessage());
+        }
+    }
+
+    public function store(Request $request)
+    {
+        try {
+            $request->validate([
+                'nama_ponpes' => 'required',
+                'nama_wilayah' => 'required',
+                'tanggal' => 'required|date',
+                'tanggal_kontrak' => 'nullable|date',
+                'tanggal_jatuh_tempo' => 'nullable|date|after_or_equal:tanggal_kontrak',
+            ], [
+                'nama_ponpes.required' => 'Nama Ponpes harus diisi.',
+                'nama_wilayah.required' => 'Nama Wilayah harus diisi.',
+                'tanggal.required' => 'Tanggal dibuat harus diisi.',
+                'tanggal_jatuh_tempo.after_or_equal' => 'Tanggal jatuh tempo harus setelah atau sama dengan tanggal kontrak.',
+            ]);
+
+            // Cari Ponpes yang dipilih untuk ambil tipe-nya
+            $ponpes = Ponpes::where('nama_ponpes', $request->nama_ponpes)
+                ->where('nama_wilayah', $request->nama_wilayah)
+                ->first();
+
+            if (!$ponpes) {
+                return redirect()->back()->with('error', 'Data Ponpes tidak ditemukan')->withInput();
+            }
+
+            // Create atau Update UploadFolder dengan contract dates
+            UploadFolderPonpes::updateOrCreate(
+                ['ponpes_id' => $ponpes->id],
+                [
+                    'tanggal_kontrak' => $request->tanggal_kontrak,
+                    'tanggal_jatuh_tempo' => $request->tanggal_jatuh_tempo,
+                ]
+            );
+
+            return redirect()->route('DbPonpes.pks.ListDataPks')->with('success', 'Data PKS berhasil ditambahkan');
+        } catch (\Exception $e) {
+            Log::error('Error creating PKS: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal menambahkan data: ' . $e->getMessage())->withInput();
+        }
+    }
+
+    public function update(Request $request, $id)
+    {
+        try {
+            $request->validate([
+                'tanggal_kontrak' => 'nullable|date',
+                'tanggal_jatuh_tempo' => 'nullable|date|after_or_equal:tanggal_kontrak',
+            ], [
+                'tanggal_jatuh_tempo.after_or_equal' => 'Tanggal jatuh tempo harus setelah atau sama dengan tanggal kontrak.',
+            ]);
+
+            $ponpes = Ponpes::findOrFail($id);
+
+            // Update or create upload folder
+            $uploadFolder = UploadFolderPonpes::firstOrCreate(
+                ['ponpes_id' => $id],
+                ['ponpes_id' => $id]
+            );
+
+            $uploadFolder->update([
+                'tanggal_kontrak' => $request->tanggal_kontrak,
+                'tanggal_jatuh_tempo' => $request->tanggal_jatuh_tempo,
+            ]);
+
+            return redirect()->back()->with('success', 'Data PKS berhasil diupdate');
+        } catch (\Exception $e) {
+            Log::error('Error updating PKS: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal mengupdate data: ' . $e->getMessage());
         }
     }
 }
