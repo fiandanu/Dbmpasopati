@@ -270,10 +270,10 @@ class PksController extends Controller
             }
 
             $dataponpes->delete();
-            return redirect()->route('ponpes.pks.ListDataPks')->with('success', 'Data berhasil dihapus');
+            return redirect()->route('DbPonpes.pks.ListDataPks')->with('success', 'Data berhasil dihapus');
         } catch (\Exception $e) {
             Log::error('Error deleting Ponpes PKS: ' . $e->getMessage());
-            return redirect()->route('ponpes.pks.ListDataPks')->with('error', 'Gagal menghapus data: ' . $e->getMessage());
+            return redirect()->route('DbPonpes.pks.ListDataPks')->with('error', 'Gagal menghapus data: ' . $e->getMessage());
         }
     }
 
@@ -398,13 +398,12 @@ class PksController extends Controller
             $request->validate([
                 'nama_ponpes' => 'required',
                 'nama_wilayah' => 'required',
-                'tanggal' => 'required|date',
+                // Hapus validasi tanggal
                 'tanggal_kontrak' => 'nullable|date',
                 'tanggal_jatuh_tempo' => 'nullable|date|after_or_equal:tanggal_kontrak',
             ], [
                 'nama_ponpes.required' => 'Nama Ponpes harus diisi.',
                 'nama_wilayah.required' => 'Nama Wilayah harus diisi.',
-                'tanggal.required' => 'Tanggal dibuat harus diisi.',
                 'tanggal_jatuh_tempo.after_or_equal' => 'Tanggal jatuh tempo harus setelah atau sama dengan tanggal kontrak.',
             ]);
 
@@ -418,6 +417,7 @@ class PksController extends Controller
             }
 
             // Create atau Update UploadFolder dengan contract dates
+            // Tanggal dibuat akan otomatis menggunakan created_at dari UploadFolderPonpes
             UploadFolderPonpes::updateOrCreate(
                 ['ponpes_id' => $ponpes->id],
                 [
@@ -462,4 +462,16 @@ class PksController extends Controller
             return redirect()->back()->with('error', 'Gagal mengupdate data: ' . $e->getMessage());
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
 }

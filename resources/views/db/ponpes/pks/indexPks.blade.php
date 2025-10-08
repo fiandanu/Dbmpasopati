@@ -225,7 +225,7 @@
                                             @if (!$d->uploadFolder || empty($d->uploadFolder->uploaded_pdf))
                                                 <span class="badge body-small-12">Belum Upload</span>
                                             @else
-                                                <span class="badge-success">
+                                                <span class="badge-succes">
                                                     Sudah Upload
                                                 </span>
                                             @endif
@@ -268,7 +268,7 @@
                                                 <div class="modal-footer flex-row-reverse justify-content-between">
                                                     <button type="button" class="btn-cancel-modal"
                                                         data-dismiss="modal">Tutup</button>
-                                                    <form action="{{ route('mcvtren.MclientVtrenDestroy', $d->id) }}"
+                                                    <form action="{{ route('DbPonpes.pks.DataBasePageDestroy', $d->id) }}"
                                                         method="POST">
                                                         @csrf
                                                         @method('DELETE')
@@ -565,14 +565,14 @@
                     </div>
 
                     <div class="modal-body">
-                        <!-- Informasi PONPES Section -->
                         <div class="mb-4">
                             <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
                                 <label>Informasi PONPES</label>
                             </div>
                             <div class="column">
                                 <div class="mb-3">
-                                    <label for="nama_ponpes" class="form-label">Nama PONPES</label>
+                                    <label for="nama_ponpes" class="form-label">Nama PONPES
+                                    </label>
                                     <div class="dropdown">
                                         <div class="input-group">
                                             <input type="text" class="form-control" id="ponpes_search"
@@ -586,7 +586,7 @@
                                         </div>
                                         <div class="dropdown-menu w-100" id="ponpesDropdownMenu"
                                             style="max-height: 200px; overflow-y: auto; display: none;">
-                                            @foreach ($data->unique('nama_ponpes') as $ponpes)
+                                            @foreach ($ponpesList as $ponpes)
                                                 <a class="dropdown-item ponpes-option" href="#"
                                                     data-value="{{ $ponpes->nama_ponpes }}"
                                                     data-nama-wilayah="{{ $ponpes->nama_wilayah }}"
@@ -598,15 +598,12 @@
                                         </div>
                                     </div>
                                     <input type="hidden" id="nama_ponpes" name="nama_ponpes" required>
-                                    <small class="form-text text-muted">Ketik untuk mencari PONPES</small>
+                                    <small class="form-text text-muted">Ketik untuk mencari
+                                        PONPES</small>
                                 </div>
                                 <div class="mb-3">
                                     <label for="nama_wilayah" class="form-label">Nama Wilayah</label>
                                     <input type="text" class="form-control" id="nama_wilayah" name="nama_wilayah" readonly>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="tipe_display" class="form-label">Tipe</label>
-                                    <input type="text" class="form-control" id="tipe_display" readonly>
                                 </div>
                             </div>
                         </div>
@@ -617,10 +614,6 @@
                                 <label>Tanggal</label>
                             </div>
                             <div class="column">
-                                <div class="mb-3">
-                                    <label for="tanggal" class="form-label">Tanggal Dibuat</label>
-                                    <input type="date" class="form-control" id="tanggal" name="tanggal" required>
-                                </div>
                                 <div class="mb-3">
                                     <label for="tanggal_kontrak" class="form-label">Tanggal Kontrak</label>
                                     <input type="date" class="form-control" id="tanggal_kontrak" name="tanggal_kontrak">
@@ -839,12 +832,14 @@
 
                     if (searchTerm.length > 0 && hasVisibleOption) {
                         ponpesDropdown.style.display = 'block';
-                    } else if (searchTerm.length === 0) {
+                    } else {
                         ponpesDropdown.style.display = 'none';
                     }
                 });
 
+                // Hapus event listener focus atau modifikasi agar tidak auto-open
                 ponpesSearch.addEventListener('focus', function () {
+                    // Hanya buka jika ada input
                     if (this.value.length > 0) {
                         const searchTerm = this.value.toLowerCase();
                         let hasVisibleOption = false;
@@ -864,6 +859,7 @@
                 });
             }
 
+            // Tutup dropdown saat klik di luar
             document.addEventListener('click', function (event) {
                 if (!event.target.closest('.dropdown')) {
                     if (ponpesDropdown) {
@@ -887,12 +883,14 @@
             }
         }
 
-        function selectPonpes(namaPonpes, namaWilayah, tipe) {
+        function selectPonpes(namaPonpes, namaWilayah) {
             document.getElementById('ponpes_search').value = namaPonpes;
             document.getElementById('nama_ponpes').value = namaPonpes;
             document.getElementById('nama_wilayah').value = namaWilayah;
-            document.getElementById('tipe_display').value = tipe.charAt(0).toUpperCase() + tipe.slice(1);
             document.getElementById('ponpesDropdownMenu').style.display = 'none';
+
+            // Tutup dropdown setelah pilihan dipilih
+            event.preventDefault();
         }
 
         // Clear selection when search is cleared
