@@ -24,6 +24,9 @@
                                     class="btn-page d-flex justify-content-center align-items-center" title="Download PDF">
                                     <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PDF
                                 </button>
+                                <button class="btn-purple" data-bs-toggle="modal" data-bs-target="#addModal">
+                                    <i class="fa fa-plus"></i> Add Data
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -202,7 +205,7 @@
                                         <td class="text-center">
                                             <span
                                                 class="
-                                                        @if ($d->tipe == 'reguler') Tipereguller 
+                                                        @if ($d->tipe == 'reguler') Tipereguller
                                                         @elseif($d->tipe == 'vtren') Tipevpas @endif">
                                                 {{ ucfirst($d->tipe) }}
                                             </span>
@@ -216,10 +219,10 @@
                                                 $totalFolders = 10;
 
                                                 // Check if uploadFolder relationship exists
-                                                if ($d->uploadFolder) {
+                                                if ($d->uploadFolderSpp) {
                                                     for ($i = 1; $i <= 10; $i++) {
                                                         $column = 'pdf_folder_' . $i;
-                                                        if (!empty($d->uploadFolder->$column)) {
+                                                        if (!empty($d->uploadFolderSpp->$column)) {
                                                             $uploadedFolders++;
                                                         }
                                                     }
@@ -243,6 +246,10 @@
                                                 <button data-toggle="modal" data-target="#uploadModal{{ $d->id }}"
                                                     title="Upload PDF">
                                                     <ion-icon name="folder-outline"></ion-icon>
+                                                </button>
+                                                <button data-toggle="modal" data-target="#deleteModal{{ $d->id }}"
+                                                    title="Hapus Data">
+                                                    <ion-icon name="trash-outline"></ion-icon>
                                                 </button>
                                             </div>
                                         </td>
@@ -277,12 +284,12 @@
                                                                 @for ($i = 1; $i <= 10; $i++)
                                                                     @php
                                                                         $fileName = null;
-                                                                        if ($d->uploadFolder) {
+                                                                        if ($d->uploadFolderSpp) {
                                                                             $column = 'pdf_folder_' . $i;
                                                                             $fileName = !empty(
-                                                                                $d->uploadFolder->$column
+                                                                                $d->uploadFolderSpp->$column
                                                                             )
-                                                                                ? basename($d->uploadFolder->$column)
+                                                                                ? basename($d->uploadFolderSpp->$column)
                                                                                 : null;
                                                                         }
                                                                     @endphp
@@ -310,11 +317,11 @@
                                                                         @php
                                                                             $firstFileName = null;
                                                                             if (
-                                                                                $d->uploadFolder &&
-                                                                                !empty($d->uploadFolder->pdf_folder_1)
+                                                                                $d->uploadFolderSpp &&
+                                                                                !empty($d->uploadFolderSpp->pdf_folder_1)
                                                                             ) {
                                                                                 $firstFileName = basename(
-                                                                                    $d->uploadFolder->pdf_folder_1,
+                                                                                    $d->uploadFolderSpp->pdf_folder_1,
                                                                                 );
                                                                             }
                                                                         @endphp
@@ -334,10 +341,10 @@
                                                                             style="display: {{ $i == 1 ? 'block' : 'none' }};">
                                                                             @php
                                                                                 $hasFile = false;
-                                                                                if ($d->uploadFolder) {
+                                                                                if ($d->uploadFolderSpp) {
                                                                                     $column = 'pdf_folder_' . $i;
                                                                                     $hasFile = !empty(
-                                                                                        $d->uploadFolder->$column
+                                                                                        $d->uploadFolderSpp->$column
                                                                                     );
                                                                                 }
                                                                             @endphp
@@ -435,9 +442,40 @@
                                                             </button>
                                                         </form>
                                                     </div>
+                                                </div>n
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal fade" id="deleteModal{{ $d->id }}" tabindex="-1" role="dialog"
+                                        aria-labelledby="deleteModalLabel{{ $d->id }}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-body text-center align-items-center">
+                                                <ion-icon name="alert-circle-outline"
+                                                    class="text-9xl text-[var(--yellow-04)]"></ion-icon>
+                                                <p class="headline-large-32">Anda Yakin?</p>
+                                                <!-- UBAH TEKS INI -->
+                                                <label>Apakah Data SPP <b>{{ $d->nama_ponpes }}</b> ingin dihapus?</label>
+                                                <small class="text-muted d-block mt-2">
+                                                    <i class="fas fa-info-circle"></i>
+                                                    Hanya data SPP yang akan dihapus, data Ponpes tetap tersimpan.
+                                                </small>
+                                            </div>
+                                                <div class="modal-footer flex-row-reverse justify-content-between">
+                                                    <button type="button" class="btn-cancel-modal"
+                                                        data-dismiss="modal">Batal</button>
+                                                    <form action="{{ route('sppPonpes.destroy', $d->id) }}"
+                                                        method="POST" style="display: inline;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn-delete">
+                                                            Hapus
+                                                        </button>
+                                                    </form>
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
                                     @endfor
                                 @empty
                                     <tr>
@@ -532,10 +570,75 @@
                 </div>
 
             </div><!-- /.container-fluid -->
+
         </section>
         <!-- /.content -->
     </div>
-    <!-- /.content-wrapper -->
+
+
+                {{-- Add Modal --}}
+    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+        <form id="addForm" action="{{ route('sppPonpes.store') }}" method="POST">
+            @csrf
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <label class="modal-title" id="addModalLabel">Tambah Data SPP</label>
+                        <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="bi bi-x"></i>
+                        </button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="mb-4">
+                            <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
+                                <label>Informasi PONPES</label>
+                            </div>
+                            <div class="column">
+                                <div class="mb-3">
+                                    <label for="nama_ponpes" class="form-label">Nama PONPES</label>
+                                    <div class="dropdown">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="ponpes_search"
+                                                placeholder="Cari PONPES..." autocomplete="off">
+                                            <div class="input-group-append">
+                                                <button type="button" class="btn btn-outline-secondary"
+                                                    onclick="togglePonpesDropdown()">
+                                                    <i class="fas fa-chevron-down"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="dropdown-menu w-100" id="ponpesDropdownMenu"
+                                            style="max-height: 200px; overflow-y: auto; display: none;">
+                                            @foreach ($ponpesList as $ponpes)
+                                                <a class="dropdown-item ponpes-option" href="#"
+                                                    data-value="{{ $ponpes->nama_ponpes }}"
+                                                    data-nama-wilayah="{{ $ponpes->nama_wilayah }}"
+                                                    onclick="selectPonpes('{{ $ponpes->nama_ponpes }}', '{{ $ponpes->nama_wilayah }}')">
+                                                    {{ $ponpes->nama_ponpes }} - {{ $ponpes->nama_wilayah }}
+                                                </a>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                    <input type="hidden" id="nama_ponpes" name="nama_ponpes" required>
+                                    <small class="form-text text-muted">Ketik untuk mencari PONPES</small>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="nama_wilayah" class="form-label">Nama Wilayah</label>
+                                    <input type="text" class="form-control" id="nama_wilayah" name="nama_wilayah" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn-cancel-modal" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn-purple">Simpan</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
 
     {{-- jQuery Library --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
@@ -767,4 +870,105 @@
         });
     </script>
 
+    {{-- JS Modal Add --}}
+    <script>
+        // Searchable Ponpes dropdown functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const ponpesSearch = document.getElementById('ponpes_search');
+            const ponpesDropdown = document.getElementById('ponpesDropdownMenu');
+            const ponpesOptions = document.querySelectorAll('.ponpes-option');
+
+            if (ponpesSearch) {
+                ponpesSearch.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    let hasVisibleOption = false;
+
+                    ponpesOptions.forEach(option => {
+                        const text = option.textContent.toLowerCase();
+                        if (text.includes(searchTerm)) {
+                            option.style.display = 'block';
+                            hasVisibleOption = true;
+                        } else {
+                            option.style.display = 'none';
+                        }
+                    });
+
+                    if (searchTerm.length > 0 && hasVisibleOption) {
+                        ponpesDropdown.style.display = 'block';
+                    } else {
+                        ponpesDropdown.style.display = 'none';
+                    }
+                });
+
+                ponpesSearch.addEventListener('focus', function() {
+                    if (this.value.length > 0) {
+                        const searchTerm = this.value.toLowerCase();
+                        let hasVisibleOption = false;
+
+                        ponpesOptions.forEach(option => {
+                            const text = option.textContent.toLowerCase();
+                            if (text.includes(searchTerm)) {
+                                option.style.display = 'block';
+                                hasVisibleOption = true;
+                            }
+                        });
+
+                        if (hasVisibleOption) {
+                            ponpesDropdown.style.display = 'block';
+                        }
+                    }
+                });
+            }
+
+            // Tutup dropdown saat klik di luar
+            document.addEventListener('click', function(event) {
+                if (!event.target.closest('.dropdown')) {
+                    if (ponpesDropdown) {
+                        ponpesDropdown.style.display = 'none';
+                    }
+                }
+            });
+        });
+
+        function togglePonpesDropdown() {
+            const ponpesDropdown = document.getElementById('ponpesDropdownMenu');
+            const ponpesOptions = document.querySelectorAll('.ponpes-option');
+
+            if (ponpesDropdown.style.display === 'none' || ponpesDropdown.style.display === '') {
+                ponpesOptions.forEach(option => {
+                    option.style.display = 'block';
+                });
+                ponpesDropdown.style.display = 'block';
+            } else {
+                ponpesDropdown.style.display = 'none';
+            }
+        }
+
+        function selectPonpes(namaPonpes, namaWilayah) {
+            document.getElementById('ponpes_search').value = namaPonpes;
+            document.getElementById('nama_ponpes').value = namaPonpes;
+            document.getElementById('nama_wilayah').value = namaWilayah;
+            document.getElementById('ponpesDropdownMenu').style.display = 'none';
+            event.preventDefault();
+        }
+
+        // Clear selection when search is cleared
+        const ponpesSearchInput = document.getElementById('ponpes_search');
+        if (ponpesSearchInput) {
+            ponpesSearchInput.addEventListener('input', function() {
+                if (this.value === '') {
+                    document.getElementById('nama_ponpes').value = '';
+                    document.getElementById('nama_wilayah').value = '';
+                }
+            });
+        }
+
+        // Reset form when modal is closed
+        $('#addModal').on('hidden.bs.modal', function() {
+            document.getElementById('ponpes_search').value = '';
+            document.getElementById('nama_ponpes').value = '';
+            document.getElementById('nama_wilayah').value = '';
+            document.getElementById('ponpesDropdownMenu').style.display = 'none';
+        });
+    </script>
 @endsection

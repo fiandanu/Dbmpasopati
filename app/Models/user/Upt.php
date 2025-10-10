@@ -3,7 +3,8 @@
 namespace App\Models\user;
 
 use App\Models\db\DataOpsionalUpt;
-use App\Models\db\UploadFolderUpt;
+use App\Models\db\UploadFolderUptPks;
+use App\Models\db\UploadFolderUptSpp;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -29,40 +30,58 @@ class Upt extends Model
         return $this->hasOne(DataOpsionalUpt::class, 'upt_id');
     }
 
-    public function uploadFolder()
+    // Relasi ke PKS
+    public function uploadFolderPks()
     {
-        return $this->hasOne(UploadFolderUpt::class, 'upt_id');
+        return $this->hasOne(UploadFolderUptPks::class, 'upt_id');
     }
 
+    // Relasi ke SPP
+    public function uploadFolderSpp()
+    {
+        return $this->hasOne(UploadFolderUptSpp::class, 'upt_id');
+    }
+
+
+
+    
+    // Alias untuk backward compatibility (default ke SPP untuk multi-folder)
+    public function uploadFolder()
+    {
+        return $this->hasOne(UploadFolderUptSpp::class, 'upt_id');
+    }
+
+    // === PKS Related Methods ===
     public function getUploadedPdfAttribute()
     {
-        return $this->uploadFolder ? $this->uploadFolder->uploaded_pdf : null;
+        return $this->uploadFolderPks ? $this->uploadFolderPks->uploaded_pdf : null;
     }
 
     public function getHasPdfAttribute()
     {
-        return $this->uploadFolder && !empty($this->uploadFolder->uploaded_pdf);
+        return $this->uploadFolderPks && !empty($this->uploadFolderPks->uploaded_pdf);
     }
 
+    // === SPP Related Methods (Multi-folder) ===
     public function hasPdfInFolder($folderNumber)
     {
-        if (!$this->uploadFolder) {
+        if (!$this->uploadFolderSpp) {
             return false;
         }
 
         $column = 'pdf_folder_' . $folderNumber;
-        return !empty($this->uploadFolder->$column);
+        return !empty($this->uploadFolderSpp->$column);
     }
 
     public function getPdfFileNameInFolder($folderNumber)
     {
-        if (!$this->uploadFolder) {
+        if (!$this->uploadFolderSpp) {
             return null;
         }
 
         $column = 'pdf_folder_' . $folderNumber;
-        if (!empty($this->uploadFolder->$column)) {
-            return basename($this->uploadFolder->$column);
+        if (!empty($this->uploadFolderSpp->$column)) {
+            return basename($this->uploadFolderSpp->$column);
         }
 
         return null;
@@ -70,18 +89,18 @@ class Upt extends Model
 
     public function getUploadedFoldersCountAttribute()
     {
-        if (!$this->uploadFolder) {
+        if (!$this->uploadFolderSpp) {
             return 0;
         }
 
         $count = 0;
         for ($i = 1; $i <= 10; $i++) {
             $column = 'pdf_folder_' . $i;
-            if (!empty($this->uploadFolder->$column)) {
+            if (!empty($this->uploadFolderSpp->$column)) {
                 $count++;
             }
         }
 
         return $count;
     }
-}
+};

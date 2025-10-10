@@ -169,7 +169,7 @@ class ListDataPonpesController extends Controller
     public function UserPage(Request $request)
     {
         // Get Ponpes data with reguler and vtren types, include relationships
-        $query = Ponpes::with(['dataOpsional', 'uploadFolder'])
+        $query = Ponpes::with(['dataOpsional', 'uploadFolderSpp', 'uploadFolderPks'])
             ->whereIn('tipe', ['reguler', 'vtren']);
 
         // Apply database filters

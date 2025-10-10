@@ -216,13 +216,13 @@
                                             {{ \Carbon\Carbon::parse($d->tanggal)->translatedFormat('M d Y') }}
                                         </td>
                                         <td class="text-center">
-                                            {{ $d->uploadFolder && $d->uploadFolder->tanggal_kontrak ? \Carbon\Carbon::parse($d->uploadFolder->tanggal_kontrak)->translatedFormat('M d Y') : '-' }}
+                                            {{ $d->uploadFolderPks && $d->uploadFolderPks->tanggal_kontrak ? \Carbon\Carbon::parse($d->uploadFolderPks->tanggal_kontrak)->translatedFormat('M d Y') : '-' }}
                                         </td>
                                         <td class="text-center">
-                                            {{ $d->uploadFolder && $d->uploadFolder->tanggal_jatuh_tempo ? \Carbon\Carbon::parse($d->uploadFolder->tanggal_jatuh_tempo)->translatedFormat('M d Y') : '-' }}
+                                            {{ $d->uploadFolderPks && $d->uploadFolderPks->tanggal_jatuh_tempo ? \Carbon\Carbon::parse($d->uploadFolderPks->tanggal_jatuh_tempo)->translatedFormat('M d Y') : '-' }}
                                         </td>
                                         <td class="text-center-status">
-                                            @if (!$d->uploadFolder || empty($d->uploadFolder->uploaded_pdf))
+                                            @if (!$d->uploadFolderPks || empty($d->uploadFolderPks->uploaded_pdf))
                                                 <span class="badge body-small-12">Belum Upload</span>
                                             @else
                                                 <span class="badge-succes">
@@ -262,8 +262,12 @@
                                                     <ion-icon name="alert-circle-outline"
                                                         class="text-9xl text-[var(--yellow-04)]"></ion-icon>
                                                     <p class="headline-large-32">Anda Yakin?</p>
-                                                    <label>Apakah Data Keluhan <b> {{ $d->nama_ponpes }} </b> ingin
-                                                        dihapus?</label>
+                                                    <!-- UBAH TEKS INI -->
+                                                    <label>Apakah Data PKS <b>{{ $d->nama_ponpes }}</b> ingin dihapus?</label>
+                                                    <small class="text-muted d-block mt-2">
+                                                        <i class="fas fa-info-circle"></i>
+                                                        Hanya data PKS yang akan dihapus, data Ponpes tetap tersimpan.
+                                                    </small>
                                                 </div>
                                                 <div class="modal-footer flex-row-reverse justify-content-between">
                                                     <button type="button" class="btn-cancel-modal"
@@ -309,8 +313,8 @@
                                                                     @php
                                                                         $hasFile = false;
                                                                         if (
-                                                                            $d->uploadFolder &&
-                                                                            !empty($d->uploadFolder->uploaded_pdf)
+                                                                            $d->uploadFolderPks &&
+                                                                            !empty($d->uploadFolderPks->uploaded_pdf)
                                                                         ) {
                                                                             $hasFile = true;
                                                                         }
@@ -405,7 +409,7 @@
                                                                 class="form-label">Tanggal Kontrak</label>
                                                             <input type="date" class="form-control"
                                                                 id="tanggal_kontrak_edit_{{ $d->id }}" name="tanggal_kontrak"
-                                                                value="{{ $d->uploadFolder && $d->uploadFolder->tanggal_kontrak ? $d->uploadFolder->tanggal_kontrak->format('Y-m-d') : '' }}">
+                                                                value="{{ $d->uploadFolderPks && $d->uploadFolderPks->tanggal_kontrak ? $d->uploadFolderPks->tanggal_kontrak->format('Y-m-d') : '' }}">
                                                         </div>
                                                         <div class="mb-3">
                                                             <label for="tanggal_jatuh_tempo_edit_{{ $d->id }}"
@@ -413,7 +417,7 @@
                                                             <input type="date" class="form-control"
                                                                 id="tanggal_jatuh_tempo_edit_{{ $d->id }}"
                                                                 name="tanggal_jatuh_tempo"
-                                                                value="{{ $d->uploadFolder && $d->uploadFolder->tanggal_jatuh_tempo ? $d->uploadFolder->tanggal_jatuh_tempo->format('Y-m-d') : '' }}">
+                                                                value="{{ $d->uploadFolderPks && $d->uploadFolderPks->tanggal_jatuh_tempo ? $d->uploadFolderPks->tanggal_jatuh_tempo->format('Y-m-d') : '' }}">
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer">

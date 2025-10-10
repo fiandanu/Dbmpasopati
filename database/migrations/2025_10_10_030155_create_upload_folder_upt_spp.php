@@ -6,16 +6,14 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
-        Schema::create('upload_folder_ponpes', function (Blueprint $table) {
+        Schema::create('upload_folder_upt_spp', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('ponpes_id')->constrained('data_ponpes')->onDelete('cascade');
-            $table->date('tanggal_kontrak')->nullable();
-            $table->date('tanggal_jatuh_tempo')->nullable();
-            $table->string('uploaded_pdf')->nullable();
-            $table->string('tanggal_kontrak')->nullable();
-            $table->string('jatuh_tempo')->nullable();
+            $table->unsignedBigInteger('upt_id');
             $table->string('pdf_folder_1')->nullable();
             $table->string('pdf_folder_2')->nullable();
             $table->string('pdf_folder_3')->nullable();
@@ -27,11 +25,17 @@ return new class extends Migration
             $table->string('pdf_folder_9')->nullable();
             $table->string('pdf_folder_10')->nullable();
             $table->timestamps();
+
+            $table->foreign('upt_id')->references('id')->on('data_upt')->onDelete('cascade');
+            $table->unique('upt_id'); // Satu UPT hanya bisa punya satu record SPP
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::dropIfExists('upload_folder_ponpes');
+        Schema::dropIfExists('upload_folder_upt_spp');
     }
 };

@@ -40,6 +40,8 @@
             </div>
         </section>
 
+
+
         {{-- Tampilkan pesan sukses total --}}
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mx-4" role="alert">
@@ -137,6 +139,70 @@
 
                         </div>
 
+                        <div class="row mt-3 mb-3">
+                            <div class="col-12">
+                                <div class="card shadow-sm">
+                                    <div class="card-header bg-primary text-white">
+                                        <h5 class="mb-0">
+                                            <i class="fas fa-calculator mr-2"></i>Total Kalkulasi Data
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row text-center">
+                                            <div class="col-md-2 mb-3">
+                                                <div class="border rounded p-3 h-100 bg-light">
+                                                    <p class="mb-1 text-muted small">Kartu Baru</p>
+                                                    <h4 class="mb-0 text-primary font-weight-bold">
+                                                        {{ number_format($totals['kartu_baru']) }}
+                                                    </h4>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2 mb-3">
+                                                <div class="border rounded p-3 h-100 bg-light">
+                                                    <p class="mb-1 text-muted small">Kartu Bekas</p>
+                                                    <h4 class="mb-0 text-success font-weight-bold">
+                                                        {{ number_format($totals['kartu_bekas']) }}
+                                                    </h4>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2 mb-3">
+                                                <div class="border rounded p-3 h-100 bg-light">
+                                                    <p class="mb-1 text-muted small">Kartu GOIP</p>
+                                                    <h4 class="mb-0 text-info font-weight-bold">
+                                                        {{ number_format($totals['kartu_goip']) }}
+                                                    </h4>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2 mb-3">
+                                                <div class="border rounded p-3 h-100 bg-light">
+                                                    <p class="mb-1 text-muted small">Kartu Belum Register</p>
+                                                    <h4 class="mb-0 text-warning font-weight-bold">
+                                                        {{ number_format($totals['kartu_belum_register']) }}
+                                                    </h4>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2 mb-3">
+                                                <div class="border rounded p-3 h-100 bg-light">
+                                                    <p class="mb-1 text-muted small">WA Terpakai</p>
+                                                    <h4 class="mb-0 text-danger font-weight-bold">
+                                                        {{ number_format($totals['whatsapp_terpakai']) }}
+                                                    </h4>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2 mb-3">
+                                                <div class="border rounded p-3 h-100 bg-light">
+                                                    <p class="mb-1 text-muted small">Total Kartu Terpakai</p>
+                                                    <h4 class="mb-0 text-dark font-weight-bold">
+                                                        {{ number_format($totals['kartu_terpakai_perhari']) }}
+                                                    </h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
 
                         <div class="card mt-3">
                             <!-- /.card-header -->
@@ -162,8 +228,8 @@
                                                         <span>
                                                             <i class="fas fa-search"></i>
                                                         </span>
-                                                        <input type="text" id="search-nama-ponpes"
-                                                            name="search_nama_ponpes" placeholder="Search">
+                                                        <input type="text" id="search-nama-ponpes" name="search_nama_ponpes"
+                                                            placeholder="Search">
                                                     </div>
                                                 </div>
                                             </th>
@@ -174,8 +240,8 @@
                                                         <span>
                                                             <i class="fas fa-search"></i>
                                                         </span>
-                                                        <input type="text" id="search-kartu-baru"
-                                                            name="search_kartu_baru" placeholder="Search">
+                                                        <input type="text" id="search-kartu-baru" name="search_kartu_baru"
+                                                            placeholder="Search">
                                                     </div>
                                                 </div>
                                             </th>
@@ -186,8 +252,8 @@
                                                         <span>
                                                             <i class="fas fa-search"></i>
                                                         </span>
-                                                        <input type="text" id="search-kartu-bekas"
-                                                            name="search_kartu_bekas" placeholder="Search">
+                                                        <input type="text" id="search-kartu-bekas" name="search_kartu_bekas"
+                                                            placeholder="Search">
                                                     </div>
                                                 </div>
                                             </th>
@@ -198,8 +264,8 @@
                                                         <span>
                                                             <i class="fas fa-search"></i>
                                                         </span>
-                                                        <input type="text" id="search-kartu-goip"
-                                                            name="search_kartu_goip" placeholder="Search">
+                                                        <input type="text" id="search-kartu-goip" name="search_kartu_goip"
+                                                            placeholder="Search">
                                                     </div>
                                                 </div>
                                             </th>
@@ -317,8 +383,7 @@
                                                     </a>
 
                                                     {{-- Delete Button --}}
-                                                    <a data-bs-toggle="modal"
-                                                        data-bs-target="#modal-default{{ $d->id }}"
+                                                    <a data-bs-toggle="modal" data-bs-target="#modal-default{{ $d->id }}"
                                                         class="">
                                                         <button>
                                                             <ion-icon name="trash-outline"></ion-icon>
@@ -395,12 +460,10 @@
                                                         <label for="nama_ponpes" class="form-label">Nama Ponpes</label>
                                                         <div class="dropdown">
                                                             <div class="input-group">
-                                                                <input type="text" class="form-control"
-                                                                    id="upt_search" placeholder="Cari nama Ponpes"
-                                                                    autocomplete="off">
+                                                                <input type="text" class="form-control" id="upt_search"
+                                                                    placeholder="Cari nama Ponpes" autocomplete="off">
                                                                 <div class="input-group-append">
-                                                                    <button type="button"
-                                                                        class="btn btn-outline-secondary"
+                                                                    <button type="button" class="btn btn-outline-secondary"
                                                                         onclick="toggleUptDropdown()">
                                                                         <i class="fas fa-chevron-down"></i>
                                                                     </button>
@@ -418,8 +481,7 @@
                                                                 @endforeach
                                                             </div>
                                                         </div>
-                                                        <input type="hidden" id="nama_ponpes" name="nama_ponpes"
-                                                            required>
+                                                        <input type="hidden" id="nama_ponpes" name="nama_ponpes" required>
                                                         <small class="form-text text-muted">Ketik untuk mencari
                                                             Ponpes</small>
                                                     </div>
@@ -474,18 +536,16 @@
                                                                 Belum Teregister</label>
                                                             <input type="text" class="form-control"
                                                                 id="kartu_belum_teregister" name="kartu_belum_teregister"
-                                                                value=""
-                                                                placeholder="Jumlah kartu belum teregister">
+                                                                value="" placeholder="Jumlah kartu belum teregister">
                                                         </div>
                                                     </div>
                                                     <div class="column">
                                                         <div class="mb-3">
-                                                            <label for="whatsapp_telah_terpakai"
-                                                                class="form-label">WhatsApp Telah Terpakai</label>
+                                                            <label for="whatsapp_telah_terpakai" class="form-label">WhatsApp
+                                                                Telah Terpakai</label>
                                                             <input type="text" class="form-control"
-                                                                id="whatsapp_telah_terpakai"
-                                                                name="whatsapp_telah_terpakai" value=""
-                                                                placeholder="Jumlah WhatsApp terpakai">
+                                                                id="whatsapp_telah_terpakai" name="whatsapp_telah_terpakai"
+                                                                value="" placeholder="Jumlah WhatsApp terpakai">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -498,15 +558,16 @@
                                                             <option value="">-- Pilih Card Supporting --</option>
                                                             @foreach ($cardSupportingList as $cardSupporting)
                                                                 <option value="{{ $cardSupporting }}">
-                                                                    {{ $cardSupporting }}</option>
+                                                                    {{ $cardSupporting }}
+                                                                </option>
                                                             @endforeach
                                                         </select>
                                                     </div>
                                                 </div>
                                                 <div class="column">
                                                     <div class="mb-3">
-                                                        <label for="jumlah_kartu_terpakai_perhari"
-                                                            class="form-label">Jumlah Kartu Terpakai Per Hari</label>
+                                                        <label for="jumlah_kartu_terpakai_perhari" class="form-label">Jumlah
+                                                            Kartu Terpakai Per Hari</label>
                                                         <input type="text" class="form-control"
                                                             id="jumlah_kartu_terpakai_perhari"
                                                             name="jumlah_kartu_terpakai_perhari" value=""
@@ -527,7 +588,8 @@
                                                             <option value="">-- Pilih PIC --</option>
                                                             @foreach ($picList as $pic)
                                                                 <option value="{{ $pic->nama_pic }}">
-                                                                    {{ $pic->nama_pic }}</option>
+                                                                    {{ $pic->nama_pic }}
+                                                                </option>
                                                             @endforeach
                                                         </select>
                                                     </div>
@@ -535,8 +597,7 @@
                                                 <div class="column">
                                                     <div class="mb-3">
                                                         <label for="tanggal" class="form-label">Tanggal</label>
-                                                        <input type="date" class="form-control" id="tanggal"
-                                                            name="tanggal">
+                                                        <input type="date" class="form-control" id="tanggal" name="tanggal">
                                                     </div>
                                                 </div>
                                             </div>
@@ -582,9 +643,8 @@
                                                     </div>
                                                     <div class="column">
                                                         <div class="mb-3">
-                                                            <label for="nama_ponpes_edit_{{ $d->id }}"
-                                                                class="form-label">Nama Ponpes <span
-                                                                    class="text-danger">*</span></label>
+                                                            <label for="nama_ponpes_edit_{{ $d->id }}" class="form-label">Nama
+                                                                Ponpes <span class="text-danger">*</span></label>
                                                             <div class="dropdown">
                                                                 <div class="input-group">
                                                                     <input type="text" class="form-control"
@@ -592,8 +652,7 @@
                                                                         placeholder="Cari Ponpes..." autocomplete="off"
                                                                         value="{{ $d->nama_ponpes ?? '' }}">
                                                                     <div class="input-group-append">
-                                                                        <button type="button"
-                                                                            class="btn btn-outline-secondary"
+                                                                        <button type="button" class="btn btn-outline-secondary"
                                                                             onclick="toggleUptDropdownEdit({{ $d->id }})">
                                                                             <i class="fas fa-chevron-down"></i>
                                                                         </button>
@@ -611,10 +670,8 @@
                                                                     @endforeach
                                                                 </div>
                                                             </div>
-                                                            <input type="hidden"
-                                                                id="nama_ponpes_edit_{{ $d->id }}"
-                                                                name="nama_ponpes" value="{{ $d->nama_ponpes ?? '' }}"
-                                                                required>
+                                                            <input type="hidden" id="nama_ponpes_edit_{{ $d->id }}"
+                                                                name="nama_ponpes" value="{{ $d->nama_ponpes ?? '' }}" required>
                                                             <small class="form-text text-muted">Ketik untuk mencari
                                                                 Ponpes</small>
                                                         </div>
@@ -692,16 +749,14 @@
 
                                                     <div class="column">
                                                         <div class="mb-3">
-                                                            <label for="card_supporting{{ $d->id }}"
-                                                                class="form-label">Card Supporting</label>
-                                                            <select class="form-control"
-                                                                id="card_supporting{{ $d->id }}"
+                                                            <label for="card_supporting{{ $d->id }}" class="form-label">Card
+                                                                Supporting</label>
+                                                            <select class="form-control" id="card_supporting{{ $d->id }}"
                                                                 name="card_supporting">
                                                                 <option value="">-- Pilih Card Supporting --
                                                                 </option>
                                                                 @foreach ($cardSupportingList as $cardSupporting)
-                                                                    <option value="{{ $cardSupporting }}"
-                                                                        {{ $d->card_supporting == $cardSupporting ? 'selected' : '' }}>
+                                                                    <option value="{{ $cardSupporting }}" {{ $d->card_supporting == $cardSupporting ? 'selected' : '' }}>
                                                                         {{ $cardSupporting }}
                                                                     </option>
                                                                 @endforeach
@@ -738,14 +793,11 @@
 
                                                     <div class="column">
                                                         <div class="mb-3">
-                                                            <label for="pic{{ $d->id }}"
-                                                                class="form-label">PIC</label>
-                                                            <select class="form-control" id="pic{{ $d->id }}"
-                                                                name="pic">
+                                                            <label for="pic{{ $d->id }}" class="form-label">PIC</label>
+                                                            <select class="form-control" id="pic{{ $d->id }}" name="pic">
                                                                 <option value="">-- Pilih PIC --</option>
                                                                 @foreach ($picList as $pic)
-                                                                    <option value="{{ $pic->nama_pic }}"
-                                                                        {{ $d->pic == $pic->nama_pic ? 'selected' : '' }}>
+                                                                    <option value="{{ $pic->nama_pic }}" {{ $d->pic == $pic->nama_pic ? 'selected' : '' }}>
                                                                         {{ $pic->nama_pic }}
                                                                     </option>
                                                                 @endforeach
@@ -764,10 +816,9 @@
                                                     </div>
                                                     <div class="column">
                                                         <div class="mb-3">
-                                                            <label for="tanggal{{ $d->id }}"
-                                                                class="form-label">Tanggal</label>
-                                                            <input type="date" class="form-control"
-                                                                id="tanggal{{ $d->id }}" name="tanggal"
+                                                            <label for="tanggal{{ $d->id }}" class="form-label">Tanggal</label>
+                                                            <input type="date" class="form-control" id="tanggal{{ $d->id }}"
+                                                                name="tanggal"
                                                                 value="{{ $d->tanggal ? $d->tanggal->format('Y-m-d') : '' }}">
                                                         </div>
                                                     </div>
@@ -796,20 +847,16 @@
                         <div class="btn-datakolom">
                             <form method="GET" class="d-flex align-items-center">
                                 @if (request('search_nama_ponpes'))
-                                    <input type="hidden" name="search_nama_ponpes"
-                                        value="{{ request('search_nama_ponpes') }}">
+                                    <input type="hidden" name="search_nama_ponpes" value="{{ request('search_nama_ponpes') }}">
                                 @endif
                                 @if (request('search_kartu_baru'))
-                                    <input type="hidden" name="search_kartu_baru"
-                                        value="{{ request('search_kartu_baru') }}">
+                                    <input type="hidden" name="search_kartu_baru" value="{{ request('search_kartu_baru') }}">
                                 @endif
                                 @if (request('search_kartu_bekas'))
-                                    <input type="hidden" name="search_kartu_bekas"
-                                        value="{{ request('search_kartu_bekas') }}">
+                                    <input type="hidden" name="search_kartu_bekas" value="{{ request('search_kartu_bekas') }}">
                                 @endif
                                 @if (request('search_kartu_goip'))
-                                    <input type="hidden" name="search_kartu_goip"
-                                        value="{{ request('search_kartu_goip') }}">
+                                    <input type="hidden" name="search_kartu_goip" value="{{ request('search_kartu_goip') }}">
                                 @endif
                                 @if (request('search_kartu_belum_register'))
                                     <input type="hidden" name="search_kartu_belum_register"
@@ -840,8 +887,8 @@
                                 @endif
 
                                 <div class="d-flex align-items-center">
-                                    <select name="per_page" class="form-control form-control-sm pr-2"
-                                        style="width: auto;" onchange="this.form.submit()">
+                                    <select name="per_page" class="form-control form-control-sm pr-2" style="width: auto;"
+                                        onchange="this.form.submit()">
                                         <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>
                                             10
                                         </option>
@@ -908,13 +955,13 @@
     {{-- Search UPT DROPDOWN UNTUK ADD MODAL --}}
     <script>
         // Start Add Modal JS
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const uptSearch = document.getElementById('upt_search');
             const uptDropdown = document.getElementById('uptDropdownMenu');
             const uptOptions = document.querySelectorAll('.upt-option');
 
             // Filter UPT options based on search input
-            uptSearch.addEventListener('input', function() {
+            uptSearch.addEventListener('input', function () {
                 const searchTerm = this.value.toLowerCase();
                 let hasVisibleOption = false;
 
@@ -937,7 +984,7 @@
             });
 
             // Show all options when clicking on search input
-            uptSearch.addEventListener('focus', function() {
+            uptSearch.addEventListener('focus', function () {
                 if (this.value.length > 0) {
                     const searchTerm = this.value.toLowerCase();
                     let hasVisibleOption = false;
@@ -959,7 +1006,7 @@
             });
 
             // Hide dropdown when clicking outside
-            document.addEventListener('click', function(event) {
+            document.addEventListener('click', function (event) {
                 if (!event.target.closest('.dropdown')) {
                     uptDropdown.style.display = 'none';
                 }
@@ -989,14 +1036,14 @@
         }
 
         // Clear UPT selection when search is cleared for Add Modal
-        document.getElementById('upt_search').addEventListener('input', function() {
+        document.getElementById('upt_search').addEventListener('input', function () {
             if (this.value === '') {
                 document.getElementById('nama_ponpes').value = '';
             }
         });
 
         // Reset form when modal is closed for Add Modal
-        $('#addModal').on('hidden.bs.modal', function() {
+        $('#addModal').on('hidden.bs.modal', function () {
             document.getElementById('upt_search').value = '';
             document.getElementById('nama_ponpes').value = '';
             document.getElementById('uptDropdownMenu').style.display = 'none';
@@ -1005,7 +1052,7 @@
         // End Add Modal JS
 
         // Start Edit Modal JS
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             @foreach ($data as $d)
                 const uptSearchEdit{{ $d->id }} = document.getElementById(
                     'upt_search_edit_{{ $d->id }}');
@@ -1016,7 +1063,7 @@
 
                 if (uptSearchEdit{{ $d->id }}) {
                     // Filter Upt Berdasarkan Pencarian Input
-                    uptSearchEdit{{ $d->id }}.addEventListener('input', function() {
+                    uptSearchEdit{{ $d->id }}.addEventListener('input', function () {
                         const searchTerm = this.value.toLowerCase();
                         let hasVisibleOption = false;
 
@@ -1039,7 +1086,7 @@
                     });
 
                     // Menampilkan Semua UPT
-                    uptSearchEdit{{ $d->id }}.addEventListener('focus', function() {
+                    uptSearchEdit{{ $d->id }}.addEventListener('focus', function () {
                         if (this.value.length > 0) {
                             const searchTerm = this.value.toLowerCase();
                             let hasVisibleOption = false;
@@ -1061,14 +1108,14 @@
                     });
 
                     // Sembunyikan Ketika Klik diluar dropdown
-                    document.addEventListener('click', function(event) {
+                    document.addEventListener('click', function (event) {
                         if (!event.target.closest(`#editModal{{ $d->id }} .dropdown`)) {
                             uptDropdownEdit{{ $d->id }}.style.display = 'none';
                         }
                     });
                 }
             @endforeach
-        });
+                });
 
         // Toggle dropdown visibility for Edit Modal
         function toggleUptDropdownEdit(id) {
@@ -1094,7 +1141,7 @@
 
         // Clear UPT selection when search is cleared for Edit Modal
         @foreach ($data as $d)
-            document.getElementById(`upt_search_edit_{{ $d->id }}`).addEventListener('input', function() {
+            document.getElementById(`upt_search_edit_{{ $d->id }}`).addEventListener('input', function () {
                 if (this.value === '') {
                     document.getElementById(`nama_ponpes_edit_{{ $d->id }}`).value = '';
                 }
@@ -1103,7 +1150,7 @@
 
         // Reset Ketika Edit Modal Ditutup
         @foreach ($data as $d)
-            $(`#editModal{{ $d->id }}`).on('hidden.bs.modal', function() {
+            $(`#editModal{{ $d->id }}`).on('hidden.bs.modal', function () {
                 document.getElementById(`upt_search_edit_{{ $d->id }}`).value =
                     '{{ $d->nama_ponpes ?? '' }}';
                 document.getElementById(`uptDropdownMenuEdit{{ $d->id }}`).style.display = 'none';
@@ -1114,7 +1161,7 @@
 
     {{-- Search and Filter JavaScript --}}
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             // Function to get current filter values
             function getFilters() {
                 return {
@@ -1134,7 +1181,7 @@
             }
 
             // Function to apply filters and redirect (GLOBAL - bisa dipanggil dari tombol)
-            window.applyFilters = function() {
+            window.applyFilters = function () {
                 let filters = getFilters();
                 let url = new URL(window.location.href);
 
@@ -1163,7 +1210,7 @@
             };
 
             // Function to clear all search filters (GLOBAL - bisa dipanggil dari tombol Reset)
-            window.clearAllFilters = function() {
+            window.clearAllFilters = function () {
                 // Clear semua input field dulu
                 $('#search-nama-ponpes').val('');
                 $('#search-kartu-baru').val('');
@@ -1197,21 +1244,21 @@
             };
 
             // Bind keypress event to all search input fields (Enter masih berfungsi)
-            $('.column-search input').on('keypress', function(e) {
+            $('.column-search input').on('keypress', function (e) {
                 if (e.which === 13) { // Enter key
                     applyFilters();
                 }
             });
 
             // Clear individual column search when input is emptied
-            $('.column-search input').on('keyup', function(e) {
+            $('.column-search input').on('keyup', function (e) {
                 if (e.which === 13 && $(this).val().trim() === '') {
                     applyFilters(); // Apply filters to update URL (removing empty filter)
                 }
             });
 
             // Download functions with current filters
-            window.downloadCsv = function() {
+            window.downloadCsv = function () {
                 let filters = getFilters();
                 let form = document.createElement('form');
                 form.method = 'GET';
@@ -1233,7 +1280,7 @@
                 document.body.removeChild(form);
             };
 
-            window.downloadPdf = function() {
+            window.downloadPdf = function () {
                 let filters = getFilters();
                 let form = document.createElement('form');
                 form.method = 'GET';
@@ -1299,15 +1346,15 @@
             }
 
             // Handle modal events
-            $('.modal').on('show.bs.modal', function(e) {
+            $('.modal').on('show.bs.modal', function (e) {
                 console.log('Modal is opening');
             });
 
-            $('.modal').on('shown.bs.modal', function(e) {
+            $('.modal').on('shown.bs.modal', function (e) {
                 console.log('Modal is fully visible');
             });
 
-            $('.modal').on('hide.bs.modal', function(e) {
+            $('.modal').on('hide.bs.modal', function (e) {
                 console.log('Modal is closing');
             });
         });

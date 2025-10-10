@@ -5,7 +5,8 @@ use App\Http\Controllers\user\ponpes\spp\SppController;
 
 Route::prefix('sppPonpes')->name('sppPonpes.')->group(function () {
     Route::get('/ListDataSpp', [SppController::class, 'ListDataSpp'])->name('ListDataSpp');
-    Route::delete('/DataBasePageDestroy/{id}', [SppController::class, 'DataBasePageDestroy'])->name('DataBasePageDestroy');
+    Route::post('/store', [SppController::class, 'store'])->name('store');
+    Route::delete('/destroy/{id}', [SppController::class, 'DatabasePageDestroy'])->name('destroy');
 
     // Export Data All
     Route::get('/ponpes/spp/export-csv', [SppController::class, 'exportListCsv'])->name('export.csv');

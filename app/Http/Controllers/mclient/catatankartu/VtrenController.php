@@ -21,6 +21,29 @@ class VtrenController extends Controller
         // Apply filter
         $query = $this->applyFilters($query, $request);
 
+        // Calculate totals from ALL filtered data (before pagination)
+        $allFilteredData = $query->get();
+        $totals = [
+            'kartu_baru' => $allFilteredData->sum(function ($item) {
+                return intval($item->spam_vtren_kartu_baru ?? 0);
+            }),
+            'kartu_bekas' => $allFilteredData->sum(function ($item) {
+                return intval($item->spam_vtren_kartu_bekas ?? 0);
+            }),
+            'kartu_goip' => $allFilteredData->sum(function ($item) {
+                return intval($item->spam_vtren_kartu_goip ?? 0);
+            }),
+            'kartu_belum_register' => $allFilteredData->sum(function ($item) {
+                return intval($item->kartu_belum_teregister ?? 0);
+            }),
+            'whatsapp_terpakai' => $allFilteredData->sum(function ($item) {
+                return intval($item->whatsapp_telah_terpakai ?? 0);
+            }),
+            'kartu_terpakai_perhari' => $allFilteredData->sum(function ($item) {
+                return intval($item->jumlah_kartu_terpakai_perhari ?? 0);
+            })
+        ];
+
         // Get per_page from request, default 10
         $perPage = $request->get('per_page', 10);
 
@@ -28,6 +51,10 @@ class VtrenController extends Controller
         if (!in_array($perPage, [10, 15, 20, 'all'])) {
             $perPage = 10;
         }
+
+        // Rebuild query for pagination (karena sudah di-get() sebelumnya)
+        $query = Vtren::query();
+        $query = $this->applyFilters($query, $request);
 
         // Handle pagination
         if ($perPage == 'all') {
@@ -52,7 +79,7 @@ class VtrenController extends Controller
             ->orderBy('nama_ponpes')
             ->get();
 
-        return view('mclient.catatankartu.indexVtren', compact('data', 'picList', 'cardSupportingList', 'uptList'));
+        return view('mclient.catatankartu.indexVtren', compact('data', 'picList', 'cardSupportingList', 'uptList', 'totals'));
     }
 
     private function applyFilters($query, Request $request)
@@ -346,26 +373,51 @@ class VtrenController extends Controller
         $query = $this->applyFilters($query, $request);
 
         // Add date sorting when date filters are applied
-        if (
-            $request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')
-        ) {
+        if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
             $query = $query->orderBy('tanggal', 'asc');
         }
 
         $data = $query->orderBy('created_at', 'desc')->get();
 
+        // Calculate totals for summary cards
+        $totals = [
+            'kartu_baru' => $data->sum(function ($item) {
+                return intval($item->spam_vtren_kartu_baru ?? 0);
+            }),
+            'kartu_bekas' => $data->sum(function ($item) {
+                return intval($item->spam_vtren_kartu_bekas ?? 0);
+            }),
+            'kartu_goip' => $data->sum(function ($item) {
+                return intval($item->spam_vtren_kartu_goip ?? 0);
+            }),
+            'kartu_belum_register' => $data->sum(function ($item) {
+                return intval($item->kartu_belum_teregister ?? 0);
+            }),
+            'whatsapp_terpakai' => $data->sum(function ($item) {
+                return intval($item->whatsapp_telah_terpakai ?? 0);
+            }),
+            'kartu_terpakai_perhari' => $data->sum(function ($item) {
+                return intval($item->jumlah_kartu_terpakai_perhari ?? 0);
+            })
+        ];
+
         $pdfData = [
             'title' => 'List Data Catatan Kartu Vtren',
             'data' => $data,
-            'generated_at' => Carbon::now()->format('d M Y H:i:s')
+            'totals' => $totals,
+            'generated_at' => Carbon::now()->format('d M Y H:i:s'),
+            'total_records' => $data->count()
         ];
 
         $pdf = Pdf::loadView('export.public.catatanKartuVtren.indexVtren', $pdfData);
+
+        // Optional: Set paper size and orientation
+        $pdf->setPaper('A4', 'landscape');
+
         $filename = 'list_catatan_kartu_vtren_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
 
         return $pdf->download($filename);
     }
-
     public function getDashboardStats()
     {
         $totalData = Vtren::count();
@@ -417,5 +469,4 @@ class VtrenController extends Controller
             'message' => 'Ponpes not found'
         ]);
     }
-    
 }

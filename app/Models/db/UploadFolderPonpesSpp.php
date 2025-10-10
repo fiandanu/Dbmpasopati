@@ -6,17 +6,14 @@ use App\Models\user\Ponpes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class UploadFolderPonpes extends Model
+class UploadFolderPonpesSpp extends Model
 {
     use HasFactory;
 
-    protected $table = 'upload_folder_ponpes';
+    protected $table = 'upload_folder_ponpes_spp';
 
     protected $fillable = [
         'ponpes_id',
-        'tanggal_kontrak',
-        'tanggal_jatuh_tempo',
-        'uploaded_pdf',
         'pdf_folder_1',
         'pdf_folder_2',
         'pdf_folder_3',
@@ -26,12 +23,7 @@ class UploadFolderPonpes extends Model
         'pdf_folder_7',
         'pdf_folder_8',
         'pdf_folder_9',
-        'pdf_folder_10'
-    ];
-
-    protected $casts = [
-        'tanggal_kontrak' => 'date',
-        'tanggal_jatuh_tempo' => 'date',
+        'pdf_folder_10',
     ];
 
     public function ponpes()
@@ -49,5 +41,18 @@ class UploadFolderPonpes extends Model
             }
         }
         return $pdfs;
+    }
+
+    // Helper method untuk cek berapa folder yang sudah diupload
+    public function getUploadedFoldersCountAttribute()
+    {
+        $count = 0;
+        for ($i = 1; $i <= 10; $i++) {
+            $pdfField = "pdf_folder_$i";
+            if (!empty($this->$pdfField)) {
+                $count++;
+            }
+        }
+        return $count;
     }
 }

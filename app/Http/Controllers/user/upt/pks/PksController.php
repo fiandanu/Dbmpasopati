@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\user\Provider;
 use App\Models\user\Upt;
-use App\Models\db\UploadFolderUpt;
+use App\Models\db\UploadFolderUptPks;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
@@ -20,9 +20,9 @@ class PksController extends Controller
         if (!$uploadFolder) {
             return 'Belum Upload';
         }
-        
+
         $hasUploadedPdf = !empty($uploadFolder->uploaded_pdf);
-        
+
         if ($hasUploadedPdf) {
             return 'Sudah Upload';
         } else {
@@ -70,7 +70,8 @@ class PksController extends Controller
         if ($request->has('search_status') && !empty($request->search_status)) {
             $statusSearch = strtolower($request->search_status);
             return $data->filter(function ($d) use ($statusSearch) {
-                $status = strtolower($this->calculatePdfStatus($d->uploadFolder));
+                // PERBAIKAN: Gunakan uploadFolderPks
+                $status = strtolower($this->calculatePdfStatus($d->uploadFolderPks));
                 return strpos($status, $statusSearch) !== false;
             });
         }
@@ -79,8 +80,8 @@ class PksController extends Controller
 
     public function ListDataPks(Request $request)
     {
-        // Menampilkan data PKS (tipe pks atau sesuai kebutuhan)
-        $query = Upt::with('uploadFolder')->whereIn('tipe', ['vpas', 'reguler']);
+        // PERBAIKAN: Gunakan uploadFolderPks
+        $query = Upt::with('uploadFolderPks')->whereIn('tipe', ['vpas', 'reguler']);
 
         // Apply database filters
         $query = $this->applyFilters($query, $request);
@@ -109,7 +110,7 @@ class PksController extends Controller
                 ['path' => $request->url(), 'query' => $request->query()]
             );
         } else {
-            // For paginated results, we need to get all data first, apply status filter, then paginate
+            // For paginated results
             $allData = $query->orderBy('tanggal', 'desc')->get();
             $filteredData = $this->applyPdfStatusFilter($allData, $request);
 
@@ -137,20 +138,17 @@ class PksController extends Controller
 
     public function exportListCsv(Request $request): StreamedResponse
     {
-        $query = Upt::with('uploadFolder')->whereIn('tipe', ['vpas', 'reguler']);
+        // PERBAIKAN: Gunakan uploadFolderPks
+        $query = Upt::with('uploadFolderPks')->whereIn('tipe', ['vpas', 'reguler']);
         $query = $this->applyFilters($query, $request);
 
-        // Add date sorting when date filters are applied
         if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
             $query = $query->orderBy('tanggal', 'asc');
         }
 
         $data = $query->get();
-
-        // Apply status filter
         $data = $this->applyPdfStatusFilter($data, $request);
 
-        // Additional sorting if date filter is applied
         if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
             $data = $data->sortBy('tanggal')->values();
         }
@@ -168,7 +166,8 @@ class PksController extends Controller
         $rows = [['No', 'Nama UPT', 'Kanwil', 'Tipe', 'Tanggal Dibuat', 'Status Upload PDF']];
         $no = 1;
         foreach ($data as $d) {
-            $status = $this->calculatePdfStatus($d->uploadFolder);
+            // PERBAIKAN: Gunakan uploadFolderPks
+            $status = $this->calculatePdfStatus($d->uploadFolderPks);
             $rows[] = [
                 $no++,
                 $d->namaupt,
@@ -192,28 +191,25 @@ class PksController extends Controller
 
     public function exportListPdf(Request $request)
     {
-        $query = Upt::with('uploadFolder')->whereIn('tipe', ['vpas', 'reguler']);
+        // PERBAIKAN: Gunakan uploadFolderPks
+        $query = Upt::with('uploadFolderPks')->whereIn('tipe', ['vpas', 'reguler']);
         $query = $this->applyFilters($query, $request);
 
-        // Add date sorting when date filters are applied
         if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
             $query = $query->orderBy('tanggal', 'asc');
         }
 
         $data = $query->get();
-
-        // Apply status filter
         $data = $this->applyPdfStatusFilter($data, $request);
 
-        // Convert collection to array with calculated status
         $dataArray = [];
         foreach ($data as $d) {
             $dataItem = $d->toArray();
-            $dataItem['calculated_status'] = $this->calculatePdfStatus($d->uploadFolder);
+            // PERBAIKAN: Gunakan uploadFolderPks
+            $dataItem['calculated_status'] = $this->calculatePdfStatus($d->uploadFolderPks);
             $dataArray[] = $dataItem;
         }
 
-        // Additional sorting using correct field name
         if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
             usort($dataArray, function ($a, $b) {
                 $dateA = strtotime($a['tanggal']);
@@ -238,16 +234,16 @@ class PksController extends Controller
     {
         try {
             $dataupt = Upt::findOrFail($id);
-            
-            // Cari data upload folder yang terkait
-            $uploadFolder = UploadFolderUpt::where('upt_id', $id)->first();
-            
+
+            // PERBAIKAN: Gunakan UploadFolderUptPks
+            $uploadFolder = UploadFolderUptPks::where('upt_id', $id)->first();
+
             if ($uploadFolder) {
                 // Hapus file PDF yang terkait
                 if (!empty($uploadFolder->uploaded_pdf) && Storage::disk('public')->exists($uploadFolder->uploaded_pdf)) {
                     Storage::disk('public')->delete($uploadFolder->uploaded_pdf);
                 }
-                
+
                 // Hapus record upload folder
                 $uploadFolder->delete();
             }
@@ -264,14 +260,15 @@ class PksController extends Controller
     {
         try {
             $upt = Upt::findOrFail($id);
-            $uploadFolder = UploadFolderUpt::where('upt_id', $id)->first();
-            
+            // PERBAIKAN: Gunakan UploadFolderUptPks
+            $uploadFolder = UploadFolderUptPks::where('upt_id', $id)->first();
+
             if (!$uploadFolder || empty($uploadFolder->uploaded_pdf)) {
                 return abort(404, 'File PDF belum diupload.');
             }
 
             $filePath = storage_path('app/public/' . $uploadFolder->uploaded_pdf);
-            
+
             if (!file_exists($filePath)) {
                 return abort(404, 'File tidak ditemukan di storage.');
             }
@@ -302,13 +299,12 @@ class PksController extends Controller
             $upt = Upt::findOrFail($id);
             $file = $request->file('uploaded_pdf');
 
-            // Debug: Cek apakah file valid
             if (!$file || !$file->isValid()) {
                 return redirect()->back()->with('error', 'File tidak valid!');
             }
 
-            // Cari atau buat record upload folder
-            $uploadFolder = UploadFolderUpt::firstOrCreate(
+            // PERBAIKAN: Gunakan UploadFolderUptPks
+            $uploadFolder = UploadFolderUptPks::firstOrCreate(
                 ['upt_id' => $id],
                 ['upt_id' => $id]
             );
@@ -343,7 +339,7 @@ class PksController extends Controller
             Log::info("PDF uploaded successfully for UPT PKS ID: {$id}, Path: {$path}");
 
             return redirect()->back()->with('success', 'PDF berhasil di-upload!');
-            
+
         } catch (\Illuminate\Validation\ValidationException $e) {
             return redirect()->back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
@@ -356,8 +352,9 @@ class PksController extends Controller
     {
         try {
             $upt = Upt::findOrFail($id);
-            $uploadFolder = UploadFolderUpt::where('upt_id', $id)->first();
-            
+            // PERBAIKAN: Gunakan UploadFolderUptPks
+            $uploadFolder = UploadFolderUptPks::where('upt_id', $id)->first();
+
             if (!$uploadFolder || empty($uploadFolder->uploaded_pdf)) {
                 return redirect()->back()->with('error', 'File PDF belum di-upload.');
             }

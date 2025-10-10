@@ -5,8 +5,7 @@ namespace App\Http\Controllers\user\ponpes\pks;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\user\Ponpes;
-use App\Models\user\Provider;
-use App\Models\db\UploadFolderPonpes;
+use App\Models\db\UploadFolderPonpesPks;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
@@ -15,13 +14,13 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class PksController extends Controller
 {
-    private function calculatePdfStatus($uploadFolder)
+    private function calculatePdfStatus($uploadFolderPks)
     {
-        if (!$uploadFolder) {
+        if (!$uploadFolderPks) {
             return 'Belum Upload';
         }
 
-        $hasUploadedPdf = !empty($uploadFolder->uploaded_pdf);
+        $hasUploadedPdf = !empty($uploadFolderPks->uploaded_pdf);
 
         if ($hasUploadedPdf) {
             return 'Sudah Upload';
@@ -29,8 +28,6 @@ class PksController extends Controller
             return 'Belum Upload';
         }
     }
-
-
 
     private function applyFilters($query, Request $request)
     {
@@ -68,7 +65,7 @@ class PksController extends Controller
         if ($request->has('search_status') && !empty($request->search_status)) {
             $statusSearch = strtolower($request->search_status);
             return $data->filter(function ($d) use ($statusSearch) {
-                $status = strtolower($this->calculatePdfStatus($d->uploadFolder));
+                $status = strtolower($this->calculatePdfStatus($d->uploadFolderPks));
                 return strpos($status, $statusSearch) !== false;
             });
         }
@@ -78,8 +75,8 @@ class PksController extends Controller
     public function ListDataPks(Request $request)
     {
         // Menampilkan data PKS Ponpes - hanya yang sudah dibuat manual
-        $query = Ponpes::with('uploadFolder')
-            ->whereHas('uploadFolder'); // Hanya tampilkan yang sudah punya upload folder (sudah dibuat di PKS)
+        $query = Ponpes::with('uploadFolderPks')
+            ->whereHas('uploadFolderPks'); // Hanya tampilkan yang sudah punya upload folder (sudah dibuat di PKS)
 
         // Apply database filters
         $query = $this->applyFilters($query, $request);
@@ -130,9 +127,9 @@ class PksController extends Controller
             );
         }
 
-        // Get list ponpes untuk dropdown - ambil dari tabel Ponpes yang belum ada di PKS
-        $ponpesList = Ponpes::whereDoesntHave('uploadFolder')
-            ->orWhereHas('uploadFolder', function ($q) {
+        // PERBAIKAN: Get list ponpes untuk dropdown - ambil dari tabel Ponpes yang belum ada di PKS
+        $ponpesList = Ponpes::whereDoesntHave('uploadFolderPks')
+            ->orWhereHas('uploadFolderPks', function ($q) {
                 $q->whereNull('tanggal_kontrak')
                     ->whereNull('tanggal_jatuh_tempo');
             })
@@ -144,7 +141,8 @@ class PksController extends Controller
 
     public function exportListCsv(Request $request): StreamedResponse
     {
-        $query = Ponpes::with('uploadFolder');
+        // PERBAIKAN: Gunakan uploadFolderPks
+        $query = Ponpes::with('uploadFolderPks');
         $query = $this->applyFilters($query, $request);
 
         // Add date sorting when date filters are applied
@@ -175,15 +173,16 @@ class PksController extends Controller
         $rows = [['No', 'Nama Ponpes', 'Nama Wilayah', 'Tipe', 'Tanggal Dibuat', 'Tanggal Kontrak', 'Tanggal Jatuh Tempo', 'Status Upload PDF']];
         $no = 1;
         foreach ($data as $d) {
-            $status = $this->calculatePdfStatus($d->uploadFolder);
+            // PERBAIKAN: Gunakan uploadFolderPks
+            $status = $this->calculatePdfStatus($d->uploadFolderPks);
             $rows[] = [
                 $no++,
                 $d->nama_ponpes,
                 $d->nama_wilayah,
                 ucfirst($d->tipe),
                 \Carbon\Carbon::parse($d->tanggal)->format('d M Y'),
-                $d->uploadFolder && $d->uploadFolder->tanggal_kontrak ? \Carbon\Carbon::parse($d->uploadFolder->tanggal_kontrak)->format('d M Y') : '-',
-                $d->uploadFolder && $d->uploadFolder->tanggal_jatuh_tempo ? \Carbon\Carbon::parse($d->uploadFolder->tanggal_jatuh_tempo)->format('d M Y') : '-',
+                $d->uploadFolderPks && $d->uploadFolderPks->tanggal_kontrak ? \Carbon\Carbon::parse($d->uploadFolderPks->tanggal_kontrak)->format('d M Y') : '-',
+                $d->uploadFolderPks && $d->uploadFolderPks->tanggal_jatuh_tempo ? \Carbon\Carbon::parse($d->uploadFolderPks->tanggal_jatuh_tempo)->format('d M Y') : '-',
                 $status
             ];
         }
@@ -201,7 +200,8 @@ class PksController extends Controller
 
     public function exportListPdf(Request $request)
     {
-        $query = Ponpes::with('uploadFolder');
+        // PERBAIKAN: Gunakan uploadFolderPks
+        $query = Ponpes::with('uploadFolderPks');
         $query = $this->applyFilters($query, $request);
 
         // Add date sorting when date filters are applied
@@ -218,7 +218,8 @@ class PksController extends Controller
         $dataArray = [];
         foreach ($data as $d) {
             $dataItem = $d->toArray();
-            $dataItem['calculated_status'] = $this->calculatePdfStatus($d->uploadFolder);
+            // PERBAIKAN: Gunakan uploadFolderPks
+            $dataItem['calculated_status'] = $this->calculatePdfStatus($d->uploadFolderPks);
             $dataArray[] = $dataItem;
         }
 
@@ -249,7 +250,7 @@ class PksController extends Controller
             $dataponpes = Ponpes::findOrFail($id);
 
             // Cari data upload folder yang terkait
-            $uploadFolder = UploadFolderPonpes::where('ponpes_id', $id)->first();
+            $uploadFolder = UploadFolderPonpesPks::where('ponpes_id', $id)->first();
 
             if ($uploadFolder) {
                 // Hapus file PDF yang terkait
@@ -257,20 +258,17 @@ class PksController extends Controller
                     Storage::disk('public')->delete($uploadFolder->uploaded_pdf);
                 }
 
-                // Hapus file PDF folder lainnya (1-10) jika ada
-                for ($i = 1; $i <= 10; $i++) {
-                    $pdfField = "pdf_folder_$i";
-                    if (!empty($uploadFolder->$pdfField) && Storage::disk('public')->exists($uploadFolder->$pdfField)) {
-                        Storage::disk('public')->delete($uploadFolder->$pdfField);
-                    }
-                }
+                // PERBAIKAN: Hapus kode PDF folder lainnya (1-10) karena tidak ada di migrasi
+                // Migrasi hanya punya 1 field: uploaded_pdf
 
                 // Hapus record upload folder
                 $uploadFolder->delete();
             }
 
-            $dataponpes->delete();
-            return redirect()->route('DbPonpes.pks.ListDataPks')->with('success', 'Data berhasil dihapus');
+            // SUDAH BENAR - Jangan hapus data ponpes
+            // $dataponpes->delete();
+
+            return redirect()->route('DbPonpes.pks.ListDataPks')->with('success', 'Data PKS berhasil dihapus');
         } catch (\Exception $e) {
             Log::error('Error deleting Ponpes PKS: ' . $e->getMessage());
             return redirect()->route('DbPonpes.pks.ListDataPks')->with('error', 'Gagal menghapus data: ' . $e->getMessage());
@@ -281,7 +279,7 @@ class PksController extends Controller
     {
         try {
             $ponpes = Ponpes::findOrFail($id);
-            $uploadFolder = UploadFolderPonpes::where('ponpes_id', $id)->first();
+            $uploadFolder = UploadFolderPonpesPks::where('ponpes_id', $id)->first();
 
             if (!$uploadFolder || empty($uploadFolder->uploaded_pdf)) {
                 return abort(404, 'File PDF belum diupload.');
@@ -325,7 +323,7 @@ class PksController extends Controller
             }
 
             // Cari atau buat record upload folder
-            $uploadFolder = UploadFolderPonpes::firstOrCreate(
+            $uploadFolder = UploadFolderPonpesPks::firstOrCreate(
                 ['ponpes_id' => $id],
                 ['ponpes_id' => $id]
             );
@@ -372,7 +370,7 @@ class PksController extends Controller
     {
         try {
             $ponpes = Ponpes::findOrFail($id);
-            $uploadFolder = UploadFolderPonpes::where('ponpes_id', $id)->first();
+            $uploadFolder = UploadFolderPonpesPks::where('ponpes_id', $id)->first();
 
             if (!$uploadFolder || empty($uploadFolder->uploaded_pdf)) {
                 return redirect()->back()->with('error', 'File PDF belum di-upload.');
@@ -398,7 +396,6 @@ class PksController extends Controller
             $request->validate([
                 'nama_ponpes' => 'required',
                 'nama_wilayah' => 'required',
-                // Hapus validasi tanggal
                 'tanggal_kontrak' => 'nullable|date',
                 'tanggal_jatuh_tempo' => 'nullable|date|after_or_equal:tanggal_kontrak',
             ], [
@@ -416,9 +413,8 @@ class PksController extends Controller
                 return redirect()->back()->with('error', 'Data Ponpes tidak ditemukan')->withInput();
             }
 
-            // Create atau Update UploadFolder dengan contract dates
-            // Tanggal dibuat akan otomatis menggunakan created_at dari UploadFolderPonpes
-            UploadFolderPonpes::updateOrCreate(
+            // Create atau Update UploadFolderPonpesPks dengan contract dates
+            UploadFolderPonpesPks::updateOrCreate(
                 ['ponpes_id' => $ponpes->id],
                 [
                     'tanggal_kontrak' => $request->tanggal_kontrak,
@@ -446,7 +442,7 @@ class PksController extends Controller
             $ponpes = Ponpes::findOrFail($id);
 
             // Update or create upload folder
-            $uploadFolder = UploadFolderPonpes::firstOrCreate(
+            $uploadFolder = UploadFolderPonpesPks::firstOrCreate(
                 ['ponpes_id' => $id],
                 ['ponpes_id' => $id]
             );
@@ -462,16 +458,4 @@ class PksController extends Controller
             return redirect()->back()->with('error', 'Gagal mengupdate data: ' . $e->getMessage());
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
 }

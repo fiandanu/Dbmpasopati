@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\user\Ponpes;
 use App\Models\user\Provider;
-use App\Models\db\UploadFolderPonpes;
+use App\Models\db\UploadFolderPonpesSpp;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
@@ -87,7 +87,9 @@ class SppController extends Controller
 
     public function ListDataSpp(Request $request)
     {
-        $query = Ponpes::with('uploadFolder');
+        // Menampilkan data SPP Ponpes - hanya yang sudah ditambahkan (memiliki upload folder)
+        $query = Ponpes::with('uploadFolder')
+            ->whereHas('uploadFolder'); // Hanya tampilkan yang sudah punya upload folder
 
         // Apply database filters
         $query = $this->applyFilters($query, $request);
@@ -138,8 +140,13 @@ class SppController extends Controller
             );
         }
 
+        // Get list ponpes untuk dropdown - ambil dari tabel Ponpes yang belum ditambahkan ke SPP
+        $ponpesList = Ponpes::whereDoesntHave('uploadFolder')
+            ->orderBy('nama_ponpes')
+            ->get();
+
         $providers = Provider::all();
-        return view('db.ponpes.spp.indexSpp', compact('data', 'providers'));
+        return view('db.ponpes.spp.indexSpp', compact('data', 'providers', 'ponpesList'));
     }
 
     public function exportListCsv(Request $request): StreamedResponse
@@ -247,7 +254,7 @@ class SppController extends Controller
             $dataPonpes = Ponpes::findOrFail($id);
 
             // Cari data upload folder yang terkait
-            $uploadFolder = UploadFolderPonpes::where('ponpes_id', $id)->first();
+            $uploadFolder = UploadFolderPonpesSpp::where('ponpes_id', $id)->first();
 
             if ($uploadFolder) {
                 // Hapus semua file PDF yang terkait
@@ -262,10 +269,12 @@ class SppController extends Controller
                 $uploadFolder->delete();
             }
 
-            $dataPonpes->delete();
-            return redirect()->route('sppPonpes.ListDataSpp')->with('success', 'Data berhasil dihapus');
+            // HAPUS BARIS INI - Jangan hapus data ponpes
+            // $dataPonpes->delete();
+
+            return redirect()->route('sppPonpes.ListDataSpp')->with('success', 'Data SPP berhasil dihapus');
         } catch (\Exception $e) {
-            Log::error('Error deleting Ponpes: ' . $e->getMessage());
+            Log::error('Error deleting Ponpes SPP: ' . $e->getMessage());
             return redirect()->route('sppPonpes.ListDataSpp')->with('error', 'Gagal menghapus data: ' . $e->getMessage());
         }
     }
@@ -278,7 +287,7 @@ class SppController extends Controller
             }
 
             $ponpes = Ponpes::findOrFail($id);
-            $uploadFolder = UploadFolderPonpes::where('ponpes_id', $id)->first();
+            $uploadFolder = UploadFolderPonpesSpp::where('ponpes_id', $id)->first();
 
             if (!$uploadFolder) {
                 return abort(404, 'Data upload folder tidak ditemukan.');
@@ -333,7 +342,7 @@ class SppController extends Controller
             }
 
             // Cari atau buat record upload folder
-            $uploadFolder = UploadFolderPonpes::firstOrCreate(
+            $uploadFolder = UploadFolderPonpesSpp::firstOrCreate(
                 ['ponpes_id' => $id],
                 ['ponpes_id' => $id]
             );
@@ -377,6 +386,39 @@ class SppController extends Controller
         }
     }
 
+    public function store(Request $request)
+    {
+        try {
+            $request->validate([
+                'nama_ponpes' => 'required',
+                'nama_wilayah' => 'required',
+            ], [
+                'nama_ponpes.required' => 'Nama Ponpes harus diisi.',
+                'nama_wilayah.required' => 'Nama Wilayah harus diisi.',
+            ]);
+
+            // Cari Ponpes yang dipilih
+            $ponpes = Ponpes::where('nama_ponpes', $request->nama_ponpes)
+                ->where('nama_wilayah', $request->nama_wilayah)
+                ->first();
+
+            if (!$ponpes) {
+                return redirect()->back()->with('error', 'Data Ponpes tidak ditemukan')->withInput();
+            }
+
+            // Create UploadFolder untuk menandai data sudah ditambahkan ke SPP
+            UploadFolderPonpesSpp::firstOrCreate(
+                ['ponpes_id' => $ponpes->id],
+                ['ponpes_id' => $ponpes->id]
+            );
+
+            return redirect()->route('sppPonpes.ListDataSpp')->with('success', 'Data SPP berhasil ditambahkan');
+        } catch (\Exception $e) {
+            Log::error('Error creating SPP: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal menambahkan data: ' . $e->getMessage())->withInput();
+        }
+    }
+
     public function deleteFilePDF($id, $folder)
     {
         try {
@@ -385,7 +427,7 @@ class SppController extends Controller
             }
 
             $ponpes = Ponpes::findOrFail($id);
-            $uploadFolder = UploadFolderPonpes::where('ponpes_id', $id)->first();
+            $uploadFolder = UploadFolderPonpesSpp::where('ponpes_id', $id)->first();
 
             if (!$uploadFolder) {
                 return redirect()->back()->with('error', 'Data upload folder tidak ditemukan.');

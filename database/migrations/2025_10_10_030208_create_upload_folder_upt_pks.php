@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ponpes', function (Blueprint $table) {
+        Schema::create('upload_folder_upt_pks', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_ponpes')->nullable();
-            $table->string('nama_wilayah');
-            $table->string('tipe')->nullable();
-            $table->date('tanggal')->default(now());
+            $table->unsignedBigInteger('upt_id');
+            $table->string('uploaded_pdf')->nullable();
             $table->timestamps();
+
+            $table->foreign('upt_id')->references('id')->on('data_upt')->onDelete('cascade');
+            $table->unique('upt_id'); // Satu UPT hanya bisa punya satu record PKS
         });
     }
 
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ponpes');
+        Schema::dropIfExists('upload_folder_upt_pks');
     }
 };

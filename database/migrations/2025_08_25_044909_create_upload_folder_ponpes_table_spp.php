@@ -6,12 +6,14 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
-        Schema::create('upload_folder_upt', function (Blueprint $table) {
+        Schema::create('upload_folder_ponpes_spp', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('upt_id')->constrained('data_upt')->onDelete('cascade');
-            $table->string('uploaded_pdf')->nullable();
+            $table->unsignedBigInteger('ponpes_id');
             $table->string('pdf_folder_1')->nullable();
             $table->string('pdf_folder_2')->nullable();
             $table->string('pdf_folder_3')->nullable();
@@ -23,11 +25,17 @@ return new class extends Migration
             $table->string('pdf_folder_9')->nullable();
             $table->string('pdf_folder_10')->nullable();
             $table->timestamps();
+
+            $table->foreign('ponpes_id')->references('id')->on('data_ponpes')->onDelete('cascade');
+            $table->unique('ponpes_id'); // Satu ponpes hanya bisa punya satu record SPP
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::dropIfExists('upload_folder_upt'); // Perbaikan: nama tabel harus konsisten
+        Schema::dropIfExists('upload_folder_ponpes_spp');
     }
 };

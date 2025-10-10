@@ -3,9 +3,10 @@
 namespace App\Models\user;
 
 use App\Models\db\DataOpsionalPonpes;
-use App\Models\db\UploadFolderPonpes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\db\UploadFolderPonpesPks;
+use App\Models\db\UploadFolderPonpesSpp;
 
 class Ponpes extends Model
 {
@@ -18,16 +19,28 @@ class Ponpes extends Model
         'nama_wilayah',
         'tipe',
         'tanggal',
-
     ];
 
     protected $casts = [
         'tanggal' => 'date'
     ];
 
+    // Relasi ke PKS
+    public function uploadFolderPks()
+    {
+        return $this->hasOne(UploadFolderPonpesPks::class, 'ponpes_id');
+    }
+
+    // Relasi ke SPP
+    public function uploadFolderSpp()
+    {
+        return $this->hasOne(UploadFolderPonpesSpp::class, 'ponpes_id');
+    }
+
+    // Alias untuk uploadFolder (digunakan di view indexSpp)
     public function uploadFolder()
     {
-        return $this->hasOne(UploadFolderPonpes::class, 'ponpes_id');
+        return $this->hasOne(UploadFolderPonpesSpp::class, 'ponpes_id');
     }
 
     public function dataOpsional()
@@ -35,40 +48,42 @@ class Ponpes extends Model
         return $this->hasOne(DataOpsionalPonpes::class, 'ponpes_id');
     }
 
+    // Helper methods untuk PDF di folder tertentu (SPP)
     public function hasPdfInFolder($folderNumber)
     {
-        if (!$this->uploadFolder) {
+        if (!$this->uploadFolderSpp) {
             return false;
         }
 
         $column = 'pdf_folder_' . $folderNumber;
-        return !empty($this->uploadFolder->$column);
+        return !empty($this->uploadFolderSpp->$column);
     }
 
     public function getPdfFileNameInFolder($folderNumber)
     {
-        if (!$this->uploadFolder) {
+        if (!$this->uploadFolderSpp) {
             return null;
         }
 
         $column = 'pdf_folder_' . $folderNumber;
-        if (!empty($this->uploadFolder->$column)) {
-            return basename($this->uploadFolder->$column);
+        if (!empty($this->uploadFolderSpp->$column)) {
+            return basename($this->uploadFolderSpp->$column);
         }
 
         return null;
     }
 
+    // Hitung berapa folder yang sudah diupload (SPP)
     public function getUploadedFoldersCountAttribute()
     {
-        if (!$this->uploadFolder) {
+        if (!$this->uploadFolderSpp) {
             return 0;
         }
 
         $count = 0;
         for ($i = 1; $i <= 10; $i++) {
             $column = 'pdf_folder_' . $i;
-            if (!empty($this->uploadFolder->$column)) {
+            if (!empty($this->uploadFolderSpp->$column)) {
                 $count++;
             }
         }
@@ -76,13 +91,14 @@ class Ponpes extends Model
         return $count;
     }
 
+    // Untuk backward compatibility
     public function getUploadedPdfAttribute()
     {
-        return $this->uploadFolder ? $this->uploadFolder->uploaded_pdf : null;
+        return $this->uploadFolderSpp ? $this->uploadFolderSpp->pdf_folder_1 : null;
     }
 
     public function getHasPdfAttribute()
     {
-        return $this->uploadFolder && !empty($this->uploadFolder->uploaded_pdf);
+        return $this->uploadFolderSpp && !empty($this->uploadFolderSpp->pdf_folder_1);
     }
 }

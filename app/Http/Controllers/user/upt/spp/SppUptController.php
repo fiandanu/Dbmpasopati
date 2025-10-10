@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\user\Provider;
 use App\Models\user\Upt;
-use App\Models\db\UploadFolderUpt;
+use App\Models\db\UploadFolderUptSpp;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
@@ -20,17 +20,17 @@ class SppUptController extends Controller
         if (!$uploadFolder) {
             return 'Belum Upload';
         }
-        
+
         $uploadedFolders = 0;
         $totalFolders = 10;
-        
+
         for ($i = 1; $i <= 10; $i++) {
             $column = 'pdf_folder_' . $i;
             if (!empty($uploadFolder->$column)) {
                 $uploadedFolders++;
             }
         }
-        
+
         if ($uploadedFolders == 0) {
             return 'Belum Upload';
         } elseif ($uploadedFolders == $totalFolders) {
@@ -80,7 +80,8 @@ class SppUptController extends Controller
         if ($request->has('search_status') && !empty($request->search_status)) {
             $statusSearch = strtolower($request->search_status);
             return $data->filter(function ($d) use ($statusSearch) {
-                $status = strtolower($this->calculatePdfStatus($d->uploadFolder));
+                // PERBAIKAN: Gunakan uploadFolderSpp
+                $status = strtolower($this->calculatePdfStatus($d->uploadFolderSpp));
                 return strpos($status, $statusSearch) !== false;
             });
         }
@@ -89,8 +90,8 @@ class SppUptController extends Controller
 
     public function ListDataSpp(Request $request)
     {
-        // Menampilkan data VPAS dan Reguler untuk SPP
-        $query = Upt::with('uploadFolder')->whereIn('tipe', ['vpas', 'reguler']);
+        // PERBAIKAN: Gunakan uploadFolderSpp
+        $query = Upt::with('uploadFolderSpp')->whereIn('tipe', ['vpas', 'reguler']);
 
         // Apply database filters
         $query = $this->applyFilters($query, $request);
@@ -147,7 +148,8 @@ class SppUptController extends Controller
 
     public function exportListCsv(Request $request): StreamedResponse
     {
-        $query = Upt::with('uploadFolder')->whereIn('tipe', ['vpas', 'reguler']);
+        // PERBAIKAN: Gunakan uploadFolderSpp
+        $query = Upt::with('uploadFolderSpp')->whereIn('tipe', ['vpas', 'reguler']);
         $query = $this->applyFilters($query, $request);
 
         // Add date sorting when date filters are applied
@@ -178,7 +180,8 @@ class SppUptController extends Controller
         $rows = [['No', 'Nama UPT', 'Kanwil', 'Tipe', 'Tanggal Dibuat', 'Status Upload PDF']];
         $no = 1;
         foreach ($data as $d) {
-            $status = $this->calculatePdfStatus($d->uploadFolder);
+            // PERBAIKAN: Gunakan uploadFolderSpp
+            $status = $this->calculatePdfStatus($d->uploadFolderSpp);
             $rows[] = [
                 $no++,
                 $d->namaupt,
@@ -202,7 +205,8 @@ class SppUptController extends Controller
 
     public function exportListPdf(Request $request)
     {
-        $query = Upt::with('uploadFolder')->whereIn('tipe', ['vpas', 'reguler']);
+        // PERBAIKAN: Gunakan uploadFolderSpp
+        $query = Upt::with('uploadFolderSpp')->whereIn('tipe', ['vpas', 'reguler']);
         $query = $this->applyFilters($query, $request);
 
         // Add date sorting when date filters are applied
@@ -219,7 +223,8 @@ class SppUptController extends Controller
         $dataArray = [];
         foreach ($data as $d) {
             $dataItem = $d->toArray();
-            $dataItem['calculated_status'] = $this->calculatePdfStatus($d->uploadFolder);
+            // PERBAIKAN: Gunakan uploadFolderSpp
+            $dataItem['calculated_status'] = $this->calculatePdfStatus($d->uploadFolderSpp);
             $dataArray[] = $dataItem;
         }
 
@@ -248,10 +253,10 @@ class SppUptController extends Controller
     {
         try {
             $dataupt = Upt::findOrFail($id);
-            
-            // Cari data upload folder yang terkait
-            $uploadFolder = UploadFolderUpt::where('upt_id', $id)->first();
-            
+
+            // PERBAIKAN: Gunakan UploadFolderUptSpp
+            $uploadFolder = UploadFolderUptSpp::where('upt_id', $id)->first();
+
             if ($uploadFolder) {
                 // Hapus semua file PDF yang terkait
                 for ($i = 1; $i <= 10; $i++) {
@@ -260,7 +265,7 @@ class SppUptController extends Controller
                         Storage::disk('public')->delete($uploadFolder->$column);
                     }
                 }
-                
+
                 // Hapus record upload folder
                 $uploadFolder->delete();
             }
@@ -281,8 +286,9 @@ class SppUptController extends Controller
             }
 
             $upt = Upt::findOrFail($id);
-            $uploadFolder = UploadFolderUpt::where('upt_id', $id)->first();
-            
+            // PERBAIKAN: Gunakan UploadFolderUptSpp
+            $uploadFolder = UploadFolderUptSpp::where('upt_id', $id)->first();
+
             if (!$uploadFolder) {
                 return abort(404, 'Data upload folder tidak ditemukan.');
             }
@@ -295,7 +301,7 @@ class SppUptController extends Controller
             }
 
             $filePath = storage_path('app/public/' . $uploadFolder->$column);
-            
+
             if (!file_exists($filePath)) {
                 return abort(404, 'File tidak ditemukan di storage.');
             }
@@ -335,8 +341,8 @@ class SppUptController extends Controller
                 return redirect()->back()->with('error', 'File tidak valid!');
             }
 
-            // Cari atau buat record upload folder
-            $uploadFolder = UploadFolderUpt::firstOrCreate(
+            // PERBAIKAN: Gunakan UploadFolderUptSpp
+            $uploadFolder = UploadFolderUptSpp::firstOrCreate(
                 ['upt_id' => $id],
                 ['upt_id' => $id]
             );
@@ -372,7 +378,7 @@ class SppUptController extends Controller
             Log::info("PDF uploaded successfully for UPT ID: {$id}, Folder: {$folder}, Path: {$path}");
 
             return redirect()->back()->with('success', 'PDF berhasil di-upload ke folder ' . $folder . '!');
-            
+
         } catch (\Illuminate\Validation\ValidationException $e) {
             return redirect()->back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
@@ -389,8 +395,9 @@ class SppUptController extends Controller
             }
 
             $upt = Upt::findOrFail($id);
-            $uploadFolder = UploadFolderUpt::where('upt_id', $id)->first();
-            
+            // PERBAIKAN: Gunakan UploadFolderUptSpp
+            $uploadFolder = UploadFolderUptSpp::where('upt_id', $id)->first();
+
             if (!$uploadFolder) {
                 return redirect()->back()->with('error', 'Data upload folder tidak ditemukan.');
             }
