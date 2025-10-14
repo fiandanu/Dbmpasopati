@@ -11,9 +11,11 @@ return new class extends Migration
         Schema::create('data_ponpes', function (Blueprint $table) {
             $table->id();
             $table->string('nama_ponpes');
-            $table->string('nama_wilayah')->nullable();
             $table->string('tipe')->nullable();
             $table->date('tanggal')->nullable();
+
+            $table->foreignId('nama_wilayah_id')->constrained('nama_wilayah')->onDelete('cascade');
+
             $table->timestamps();
         });
     }

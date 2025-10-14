@@ -8,9 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('data_opsional_ponpes', function (Blueprint $table) {
+        Schema::create('db_opsional_ponpes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('ponpes_id')->constrained('data_ponpes')->onDelete('cascade');
             $table->string('pic_ponpes')->nullable();
             $table->string('no_telpon')->nullable();
             $table->text('alamat')->nullable();
@@ -27,7 +26,6 @@ return new class extends Migration
             $table->string('internet_protocol')->nullable();
             $table->string('vpn_user')->nullable();
             $table->string('vpn_password')->nullable();
-            $table->string('jenis_vpn')->nullable();
             $table->integer('jumlah_extension')->nullable();
             $table->string('pin_tes')->nullable();
             $table->string('no_extension')->nullable();
@@ -35,12 +33,17 @@ return new class extends Migration
             $table->string('no_pemanggil')->nullable();
             $table->string('email_airdroid')->nullable();
             $table->string('password')->nullable();
+
+            $table->foreignId('vpns_id')->nullable()->constrained('vpns')->onDelete('cascade');
+            $table->foreignId('data_ponpes_id')->nullable()->constrained('data_ponpes')->onDelete('cascade');
+            $table->foreignId('provider_id')->nullable()->constrained('providers')->onDelete('cascade');
+
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('data_opsional_ponpes');
+        Schema::dropIfExists('db_opsional_ponpes');
     }
 };

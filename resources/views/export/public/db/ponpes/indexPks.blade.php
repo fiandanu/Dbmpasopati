@@ -120,17 +120,13 @@
                     <tr>
                         <td class="text-center">{{ $no++ }}</td>
                         <td>{{ $d['nama_ponpes'] }}</td>
-                        <td>{{ $d['nama_wilayah'] }}</td>
+                        <td>{{ $d->namaWilayah->nama_wilayah}}</td>
                         <td class="text-center">
                             <span class="pks-badge">{{ ucfirst($d['tipe']) }}</span>
                         </td>
                         <td class="text-center">{{ \Carbon\Carbon::parse($d['tanggal'])->format('d M Y') }}</td>
-                        <td class="text-center">
-                            {{ isset($d['tanggal_kontrak']) && $d['tanggal_kontrak'] ? \Carbon\Carbon::parse($d['tanggal_kontrak'])->format('d M Y') : '-' }}
-                        </td>
-                        <td class="text-center">
-                            {{ isset($d['tanggal_jatuh_tempo']) && $d['tanggal_jatuh_tempo'] ? \Carbon\Carbon::parse($d['tanggal_jatuh_tempo'])->format('d M Y') : '-' }}
-                        </td>
+                        <td>{{ $d->uploadFolderPks->tanggal_kontrak->format('d M Y') ?? '-' }}</td>
+                        <td>{{ $d->uploadFolderPks->tanggal_jatuh_tempo->format('d M Y') ?? '-' }}</td>
                         <td class="text-center {{ $statusClass }}">{{ $status }}</td>
                     </tr>
                 @endforeach

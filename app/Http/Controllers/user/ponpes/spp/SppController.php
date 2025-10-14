@@ -47,7 +47,9 @@ class SppController extends Controller
             $searchTerm = $request->table_search;
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('nama_ponpes', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('nama_wilayah', 'LIKE', '%' . $searchTerm . '%')
+                    ->orWhereHas('namaWilayah', function ($q) use ($searchTerm) {
+                        $q->where('nama_wilayah', 'LIKE', '%' . $searchTerm . '%');
+                    })
                     ->orWhere('tanggal', 'LIKE', '%' . $searchTerm . '%');
             });
         }
@@ -56,12 +58,17 @@ class SppController extends Controller
         if ($request->has('search_namaponpes') && !empty($request->search_namaponpes)) {
             $query->where('nama_ponpes', 'LIKE', '%' . $request->search_namaponpes . '%');
         }
+
         if ($request->has('search_wilayah') && !empty($request->search_wilayah)) {
-            $query->where('nama_wilayah', 'LIKE', '%' . $request->search_wilayah . '%');
+            $query->whereHas('namaWilayah', function ($q) use ($request) {
+                $q->where('nama_wilayah', 'LIKE', '%' . $request->search_wilayah . '%');
+            });
         }
+
         if ($request->has('search_tipe') && !empty($request->search_tipe)) {
             $query->where('tipe', 'LIKE', '%' . $request->search_tipe . '%');
         }
+
         // Date range filtering
         if ($request->has('search_tanggal_dari') && !empty($request->search_tanggal_dari)) {
             $query->whereDate('tanggal', '>=', $request->search_tanggal_dari);
@@ -78,7 +85,8 @@ class SppController extends Controller
         if ($request->has('search_status') && !empty($request->search_status)) {
             $statusSearch = strtolower($request->search_status);
             return $data->filter(function ($d) use ($statusSearch) {
-                $status = strtolower($this->calculatePdfStatus($d->uploadFolder));
+                // PERBAIKAN: Gunakan uploadFolderSpp
+                $status = strtolower($this->calculatePdfStatus($d->uploadFolderSpp));
                 return strpos($status, $statusSearch) !== false;
             });
         }
@@ -87,9 +95,9 @@ class SppController extends Controller
 
     public function ListDataSpp(Request $request)
     {
-        // Menampilkan data SPP Ponpes - hanya yang sudah ditambahkan (memiliki upload folder)
-        $query = Ponpes::with('uploadFolder')->whereHas('uploadFolder');
-        // Hanya tampilkan yang sudah punya upload folder
+        // PERBAIKAN: Gunakan uploadFolderSpp
+        $query = Ponpes::with(['uploadFolderSpp', 'namaWilayah'])
+            ->whereHas('uploadFolderSpp');
 
         // Apply database filters
         $query = $this->applyFilters($query, $request);
@@ -118,7 +126,7 @@ class SppController extends Controller
                 ['path' => $request->url(), 'query' => $request->query()]
             );
         } else {
-            // For paginated results, we need to get all data first, apply status filter, then paginate
+            // For paginated results
             $allData = $query->orderBy('tanggal', 'desc')->get();
             $filteredData = $this->applyPdfStatusFilter($allData, $request);
 
@@ -140,8 +148,8 @@ class SppController extends Controller
             );
         }
 
-        // Get list ponpes untuk dropdown - ambil dari tabel Ponpes yang belum ditambahkan ke SPP
-        $ponpesList = Ponpes::whereDoesntHave('uploadFolder')
+        $ponpesList = Ponpes::with('namaWilayah')
+            ->whereDoesntHave('uploadFolderSpp')
             ->orderBy('nama_ponpes')
             ->get();
 
@@ -151,20 +159,16 @@ class SppController extends Controller
 
     public function exportListCsv(Request $request): StreamedResponse
     {
-        $query = Ponpes::with('uploadFolder');
+        $query = Ponpes::with(['uploadFolderSpp', 'namaWilayah']);
         $query = $this->applyFilters($query, $request);
 
-        // Add date sorting when date filters are applied
         if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
             $query = $query->orderBy('tanggal', 'asc');
         }
 
         $data = $query->get();
-
-        // Apply status filter
         $data = $this->applyPdfStatusFilter($data, $request);
 
-        // Additional sorting if date filter is applied
         if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
             $data = $data->sortBy('tanggal')->values();
         }
@@ -179,16 +183,17 @@ class SppController extends Controller
             "Expires" => "0"
         ];
 
-        $rows = [['No', 'Nama Ponpes', 'Nama Wilayah', 'Tanggal Dibuat', 'Status Upload PDF']];
+        $rows = [['No', 'Nama Ponpes', 'Nama Wilayah', 'Tipe', 'Tanggal Dibuat', 'Status Upload PDF']];
         $no = 1;
         foreach ($data as $d) {
-            $status = $this->calculatePdfStatus($d->uploadFolder);
+            // PERBAIKAN: Gunakan uploadFolderSpp
+            $status = $this->calculatePdfStatus($d->uploadFolderSpp);
             $rows[] = [
                 $no++,
                 $d->nama_ponpes,
-                $d->nama_wilayah,
-                ucfirst($d->tipe),
-                \Carbon\Carbon::parse($d->tanggal)->format('d M Y'),
+                $d->namaWilayah->nama_wilayah ?? '-',
+                ucfirst($d->tipe ?? '-'),
+                $d->tanggal ? Carbon::parse($d->tanggal)->format('d M Y') : '-',
                 $status
             ];
         }
@@ -206,28 +211,24 @@ class SppController extends Controller
 
     public function exportListPdf(Request $request)
     {
-        $query = Ponpes::with('uploadFolder');
+        $query = Ponpes::with(['uploadFolderSpp', 'namaWilayah']);
         $query = $this->applyFilters($query, $request);
 
-        // Add date sorting when date filters are applied
         if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
             $query = $query->orderBy('tanggal', 'asc');
         }
 
         $data = $query->get();
-
-        // Apply status filter
         $data = $this->applyPdfStatusFilter($data, $request);
 
-        // Convert collection to array with calculated status
         $dataArray = [];
         foreach ($data as $d) {
             $dataItem = $d->toArray();
-            $dataItem['calculated_status'] = $this->calculatePdfStatus($d->uploadFolder);
+            // PERBAIKAN: Gunakan uploadFolderSpp
+            $dataItem['calculated_status'] = $this->calculatePdfStatus($d->uploadFolderSpp);
             $dataArray[] = $dataItem;
         }
 
-        // Additional sorting using correct field name
         if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
             usort($dataArray, function ($a, $b) {
                 $dateA = strtotime($a['tanggal']);
@@ -251,10 +252,8 @@ class SppController extends Controller
     public function DatabasePageDestroy($id)
     {
         try {
-            $dataPonpes = Ponpes::findOrFail($id);
-
-            // Cari data upload folder yang terkait
-            $uploadFolder = UploadFolderPonpesSpp::where('ponpes_id', $id)->first();
+            // PERBAIKAN: Gunakan UploadFolderPonpesSpp
+            $uploadFolder = UploadFolderPonpesSpp::where('data_ponpes_id', $id)->first();
 
             if ($uploadFolder) {
                 // Hapus semua file PDF yang terkait
@@ -269,13 +268,10 @@ class SppController extends Controller
                 $uploadFolder->delete();
             }
 
-            // HAPUS BARIS INI - Jangan hapus data ponpes
-            // $dataPonpes->delete();
-
-            return redirect()->route('sppPonpes.ListDataSpp')->with('success', 'Data SPP berhasil dihapus');
+            return redirect()->back()->with('success', 'Data berhasil dihapus');
         } catch (\Exception $e) {
             Log::error('Error deleting Ponpes SPP: ' . $e->getMessage());
-            return redirect()->route('sppPonpes.ListDataSpp')->with('error', 'Gagal menghapus data: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal menghapus data: ' . $e->getMessage());
         }
     }
 
@@ -287,7 +283,7 @@ class SppController extends Controller
             }
 
             $ponpes = Ponpes::findOrFail($id);
-            $uploadFolder = UploadFolderPonpesSpp::where('ponpes_id', $id)->first();
+            $uploadFolder = UploadFolderPonpesSpp::where('data_ponpes_id', $id)->first();
 
             if (!$uploadFolder) {
                 return abort(404, 'Data upload folder tidak ditemukan.');
@@ -295,7 +291,6 @@ class SppController extends Controller
 
             $column = 'pdf_folder_' . $folder;
 
-            // Cek apakah file ada dan path tidak kosong
             if (empty($uploadFolder->$column)) {
                 return abort(404, 'File PDF belum diupload untuk folder ' . $folder . '.');
             }
@@ -322,7 +317,7 @@ class SppController extends Controller
 
             // Validasi file PDF
             $request->validate([
-                'uploaded_pdf' => 'required|file|mimes:pdf|max:10240', // 10MB
+                'uploaded_pdf' => 'required|file|mimes:pdf|max:10240',
             ], [
                 'uploaded_pdf.required' => 'File PDF harus dipilih.',
                 'uploaded_pdf.mimes' => 'File harus berformat PDF.',
@@ -336,15 +331,14 @@ class SppController extends Controller
             $ponpes = Ponpes::findOrFail($id);
             $file = $request->file('uploaded_pdf');
 
-            // Debug: Cek apakah file valid
             if (!$file || !$file->isValid()) {
                 return redirect()->back()->with('error', 'File tidak valid!');
             }
 
-            // Cari atau buat record upload folder
+            // PERBAIKAN: Gunakan UploadFolderPonpesSpp
             $uploadFolder = UploadFolderPonpesSpp::firstOrCreate(
-                ['ponpes_id' => $id],
-                ['ponpes_id' => $id]
+                ['data_ponpes_id' => $id],
+                ['data_ponpes_id' => $id]
             );
 
             // Hapus file lama jika ada
@@ -391,28 +385,26 @@ class SppController extends Controller
         try {
             $request->validate([
                 'nama_ponpes' => 'required',
-                'nama_wilayah' => 'required',
             ], [
                 'nama_ponpes.required' => 'Nama Ponpes harus diisi.',
-                'nama_wilayah.required' => 'Nama Wilayah harus diisi.',
             ]);
 
-            // Cari Ponpes yang dipilih
-            $ponpes = Ponpes::where('nama_ponpes', $request->nama_ponpes)
-                ->where('nama_wilayah', $request->nama_wilayah)
-                ->first();
+            // Cari Ponpes berdasarkan nama_ponpes saja (nama sudah unik)
+            $ponpes = Ponpes::where('nama_ponpes', $request->nama_ponpes)->first();
 
             if (!$ponpes) {
-                return redirect()->back()->with('error', 'Data Ponpes tidak ditemukan')->withInput();
+                return redirect()->back()
+                    ->with('error', 'Data Ponpes tidak ditemukan')
+                    ->withInput();
             }
 
             // Create UploadFolder untuk menandai data sudah ditambahkan ke SPP
             UploadFolderPonpesSpp::firstOrCreate(
-                ['ponpes_id' => $ponpes->id],
-                ['ponpes_id' => $ponpes->id]
+                ['data_ponpes_id' => $ponpes->id],
+                ['data_ponpes_id' => $ponpes->id]
             );
 
-            return redirect()->route('sppPonpes.ListDataSpp')->with('success', 'Data SPP berhasil ditambahkan');
+            return redirect()->back()->with('success', 'Data SPP berhasil ditambahkan');
         } catch (\Exception $e) {
             Log::error('Error creating SPP: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Gagal menambahkan data: ' . $e->getMessage())->withInput();
@@ -427,7 +419,7 @@ class SppController extends Controller
             }
 
             $ponpes = Ponpes::findOrFail($id);
-            $uploadFolder = UploadFolderPonpesSpp::where('ponpes_id', $id)->first();
+            $uploadFolder = UploadFolderPonpesSpp::where('data_ponpes_id', $id)->first();
 
             if (!$uploadFolder) {
                 return redirect()->back()->with('error', 'Data upload folder tidak ditemukan.');

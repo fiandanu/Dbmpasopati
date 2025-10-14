@@ -673,10 +673,10 @@
                                     </div>
                                     <input type="hidden" id="namaupt" name="namaupt" required>
                                     <small class="form-text text-muted">Ketik untuk mencari
-                                        PONPES</small>
+                                        UPT</small>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="kanwil" class="form-label">Nama Wilayah</label>
+                                    <label for="kanwil" class="form-label">Nama UPT</label>
                                     <input type="text" class="form-control" id="kanwil" name="kanwil" readonly>
                                 </div>
                             </div>

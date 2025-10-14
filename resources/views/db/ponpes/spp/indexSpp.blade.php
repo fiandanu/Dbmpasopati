@@ -201,7 +201,7 @@
                                     <tr>
                                         <td class="text-center">{{ $no++ }}</td>
                                         <td>{{ $d->nama_ponpes }}</td>
-                                        <td><span class="tag tag-success">{{ $d->nama_wilayah }}</span></td>
+                                        <td><span class="tag tag-success">{{ $d->namaWilayah->nama_wilayah ?? '-' }}</span></td>
                                         <td class="text-center">
                                             <span
                                                 class="
@@ -614,9 +614,9 @@
                                             @foreach ($ponpesList as $ponpes)
                                                 <a class="dropdown-item ponpes-option" href="#"
                                                     data-value="{{ $ponpes->nama_ponpes }}"
-                                                    data-nama-wilayah="{{ $ponpes->nama_wilayah }}"
-                                                    onclick="selectPonpes('{{ $ponpes->nama_ponpes }}', '{{ $ponpes->nama_wilayah }}')">
-                                                    {{ $ponpes->nama_ponpes }} - {{ $ponpes->nama_wilayah }}
+                                                    data-nama-wilayah="{{ $ponpes->namaWilayah ? $ponpes->namaWilayah->nama_wilayah : '' }}"
+                                                    onclick="selectPonpes('{{ $ponpes->nama_ponpes }}', '{{ $ponpes->namaWilayah ? $ponpes->namaWilayah->nama_wilayah : '' }}')">
+                                                    {{ $ponpes->nama_ponpes }} - {{ $ponpes->namaWilayah ? $ponpes->namaWilayah->nama_wilayah : 'Wilayah tidak ditemukan' }}
                                                 </a>
                                             @endforeach
                                         </div>

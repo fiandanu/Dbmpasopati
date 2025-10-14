@@ -208,8 +208,7 @@
                                                 data-bs-target="#editModal{{ $d->id }}" title="Edit">
                                                 <ion-icon name="pencil-outline"></ion-icon>
                                             </button>
-                                            <button data-toggle="modal" data-target="#modal-default{{ $d->id }}"
-                                                title="Hapus">
+                                            <button data-toggle="modal" data-target="#modal-default{{ $d->id }}" title="Hapus">
                                                 <ion-icon name="trash-outline"></ion-icon>
                                             </button>
                                         </td>
@@ -251,10 +250,8 @@
                                         @endif
                                     </div>
                                     <div class="modal-footer flex-row-reverse justify-content-between">
-                                        <button type="button" class="btn-cancel-modal"
-                                            data-dismiss="modal">Tutup</button>
-                                        <form action="{{ route('UserPonpes.PonpesPageDestroy', $d->id) }}"
-                                            method="POST">
+                                        <button type="button" class="btn-cancel-modal" data-dismiss="modal">Tutup</button>
+                                        <form action="{{ route('UserPonpes.PonpesPageDestroy', $d->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn-delete">Hapus</button>
@@ -266,8 +263,7 @@
                     @endforeach
 
                     {{-- User Create Modal --}}
-                    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel"
-                        aria-hidden="true">
+                    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
                         <form id="addForm" action="{{ route('UserPonpes.UserPageStore') }}" method="POST">
                             @csrf
                             <div class="modal-dialog">
@@ -282,25 +278,25 @@
                                     <div class="modal-body">
                                         <div class="mb-3">
                                             <label for="nama_ponpes" class="form-label">Nama Ponpes</label>
-                                            <input type="text" class="form-control" id="nama_ponpes"
-                                                name="nama_ponpes" placeholder="Masukan Nama Ponpes" required>
+                                            <input type="text" class="form-control" id="nama_ponpes" name="nama_ponpes"
+                                                placeholder="Masukan Nama Ponpes" required>
                                         </div>
                                         @error('nama_ponpes')
                                             <small class="text-danger">{{ $message }}</small>
                                         @enderror
 
                                         <div class="mb-3">
-                                            <label for="nama_wilayah" class="form-label">Wilayah</label>
-                                            <select class="form-control" id="nama_wilayah" name="nama_wilayah" required>
+                                            <label for="nama_wilayah_id" class="form-label">Wilayah</label>
+                                            <select class="form-control" id="nama_wilayah_id" name="nama_wilayah_id"
+                                                required>
                                                 <option value="" selected disabled>Pilih Nama Wilayah</option>
                                                 @foreach ($datanamawilayah as $wilayah)
-                                                    <option value="{{ $wilayah->nama_wilayah }}"
-                                                        {{ old('nama_wilayah') == $wilayah->nama_wilayah ? 'selected' : '' }}>
+                                                    <option value="{{ $wilayah->id }}" {{ old('nama_wilayah_id') == $wilayah->id ? 'selected' : '' }}>
                                                         {{ $wilayah->nama_wilayah }}
                                                     </option>
                                                 @endforeach
                                             </select>
-                                            @error('nama_wilayah')
+                                            @error('nama_wilayah_id')
                                                 <small class="text-danger">{{ $message }}</small>
                                             @enderror
                                         </div>
@@ -313,8 +309,8 @@
                                                 <h6 class="form-check-label" for="tipe_reguler">Reguler</h6>
                                             </div>
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" name="tipe[]"
-                                                    value="vtren" id="tipe_vtren">
+                                                <input class="form-check-input" type="checkbox" name="tipe[]" value="vtren"
+                                                    id="tipe_vtren">
                                                 <h6 class="form-check-label" for="tipe_vtren">Vtren</h6>
                                             </div>
                                             <div class="d-flex justify-start gap-2 mt-3">
@@ -341,8 +337,8 @@
 
                     {{-- User Edit Modal --}}
                     @foreach ($data as $d)
-                        <div class="modal fade" id="editModal{{ $d->id }}" tabindex="-1"
-                            aria-labelledby="editModalLabel" aria-hidden="true">
+                        <div class="modal fade" id="editModal{{ $d->id }}" tabindex="-1" aria-labelledby="editModalLabel"
+                            aria-hidden="true">
                             <form id="editForm" action="{{ route('UserPonpes.UserPageUpdate', ['id' => $d->id]) }}"
                                 method="POST">
                                 @csrf
@@ -360,8 +356,8 @@
                                             <input type="hidden" id="editId" name="id">
                                             <div class="mb-3">
                                                 <label for="nama_ponpes" class="form-label">Nama Ponpes</label>
-                                                <input type="text" class="form-control" id="nama_ponpes"
-                                                    name="nama_ponpes" value="{{ $d->nama_ponpes }}">
+                                                <input type="text" class="form-control" id="nama_ponpes" name="nama_ponpes"
+                                                    value="{{ $d->nama_ponpes }}">
                                                 @if (str_contains($d->nama_ponpes, '(VtrenReg)'))
                                                     <small class="text-muted">
                                                         <i class="fas fa-info-circle"></i>
@@ -371,9 +367,18 @@
                                                 @endif
                                             </div>
                                             <div class="mb-3">
-                                                <label for="nama_wilayah" class="form-label">Wilayah</label>
-                                                <input type="text" class="form-control" id="nama_wilayah"
-                                                    name="nama_wilayah" value="{{ $d->nama_wilayah }}">
+                                                <label for="nama_wilayah_id" class="form-label">Wilayah</label>
+                                                <select class="form-control" id="nama_wilayah_id" name="nama_wilayah_id" required>
+                                                    @foreach ($datanamawilayah as $wilayah)
+                                                        <option value="{{ $wilayah->id }}"
+                                                            {{ $d->nama_wilayah_id == $wilayah->id ? 'selected' : '' }}>
+                                                            {{ $wilayah->nama_wilayah }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                @error('nama_wilayah_id')
+                                                    <small class="text-danger">{{ $message }}</small>
+                                                @enderror
                                             </div>
                                             <div class="mb-3">
                                                 <label for="tipe" class="form-label">Tipe</label>
@@ -408,8 +413,7 @@
                         <div class="btn-datakolom">
                             <form method="GET" class="d-flex align-items-center">
                                 @if (request('search_namaponpes'))
-                                    <input type="hidden" name="search_namaponpes"
-                                        value="{{ request('search_namaponpes') }}">
+                                    <input type="hidden" name="search_namaponpes" value="{{ request('search_namaponpes') }}">
                                 @endif
                                 @if (request('search_wilayah'))
                                     <input type="hidden" name="search_wilayah" value="{{ request('search_wilayah') }}">
@@ -426,8 +430,8 @@
                                         value="{{ request('search_tanggal_sampai') }}">
                                 @endif
                                 <div class="d-flex align-items-center">
-                                    <select name="per_page" class="form-control form-control-sm pr-2"
-                                        style="width: auto;" onchange="this.form.submit()">
+                                    <select name="per_page" class="form-control form-control-sm pr-2" style="width: auto;"
+                                        onchange="this.form.submit()">
                                         <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10
                                         </option>
                                         <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>15
@@ -484,7 +488,7 @@
 
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const tipeCheckboxes = document.querySelectorAll('input[name="tipe[]"]');
             const namaPonpesInput = document.getElementById('nama_ponpes');
             let originalNamaPonpes = '';
@@ -493,12 +497,12 @@
                 return nama.replace(/ \(VtrenReg\)/g, '').trim();
             }
 
-            namaPonpesInput.addEventListener('input', function() {
+            namaPonpesInput.addEventListener('input', function () {
                 originalNamaPonpes = cleanNamaPonpes(this.value);
             });
 
-            tipeCheckboxes.forEach(function(checkbox) {
-                checkbox.addEventListener('change', function() {
+            tipeCheckboxes.forEach(function (checkbox) {
+                checkbox.addEventListener('change', function () {
                     updateNamaPonpesPreview();
                 });
             });
@@ -521,7 +525,7 @@
                 namaPonpesInput.setSelectionRange(newCursorPos, newCursorPos);
             }
 
-            document.getElementById('addModal').addEventListener('show.bs.modal', function() {
+            document.getElementById('addModal').addEventListener('show.bs.modal', function () {
                 originalNamaPonpes = '';
                 namaPonpesInput.value = '';
                 document.getElementById('tipe_reguler').checked = false;
@@ -531,7 +535,7 @@
     </script>
 
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             function getFilters() {
                 return {
                     search_namaponpes: $('#search-namaponpes').val().trim(),
@@ -543,7 +547,7 @@
                 };
             }
 
-            window.applyFilters = function() {
+            window.applyFilters = function () {
                 let filters = getFilters();
                 let url = new URL(window.location.href);
 
@@ -563,7 +567,7 @@
                 window.location.href = url.toString();
             };
 
-            window.clearAllFilters = function() {
+            window.clearAllFilters = function () {
                 $('#search-namaponpes').val('');
                 $('#search-wilayah').val('');
                 $('#search-tipe').val('');
@@ -583,19 +587,19 @@
                 window.location.href = url.toString();
             };
 
-            $('.column-search input').on('keypress', function(e) {
+            $('.column-search input').on('keypress', function (e) {
                 if (e.which === 13) {
                     applyFilters();
                 }
             });
 
-            $('.column-search input').on('keyup', function(e) {
+            $('.column-search input').on('keyup', function (e) {
                 if (e.which === 13 && $(this).val().trim() === '') {
                     applyFilters();
                 }
             });
 
-            window.downloadCsv = function() {
+            window.downloadCsv = function () {
                 let filters = getFilters();
                 let form = document.createElement('form');
                 form.method = 'GET';
@@ -617,7 +621,7 @@
                 document.body.removeChild(form);
             };
 
-            window.downloadPdf = function() {
+            window.downloadPdf = function () {
                 let filters = getFilters();
                 let form = document.createElement('form');
                 form.method = 'GET';

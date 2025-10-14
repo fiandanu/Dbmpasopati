@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\user\upt\pks;
 
 use App\Http\Controllers\Controller;
-use App\Models\db\UploadFolderUpt;
 use Illuminate\Http\Request;
 use App\Models\user\Upt;
 use App\Models\db\UploadFolderUptPks;

@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\user\Kanwil;
 use App\Models\user\Upt;
+use App\Models\user\NamaWilayah;
 
 class DatabaseSeeder extends Seeder
 {
@@ -26,7 +27,23 @@ class DatabaseSeeder extends Seeder
             Kanwil::create($kanwil);
         }
 
-        // 2. Baru buat UPT
-        Upt::factory()->count(100)->create();
+        // 2. Buat NamaWilayah
+        $wilayahData = [
+            ['nama_wilayah' => 'Kanwil Banten'],
+            ['nama_wilayah' => 'Kanwil DKI Jakarta'],
+            ['nama_wilayah' => 'Kanwil Jawa Barat'],
+            ['nama_wilayah' => 'Kanwil Jawa Tengah'],
+            ['nama_wilayah' => 'Kanwil Jawa Timur'],
+            ['nama_wilayah' => 'Kanwil Kalimantan'],
+            ['nama_wilayah' => 'Kanwil Sulawesi'],
+            ['nama_wilayah' => 'Kanwil Sumatera'],
+        ];
+
+        foreach ($wilayahData as $wilayah) {
+            NamaWilayah::create($wilayah);
+        }
+
+        // 3. Baru buat UPT
+        // Upt::factory()->count(100)->create();
     }
 }

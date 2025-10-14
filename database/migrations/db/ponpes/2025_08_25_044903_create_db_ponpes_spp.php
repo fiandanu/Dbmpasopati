@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('upload_folder_ponpes_spp', function (Blueprint $table) {
+        Schema::create('db_ponpes_spp', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('ponpes_id');
             $table->string('pdf_folder_1')->nullable();
             $table->string('pdf_folder_2')->nullable();
             $table->string('pdf_folder_3')->nullable();
@@ -24,10 +23,10 @@ return new class extends Migration
             $table->string('pdf_folder_8')->nullable();
             $table->string('pdf_folder_9')->nullable();
             $table->string('pdf_folder_10')->nullable();
-            $table->timestamps();
 
-            $table->foreign('ponpes_id')->references('id')->on('data_ponpes')->onDelete('cascade');
-            $table->unique('ponpes_id'); // Satu ponpes hanya bisa punya satu record SPP
+            $table->foreignId('data_ponpes_id')->nullable()->constrained('data_ponpes')->onDelete('cascade');
+
+            $table->timestamps();
         });
     }
 
@@ -36,6 +35,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('upload_folder_ponpes_spp');
+        Schema::dropIfExists('db_ponpes_spp');
     }
 };

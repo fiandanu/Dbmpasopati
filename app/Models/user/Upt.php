@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Models\user;
 
@@ -35,26 +35,21 @@ class Upt extends Model
         return $this->hasOne(DataOpsionalUpt::class, 'data_upt_id');
     }
 
-    // Relasi ke PKS
     public function uploadFolderPks()
     {
         return $this->hasOne(UploadFolderUptPks::class, 'data_upt_id');
     }
 
-    // Relasi ke SPP
     public function uploadFolderSpp()
     {
         return $this->hasOne(UploadFolderUptSpp::class, 'data_upt_id');
     }
 
-
-    // Alias untuk backward compatibility (default ke SPP untuk multi-folder)
     public function uploadFolder()
     {
         return $this->hasOne(UploadFolderUptSpp::class, 'data_upt_id');
     }
 
-    // === PKS Related Methods ===
     public function getUploadedPdfAttribute()
     {
         return $this->uploadFolderPks ? $this->uploadFolderPks->uploaded_pdf : null;
@@ -65,7 +60,6 @@ class Upt extends Model
         return $this->uploadFolderPks && !empty($this->uploadFolderPks->uploaded_pdf);
     }
 
-    // === SPP Related Methods (Multi-folder) ===
     public function hasPdfInFolder($folderNumber)
     {
         if (!$this->uploadFolderSpp) {

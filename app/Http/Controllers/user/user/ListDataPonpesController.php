@@ -74,7 +74,9 @@ class ListDataPonpesController extends Controller
             $searchTerm = $request->table_search;
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('nama_ponpes', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('nama_wilayah', 'LIKE', '%' . $searchTerm . '%')
+                    ->orWhereHas('namaWilayah', function ($q) use ($searchTerm) { // PERBAIKAN
+                        $q->where('nama_wilayah', 'LIKE', '%' . $searchTerm . '%');
+                    })
                     ->orWhere('tanggal', 'LIKE', '%' . $searchTerm . '%')
                     ->orWhereHas('dataOpsional', function ($subQuery) use ($searchTerm) {
                         $subQuery->where('pic_upt', 'LIKE', '%' . $searchTerm . '%')
@@ -89,7 +91,9 @@ class ListDataPonpesController extends Controller
             $query->where('nama_ponpes', 'LIKE', '%' . $request->search_namaponpes . '%');
         }
         if ($request->has('search_wilayah') && !empty($request->search_wilayah)) {
-            $query->where('nama_wilayah', 'LIKE', '%' . $request->search_wilayah . '%');
+            $query->whereHas('namaWilayah', function ($q) use ($request) { // PERBAIKAN
+                $q->where('nama_wilayah', 'LIKE', '%' . $request->search_wilayah . '%');
+            });
         }
         if ($request->has('search_tipe') && !empty($request->search_tipe)) {
             $query->where('tipe', 'LIKE', '%' . $request->search_tipe . '%');
@@ -105,6 +109,7 @@ class ListDataPonpesController extends Controller
 
         return $query;
     }
+
 
     private function applyStatusFilter($data, Request $request)
     {
@@ -169,7 +174,7 @@ class ListDataPonpesController extends Controller
     public function UserPage(Request $request)
     {
         // Get Ponpes data with reguler and vtren types, include relationships
-        $query = Ponpes::with(['dataOpsional', 'uploadFolderSpp', 'uploadFolderPks'])
+        $query = Ponpes::with(['dataOpsional', 'uploadFolderSpp', 'uploadFolderPks', 'namaWilayah']) // PERBAIKAN: Ganti uploadFolderSpp/Pks dengan dbPonpesSpp/Pks, tambah namaWilayah
             ->whereIn('tipe', ['reguler', 'vtren']);
 
         // Apply database filters
@@ -232,13 +237,14 @@ class ListDataPonpesController extends Controller
             $request->all(),
             [
                 'nama_ponpes' => 'required|string',
-                'nama_wilayah' => 'required|string',
+                'nama_wilayah_id' => 'required|exists:nama_wilayah,id',
                 'tipe' => 'required|array|min:1',
                 'tipe.*' => 'in:reguler,vtren',
             ],
             [
                 'nama_ponpes.required' => 'Nama Ponpes harus diisi',
-                'nama_wilayah.required' => 'Nama Wilayah harus diisi',
+                'nama_wilayah_id.required' => 'Nama Wilayah harus diisi',
+                'nama_wilayah_id.exists' => 'Nama Wilayah tidak valid',
                 'tipe.required' => 'Tipe harus dipilih minimal satu',
                 'tipe.array' => 'Tipe harus berupa array',
                 'tipe.min' => 'Pilih minimal satu tipe',
@@ -281,7 +287,7 @@ class ListDataPonpesController extends Controller
             // Buat record baru untuk setiap tipe
             $dataponpes = [
                 'nama_ponpes' => $namaPonpes,
-                'nama_wilayah' => $request->nama_wilayah,
+                'nama_wilayah_id' => $request->nama_wilayah_id,
                 'tipe' => $tipeValue,
                 'tanggal' => Carbon::now()->format('Y-m-d'),
             ];
@@ -341,12 +347,13 @@ class ListDataPonpesController extends Controller
                         }
                     }
                 ],
-                'nama_wilayah' => 'required|string',
+                'nama_wilayah_id' => 'required|exists:nama_wilayah,id|string',
                 'tipe' => 'required|string|in:reguler,vtren',
             ],
             [
                 'nama_ponpes.required' => 'Nama Ponpes harus diisi',
-                'nama_wilayah.required' => 'Nama Wilayah harus diisi',
+                'nama_wilayah_id.required' => 'Nama Wilayah harus diisi',
+                'nama_wilayah_id.exists' => 'Nama Wilayah tidak valid',
                 'tipe.required' => 'Tipe harus diisi',
                 'tipe.in' => 'Tipe hanya boleh reguler atau vtren',
             ]
@@ -358,7 +365,7 @@ class ListDataPonpesController extends Controller
 
         $dataponpes = Ponpes::findOrFail($id);
         $dataponpes->nama_ponpes = $request->nama_ponpes;
-        $dataponpes->nama_wilayah = $request->nama_wilayah;
+        $dataponpes->nama_wilayah_id  = $request->nama_wilayah_id;
         $dataponpes->tipe = $request->tipe;
         $dataponpes->save();
 
@@ -367,7 +374,7 @@ class ListDataPonpesController extends Controller
 
     public function exportListCsv(Request $request): StreamedResponse
     {
-        $query = Ponpes::with('dataOpsional')->whereIn('tipe', ['reguler', 'vtren']);
+        $query = Ponpes::with(['dataOpsional', 'namaWilayah'])->whereIn('tipe', ['reguler', 'vtren']); // PERBAIKAN: Tambah namaWilayah
         $query = $this->applyFilters($query, $request);
 
         // Add date sorting when date filters are applied
@@ -402,7 +409,7 @@ class ListDataPonpesController extends Controller
             $rows[] = [
                 $no++,
                 $d->nama_ponpes,
-                $d->nama_wilayah,
+                $d->namaWilayah->nama_wilayah ?? '-', // PERBAIKAN: Gunakan relasi
                 ucfirst($d->tipe),
                 \Carbon\Carbon::parse($d->tanggal)->format('d M Y'),
                 $status
@@ -422,7 +429,7 @@ class ListDataPonpesController extends Controller
 
     public function exportListPdf(Request $request)
     {
-        $query = Ponpes::with('dataOpsional')->whereIn('tipe', ['reguler', 'vtren']);
+        $query = Ponpes::with(['dataOpsional', 'namaWilayah'])->whereIn('tipe', ['reguler', 'vtren']); // PERBAIKAN: Tambah namaWilayah
         $query = $this->applyFilters($query, $request);
 
         // Add date sorting when date filters are applied

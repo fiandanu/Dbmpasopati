@@ -11,16 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('upload_folder_ponpes_pks', function (Blueprint $table) {
+        Schema::create('db_ponpes_pks', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('ponpes_id');
             $table->date('tanggal_kontrak')->nullable();
             $table->date('tanggal_jatuh_tempo')->nullable();
-            $table->string('uploaded_pdf')->nullable();
-            $table->timestamps();
+            $table->string('uploaded_pdf_1')->nullable();
+            $table->string('uploaded_pdf_2')->nullable();
 
-            $table->foreign('ponpes_id')->references('id')->on('data_ponpes')->onDelete('cascade');
-            $table->unique('ponpes_id');
+            $table->foreignId('data_ponpes_id')->nullable()->constrained('data_ponpes')->onDelete('cascade');
+
+            $table->timestamps();
         });
     }
 
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('upload_folder_ponpes_pks');
+        Schema::dropIfExists('db_ponpes_pks');
     }
 };

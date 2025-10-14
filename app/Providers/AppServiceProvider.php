@@ -26,10 +26,12 @@ class AppServiceProvider extends ServiceProvider
             // Db --------------------------------
             database_path('migrations'),
             database_path('migrations/db/upt'),
+            database_path('migrations/db/ponpes'),
 
 
             // User --------------------------------
             database_path('migrations/user/upt'),
+            database_path('migrations/user/ponpes'),
             database_path('migrations/user/provider_vpn'),
             database_path('migrations/user/kanwil_namaWilayah'),
 

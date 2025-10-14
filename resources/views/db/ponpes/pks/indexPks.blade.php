@@ -206,7 +206,7 @@
                                     <tr>
                                         <td class="text-center">{{ $no++ }}</td>
                                         <td>{{ $d->nama_ponpes }}</td>
-                                        <td><span class="tag tag-success">{{ $d->nama_wilayah }}</span></td>
+                                        <td><span class="tag tag-success">{{ $d->namaWilayah->nama_wilayah ?? '-' }}</span></td>
                                         <td class="text-center">
                                             <span class="@if ($d->tipe == 'reguler') Tipereguller
                                             @elseif($d->tipe == 'vtren') Tipevpas @endif">
@@ -275,6 +275,7 @@
                                                     <form action="{{ route('DbPonpes.pks.DataBasePageDestroy', $d->id) }}"
                                                         method="POST">
                                                         @csrf
+                                                        <input type="hidden" name="selected_folder" id="selectedFolder{{ $d->id }}" value="1">
                                                         @method('DELETE')
                                                         <button type="submit" class="btn-delete">Hapus</button>
                                                     </form>
@@ -288,9 +289,11 @@
                                         aria-labelledby="uploadModalLabel{{ $d->id }}" aria-hidden="true">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
-                                                <form action="{{ route('DbPonpes.pks.uploadFilePDFPonpesPks', $d->id) }}"
-                                                    method="POST" enctype="multipart/form-data" id="uploadForm{{ $d->id }}">
+                                                <form action="{{ route('dbpks.uploadFilePDFPks', [$d->id, 1]) }}"
+                                                    method="POST" enctype="multipart/form-data"
+                                                    id="uploadForm{{ $d->id }}">
                                                     @csrf
+
                                                     <div class="modal-header">
                                                         <label id="uploadModalLabel{{ $d->id }}">Upload PDF PKS
                                                             Ponpes
@@ -397,7 +400,7 @@
                                                         <div class="mb-3">
                                                             <label class="form-label">Nama Wilayah</label>
                                                             <input type="text" class="form-control"
-                                                                value="{{ $d->nama_wilayah }}" readonly>
+                                                                value="{{ $d->namaWilayah->nama_wilayah }}" readonly>
                                                         </div>
                                                         <div class="mb-3">
                                                             <label class="form-label">Tipe</label>
@@ -593,10 +596,10 @@
                                             @foreach ($ponpesList as $ponpes)
                                                 <a class="dropdown-item ponpes-option" href="#"
                                                     data-value="{{ $ponpes->nama_ponpes }}"
-                                                    data-nama-wilayah="{{ $ponpes->nama_wilayah }}"
-                                                    onclick="selectPonpes('{{ $ponpes->nama_ponpes }}', '{{ $ponpes->nama_wilayah }}')">
+                                                    data-nama-wilayah="{{ $ponpes->namaWilayah ? $ponpes->namaWilayah->nama_wilayah : '' }}"
+                                                    onclick="selectPonpes('{{ $ponpes->nama_ponpes }}', '{{ $ponpes->namaWilayah ? $ponpes->namaWilayah->nama_wilayah : '' }}')">
                                                     {{ $ponpes->nama_ponpes }} -
-                                                    {{ $ponpes->nama_wilayah }}
+                                                    {{ $ponpes->namaWilayah ? $ponpes->namaWilayah->nama_wilayah : 'Wilayah tidak ditemukan' }}
                                                 </a>
                                             @endforeach
                                         </div>
@@ -606,7 +609,7 @@
                                         PONPES</small>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="nama_wilayah" class="form-label">Nama Wilayah</label>
+                                    <label for="nama_wilayah_id" class="form-label">Nama Wilayah</label>
                                     <input type="text" class="form-control" id="nama_wilayah" name="nama_wilayah" readonly>
                                 </div>
                             </div>
@@ -790,6 +793,45 @@
                 $("#export-buttons").hide();
             }
         });
+    </script>
+
+    <script>
+        function updateFolder(id, folder) {
+    const form = document.getElementById('uploadForm' + id);
+    const hiddenInput = document.getElementById('selectedFolder' + id);
+    const currentFolderSpan = document.getElementById('currentFolder' + id);
+
+    hiddenInput.value = folder;
+    currentFolderSpan.textContent = folder;
+
+    // Update action URL dengan route name yang benar
+    form.action = "{{ route('dbpks.uploadFilePDFPks', [':id', ':folder']) }}"
+        .replace(':id', id)
+        .replace(':folder', folder);
+
+    // Hide all folder actions
+    const allFolderActions = document.querySelectorAll(`[id^="folderActions${id}_"]`);
+    allFolderActions.forEach(function(element) {
+        element.style.display = 'none';
+    });
+
+    // Show current folder actions
+    const currentFolderActions = document.getElementById(`folderActions${id}_${folder}`);
+    if (currentFolderActions) {
+        currentFolderActions.style.display = 'block';
+    }
+
+    // Update current file name display
+    const selectElement = document.getElementById('folderSelect' + id);
+    const selectedOption = selectElement.options[selectElement.selectedIndex];
+    const fileName = selectedOption.text.split(': ')[1] || 'Tidak ada file';
+    const currentFileNameSpan = document.getElementById('currentFileName' + id);
+    if (fileName === 'Tidak ada file') {
+        currentFileNameSpan.textContent = '- Tidak ada file';
+    } else {
+        currentFileNameSpan.textContent = '- ' + fileName;
+    }
+}
     </script>
 
     {{-- File Name Display --}}
