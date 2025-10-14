@@ -1,4 +1,4 @@
-<?php
+<?php 
 
 namespace App\Models\user;
 
@@ -16,7 +16,7 @@ class Upt extends Model
 
     protected $fillable = [
         'namaupt',
-        'kanwil',
+        'kanwil_id',
         'tipe',
         'tanggal'
     ];
@@ -25,21 +25,26 @@ class Upt extends Model
         'tanggal' => 'date'
     ];
 
+    public function kanwil()
+    {
+        return $this->belongsTo(Kanwil::class, 'kanwil_id');
+    }
+
     public function dataOpsional()
     {
-        return $this->hasOne(DataOpsionalUpt::class, 'upt_id');
+        return $this->hasOne(DataOpsionalUpt::class, 'data_upt_id');
     }
 
     // Relasi ke PKS
     public function uploadFolderPks()
     {
-        return $this->hasOne(UploadFolderUptPks::class, 'upt_id');
+        return $this->hasOne(UploadFolderUptPks::class, 'data_upt_id');
     }
 
     // Relasi ke SPP
     public function uploadFolderSpp()
     {
-        return $this->hasOne(UploadFolderUptSpp::class, 'upt_id');
+        return $this->hasOne(UploadFolderUptSpp::class, 'data_upt_id');
     }
 
 
@@ -48,7 +53,7 @@ class Upt extends Model
     // Alias untuk backward compatibility (default ke SPP untuk multi-folder)
     public function uploadFolder()
     {
-        return $this->hasOne(UploadFolderUptSpp::class, 'upt_id');
+        return $this->hasOne(UploadFolderUptSpp::class, 'data_upt_id');
     }
 
     // === PKS Related Methods ===

@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\db\DataOpsionalPonpes;
+use App\Models\db\ponpes\DataOpsionalPonpes;
 use App\Models\user\Ponpes;
 use Illuminate\Database\Eloquent\Factories\Factory;
 

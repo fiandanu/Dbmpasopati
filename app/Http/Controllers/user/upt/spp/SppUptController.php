@@ -42,23 +42,14 @@ class SppUptController extends Controller
 
     private function applyFilters($query, Request $request)
     {
-        // Global search
-        if ($request->has('table_search') && !empty($request->table_search)) {
-            $searchTerm = $request->table_search;
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('namaupt', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('kanwil', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('tanggal', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('tipe', 'LIKE', '%' . $searchTerm . '%');
-            });
-        }
-
         // Column-specific searches
         if ($request->has('search_namaupt') && !empty($request->search_namaupt)) {
             $query->where('namaupt', 'LIKE', '%' . $request->search_namaupt . '%');
         }
         if ($request->has('search_kanwil') && !empty($request->search_kanwil)) {
-            $query->where('kanwil', 'LIKE', '%' . $request->search_kanwil . '%');
+            $query->whereHas('kanwil', function ($q) use ($request) {
+                $q->where('kanwil', 'LIKE', '%' . $request->search_kanwil . '%');
+            });
         }
         if ($request->has('search_tipe') && !empty($request->search_tipe)) {
             $query->where('tipe', 'LIKE', '%' . $request->search_tipe . '%');
@@ -91,7 +82,7 @@ class SppUptController extends Controller
     public function ListDataSpp(Request $request)
     {
         // PERBAIKAN: Gunakan uploadFolderSpp
-        $query = Upt::with('uploadFolderSpp')->whereIn('tipe', ['vpas', 'reguler']);
+        $query = Upt::with('uploadFolderSpp', 'kanwil')->whereHas('uploadFolderSpp');
 
         // Apply database filters
         $query = $this->applyFilters($query, $request);
@@ -142,112 +133,51 @@ class SppUptController extends Controller
             );
         }
 
-        $providers = Provider::all();
-        return view('db.upt.spp.indexSpp', compact('data', 'providers'));
+        $uptList = Upt::whereDoesntHave('uploadFolderSpp')->get();
+
+        return view('db.upt.spp.indexSpp', compact('data', 'uptList'));
     }
 
-    public function exportListCsv(Request $request): StreamedResponse
+    public function store(Request $request)
     {
-        // PERBAIKAN: Gunakan uploadFolderSpp
-        $query = Upt::with('uploadFolderSpp')->whereIn('tipe', ['vpas', 'reguler']);
-        $query = $this->applyFilters($query, $request);
+        try {
+            $request->validate([
+                'namaupt' => 'required',
+                'kanwil' => 'required',
+            ], [
+                'namaupt.required' => 'Nama upt harus diisi.',
+                'kanwil.required' => 'Nama kanwil harus diisi.',
+            ]);
 
-        // Add date sorting when date filters are applied
-        if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
-            $query = $query->orderBy('tanggal', 'asc');
-        }
+            // Cari Ponpes berdasarkan namaupt dan relasi kanwil
+            $ponpes = Upt::where('namaupt', $request->namaupt)
+                ->whereHas('kanwil', function ($query) use ($request) {
+                    $query->where('kanwil', $request->kanwil);
+                })
+                ->first();
 
-        $data = $query->get();
-
-        // Apply status filter
-        $data = $this->applyPdfStatusFilter($data, $request);
-
-        // Additional sorting if date filter is applied
-        if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
-            $data = $data->sortBy('tanggal')->values();
-        }
-
-        $filename = 'list_upt_vpas_reguler_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
-
-        $headers = [
-            "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
-        ];
-
-        $rows = [['No', 'Nama UPT', 'Kanwil', 'Tipe', 'Tanggal Dibuat', 'Status Upload PDF']];
-        $no = 1;
-        foreach ($data as $d) {
-            // PERBAIKAN: Gunakan uploadFolderSpp
-            $status = $this->calculatePdfStatus($d->uploadFolderSpp);
-            $rows[] = [
-                $no++,
-                $d->namaupt,
-                $d->kanwil,
-                ucfirst($d->tipe),
-                \Carbon\Carbon::parse($d->tanggal)->format('d M Y'),
-                $status
-            ];
-        }
-
-        $callback = function () use ($rows) {
-            $file = fopen('php://output', 'w');
-            foreach ($rows as $row) {
-                fputcsv($file, $row);
+            if (!$ponpes) {
+                return redirect()->back()
+                    ->with('error', 'Data Ponpes tidak ditemukan')
+                    ->withInput();
             }
-            fclose($file);
-        };
 
-        return response()->stream($callback, 200, $headers);
+            // Create UploadFolder untuk menandai data sudah ditambahkan ke SPP
+            UploadFolderUptSpp::firstOrCreate(
+                ['data_upt_id' => $ponpes->id],
+                ['data_upt_id' => $ponpes->id]
+            );
+
+            return redirect()->back()
+                ->with('success', 'Data SPP berhasil ditambahkan');
+        } catch (\Exception $e) {
+            Log::error('Error creating SPP: ' . $e->getMessage());
+            return redirect()->back()
+                ->with('error', 'Gagal menambahkan data: ' . $e->getMessage())
+                ->withInput();
+        }
     }
 
-    public function exportListPdf(Request $request)
-    {
-        // PERBAIKAN: Gunakan uploadFolderSpp
-        $query = Upt::with('uploadFolderSpp')->whereIn('tipe', ['vpas', 'reguler']);
-        $query = $this->applyFilters($query, $request);
-
-        // Add date sorting when date filters are applied
-        if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
-            $query = $query->orderBy('tanggal', 'asc');
-        }
-
-        $data = $query->get();
-
-        // Apply status filter
-        $data = $this->applyPdfStatusFilter($data, $request);
-
-        // Convert collection to array with calculated status
-        $dataArray = [];
-        foreach ($data as $d) {
-            $dataItem = $d->toArray();
-            // PERBAIKAN: Gunakan uploadFolderSpp
-            $dataItem['calculated_status'] = $this->calculatePdfStatus($d->uploadFolderSpp);
-            $dataArray[] = $dataItem;
-        }
-
-        // Additional sorting using correct field name
-        if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
-            usort($dataArray, function ($a, $b) {
-                $dateA = strtotime($a['tanggal']);
-                $dateB = strtotime($b['tanggal']);
-                return $dateA - $dateB;
-            });
-        }
-
-        $pdfData = [
-            'title' => 'List Data UPT VPAS & Reguler',
-            'data' => $dataArray,
-            'generated_at' => Carbon::now()->format('d M Y H:i:s')
-        ];
-
-        $pdf = Pdf::loadView('export.public.db.upt.indexSpp', $pdfData);
-        $filename = 'list_upt_vpas_reguler_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
-
-        return $pdf->download($filename);
-    }
 
     public function DatabasePageDestroy($id)
     {
@@ -255,7 +185,7 @@ class SppUptController extends Controller
             $dataupt = Upt::findOrFail($id);
 
             // PERBAIKAN: Gunakan UploadFolderUptSpp
-            $uploadFolder = UploadFolderUptSpp::where('upt_id', $id)->first();
+            $uploadFolder = UploadFolderUptSpp::where('data_upt_id', $id)->first();
 
             if ($uploadFolder) {
                 // Hapus semua file PDF yang terkait
@@ -287,7 +217,7 @@ class SppUptController extends Controller
 
             $upt = Upt::findOrFail($id);
             // PERBAIKAN: Gunakan UploadFolderUptSpp
-            $uploadFolder = UploadFolderUptSpp::where('upt_id', $id)->first();
+            $uploadFolder = UploadFolderUptSpp::where('data_upt_id', $id)->first();
 
             if (!$uploadFolder) {
                 return abort(404, 'Data upload folder tidak ditemukan.');
@@ -343,8 +273,8 @@ class SppUptController extends Controller
 
             // PERBAIKAN: Gunakan UploadFolderUptSpp
             $uploadFolder = UploadFolderUptSpp::firstOrCreate(
-                ['upt_id' => $id],
-                ['upt_id' => $id]
+                ['data_upt_id' => $id],
+                ['data_upt_id' => $id]
             );
 
             // Hapus file lama jika ada
@@ -378,7 +308,6 @@ class SppUptController extends Controller
             Log::info("PDF uploaded successfully for UPT ID: {$id}, Folder: {$folder}, Path: {$path}");
 
             return redirect()->back()->with('success', 'PDF berhasil di-upload ke folder ' . $folder . '!');
-
         } catch (\Illuminate\Validation\ValidationException $e) {
             return redirect()->back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
@@ -396,7 +325,7 @@ class SppUptController extends Controller
 
             $upt = Upt::findOrFail($id);
             // PERBAIKAN: Gunakan UploadFolderUptSpp
-            $uploadFolder = UploadFolderUptSpp::where('upt_id', $id)->first();
+            $uploadFolder = UploadFolderUptSpp::where('data_upt_id', $id)->first();
 
             if (!$uploadFolder) {
                 return redirect()->back()->with('error', 'Data upload folder tidak ditemukan.');
@@ -421,4 +350,94 @@ class SppUptController extends Controller
             return redirect()->back()->with('error', 'Gagal menghapus file: ' . $e->getMessage());
         }
     }
+
+
+    // Export data CSV GLOBAL
+    public function exportListCsv(Request $request): StreamedResponse
+    {
+        // PERBAIKAN: Gunakan uploadFolderSpp
+        $query = Upt::with('uploadFolderSpp', 'kanwil')->whereIn('tipe', ['vpas', 'reguler']);
+        $query = $this->applyFilters($query, $request);
+
+        // Add date sorting when date filters are applied
+        if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
+            $query = $query->orderBy('tanggal', 'asc');
+        }
+
+        $data = $query->get();
+
+        // Apply status filter
+        $data = $this->applyPdfStatusFilter($data, $request);
+
+        // Additional sorting if date filter is applied
+        if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
+            $data = $data->sortBy('tanggal')->values();
+        }
+
+        $filename = 'list_upt_vpas_reguler_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
+
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+
+        $rows = [['No', 'Nama UPT', 'Kanwil', 'Tipe', 'Tanggal Dibuat', 'Status Upload PDF']];
+        $no = 1;
+        foreach ($data as $d) {
+            // PERBAIKAN: Gunakan uploadFolderSpp
+            $status = $this->calculatePdfStatus($d->uploadFolderSpp);
+            $rows[] = [
+                $no++,
+                $d->namaupt,
+                $d->kanwil->kanwil ?? '',
+                ucfirst($d->tipe),
+                \Carbon\Carbon::parse($d->tanggal)->format('d M Y'),
+                $status
+            ];
+        }
+
+        $callback = function () use ($rows) {
+            $file = fopen('php://output', 'w');
+            foreach ($rows as $row) {
+                fputcsv($file, $row);
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+
+    // Export data PDF GLOBAL
+    public function exportListPdf(Request $request)
+    {
+        // PERBAIKAN: Gunakan uploadFolderSpp
+        $query = Upt::with('uploadFolderSpp')->whereIn('tipe', ['vpas', 'reguler']);
+        $query = $this->applyFilters($query, $request);
+
+        // Add date sorting when date filters are applied
+        if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
+            $query = $query->orderBy('tanggal', 'asc');
+        }
+
+        $data = $query->get();
+
+        // Apply status filter
+        $data = $this->applyPdfStatusFilter($data, $request);
+
+        $pdfData = [
+            'title' => 'List Data UPT VPAS & Reguler',
+            'data' => $data,
+            'generated_at' => Carbon::now()->format('d M Y H:i:s')
+        ];
+
+        $pdf = Pdf::loadView('export.public.db.upt.indexSpp', $pdfData);
+        $filename = 'list_upt_vpas_reguler_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
+
+        return $pdf->download($filename);
+    }
+    
 }

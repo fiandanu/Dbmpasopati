@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Models\db;
+namespace App\Models\db\ponpes;
 
-use App\Models\user\Ponpes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\user\Ponpes;
 
 class UploadFolderPonpesSpp extends Model
 {

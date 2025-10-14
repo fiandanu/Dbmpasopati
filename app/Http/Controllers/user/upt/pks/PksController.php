@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\user\upt\pks;
 
 use App\Http\Controllers\Controller;
+use App\Models\db\UploadFolderUpt;
 use Illuminate\Http\Request;
-use App\Models\user\Provider;
 use App\Models\user\Upt;
 use App\Models\db\UploadFolderUptPks;
 use Illuminate\Support\Facades\Storage;
@@ -21,10 +21,13 @@ class PksController extends Controller
             return 'Belum Upload';
         }
 
-        $hasUploadedPdf = !empty($uploadFolder->uploaded_pdf);
+        $hasPdf1 = !empty($uploadFolder->uploaded_pdf_1);
+        $hasPdf2 = !empty($uploadFolder->uploaded_pdf_2);
 
-        if ($hasUploadedPdf) {
-            return 'Sudah Upload';
+        if ($hasPdf1 && $hasPdf2) {
+            return 'Sudah Upload (2/2)';
+        } elseif ($hasPdf1 || $hasPdf2) {
+            return 'Sudah Upload (1/2)';
         } else {
             return 'Belum Upload';
         }
@@ -32,23 +35,14 @@ class PksController extends Controller
 
     private function applyFilters($query, Request $request)
     {
-        // Global search
-        if ($request->has('table_search') && !empty($request->table_search)) {
-            $searchTerm = $request->table_search;
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('namaupt', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('kanwil', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('tanggal', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('tipe', 'LIKE', '%' . $searchTerm . '%');
-            });
-        }
-
         // Column-specific searches
         if ($request->has('search_namaupt') && !empty($request->search_namaupt)) {
             $query->where('namaupt', 'LIKE', '%' . $request->search_namaupt . '%');
         }
         if ($request->has('search_kanwil') && !empty($request->search_kanwil)) {
-            $query->where('kanwil', 'LIKE', '%' . $request->search_kanwil . '%');
+            $query->whereHas('kanwil', function ($q) use ($request) {
+                $q->where('kanwil', 'LIKE', '%' . $request->search_kanwil . '%');
+            });
         }
         if ($request->has('search_tipe') && !empty($request->search_tipe)) {
             $query->where('tipe', 'LIKE', '%' . $request->search_tipe . '%');
@@ -81,7 +75,8 @@ class PksController extends Controller
     public function ListDataPks(Request $request)
     {
         // PERBAIKAN: Gunakan uploadFolderPks
-        $query = Upt::with('uploadFolderPks')->whereIn('tipe', ['vpas', 'reguler']);
+        $query = Upt::with('uploadFolderPks')
+            ->whereHas('uploadFolderPks');
 
         // Apply database filters
         $query = $this->applyFilters($query, $request);
@@ -132,8 +127,15 @@ class PksController extends Controller
             );
         }
 
-        $providers = Provider::all();
-        return view('db.upt.pks.indexPks', compact('data', 'providers'));
+        $uptList = Upt::whereDoesntHave('uploadFolderPks')
+            ->orWhereHas('uploadFolderPks', function ($q) {
+                $q->whereNull('tanggal_kontrak')
+                    ->whereNull('tanggal_jatuh_tempo');
+            })
+            ->orderBy('namaupt')
+            ->get();
+
+        return view('db.upt.pks.indexPks', compact('data', 'uptList'));
     }
 
     public function exportListCsv(Request $request): StreamedResponse
@@ -230,44 +232,24 @@ class PksController extends Controller
         return $pdf->download($filename);
     }
 
-    public function DatabasePageDestroy($id)
+    public function viewUploadedPDF($id, $folderNumber)
     {
         try {
-            $dataupt = Upt::findOrFail($id);
-
-            // PERBAIKAN: Gunakan UploadFolderUptPks
-            $uploadFolder = UploadFolderUptPks::where('upt_id', $id)->first();
-
-            if ($uploadFolder) {
-                // Hapus file PDF yang terkait
-                if (!empty($uploadFolder->uploaded_pdf) && Storage::disk('public')->exists($uploadFolder->uploaded_pdf)) {
-                    Storage::disk('public')->delete($uploadFolder->uploaded_pdf);
-                }
-
-                // Hapus record upload folder
-                $uploadFolder->delete();
+            // Validasi folder number
+            if (!in_array($folderNumber, [1, 2])) {
+                return abort(404, 'Nomor folder tidak valid.');
             }
 
-            $dataupt->delete();
-            return redirect()->route('dbpks.ListDataPks')->with('success', 'Data berhasil dihapus');
-        } catch (\Exception $e) {
-            Log::error('Error deleting UPT PKS: ' . $e->getMessage());
-            return redirect()->route('dbpks.ListDataPks')->with('error', 'Gagal menghapus data: ' . $e->getMessage());
-        }
-    }
-
-    public function viewUploadedPDF($id)
-    {
-        try {
             $upt = Upt::findOrFail($id);
-            // PERBAIKAN: Gunakan UploadFolderUptPks
-            $uploadFolder = UploadFolderUptPks::where('upt_id', $id)->first();
+            $uploadFolder = \App\Models\db\upt\UploadFolderUptPks::where('data_upt_id', $id)->first();
 
-            if (!$uploadFolder || empty($uploadFolder->uploaded_pdf)) {
-                return abort(404, 'File PDF belum diupload.');
+            $columnName = 'uploaded_pdf_' . $folderNumber;
+
+            if (!$uploadFolder || empty($uploadFolder->$columnName)) {
+                return abort(404, 'File PDF belum diupload untuk folder ini.');
             }
 
-            $filePath = storage_path('app/public/' . $uploadFolder->uploaded_pdf);
+            $filePath = storage_path('app/public/' . $uploadFolder->$columnName);
 
             if (!file_exists($filePath)) {
                 return abort(404, 'File tidak ditemukan di storage.');
@@ -280,20 +262,25 @@ class PksController extends Controller
         }
     }
 
-    public function uploadFilePDFPks(Request $request, $id)
+    public function uploadFilePDFPks(Request $request, $id, $folderNumber)
     {
         try {
             // Validasi file PDF
             $request->validate([
-                'uploaded_pdf' => 'required|file|mimes:pdf|max:10240', // 10MB
+                'uploaded_pdf' => 'required|file|mimes:pdf|max:10240',
             ], [
                 'uploaded_pdf.required' => 'File PDF harus dipilih.',
                 'uploaded_pdf.mimes' => 'File harus berformat PDF.',
-                'uploaded_pdf.max' => 'Ukuran file maksimal 10MB.'
+                'uploaded_pdf.max' => 'Ukuran file maksimal 10MB.',
             ]);
 
             if (!$request->hasFile('uploaded_pdf')) {
                 return redirect()->back()->with('error', 'File tidak ditemukan dalam request!');
+            }
+
+            // Validasi folder number (1 atau 2)
+            if (!in_array($folderNumber, [1, 2])) {
+                return redirect()->back()->with('error', 'Nomor folder tidak valid!');
             }
 
             $upt = Upt::findOrFail($id);
@@ -303,29 +290,31 @@ class PksController extends Controller
                 return redirect()->back()->with('error', 'File tidak valid!');
             }
 
-            // PERBAIKAN: Gunakan UploadFolderUptPks
-            $uploadFolder = UploadFolderUptPks::firstOrCreate(
-                ['upt_id' => $id],
-                ['upt_id' => $id]
+            // Gunakan namespace lengkap untuk model
+            $uploadFolder = \App\Models\db\upt\UploadFolderUptPks::firstOrCreate(
+                ['data_upt_id' => $id],
+                ['data_upt_id' => $id]
             );
 
+            // Tentukan kolom berdasarkan folder number
+            $columnName = 'uploaded_pdf_' . $folderNumber;
+
             // Hapus file lama jika ada
-            if (!empty($uploadFolder->uploaded_pdf) && Storage::disk('public')->exists($uploadFolder->uploaded_pdf)) {
-                Storage::disk('public')->delete($uploadFolder->uploaded_pdf);
+            if (!empty($uploadFolder->$columnName) && Storage::disk('public')->exists($uploadFolder->$columnName)) {
+                Storage::disk('public')->delete($uploadFolder->$columnName);
             }
 
-            // Buat nama file unik dengan sanitasi
+            // Buat nama file unik
             $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
             $sanitizedName = preg_replace('/[^A-Za-z0-9\-_.]/', '_', $originalName);
-            $filename = time() . '_' . $sanitizedName . '.pdf';
+            $filename = time() . '_folder' . $folderNumber . '_' . $sanitizedName . '.pdf';
 
-            // Pastikan direktori ada
-            $directory = 'upt/pks';
+            // Simpan file
+            $directory = 'upt/pks/folder_' . $folderNumber;
             if (!Storage::disk('public')->exists($directory)) {
                 Storage::disk('public')->makeDirectory($directory);
             }
 
-            // Simpan file
             $path = $file->storeAs($directory, $filename, 'public');
 
             if (!$path) {
@@ -333,13 +322,12 @@ class PksController extends Controller
             }
 
             // Simpan path ke database
-            $uploadFolder->uploaded_pdf = $path;
+            $uploadFolder->$columnName = $path;
             $uploadFolder->save();
 
-            Log::info("PDF uploaded successfully for UPT PKS ID: {$id}, Path: {$path}");
+            Log::info("PDF uploaded successfully for UPT PKS ID: {$id}, Folder: {$folderNumber}, Path: {$path}");
 
-            return redirect()->back()->with('success', 'PDF berhasil di-upload!');
-
+            return redirect()->back()->with('success', 'PDF Folder ' . $folderNumber . ' berhasil di-upload!');
         } catch (\Illuminate\Validation\ValidationException $e) {
             return redirect()->back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
@@ -348,28 +336,132 @@ class PksController extends Controller
         }
     }
 
-    public function deleteFilePDF($id)
+    public function deleteFilePDF($id, $folderNumber)
     {
         try {
+            // Validasi folder number
+            if (!in_array($folderNumber, [1, 2])) {
+                return redirect()->back()->with('error', 'Nomor folder tidak valid.');
+            }
+
             $upt = Upt::findOrFail($id);
-            // PERBAIKAN: Gunakan UploadFolderUptPks
-            $uploadFolder = UploadFolderUptPks::where('upt_id', $id)->first();
+            $uploadFolder = \App\Models\db\upt\UploadFolderUptPks::where('data_upt_id', $id)->first();
 
-            if (!$uploadFolder || empty($uploadFolder->uploaded_pdf)) {
-                return redirect()->back()->with('error', 'File PDF belum di-upload.');
+            $columnName = 'uploaded_pdf_' . $folderNumber;
+
+            if (!$uploadFolder || empty($uploadFolder->$columnName)) {
+                return redirect()->back()->with('error', 'File PDF belum di-upload untuk folder ini.');
             }
 
-            if (Storage::disk('public')->exists($uploadFolder->uploaded_pdf)) {
-                Storage::disk('public')->delete($uploadFolder->uploaded_pdf);
+            if (Storage::disk('public')->exists($uploadFolder->$columnName)) {
+                Storage::disk('public')->delete($uploadFolder->$columnName);
             }
 
-            $uploadFolder->uploaded_pdf = null;
+            $uploadFolder->$columnName = null;
             $uploadFolder->save();
 
-            return redirect()->back()->with('success', 'File PDF berhasil dihapus');
+            return redirect()->back()->with('success', 'File PDF Folder ' . $folderNumber . ' berhasil dihapus');
         } catch (\Exception $e) {
             Log::error('Error deleting PDF PKS: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Gagal menghapus file: ' . $e->getMessage());
+        }
+    }
+
+
+    public function update(Request $request, $id)
+    {
+        try {
+            $request->validate([
+                'tanggal_kontrak' => 'nullable|date',
+                'tanggal_jatuh_tempo' => 'nullable|date|after_or_equal:tanggal_kontrak',
+            ], [
+                'tanggal_jatuh_tempo.after_or_equal' => 'Tanggal jatuh tempo harus setelah atau sama dengan tanggal kontrak.',
+            ]);
+
+            $upt = Upt::findOrFail($id);
+
+            // Update or create upload folder - PERBAIKAN: gunakan namespace lengkap
+            $uploadFolder = \App\Models\db\upt\UploadFolderUptPks::firstOrCreate(
+                ['data_upt_id' => $id],
+                ['data_upt_id' => $id]
+            );
+
+            $uploadFolder->update([
+                'tanggal_kontrak' => $request->tanggal_kontrak,
+                'tanggal_jatuh_tempo' => $request->tanggal_jatuh_tempo,
+            ]);
+
+            return redirect()->back()->with('success', 'Data PKS berhasil diupdate');
+        } catch (\Exception $e) {
+            Log::error('Error updating PKS: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal mengupdate data: ' . $e->getMessage());
+        }
+    }
+
+    public function store(Request $request)
+    {
+        try {
+            $request->validate([
+                'namaupt' => 'required',
+                'kanwil' => 'required',
+                'tanggal_kontrak' => 'nullable|date',
+                'tanggal_jatuh_tempo' => 'nullable|date|after_or_equal:tanggal_kontrak',
+            ], [
+                'namaupt.required' => 'Nama Ponpes harus diisi.',
+                'kanwil.required' => 'Nama Wilayah harus diisi.',
+                'tanggal_jatuh_tempo.after_or_equal' => 'Tanggal jatuh tempo harus setelah atau sama dengan tanggal kontrak.',
+            ]);
+
+            // Cari Ponpes yang dipilih untuk ambil tipe-nya
+            $upt = Upt::where('namaupt', $request->namaupt)
+                ->whereHas('kanwil', function ($query) use ($request) {
+                    $query->where('kanwil', $request->kanwil);
+                })
+                ->first();
+
+            if (!$upt) {
+                return redirect()->back()->with('error', 'Data Ponpes tidak ditemukan')->withInput();
+            }
+
+            // Create atau Update UploadFolderUptPks dengan contract dates - PERBAIKAN: gunakan namespace lengkap
+            \App\Models\db\upt\UploadFolderUptPks::updateOrCreate(
+                ['data_upt_id' => $upt->id],
+                [
+                    'tanggal_kontrak' => $request->tanggal_kontrak,
+                    'tanggal_jatuh_tempo' => $request->tanggal_jatuh_tempo,
+                ]
+            );
+
+            return redirect()->back()->with('success', 'Data PKS berhasil ditambahkan');
+        } catch (\Exception $e) {
+            Log::error('Error creating PKS: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal menambahkan data: ' . $e->getMessage())->withInput();
+        }
+    }
+
+
+    public function DatabasePageDestroy($id)
+    {
+        try {
+
+            // PERBAIKAN: Gunakan UploadFolderUptPks
+            $uploadFolder = UploadFolderUptPks::where('data_upt_id', $id)->first();
+
+            if ($uploadFolder) {
+                // Hapus file PDF yang terkait
+                if (!empty($uploadFolder->uploaded_pdf) && Storage::disk('public')->exists($uploadFolder->uploaded_pdf)) {
+                    Storage::disk('public')->delete($uploadFolder->uploaded_pdf);
+                }
+
+                // Hapus record upload folder
+                $uploadFolder->delete();
+            }
+
+            $uploadFolder->delete();
+            return redirect()->back()->with('success', 'Data berhasil dihapus');
+        } catch (\Exception $e) {
+            Log::error('Error deleting UPT PKS: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal menghapus data: ' . $e->getMessage());
         }
     }
 }

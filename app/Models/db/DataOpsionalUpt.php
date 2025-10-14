@@ -3,6 +3,7 @@
 namespace App\Models\db;
 
 use App\Models\user\Upt;
+use App\Models\user\Vpn;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -10,10 +11,11 @@ class DataOpsionalUpt extends Model
 {
     use HasFactory;
 
-    protected $table = 'data_opsional_upt';
+    protected $table = 'db_opsional_upt';
 
     protected $fillable = [
-        'upt_id',
+        'data_upt_id',
+        'vpns_id',
         'pic_upt',
         'no_telpon',
         'alamat',
@@ -30,7 +32,6 @@ class DataOpsionalUpt extends Model
         'internet_protocol',
         'vpn_user',
         'vpn_password',
-        'jenis_vpn',
         'jumlah_extension',
         'pin_tes',
         'no_extension',
@@ -50,6 +51,8 @@ class DataOpsionalUpt extends Model
     public function getStatusUpdateAttribute()
     {
         $optionalFields = [
+            'data_upt_id',
+            'vpns_id',
             'pic_upt',
             'no_telpon',
             'alamat',
@@ -66,7 +69,6 @@ class DataOpsionalUpt extends Model
             'internet_protocol',
             'vpn_user',
             'vpn_password',
-            'jenis_vpn',
             'jumlah_extension',
             'no_extension',
             'extension_password',
@@ -99,6 +101,11 @@ class DataOpsionalUpt extends Model
 
     public function upt()
     {
-        return $this->belongsTo(Upt::class, 'upt_id');
+        return $this->hasOne(Upt::class, 'data_upt_id');
     }
+
+    public function vpn() {
+        return $this->belongsTo(Vpn::class, 'vpns_id');
+    }
+
 }

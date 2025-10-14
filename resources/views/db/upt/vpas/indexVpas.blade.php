@@ -155,11 +155,11 @@
                                             </div>
                                         </div>
                                     </th>
-                                    <th class="text-center align-top">
+                                    {{-- <th class="text-center align-top">
                                         <div class="d-flex justify-content-center align-items-center flex-column gap-12">
                                             <span>Tipe</span>
                                         </div>
-                                    </th>
+                                    </th> --}}
                                     <th class="text-center align-top">
                                         <span>Tanggal</span>
                                     </th>
@@ -190,10 +190,10 @@
                                     <tr>
                                         <td class="text-center">{{ $no++ }}</td>
                                         <td>{{ $d->namaupt }}</td>
-                                        <td><span class="tag tag-success">{{ $d->kanwil }}</span></td>
-                                        <td class="text-center">
+                                        <td><span class="tag tag-success">{{ $d->kanwil->kanwil }}</span></td>
+                                        {{-- <td class="text-center">
                                             <span class="Tipevpas">{{ ucfirst($d->tipe) }}</span>
-                                        </td>
+                                        </td> --}}
                                         <td class="text-center">
                                             {{ \Carbon\Carbon::parse($d->tanggal)->translatedFormat('M d Y') }}
                                         </td>
@@ -201,6 +201,7 @@
                                             @php
                                                 $dataOpsional = $d->dataOpsional;
                                                 $optionalFields = [
+                                                    'vpns_id',
                                                     'pic_upt',
                                                     'no_telpon',
                                                     'alamat',
@@ -217,7 +218,6 @@
                                                     'internet_protocol',
                                                     'vpn_user',
                                                     'vpn_password',
-                                                    'jenis_vpn',
                                                     'jumlah_extension',
                                                     'no_pemanggil',
                                                     'email_airdroid',
@@ -316,7 +316,7 @@
                                                         class="form-label">Kanwil</label>
                                                     <input type="text" class="form-control"
                                                         id="kanwil{{ $d->id }}" name="kanwil"
-                                                        value="{{ $d->kanwil }}" readonly>
+                                                        value="{{ $d->kanwil->kanwil }}" readonly>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="tipe{{ $d->id }}" class="form-label">Tipe</label>
@@ -411,14 +411,14 @@
                                                     <select class="form-control" id="status_wartel{{ $d->id }}"
                                                         name="status_wartel">
                                                         <option value="">-- Pilih Status --</option>
-                                                        <option value="Aktif"
-                                                            {{ ($dataOpsional->status_wartel ?? '') == 'Aktif' ? 'selected' : '' }}>
+                                                        <option value="1"
+                                                            {{ ($dataOpsional->status_wartel ?? 0) == 1 ? 'selected' : '' }}>
                                                             Aktif
                                                         </option>
-                                                        <option value="Tidak Aktif"
-                                                            {{ ($dataOpsional->status_wartel ?? '') == 'Tidak Aktif' ? 'selected' : '' }}>
-                                                            Tidak Aktif
-                                                        </option>
+                                                        <option value="0"
+                                                            {{ ($dataOpsional->status_wartel ?? 0) == 0 ? 'selected' : '' }}>
+                                                            Tidak
+                                                            Aktif</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -500,15 +500,15 @@
                                                         placeholder="Masukkan password VPN">
                                                 </div>
                                                 <div class="mb-3">
-                                                    <label for="jenis_vpn{{ $d->id }}" class="form-label">Jenis
+                                                    <label for="vpns_id{{ $d->id }}" class="form-label">Jenis
                                                         VPN</label>
-                                                    <select class="form-control" id="jenis_vpn{{ $d->id }}"
-                                                        name="jenis_vpn">
+                                                    <select class="form-control" id="vpns_id{{ $d->id }}"
+                                                        name="vpns_id">
                                                         <option value="">-- Pilih Jenis VPN --</option>
                                                         @if (isset($vpns) && $vpns->count() > 0)
                                                             @foreach ($vpns as $p)
-                                                                <option value="{{ $p->jenis_vpn }}"
-                                                                    {{ ($dataOpsional->jenis_vpn ?? '') == $p->jenis_vpn ? 'selected' : '' }}>
+                                                                <option value="{{ $p->id }}"
+                                                                    {{ ($dataOpsional->vpns_id ?? '') == $p->id ? 'selected' : '' }}>
                                                                     {{ $p->jenis_vpn }}
                                                                 </option>
                                                             @endforeach
@@ -551,14 +551,16 @@
                                                         placeholder="Contoh:&#10;201&#10;202&#10;203">{{ $dataOpsional->no_pemanggil ?? '' }}</textarea>
                                                 </div>
                                                 <div class="mb-3">
-                                                    <label for="email_airdroid{{ $d->id }}" class="form-label">Email AirDroid</label>
-                                                    <small class="text-muted d-block mb-2">Masukkan setiap email AirDroid pada baris terpisah</small>
+                                                    <label for="email_airdroid{{ $d->id }}"
+                                                        class="form-label">Email AirDroid</label>
+                                                    <small class="text-muted d-block mb-2">Masukkan setiap email AirDroid
+                                                        pada baris terpisah</small>
                                                     <textarea class="form-control" id="email_airdroid{{ $d->id }}" name="email_airdroid" rows="6"
                                                         placeholder="Contoh:&#10;email1@example.com&#10;email2@example.com&#10;email3@example.com">{{ $dataOpsional->email_airdroid ?? '' }}</textarea>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="password{{ $d->id }}" class="form-label">Password
-                                                        </label>
+                                                    </label>
                                                     <small class="text-muted d-block mb-2">Masukkan setiap password
                                                         baris terpisah (sesuai urutan nomor AirDroid di atas)</small>
                                                     <textarea class="form-control" id="password{{ $d->id }}" name="password" rows="6"
@@ -587,7 +589,8 @@
                             <form method="GET" class="d-flex align-items-center">
                                 <!-- Preserve all search parameters -->
                                 @if (request('search_namaupt'))
-                                    <input type="hidden" name="search_namaupt" value="{{ request('search_namaupt') }}">
+                                    <input type="hidden" name="search_namaupt"
+                                        value="{{ request('search_namaupt') }}">
                                 @endif
                                 @if (request('search_kanwil'))
                                     <input type="hidden" name="search_kanwil" value="{{ request('search_kanwil') }}">

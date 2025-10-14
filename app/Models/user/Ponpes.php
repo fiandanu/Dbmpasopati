@@ -2,11 +2,11 @@
 
 namespace App\Models\user;
 
-use App\Models\db\DataOpsionalPonpes;
+use App\Models\db\ponpes\DataOpsionalPonpes;
+use App\Models\db\ponpes\UploadFolderPonpesPks;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\db\UploadFolderPonpesPks;
-use App\Models\db\UploadFolderPonpesSpp;
+use App\Models\db\ponpes\UploadFolderPonpesSpp;
 
 class Ponpes extends Model
 {

@@ -6,23 +6,22 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('vpns', function (Blueprint $table) {
+        Schema::create('data_upt', function (Blueprint $table) {
             $table->id();
-            $table->string('jenis_vpn');
+            $table->string('namaupt');
+            $table->string('tipe')->nullable();
+            $table->date('tanggal')->nullable();
+
+            $table->foreignId('kanwil_id')->constrained('kanwil')->onDelete('cascade'); 
+
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('vpns');
+        Schema::dropIfExists('data_upt');
     }
 };

@@ -318,7 +318,9 @@
                                                                             $firstFileName = null;
                                                                             if (
                                                                                 $d->uploadFolderSpp &&
-                                                                                !empty($d->uploadFolderSpp->pdf_folder_1)
+                                                                                !empty(
+                                                                                    $d->uploadFolderSpp->pdf_folder_1
+                                                                                )
                                                                             ) {
                                                                                 $firstFileName = basename(
                                                                                     $d->uploadFolderSpp->pdf_folder_1,
@@ -445,138 +447,137 @@
                                                 </div>n
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="modal fade" id="deleteModal{{ $d->id }}" tabindex="-1" role="dialog"
-                                        aria-labelledby="deleteModalLabel{{ $d->id }}" aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-body text-center align-items-center">
-                                                <ion-icon name="alert-circle-outline"
-                                                    class="text-9xl text-[var(--yellow-04)]"></ion-icon>
-                                                <p class="headline-large-32">Anda Yakin?</p>
-                                                <!-- UBAH TEKS INI -->
-                                                <label>Apakah Data SPP <b>{{ $d->nama_ponpes }}</b> ingin dihapus?</label>
-                                                <small class="text-muted d-block mt-2">
-                                                    <i class="fas fa-info-circle"></i>
-                                                    Hanya data SPP yang akan dihapus, data Ponpes tetap tersimpan.
-                                                </small>
-                                            </div>
-                                                <div class="modal-footer flex-row-reverse justify-content-between">
-                                                    <button type="button" class="btn-cancel-modal"
-                                                        data-dismiss="modal">Batal</button>
-                                                    <form action="{{ route('sppPonpes.destroy', $d->id) }}"
-                                                        method="POST" style="display: inline;">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn-delete">
-                                                            Hapus
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    @endfor
-                                @empty
-                                    <tr>
-                                        <td colspan="6" class="text-center">
-                                            <div class="py-4">
-                                                <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-                                                <p class="text-muted">Tidak ada data yang ditemukan</p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
                     </div>
-                </div>
-
-                <!-- Custom Pagination dengan Dropdown -->
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <!-- Left: Data info + Dropdown per page -->
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="btn-datakolom">
-                            <form method="GET" class="d-flex align-items-center">
-                                @if (request('search_namaponpes'))
-                                    <input type="hidden" name="search_namaponpes"
-                                        value="{{ request('search_namaponpes') }}">
-                                @endif
-                                @if (request('search_wilayah'))
-                                    <input type="hidden" name="search_wilayah" value="{{ request('search_wilayah') }}">
-                                @endif
-                                @if (request('search_tanggal_dari'))
-                                    <input type="hidden" name="search_tanggal_dari"
-                                        value="{{ request('search_tanggal_dari') }}">
-                                @endif
-                                @if (request('search_tanggal_sampai'))
-                                    <input type="hidden" name="search_tanggal_sampai"
-                                        value="{{ request('search_tanggal_sampai') }}">
-                                @endif
-                                @if (request('search_status'))
-                                    <input type="hidden" name="search_status" value="{{ request('search_status') }}">
-                                @endif
-
-                                <div class="d-flex align-items-center">
-                                    <select name="per_page" class="form-control form-control-sm pr-2"
-                                        style="width: auto;" onchange="this.form.submit()">
-                                        <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10
-                                        </option>
-                                        <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>15
-                                        </option>
-                                        <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20
-                                        </option>
-                                        <option value="all" {{ request('per_page') == 'all' ? 'selected' : '' }}>Semua
-                                        </option>
-                                    </select>
-                                    <span>Rows</span>
+                    <div class="modal fade" id="deleteModal{{ $d->id }}" tabindex="-1" role="dialog"
+                        aria-labelledby="deleteModalLabel{{ $d->id }}" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-body text-center align-items-center">
+                                    <ion-icon name="alert-circle-outline"
+                                        class="text-9xl text-[var(--yellow-04)]"></ion-icon>
+                                    <p class="headline-large-32">Anda Yakin?</p>
+                                    <!-- UBAH TEKS INI -->
+                                    <label>Apakah Data SPP <b>{{ $d->nama_ponpes }}</b> ingin dihapus?</label>
+                                    <small class="text-muted d-block mt-2">
+                                        <i class="fas fa-info-circle"></i>
+                                        Hanya data SPP yang akan dihapus, data Ponpes tetap tersimpan.
+                                    </small>
                                 </div>
-                            </form>
-                        </div>
-
-                        <div class="text-muted">
-                            @if (request('per_page') != 'all')
-                                Menampilkan {{ $data->firstItem() }} sampai {{ $data->lastItem() }}
-                                dari {{ $data->total() }} data
-                            @else
-                                Menampilkan semua {{ $data->total() }} data
-                            @endif
+                                <div class="modal-footer flex-row-reverse justify-content-between">
+                                    <button type="button" class="btn-cancel-modal" data-dismiss="modal">Batal</button>
+                                    <form action="{{ route('sppPonpes.destroy', $d->id) }}" method="POST"
+                                        style="display: inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn-delete">
+                                            Hapus
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                    @endfor
+                @empty
+                    <tr>
+                        <td colspan="6" class="text-center">
+                            <div class="py-4">
+                                <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">Tidak ada data yang ditemukan</p>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforelse
+                    </tbody>
+                    </table>
+                </div>
+            </div>
 
-                    <!-- Right: Navigation (hanya tampil jika tidak pilih "Semua") -->
-                    @if (request('per_page') != 'all' && $data->lastPage() > 1)
-                        <div class="pagination-controls d-flex align-items-center gap-12">
-                            @if ($data->onFirstPage())
-                                <button class="btn-page" disabled>&laquo; Previous</button>
-                            @else
-                                <button class="btn-datakolom w-auto p-3">
-                                    <a href="{{ $data->appends(request()->query())->previousPageUrl() }}">&laquo;
-                                        Previous</a>
-                                </button>
+            <!-- Custom Pagination dengan Dropdown -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <!-- Left: Data info + Dropdown per page -->
+                <div class="d-flex align-items-center gap-3">
+                    <div class="btn-datakolom">
+                        <form method="GET" class="d-flex align-items-center">
+                            @if (request('search_namaponpes'))
+                                <input type="hidden" name="search_namaponpes"
+                                    value="{{ request('search_namaponpes') }}">
+                            @endif
+                            @if (request('search_wilayah'))
+                                <input type="hidden" name="search_wilayah" value="{{ request('search_wilayah') }}">
+                            @endif
+                            @if (request('search_tanggal_dari'))
+                                <input type="hidden" name="search_tanggal_dari"
+                                    value="{{ request('search_tanggal_dari') }}">
+                            @endif
+                            @if (request('search_tanggal_sampai'))
+                                <input type="hidden" name="search_tanggal_sampai"
+                                    value="{{ request('search_tanggal_sampai') }}">
+                            @endif
+                            @if (request('search_status'))
+                                <input type="hidden" name="search_status" value="{{ request('search_status') }}">
                             @endif
 
-                            <span id="page-info">Page {{ $data->currentPage() }} of {{ $data->lastPage() }}</span>
+                            <div class="d-flex align-items-center">
+                                <select name="per_page" class="form-control form-control-sm pr-2" style="width: auto;"
+                                    onchange="this.form.submit()">
+                                    <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10
+                                    </option>
+                                    <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>15
+                                    </option>
+                                    <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20
+                                    </option>
+                                    <option value="all" {{ request('per_page') == 'all' ? 'selected' : '' }}>Semua
+                                    </option>
+                                </select>
+                                <span>Rows</span>
+                            </div>
+                        </form>
+                    </div>
 
-                            @if ($data->hasMorePages())
-                                <button class="btn-datakolom w-auto p-3">
-                                    <a href="{{ $data->appends(request()->query())->nextPageUrl() }}">Next&raquo;</a>
-                                </button>
-                            @else
-                                <button class="btn-page" disabled>Next &raquo;</button>
-                            @endif
-                        </div>
-                    @endif
+                    <div class="text-muted">
+                        @if (request('per_page') != 'all')
+                            Menampilkan {{ $data->firstItem() }} sampai {{ $data->lastItem() }}
+                            dari {{ $data->total() }} data
+                        @else
+                            Menampilkan semua {{ $data->total() }} data
+                        @endif
+                    </div>
                 </div>
 
-            </div><!-- /.container-fluid -->
+                <!-- Right: Navigation (hanya tampil jika tidak pilih "Semua") -->
+                @if (request('per_page') != 'all' && $data->lastPage() > 1)
+                    <div class="pagination-controls d-flex align-items-center gap-12">
+                        @if ($data->onFirstPage())
+                            <button class="btn-page" disabled>&laquo; Previous</button>
+                        @else
+                            <button class="btn-datakolom w-auto p-3">
+                                <a href="{{ $data->appends(request()->query())->previousPageUrl() }}">&laquo;
+                                    Previous</a>
+                            </button>
+                        @endif
 
-        </section>
-        <!-- /.content -->
+                        <span id="page-info">Page {{ $data->currentPage() }} of {{ $data->lastPage() }}</span>
+
+                        @if ($data->hasMorePages())
+                            <button class="btn-datakolom w-auto p-3">
+                                <a href="{{ $data->appends(request()->query())->nextPageUrl() }}">Next&raquo;</a>
+                            </button>
+                        @else
+                            <button class="btn-page" disabled>Next &raquo;</button>
+                        @endif
+                    </div>
+                @endif
+            </div>
+
+    </div><!-- /.container-fluid -->
+
+    </section>
+    <!-- /.content -->
     </div>
 
 
-                {{-- Add Modal --}}
+    {{-- Add Modal --}}
     <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
         <form id="addForm" action="{{ route('sppPonpes.store') }}" method="POST">
             @csrf
@@ -625,7 +626,8 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="nama_wilayah" class="form-label">Nama Wilayah</label>
-                                    <input type="text" class="form-control" id="nama_wilayah" name="nama_wilayah" readonly>
+                                    <input type="text" class="form-control" id="nama_wilayah" name="nama_wilayah"
+                                        readonly>
                                 </div>
                             </div>
                         </div>

@@ -104,7 +104,7 @@
                             $status = $d['calculated_status'];
                         } else {
                             // Fallback calculation if calculated_status not available
-                            $dataOpsional = (object) ($d['data_opsional_upt'] ?? null);
+                            $dataOpsional = (object) ($d['db_opsional_upt'] ?? null);
                             $filledFields = 0;
                             if ($dataOpsional) {
                                 foreach ($optionalFields as $field) {

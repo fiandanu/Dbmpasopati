@@ -6,7 +6,7 @@
             <div class="container-fluid">
                 <div class="row py-3 align-items-center">
                     <div class="col d-flex justify-content-between align-items-center">
-                        <!-- Left navbar links -->
+                        <!-- Left navbar links --> 
                         <div class="d-flex justify-center align-items-center gap-12">
                             <button class="btn-pushmenu" data-widget="pushmenu" role="button">
                                 <i class="fas fa-bars"></i></button>
@@ -23,6 +23,9 @@
                                 <button onclick="downloadPdf()"
                                     class="btn-page d-flex justify-content-center align-items-center" title="Download PDF">
                                     <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PDF
+                                </button>
+                                <button class="btn-purple" data-bs-toggle="modal" data-bs-target="#addModal">
+                                    <i class="fa fa-plus"></i> Add Data
                                 </button>
                             </div>
                         </div>
@@ -198,7 +201,7 @@
                                     <tr>
                                         <td class="text-center">{{ $no++ }}</td>
                                         <td>{{ $d->namaupt }}</td>
-                                        <td><span class="tag tag-success">{{ $d->kanwil }}</span></td>
+                                        <td><span class="tag tag-success">{{ $d->kanwil->kanwil }}</span></td>
                                         <td class="text-center">
                                             <span
                                                 class="@if ($d->tipe == 'reguler') Tipereguller
@@ -242,6 +245,10 @@
                                                 <button data-toggle="modal" data-target="#uploadModal{{ $d->id }}"
                                                     title="Upload PDF">
                                                     <ion-icon name="folder-outline"></ion-icon>
+                                                </button>
+                                                <button data-toggle="modal" data-target="#deleteModal{{ $d->id }}"
+                                                    title="Hapus Data">
+                                                    <ion-icon name="trash-outline"></ion-icon>
                                                 </button>
                                             </div>
                                         </td>
@@ -436,7 +443,37 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="modal fade" id="deleteModal{{ $d->id }}" tabindex="-1" role="dialog"
+                        aria-labelledby="deleteModalLabel{{ $d->id }}" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-body text-center align-items-center">
+                                    <ion-icon name="alert-circle-outline"
+                                        class="text-9xl text-[var(--yellow-04)]"></ion-icon>
+                                    <p class="headline-large-32">Anda Yakin?</p>
+                                    <!-- UBAH TEKS INI -->
+                                    <label>Apakah Data SPP <b>{{ $d->nama_ponpes }}</b> ingin dihapus?</label>
+                                    <small class="text-muted d-block mt-2">
+                                        <i class="fas fa-info-circle"></i>
+                                        Hanya data SPP yang akan dihapus, data Ponpes tetap tersimpan.
+                                    </small>
+                                </div>
+                                <div class="modal-footer flex-row-reverse justify-content-between">
+                                    <button type="button" class="btn-cancel-modal" data-dismiss="modal">Batal</button>
+                                    <form action="{{ route('sppPonpes.destroy', $d->id) }}" method="POST"
+                                        style="display: inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn-delete">
+                                            Hapus
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                                     @endfor
+                                    
                                 @empty
                                     <tr>
                                         <td colspan="7" class="text-center">
@@ -535,6 +572,75 @@
             </div><!-- /.container-fluid -->
         </section>
         <!-- /.content -->
+
+
+        {{-- Add Modal --}}
+        <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+            <form id="addForm" action="{{ route('spp.store') }}" method="POST">
+                @csrf
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <label class="modal-title" id="addModalLabel">Tambah Data SPP</label>
+                            <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="mb-4">
+                                <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
+                                    <label>Informasi UPT</label>
+                                </div>
+                                <div class="column">
+                                    <div class="mb-3">
+                                        <label for="namaupt" class="form-label">Nama UPT</label>
+                                        <div class="dropdown">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="ponpes_search"
+                                                    placeholder="Cari PONPES..." autocomplete="off">
+                                                <div class="input-group-append">
+                                                    <button type="button" class="btn btn-outline-secondary"
+                                                        onclick="togglePonpesDropdown()">
+                                                        <i class="fas fa-chevron-down"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="dropdown-menu w-100" id="ponpesDropdownMenu"
+                                                style="max-height: 200px; overflow-y: auto; display: none;">
+                                                @foreach ($uptList as $d)
+                                                    <a class="dropdown-item ponpes-option" href="#"
+                                                        data-value="{{ $d->namaupt }}"
+                                                        data-nama-wilayah="{{ $d->kanwil->kanwil }}"
+                                                        onclick="selectPonpes('{{ $d->namaupt }}', '{{ $d->kanwil->kanwil }}')">
+                                                        {{ $d->namaupt }} - {{ $d->kanwil->kanwil }}
+                                                    </a>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                        <input type="hidden" id="namaupt" name="namaupt" required>
+                                        <small class="form-text text-muted">Ketik untuk mencari UPT</small>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="kanwil" class="form-label">Kanwil</label>
+                                        <input type="text" class="form-control" id="kanwil" name="kanwil"
+                                            readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn-cancel-modal" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn-purple">Simpan</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+
+
     </div>
     <!-- /.content-wrapper -->
 
@@ -764,6 +870,108 @@
                     fileNameDisplay.textContent = fileName;
                 });
             });
+        });
+    </script>
+
+    {{-- JS Modal Add --}}
+    <script>
+        // Searchable Ponpes dropdown functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const ponpesSearch = document.getElementById('ponpes_search');
+            const ponpesDropdown = document.getElementById('ponpesDropdownMenu');
+            const ponpesOptions = document.querySelectorAll('.ponpes-option');
+
+            if (ponpesSearch) {
+                ponpesSearch.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    let hasVisibleOption = false;
+
+                    ponpesOptions.forEach(option => {
+                        const text = option.textContent.toLowerCase();
+                        if (text.includes(searchTerm)) {
+                            option.style.display = 'block';
+                            hasVisibleOption = true;
+                        } else {
+                            option.style.display = 'none';
+                        }
+                    });
+
+                    if (searchTerm.length > 0 && hasVisibleOption) {
+                        ponpesDropdown.style.display = 'block';
+                    } else {
+                        ponpesDropdown.style.display = 'none';
+                    }
+                });
+
+                ponpesSearch.addEventListener('focus', function() {
+                    if (this.value.length > 0) {
+                        const searchTerm = this.value.toLowerCase();
+                        let hasVisibleOption = false;
+
+                        ponpesOptions.forEach(option => {
+                            const text = option.textContent.toLowerCase();
+                            if (text.includes(searchTerm)) {
+                                option.style.display = 'block';
+                                hasVisibleOption = true;
+                            }
+                        });
+
+                        if (hasVisibleOption) {
+                            ponpesDropdown.style.display = 'block';
+                        }
+                    }
+                });
+            }
+
+            // Tutup dropdown saat klik di luar
+            document.addEventListener('click', function(event) {
+                if (!event.target.closest('.dropdown')) {
+                    if (ponpesDropdown) {
+                        ponpesDropdown.style.display = 'none';
+                    }
+                }
+            });
+        });
+
+        function togglePonpesDropdown() {
+            const ponpesDropdown = document.getElementById('ponpesDropdownMenu');
+            const ponpesOptions = document.querySelectorAll('.ponpes-option');
+
+            if (ponpesDropdown.style.display === 'none' || ponpesDropdown.style.display === '') {
+                ponpesOptions.forEach(option => {
+                    option.style.display = 'block';
+                });
+                ponpesDropdown.style.display = 'block';
+            } else {
+                ponpesDropdown.style.display = 'none';
+            }
+        }
+
+        function selectPonpes(namaPonpes, namaWilayah) {
+            document.getElementById('ponpes_search').value = namaPonpes;
+            document.getElementById('namaupt').value = namaPonpes;
+            document.getElementById('kanwil').value = namaWilayah;
+            document.getElementById('ponpesDropdownMenu').style.display = 'none';
+            event.preventDefault();
+        }
+
+        // Clear selection when search is cleared
+        const ponpesSearchInput = document.getElementById('ponpes_search');
+        if (ponpesSearchInput) {
+            ponpesSearchInput.addEventListener('input', function() {
+                if (this.value === '') {
+                    document.getElementById('namaupt').value = '';
+                    document.getElementById('kanwil').value = '';
+                }
+            });
+        }
+
+        // Reset form when modal is closed
+        $('#addModal').on('hidden.bs.modal', function() {
+            document.getElementById('ponpes_search').value = '';
+            document.getElementById('namaupt').value = '';
+            document.getElementById('kanwil').value = '';
+            document.getElementById('ponpesDropdownMenu').style.display = 'none';
         });
     </script>
 

@@ -203,7 +203,8 @@
                                                     terkait dengan Reguler & VPAS</small>
                                             @endif
                                         </td>
-                                        <td><span class="tag tag-success">{{ $d->kanwil }}</span></td>
+                                        {{-- <td><span class="tag tag-success">{{ $d->kanwil_id }}</span></td> --}}
+                                        <td><span class="tag tag-success">{{ $d->kanwil->kanwil ?? '-' }}</span></td>
                                         <td class="text-center">
                                             <span
                                                 class="
@@ -311,17 +312,17 @@
 
                                         {{-- Input Nama Kanwil --}}
                                         <div class="mb-3">
-                                            <label for="kanwil" class="form-label">Kanwil</label>
-                                            <select class="form-control" id="kanwil" name="kanwil" required>
+                                            <label for="kanwil_id" class="form-label">Kanwil</label>
+                                            <select class="form-control" id="kanwil_id" name="kanwil_id" required>
                                                 <option value="" selected disabled>Pilih Kanwil</option>
                                                 @foreach ($datakanwil as $k)
-                                                    <option value="{{ $k->kanwil }}"
-                                                        {{ old('kanwil') == $k->kanwil ? 'selected' : '' }}>
+                                                    <option value="{{ $k->id }}"
+                                                        {{ old('kanwil_id') == $k->id ? 'selected' : '' }}>
                                                         {{ $k->kanwil }}
                                                     </option>
                                                 @endforeach
                                             </select>
-                                            @error('kanwil')
+                                            @error('kanwil_id')
                                                 <small class="text-danger">{{ $message }}</small>
                                             @enderror
                                         </div>
@@ -405,9 +406,15 @@
                                             </div>
 
                                             <div class="mb-3">
-                                                <label for="kanwil" class="form-label">Kanwil</label>
-                                                <input type="text" class="form-control" id="kanwil" name="kanwil"
-                                                    value="{{ $d->kanwil }}">
+                                                <label for="kanwil_id" class="form-label">Kanwil</label>
+                                                <select class="form-control" id="kanwil_id" name="kanwil_id" required>
+                                                    @foreach ($datakanwil as $k)
+                                                        <option value="{{ $k->id }}"
+                                                            {{ $d->kanwil_id == $k->id ? 'selected' : '' }}>
+                                                            {{ $k->kanwil }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
                                             </div>
 
                                             <div class="mb-3">

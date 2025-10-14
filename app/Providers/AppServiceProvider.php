@@ -19,5 +19,20 @@ class AppServiceProvider extends ServiceProvider
         }
 
         Carbon::setLocale('en');
+
+
+        $this->loadMigrationsFrom([
+
+            // Db --------------------------------
+            database_path('migrations'),
+            database_path('migrations/db/upt'),
+
+
+            // User --------------------------------
+            database_path('migrations/user/upt'),
+            database_path('migrations/user/provider_vpn'),
+            database_path('migrations/user/kanwil_namaWilayah'),
+
+        ]);
     }
 }

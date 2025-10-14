@@ -74,7 +74,9 @@ class ListDataUptController extends Controller
             $searchTerm = $request->table_search;
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('namaupt', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('kanwil', 'LIKE', '%' . $searchTerm . '%')
+                    ->orWhereHas('kanwil', function ($q) use ($searchTerm) {
+                        $q->where('nama', 'LIKE', '%' . $searchTerm . '%');
+                    })
                     ->orWhere('tanggal', 'LIKE', '%' . $searchTerm . '%')
                     ->orWhereHas('dataOpsional', function ($subQuery) use ($searchTerm) {
                         $subQuery->where('pic_upt', 'LIKE', '%' . $searchTerm . '%')
@@ -89,7 +91,9 @@ class ListDataUptController extends Controller
             $query->where('namaupt', 'LIKE', '%' . $request->search_namaupt . '%');
         }
         if ($request->has('search_kanwil') && !empty($request->search_kanwil)) {
-            $query->where('kanwil', 'LIKE', '%' . $request->search_kanwil . '%');
+            $query->whereHas('kanwil', function ($q) use ($request) {
+                $q->where('kanwil', 'LIKE', '%' . $request->search_kanwil . '%');
+            });
         }
         if ($request->has('search_tipe') && !empty($request->search_tipe)) {
             $query->where('tipe', 'LIKE', '%' . $request->search_tipe . '%');
@@ -230,13 +234,14 @@ class ListDataUptController extends Controller
             $request->all(),
             [
                 'namaupt' => 'required|string',
-                'kanwil' => 'required|string',
+                'kanwil_id' => 'required|exists:kanwil,id',
                 'tipe' => 'required|array|min:1',
                 'tipe.*' => 'in:reguler,vpas',
             ],
             [
                 'namaupt.required' => 'Nama UPT harus diisi',
-                'kanwil.required' => 'Kanwil harus diisi',
+                'kanwil_id.required' => 'Kanwil harus diisi',
+                'kanwil_id.exists' => 'Kanwil tidak valid',
                 'tipe.required' => 'Tipe harus dipilih minimal satu',
                 'tipe.array' => 'Tipe harus berupa array',
                 'tipe.min' => 'Pilih minimal satu tipe',
@@ -279,7 +284,7 @@ class ListDataUptController extends Controller
             // Buat record baru untuk setiap tipe
             $dataupt = [
                 'namaupt' => $namaUpt,
-                'kanwil' => $request->kanwil,
+                'kanwil_id' => $request->kanwil_id,
                 'tipe' => $tipeValue,
                 'tanggal' => Carbon::now()->format('Y-m-d'),
             ];
@@ -339,12 +344,13 @@ class ListDataUptController extends Controller
                         }
                     }
                 ],
-                'kanwil' => 'required|string',
+                'kanwil_id' => 'required|exists:kanwil,id',
                 'tipe' => 'required|string|in:reguler,vpas',
             ],
             [
                 'namaupt.required' => 'Nama UPT harus diisi',
-                'kanwil.required' => 'Kanwil harus diisi',
+                'kanwil_id.required' => 'Kanwil harus diisi',
+                'kanwil_id.exists' => 'Kanwil tidak valid',
                 'tipe.required' => 'Tipe harus diisi',
                 'tipe.in' => 'Tipe hanya boleh reguler atau vpas',
             ]
@@ -356,7 +362,7 @@ class ListDataUptController extends Controller
 
         $dataupt = Upt::findOrFail($id);
         $dataupt->namaupt = $request->namaupt;
-        $dataupt->kanwil = $request->kanwil;
+        $dataupt->kanwil_id = $request->kanwil_id;
         $dataupt->tipe = $request->tipe;
         $dataupt->save();
 
@@ -401,7 +407,7 @@ class ListDataUptController extends Controller
             $rows[] = [
                 $no++,
                 $d->namaupt,
-                $d->kanwil,
+                $d->kanwil->kanwil ?? '-',
                 ucfirst($d->tipe),
                 \Carbon\Carbon::parse($d->tanggal)->format('d M Y'),
                 $status
@@ -433,27 +439,9 @@ class ListDataUptController extends Controller
         // Apply status filter
         $data = $this->applyStatusFilter($data, $request);
 
-        // FIXED: Convert collection to array with calculated status
-        $dataArray = [];
-        foreach ($data as $d) {
-            $dataItem = $d->toArray();
-            $dataItem['calculated_status'] = $this->calculateStatus($d->dataOpsional);
-            $dataArray[] = $dataItem;
-        }
-
-        // FIXED: Additional sorting using correct field name
-        if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
-            usort($dataArray, function ($a, $b) {
-                // Using 'tanggal' field instead of 'created_at'
-                $dateA = strtotime($a['tanggal']);
-                $dateB = strtotime($b['tanggal']);
-                return $dateA - $dateB; // Ascending order (oldest first)
-            });
-        }
-
         $pdfData = [
             'title' => 'List Data UPT Reguler',
-            'data' => $dataArray,
+            'data' => $data,
             'optionalFields' => $this->optionalFields,
             'generated_at' => Carbon::now()->format('d M Y H:i:s')
         ];
@@ -463,4 +451,5 @@ class ListDataUptController extends Controller
 
         return $pdf->download($filename);
     }
+
 }

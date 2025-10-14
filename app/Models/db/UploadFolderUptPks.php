@@ -10,16 +10,16 @@ class UploadFolderUptPks extends Model
 {
     use HasFactory;
 
-    protected $table = 'upload_folder_upt_pks';
+    protected $table = 'db_upt_pks';
 
     protected $fillable = [
-        'upt_id',
+        'data_upt_id',
         'uploaded_pdf',
     ];
 
     public function upt()
     {
-        return $this->belongsTo(Upt::class, 'upt_id');
+        return $this->belongsTo(Upt::class, 'data_upt_id');
     }
 
     // Helper method untuk cek apakah sudah upload

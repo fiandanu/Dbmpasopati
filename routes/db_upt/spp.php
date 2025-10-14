@@ -5,6 +5,7 @@ use App\Http\Controllers\user\upt\spp\SppUptController;
 
 Route::prefix('spp')->name('spp.')->group(function () {
     Route::get('/ListDataSpp', [SppUptController::class, 'ListDataSpp'])->name('ListDataSpp');
+    Route::post('/store', [SppUptController::class, 'store'])->name('store');
     Route::delete('/DataBasePageDestroy/{id}', [SppUptController::class, 'DatabasePageDestroy'])->name('DataBasePageDestroy');
 
     // PDF routes

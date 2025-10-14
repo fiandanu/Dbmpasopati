@@ -10,10 +10,10 @@ class UploadFolderUptSpp extends Model
 {
     use HasFactory;
 
-    protected $table = 'upload_folder_upt_spp';
+    protected $table = 'db_upt_spp';
 
     protected $fillable = [
-        'upt_id',
+        'data_upt_id',
         'pdf_folder_1',
         'pdf_folder_2',
         'pdf_folder_3',
@@ -28,7 +28,7 @@ class UploadFolderUptSpp extends Model
 
     public function upt()
     {
-        return $this->belongsTo(Upt::class, 'upt_id');
+        return $this->belongsTo(Upt::class, 'data_upt_id');
     }
 
     // Get all PDF files as array

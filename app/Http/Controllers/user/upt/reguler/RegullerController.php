@@ -33,7 +33,6 @@ class RegullerController extends Controller
         'internet_protocol',
         'vpn_user',
         'vpn_password',
-        'jenis_vpn',
         'jumlah_extension',
         'no_extension',
         'extension_password',
@@ -65,27 +64,15 @@ class RegullerController extends Controller
 
     private function applyFilters($query, Request $request)
     {
-        // Global search
-        if ($request->has('table_search') && !empty($request->table_search)) {
-            $searchTerm = $request->table_search;
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('namaupt', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('kanwil', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('tanggal', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhereHas('dataOpsional', function ($subQuery) use ($searchTerm) {
-                        $subQuery->where('pic_upt', 'LIKE', '%' . $searchTerm . '%')
-                            ->orWhere('alamat', 'LIKE', '%' . $searchTerm . '%')
-                            ->orWhere('provider_internet', 'LIKE', '%' . $searchTerm . '%');
-                    });
-            });
-        }
 
         // Column-specific searches
         if ($request->has('search_namaupt') && !empty($request->search_namaupt)) {
             $query->where('namaupt', 'LIKE', '%' . $request->search_namaupt . '%');
         }
         if ($request->has('search_kanwil') && !empty($request->search_kanwil)) {
-            $query->where('kanwil', 'LIKE', '%' . $request->search_kanwil . '%');
+            $query->whereHas('kanwil', function ($q) use ($request) {
+                $q->where('kanwil', 'LIKE', '%' . $request->search_kanwil . '%');
+            });
         }
         if ($request->has('search_tipe') && !empty($request->search_tipe)) {
             $query->where('tipe', 'LIKE', '%' . $request->search_tipe . '%');
@@ -115,7 +102,7 @@ class RegullerController extends Controller
 
     public function ListDataReguller(Request $request)
     {
-        $query = Upt::with('dataOpsional')->where('tipe', 'reguler');
+        $query = Upt::with('dataOpsional', 'kanwil')->where('tipe', 'reguler');
 
         // Apply database filters
         $query = $this->applyFilters($query, $request);
@@ -174,7 +161,7 @@ class RegullerController extends Controller
 
     public function exportListCsv(Request $request): StreamedResponse
     {
-        $query = Upt::with('dataOpsional')->where('tipe', 'reguler');
+        $query = Upt::with('dataOpsional', 'kanwil')->where('tipe', 'reguler');
         $query = $this->applyFilters($query, $request);
 
         // FIXED: Add date sorting when date filters are applied
@@ -209,7 +196,7 @@ class RegullerController extends Controller
             $rows[] = [
                 $no++,
                 $d->namaupt,
-                $d->kanwil,
+                $d->kanwil->kanwil ?? '',
                 ucfirst($d->tipe),
                 \Carbon\Carbon::parse($d->tanggal)->format('d M Y'),
                 $status
@@ -261,27 +248,9 @@ class RegullerController extends Controller
         // Apply status filter
         $data = $this->applyStatusFilter($data, $request);
 
-        // FIXED: Convert collection to array with calculated status
-        $dataArray = [];
-        foreach ($data as $d) {
-            $dataItem = $d->toArray();
-            $dataItem['calculated_status'] = $this->calculateStatus($d->dataOpsional);
-            $dataArray[] = $dataItem;
-        }
-
-        // FIXED: Additional sorting using correct field name
-        if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
-            usort($dataArray, function ($a, $b) {
-                // Using 'tanggal' field instead of 'created_at'
-                $dateA = strtotime($a['tanggal']);
-                $dateB = strtotime($b['tanggal']);
-                return $dateA - $dateB; // Ascending order (oldest first)
-            });
-        }
-
         $pdfData = [
             'title' => 'List Data UPT Reguler',
-            'data' => $dataArray,
+            'data' => $data,
             'optionalFields' => $this->optionalFields,
             'generated_at' => Carbon::now()->format('d M Y H:i:s')
         ];
@@ -294,6 +263,7 @@ class RegullerController extends Controller
 
     public function ListUpdateReguller(Request $request, $id)
     {
+        // dd($request->all());
         $validator = Validator::make(
             $request->all(),
             [
@@ -323,7 +293,7 @@ class RegullerController extends Controller
                 'internet_protocol' => 'nullable|string|max:255',
                 'vpn_user' => 'nullable|string|max:255',
                 'vpn_password' => 'nullable|string|max:255',
-                'jenis_vpn' => 'nullable|string|max:255',
+                'vpns_id' => 'nullable|exists:vpns,id',
 
                 // Extension Reguler
                 'jumlah_extension' => 'nullable|integer|min:0',
@@ -357,7 +327,7 @@ class RegullerController extends Controller
                 'internet_protocol.string' => 'Internet Protocol harus berupa teks.',
                 'vpn_user.string' => 'User VPN harus berupa teks.',
                 'vpn_password.string' => 'Password VPN harus berupa teks.',
-                'jenis_vpn.string' => 'Jenis VPN harus berupa teks.',
+                'vpns_id.exists' => 'Jenis VPN harus berupa teks.',
 
                 // Extension Reguler
                 'jumlah_extension.integer' => 'Jumlah extension harus berupa angka.',
@@ -383,7 +353,7 @@ class RegullerController extends Controller
             // Find UPT data
             $upt = Upt::findOrFail($id);
 
-            // Prepare data for data_opsional_upt table
+            // Prepare data for db_opsional_upt table
             $opsionalData = [
                 'pic_upt' => $request->pic_upt,
                 'no_telpon' => $request->no_telpon,
@@ -401,16 +371,16 @@ class RegullerController extends Controller
                 'internet_protocol' => $request->internet_protocol,
                 'vpn_user' => $request->vpn_user,
                 'vpn_password' => $request->vpn_password,
-                'jenis_vpn' => $request->jenis_vpn,
+                'vpns_id' => $request->vpns_id,
                 'jumlah_extension' => $request->jumlah_extension,
                 'no_extension' => $request->no_extension,
                 'extension_password' => $request->extension_password,
                 'pin_tes' => $request->pin_tes,
             ];
 
-            // Update or create data_opsional_upt record
+            // Update or create db_opsional_upt record
             $dataOpsional = DataOpsionalUpt::updateOrCreate(
-                ['upt_id' => $upt->id],
+                ['data_upt_id' => $upt->id],
                 $opsionalData
             );
 
@@ -424,7 +394,7 @@ class RegullerController extends Controller
 
     public function exportVerticalCsv($id): StreamedResponse
     {
-        $user = Upt::with('dataOpsional')->findOrFail($id);
+        $user = Upt::with('dataOpsional.vpn', 'kanwil')->findOrFail($id);
         $dataOpsional = $user->dataOpsional;
 
         $filename = 'data_upt_' . $user->namaupt . '.csv';
@@ -441,7 +411,7 @@ class RegullerController extends Controller
             ['PIC UPT', $dataOpsional->pic_upt ?? ''],
             ['No. Telpon', $dataOpsional->no_telpon ?? ''],
             ['Alamat', $dataOpsional->alamat ?? ''],
-            ['Kanwil', $user->kanwil],
+            ['Kanwil', $user->kanwil->kanwil],
             ['Jumlah WBP', $dataOpsional->jumlah_wbp ?? ''],
             ['Jumlah Line Reguler Terpasang', $dataOpsional->jumlah_line ?? ''],
             ['Provider Internet', $dataOpsional->provider_internet ?? ''],
@@ -455,7 +425,7 @@ class RegullerController extends Controller
             ['Internet Protocol', $dataOpsional->internet_protocol ?? ''],
             ['VPN User', $dataOpsional->vpn_user ?? ''],
             ['VPN Password', $dataOpsional->vpn_password ?? ''],
-            ['Jenis VPN', $dataOpsional->jenis_vpn ?? ''],
+            ['Jenis VPN', $dataOpsional->vpn->jenis_vpn ?? ''],
             ['Jumlah Extension', $dataOpsional->jumlah_extension ?? ''],
             ['No Extension', $dataOpsional->no_extension ?? ''],
             ['Extension Password', $dataOpsional->extension_password ?? ''],
@@ -475,7 +445,7 @@ class RegullerController extends Controller
 
     public function exportUptPdf($id)
     {
-        $user = Upt::with('dataOpsional')->findOrFail($id);
+        $user = Upt::with('dataOpsional.vpn')->findOrFail($id);
 
         $data = [
             'title' => 'Data UPT Reguller ' . $user->namaupt,

@@ -13,7 +13,7 @@ class UploadFolderUpt extends Model
     protected $table = 'upload_folder_upt';
 
     protected $fillable = [
-        'upt_id',
+        'data_upt_id',
         'uploaded_pdf',
         'pdf_folder_1',
         'pdf_folder_2',
@@ -29,7 +29,7 @@ class UploadFolderUpt extends Model
 
     public function upt()
     {
-        return $this->belongsTo(Upt::class, 'upt_id');
+        return $this->belongsTo(Upt::class, 'data_upt_id');
     }
 
     public function getPdfFilesAttribute()

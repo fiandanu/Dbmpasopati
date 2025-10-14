@@ -98,7 +98,7 @@
                             $status = $d['calculated_status'];
                         } else {
                             // Fallback calculation if calculated_status not available
-                            $dataOpsional = (object) ($d['data_opsional_upt'] ?? null);
+                            $dataOpsional = (object) ($d['db_opsional_upt'] ?? null);
                             $filledFields = 0;
                             if ($dataOpsional) {
                                 foreach ($optionalFields as $field) {
@@ -130,12 +130,12 @@
                     @endphp
                     <tr>
                         <td class="text-center">{{ $no++ }}</td>
-                        <td>{{ $d['namaupt'] }}</td>
-                        <td>{{ $d['kanwil'] }}</td>
+                        <td>{{ $d->namaupt }}</td>
+                        <td>{{ $d->kanwil->kanwil }}</td>
                         <td class="text-center">
-                            <span class="vpas-badge">{{ ucfirst($d['tipe']) }}</span>
+                            <span class="vpas-badge">{{ ucfirst($d->tipe) }}</span>
                         </td>
-                        <td class="text-center">{{ \Carbon\Carbon::parse($d['tanggal'])->format('d M Y') }}</td>
+                        <td class="text-center">{{ \Carbon\Carbon::parse($d->tanggal)->format('d M Y') }}</td>
                         <td class="text-center {{ $statusClass }}">{{ $status }}</td>
                     </tr>
                 @endforeach

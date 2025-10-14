@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\user\ponpes\reguller;
 
 use App\Http\Controllers\Controller;
-use App\Models\db\DataOpsionalPonpes as DbDataOpsionalPonpes;
+use App\Models\db\ponpes\DataOpsionalPonpes;
 use App\Models\user\Provider;
 use App\Models\user\Ponpes;
 use App\Models\user\Vpn;
@@ -417,7 +417,7 @@ class RegullerController extends Controller
             ];
 
             // Update or create data_opsional_ponpes record
-            $dataOpsional = DbDataOpsionalPonpes::updateOrCreate(
+            $dataOpsional = DataOpsionalPonpes::updateOrCreate(
                 ['ponpes_id' => $ponpes->id],
                 $opsionalData
             );

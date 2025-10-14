@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Models\db; 
+namespace App\Models\db\ponpes;
 
-use App\Models\user\Ponpes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\user\Ponpes;
+
 
 class DataOpsionalPonpes extends Model
 {
@@ -34,7 +35,7 @@ class DataOpsionalPonpes extends Model
         'jumlah_extension',
         'pin_tes',
         'no_extension',
-        'extension_password',   
+        'extension_password',
         'no_pemanggil',
         'email_airdroid',
         'password'

@@ -19,4 +19,11 @@ class Kanwil extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
+
+    public function upt()
+    {
+        return $this->hasMany(Upt::class, 'kanwil_id');
+    }
+
+
 }

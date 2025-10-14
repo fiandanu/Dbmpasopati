@@ -25,7 +25,7 @@ class DataOpsionalUptFactory extends Factory
         $jenisVpnOptions = ['OpenVPN', 'L2TP', 'PPTP', 'IKEv2', 'WireGuard'];
 
         return [
-            'upt_id' => Upt::factory(),
+            'data_upt_id' => Upt::factory(),
             'pic_upt' => $this->faker->name,
             'no_telpon' => $this->faker->phoneNumber,
             'alamat' => $this->faker->address,

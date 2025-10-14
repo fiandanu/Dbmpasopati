@@ -5,7 +5,7 @@ namespace App\Http\Controllers\user\ponpes\pks;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\user\Ponpes;
-use App\Models\db\UploadFolderPonpesPks;
+use App\Models\db\ponpes\UploadFolderPonpesPks;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;

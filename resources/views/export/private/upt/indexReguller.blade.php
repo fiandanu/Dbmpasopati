@@ -84,7 +84,7 @@
         </tr>
         <tr>
             <td>Kanwil</td>
-            <td>{{ $user->kanwil }}</td>
+            <td>{{ $user->kanwil->kanwil }}</td>
         </tr>
         <tr>
             <td>Jumlah WBP</td>
@@ -165,7 +165,7 @@
         </tr>
         <tr>
             <td>Jenis VPN</td>
-            <td>{{ $user->dataOpsional->jenis_vpn ?? '' }}</td>
+            <td>{{ $user->dataOpsional->vpn->jenis_vpn ?? '' }}</td>
         </tr>
 
         <tr>

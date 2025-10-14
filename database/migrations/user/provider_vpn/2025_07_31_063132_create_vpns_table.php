@@ -6,20 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /** 
+     * Run the migrations.
+     */
     public function up(): void
     {
-        Schema::create('data_upt', function (Blueprint $table) {
+        Schema::create('vpns', function (Blueprint $table) {
             $table->id();
-            $table->string('namaupt');
-            $table->string('kanwil')->nullable();
-            $table->string('tipe')->nullable();
-            $table->date('tanggal')->nullable();
+            $table->string('jenis_vpn');
             $table->timestamps();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::dropIfExists('data_upt');
+        Schema::dropIfExists('vpns');
     }
 };

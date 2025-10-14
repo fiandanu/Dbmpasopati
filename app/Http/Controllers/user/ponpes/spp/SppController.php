@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\user\Ponpes;
 use App\Models\user\Provider;
-use App\Models\db\UploadFolderPonpesSpp;
+use App\Models\db\ponpes\UploadFolderPonpesSpp;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
@@ -88,8 +88,8 @@ class SppController extends Controller
     public function ListDataSpp(Request $request)
     {
         // Menampilkan data SPP Ponpes - hanya yang sudah ditambahkan (memiliki upload folder)
-        $query = Ponpes::with('uploadFolder')
-            ->whereHas('uploadFolder'); // Hanya tampilkan yang sudah punya upload folder
+        $query = Ponpes::with('uploadFolder')->whereHas('uploadFolder');
+        // Hanya tampilkan yang sudah punya upload folder
 
         // Apply database filters
         $query = $this->applyFilters($query, $request);

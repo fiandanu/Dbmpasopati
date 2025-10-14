@@ -94,8 +94,7 @@
                 @foreach ($data as $d)
                     @php
                         // Use calculated_status if available
-                        $status = $d['calculated_status'] ?? 'Unknown';
-                        
+                        $status = $d->calculated_status ?? 'Unknown';
                         // Determine CSS class based on status
                         if (str_contains(strtolower($status), 'belum')) {
                             $statusClass = 'status-belum';
@@ -107,12 +106,12 @@
                     @endphp
                     <tr>
                         <td class="text-center">{{ $no++ }}</td>
-                        <td>{{ $d['namaupt'] }}</td>
-                        <td>{{ $d['kanwil'] }}</td>
+                        <td>{{ $d->namaupt }}</td>
+                        <td>{{ $d->kanwil->kanwil }}</td>
                         <td class="text-center">
-                            <span class="spp-badge">{{ ucfirst($d['tipe']) }}</span>
+                            <span class="spp-badge">{{ ucfirst($d->tipe) }}</span>
                         </td>
-                        <td class="text-center">{{ \Carbon\Carbon::parse($d['tanggal'])->format('d M Y') }}</td>
+                        <td class="text-center">{{ \Carbon\Carbon::parse($d->tanggal)->format('d M Y') }}</td>
                         <td class="text-center {{ $statusClass }}">{{ $status }}</td>
                     </tr>
                 @endforeach

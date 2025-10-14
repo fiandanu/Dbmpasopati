@@ -2,11 +2,11 @@
 
 namespace Database\Factories;
 
-use App\Models\db\DataOpsionalPonpes;
+use App\Models\db\ponpes\DataOpsionalPonpes;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\db\DataOpsionalPonpes>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\db\ponpes\DataOpsionalPonpes>
  */
 class DataOpsionalPonpesFactory extends Factory
 {

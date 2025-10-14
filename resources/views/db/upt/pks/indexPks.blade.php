@@ -24,6 +24,9 @@
                                     class="btn-page d-flex justify-content-center align-items-center" title="Download PDF">
                                     <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PDF
                                 </button>
+                                <button class="btn-purple" data-bs-toggle="modal" data-bs-target="#addModal">
+                                    <i class="fa fa-plus"></i> Add Data
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -158,7 +161,10 @@
                                         </div>
                                     </th>
                                     <th class="text-center align-top">
-                                        <span>Tanggal</span>
+                                        <span>Tanggal Kontrak</span>
+                                    </th>
+                                    <th class="text-center align-top">
+                                        <span>Tanggal Jatuh Tempo</span>
                                     </th>
                                     <th class="text-center align-top">
                                         <div class="d-flex justify-content-center align-items-center flex-column gap-12">
@@ -188,36 +194,50 @@
                                     <tr>
                                         <td class="text-center">{{ $no++ }}</td>
                                         <td>{{ $d->namaupt }}</td>
-                                        <td><span class="tag tag-success">{{ $d->kanwil }}</span></td>
+                                        <td><span class="tag tag-success">{{ $d->kanwil->kanwil }}</span></td>
                                         <td class="text-center">
-                                            {{ \Carbon\Carbon::parse($d->tanggal)->translatedFormat('M d Y') }}
+                                            {{ $d->uploadFolderPks && $d->uploadFolderPks->tanggal_kontrak ? \Carbon\Carbon::parse($d->uploadFolderPks->tanggal_kontrak)->translatedFormat('M d Y') : '-' }}
+                                        </td>
+                                        <td class="text-center">
+                                            {{ $d->uploadFolderPks && $d->uploadFolderPks->tanggal_jatuh_tempo ? \Carbon\Carbon::parse($d->uploadFolderPks->tanggal_jatuh_tempo)->translatedFormat('M d Y') : '-' }}
                                         </td>
                                         <td class="text-center-status">
-                                            @if (!$d->uploadFolder || empty($d->uploadFolder->uploaded_pdf))
+                                            @php
+                                                $hasPdf1 =
+                                                    $d->uploadFolderPks && !empty($d->uploadFolderPks->uploaded_pdf_1);
+                                                $hasPdf2 =
+                                                    $d->uploadFolderPks && !empty($d->uploadFolderPks->uploaded_pdf_2);
+                                            @endphp
+
+                                            @if (!$hasPdf1 && !$hasPdf2)
                                                 <span class="badge body-small-12">Belum Upload</span>
+                                            @elseif ($hasPdf1 && $hasPdf2)
+                                                <span class="badge-succes">Sudah Upload (2/2)</span>
                                             @else
-                                                <span class="badge-succes">
-                                                    Sudah Upload
-                                                </span>
+                                                <span class="badge-prosses">Sudah Upload (1/2)</span>
                                             @endif
                                         </td>
                                         <td class="text-center">
                                             <div class="btn-group" role="group">
+
+                                                <!-- Edit Button -->
+                                                <a href="#editModal{{ $d->id }}" data-bs-toggle="modal"
+                                                    data-bs-target="#editModal{{ $d->id }}">
+                                                    <button title="Edit Data">
+                                                        <ion-icon name="pencil-outline"></ion-icon>
+                                                    </button>
+                                                </a>
+
                                                 <!-- Upload PDF Button - Selalu tampil -->
                                                 <button data-toggle="modal" data-target="#uploadModal{{ $d->id }}"
                                                     title="Upload PDF">
                                                     <ion-icon name="folder-outline"></ion-icon>
                                                 </button>
-                                                {{-- 
-                                                <!-- View PDF Button - Hanya tampil jika PDF sudah diupload -->
-                                                @if ($d->uploadFolder && !empty($d->uploadFolder->uploaded_pdf))
-                                                    <a href="{{ route('dbpks.viewpdf', $d->id) }}" target="_blank"
-                                                        title="Lihat PDF">
-                                                        <button>
-                                                            <ion-icon name="eye-outline"></ion-icon>
-                                                        </button>
-                                                    </a>
-                                                @endif --}}
+                                                {{-- Delete Button --}}
+                                                <button data-toggle="modal"
+                                                    data-target="#modal-default{{ $d->id }}" title="Hapus">
+                                                    <ion-icon name="trash-outline"></ion-icon>
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -225,14 +245,15 @@
                                     <!-- Upload Modal -->
                                     <div class="modal fade" id="uploadModal{{ $d->id }}" tabindex="-1"
                                         aria-labelledby="uploadModalLabel{{ $d->id }}" aria-hidden="true">
-                                        <div class="modal-dialog">
+                                        <div class="modal-dialog modal-lg">
                                             <div class="modal-content">
-                                                <form action="{{ route('dbpks.uploadFilePDFPks', $d->id) }}"
+                                                <form action="{{ route('dbpks.uploadFilePDFPks', [$d->id, 1]) }}"
                                                     method="POST" enctype="multipart/form-data"
                                                     id="uploadForm{{ $d->id }}">
                                                     @csrf
+
                                                     <div class="modal-header">
-                                                        <label id="uploadModalLabel{{ $d->id }}">Upload PDF PKS
+                                                        <label id="uploadModalLabel{{ $d->id }}">Manage PDF
                                                         </label>
                                                         <button type="button" class="btn-close-custom"
                                                             data-dismiss="modal" aria-label="Close">
@@ -240,51 +261,114 @@
                                                         </button>
                                                     </div>
                                                     <div class="modal-body">
-                                                        <!-- PDF Status and Actions -->
+                                                        <div class="form-group">
+                                                            <label for="folderSelect{{ $d->id }}">Pilih
+                                                                Folder</label>
+                                                            <select class="form-control"
+                                                                id="folderSelect{{ $d->id }}" name="folder"
+                                                                onchange="updateFolder({{ $d->id }}, this.value)">
+                                                                @for ($i = 1; $i <= 2; $i++)
+                                                                    @php
+                                                                        $fileName = null;
+                                                                        if ($d->uploadFolderPks) {
+                                                                            $column = 'uploaded_pdf_' . $i;
+                                                                            $fileName = !empty(
+                                                                                $d->uploadFolderPks->$column
+                                                                            )
+                                                                                ? basename($d->uploadFolderPks->$column)
+                                                                                : null;
+                                                                        }
+                                                                    @endphp
+                                                                    <option value="{{ $i }}">
+                                                                        @if ($fileName)
+                                                                            Folder {{ $i }}:
+                                                                            {{ $fileName }}
+                                                                        @else
+                                                                            Folder {{ $i }}: Tidak ada file
+                                                                        @endif
+                                                                    </option>
+                                                                @endfor
+                                                            </select>
+                                                        </div>
+
+                                                        <!-- PDF Status and Actions for Selected Folder -->
                                                         <div class="card">
                                                             <div class="card-header">
                                                                 <div class="label-medium-14">
-                                                                    Status PDF - {{ $d->namaupt }}
+                                                                    Status dan Aksi <span
+                                                                        id="currentFolder{{ $d->id }}">1</span>
+                                                                    <span id="currentFileName{{ $d->id }}"
+                                                                        class="text-muted">
+                                                                        @php
+                                                                            $firstFileName = null;
+                                                                            if (
+                                                                                $d->uploadFolderPks &&
+                                                                                !empty(
+                                                                                    $d->uploadFolderPks->uploaded_pdf_1
+                                                                                )
+                                                                            ) {
+                                                                                $firstFileName = basename(
+                                                                                    $d->uploadFolderPks->uploaded_pdf_1,
+                                                                                );
+                                                                            }
+                                                                        @endphp
+                                                                        @if ($firstFileName)
+                                                                            - {{ $firstFileName }}
+                                                                        @else
+                                                                            - Tidak ada file
+                                                                        @endif
+                                                                    </span>
                                                                 </div>
                                                             </div>
                                                             <div class="card-body">
                                                                 <div id="pdfActions{{ $d->id }}">
-                                                                    @php
-                                                                        $hasFile = false;
-                                                                        if (
-                                                                            $d->uploadFolder &&
-                                                                            !empty($d->uploadFolder->uploaded_pdf)
-                                                                        ) {
-                                                                            $hasFile = true;
-                                                                        }
-                                                                    @endphp
+                                                                    @for ($i = 1; $i <= 2; $i++)
+                                                                        <div class="pdf-folder-actions"
+                                                                            id="folderActions{{ $d->id }}_{{ $i }}"
+                                                                            style="display: {{ $i == 1 ? 'block' : 'none' }};">
+                                                                            @php
+                                                                                $hasFile = false;
+                                                                                if ($d->uploadFolderPks) {
+                                                                                    $column = 'uploaded_pdf_' . $i;
+                                                                                    $hasFile = !empty(
+                                                                                        $d->uploadFolderPks->$column
+                                                                                    );
+                                                                                }
+                                                                            @endphp
 
-                                                                    @if ($hasFile)
-                                                                        <div class="badge-succes mb-3 text-center">
-                                                                            <i class="fas fa-check-circle"></i>
-                                                                            PDF sudah tersedia
+                                                                            @if ($hasFile)
+                                                                                <div class="badge-succes mb-3 text-center">
+                                                                                    <i class="fas fa-check-circle"></i>
+                                                                                    PDF sudah tersedia untuk Folder
+                                                                                    {{ $i }}
+                                                                                </div>
+                                                                                <div class="btn-group mb-3 gap-3"
+                                                                                    role="group">
+                                                                                    <a href="{{ route('dbpks.viewpdf', [$d->id, $i]) }}"
+                                                                                        target="_blank"
+                                                                                        class="view-btn-pdf"
+                                                                                        title="Lihat PDF Folder {{ $i }}">
+                                                                                        <i class="fas fa-eye"></i>
+                                                                                        View PDF
+                                                                                    </a>
+                                                                                    <button type="button"
+                                                                                        class="delete-btn-pdf"
+                                                                                        data-toggle="modal"
+                                                                                        data-target="#deletePdfModal{{ $d->id }}_{{ $i }}"
+                                                                                        title="Hapus File PDF Folder {{ $i }}">
+                                                                                        <i class="fas fa-trash"></i>
+                                                                                        Delete
+                                                                                    </button>
+                                                                                </div>
+                                                                            @else
+                                                                                <div class="badge-prosses text-center">
+                                                                                    <i
+                                                                                        class="fas fa-exclamation-triangle"></i>
+                                                                                    Belum Upload Folder
+                                                                                </div>
+                                                                            @endif
                                                                         </div>
-                                                                        <div class="btn-group mb-3 gap-3" role="group">
-                                                                            <a href="{{ route('dbpks.viewpdf', $d->id) }}"
-                                                                                target="_blank" class="view-btn-pdf"
-                                                                                title="Lihat PDF">
-                                                                                <i class="fas fa-eye"></i>
-                                                                                View PDF
-                                                                            </a>
-                                                                            <button type="button" class="delete-btn-pdf"
-                                                                                data-toggle="modal"
-                                                                                data-target="#deletePdfModal{{ $d->id }}"
-                                                                                title="Hapus File PDF">
-                                                                                <i class="fas fa-trash"></i>
-                                                                                Delete
-                                                                            </button>
-                                                                        </div>
-                                                                    @else
-                                                                        <div class="badge-prosses text-center">
-                                                                            <i class="fas fa-exclamation-triangle"></i>
-                                                                            Belum Upload PDF
-                                                                        </div>
-                                                                    @endif
+                                                                    @endfor
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -300,7 +384,7 @@
                                                             <span id="fileNameDisplay{{ $d->id }}"
                                                                 class="text-muted"></span>
                                                             <small class="form-text text-muted">Max Upload
-                                                                10MB</small>
+                                                                10Mb</small>
                                                         </div>
 
                                                     </div>
@@ -315,35 +399,99 @@
                                         </div>
                                     </div>
 
-                                    {{-- Delete PDF Modal --}}
-                                    <div class="modal fade" id="deletePdfModal{{ $d->id }}" tabindex="-1"
-                                        role="dialog" aria-labelledby="deletePdfModalLabel{{ $d->id }}"
-                                        aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-body text-center align-items-center">
-                                                    <ion-icon name="alert-circle-outline"
-                                                        class="text-9xl text-[var(--yellow-04)]"></ion-icon>
-                                                    <p class="headline-large-32">Anda Yakin?</p>
-                                                    <label>Apakah PDF dari <b> {{ $d->namaupt }} </b>
-                                                        ingin
-                                                        dihapus?</label>
-                                                </div>
-                                                <div class="modal-footer flex-row-reverse justify-content-between">
-                                                    <button type="button" class="btn-cancel-modal"
-                                                        data-dismiss="modal">Batal</button>
-                                                    <form action="{{ route('dbpks.deleteFilePDF', $d->id) }}"
-                                                        method="POST" style="display: inline;">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn-delete">
-                                                            Hapus
+                                    {{-- Edit Modal --}}
+                                    <div class="modal fade" id="editModal{{ $d->id }}" tabindex="-1"
+                                        aria-labelledby="editModalLabel{{ $d->id }}" aria-hidden="true">
+                                        <form action="{{ route('dbpks.update', $d->id) }}" method="POST">
+                                            @csrf
+                                            @method('PUT')
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <label id="editModalLabel{{ $d->id }}">Edit Data
+                                                            PKS</label>
+                                                        <button type="button" class="btn-close-custom"
+                                                            data-bs-dismiss="modal" aria-label="Close">
+                                                            <i class="bi bi-x"></i>
                                                         </button>
-                                                    </form>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Nama UPT</label>
+                                                            <input type="text" class="form-control"
+                                                                value="{{ $d->namaupt }}" readonly>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Kanwil</label>
+                                                            <input type="text" class="form-control"
+                                                                value="{{ $d->kanwil->kanwil }}" readonly>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Tipe</label>
+                                                            <input type="text" class="form-control"
+                                                                value="{{ ucfirst($d->tipe) }}" readonly>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="tanggal_kontrak_edit_{{ $d->id }}"
+                                                                class="form-label">Tanggal Kontrak</label>
+                                                            <input type="date" class="form-control"
+                                                                id="tanggal_kontrak_edit_{{ $d->id }}"
+                                                                name="tanggal_kontrak"
+                                                                value="{{ $d->uploadFolderPks && $d->uploadFolderPks->tanggal_kontrak ? \Carbon\Carbon::parse($d->uploadFolderPks->tanggal_kontrak)->format('Y-m-d') : '' }}">
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="tanggal_jatuh_tempo_edit_{{ $d->id }}"
+                                                                class="form-label">Tanggal Jatuh Tempo</label>
+                                                            <input type="date" class="form-control"
+                                                                id="tanggal_jatuh_tempo_edit_{{ $d->id }}"
+                                                                name="tanggal_jatuh_tempo"
+                                                                value="{{ $d->uploadFolderPks && $d->uploadFolderPks->tanggal_jatuh_tempo ? \Carbon\Carbon::parse($d->uploadFolderPks->tanggal_jatuh_tempo)->format('Y-m-d') : '' }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn-cancel-modal"
+                                                            data-bs-dismiss="modal">Tutup</button>
+                                                        <button type="submit" class="btn-purple">Update</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+
+
+                                    {{-- Delete PDF Modals for Each Folder --}}
+                                    @for ($i = 1; $i <= 2; $i++)
+                                        <div class="modal fade"
+                                            id="deletePdfModal{{ $d->id }}_{{ $i }}" tabindex="-1"
+                                            role="dialog"
+                                            aria-labelledby="deletePdfModalLabel{{ $d->id }}_{{ $i }}"
+                                            aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-body text-center align-items-center">
+                                                        <ion-icon name="alert-circle-outline"
+                                                            class="text-9xl text-[var(--yellow-04)]"></ion-icon>
+                                                        <p class="headline-large-32">Anda Yakin?</p>
+                                                        <label>Apakah Folder <b> {{ $d->namaupt }} </b>
+                                                            ingin
+                                                            dihapus?</label>
+                                                    </div>
+                                                    <div class="modal-footer flex-row-reverse justify-content-between">
+                                                        <button type="button" class="btn-cancel-modal"
+                                                            data-dismiss="modal">Batal</button>
+                                                        <form action="{{ route('dbpks.deleteFilePDF', [$d->id, $i]) }}"
+                                                            method="POST" style="display: inline;">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="btn-delete">
+                                                                Hapus
+                                                            </button>
+                                                        </form>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    @endfor
                                 @empty
                                     <tr>
                                         <td colspan="7" class="text-center">
@@ -440,6 +588,130 @@
         </section>
         <!-- /.content -->
     </div>
+
+    {{-- Delete Modal --}}
+    @foreach ($data as $d)
+        <div class="modal fade" id="modal-default{{ $d->id }}">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body text-center align-items-center">
+                        <ion-icon name="alert-circle-outline" class="text-9xl text-[var(--yellow-04)]"></ion-icon>
+                        <p class="headline-large-32">Anda Yakin?</p>
+                        <label>Apakah Data <b> {{ $d->namaupt }} </b> ingin
+                            dihapus?</label>
+
+                        @if (str_contains($d->namaupt, '(VpasReg)'))
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <strong>Perhatian:</strong> Data ini terkait dengan tipe
+                                lain. Jika ini adalah data terakhir yang terkait, maka
+                                suffix "(VpasReg)" akan dihapus otomatis dari data yang
+                                tersisa.
+                            </div>
+                        @endif
+                    </div>
+                    <div class="modal-footer flex-row-reverse justify-content-between">
+                        <button type="button" class="btn-cancel-modal" data-dismiss="modal">Tutup</button>
+                        <form action="{{ route('dbpks.DataBasePageDestroy', $d->id) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn-delete">Hapus</button>
+                        </form>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+        </div>
+    @endforeach
+
+
+    {{-- Add Modal --}}
+    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+        <form id="addForm" action="{{ route('dbpks.store') }}" method="POST">
+            @csrf
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <label class="modal-title" id="addModalLabel">Tambah Data PKS</label>
+                        <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="bi bi-x"></i>
+                        </button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="mb-4">
+                            <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
+                                <label>Informasi Upt</label>
+                            </div>
+                            <div class="column">
+                                <div class="mb-3">
+                                    <label for="namaupt" class="form-label">Nama PONPES
+                                    </label>
+                                    <div class="dropdown">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="ponpes_search"
+                                                placeholder="Cari PONPES..." autocomplete="off">
+                                            <div class="input-group-append">
+                                                <button type="button" class="btn btn-outline-secondary"
+                                                    onclick="togglePonpesDropdown()">
+                                                    <i class="fas fa-chevron-down"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="dropdown-menu w-100" id="ponpesDropdownMenu"
+                                            style="max-height: 200px; overflow-y: auto; display: none;">
+                                            @foreach ($uptList as $d)
+                                                <a class="dropdown-item ponpes-option" href="#"
+                                                    data-value="{{ $d->namaupt }}"
+                                                    data-nama-wilayah="{{ $d->kanwil->kanwil }}"
+                                                    onclick="selectPonpes('{{ $d->namaupt }}', '{{ $d->kanwil->kanwil }}')">
+                                                    {{ $d->namaupt }} -
+                                                    {{ $d->kanwil->kanwil }}
+                                                </a>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                    <input type="hidden" id="namaupt" name="namaupt" required>
+                                    <small class="form-text text-muted">Ketik untuk mencari
+                                        PONPES</small>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="kanwil" class="form-label">Nama Wilayah</label>
+                                    <input type="text" class="form-control" id="kanwil" name="kanwil" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tanggal Section -->
+                        <div class="mb-4">
+                            <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
+                                <label>Tanggal</label>
+                            </div>
+                            <div class="column">
+                                <div class="mb-3">
+                                    <label for="tanggal_kontrak" class="form-label">Tanggal Kontrak</label>
+                                    <input type="date" class="form-control" id="tanggal_kontrak"
+                                        name="tanggal_kontrak">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="tanggal_jatuh_tempo" class="form-label">Tanggal Jatuh Tempo</label>
+                                    <input type="date" class="form-control" id="tanggal_jatuh_tempo"
+                                        name="tanggal_jatuh_tempo">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn-cancel-modal" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn-purple">Simpan</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
     <!-- /.content-wrapper -->
 
     {{-- jQuery Library --}}
@@ -595,6 +867,58 @@
         });
     </script>
 
+    {{-- Update Folder --}}
+    <script>
+        function updateFolder(id, folder) {
+            const form = document.getElementById('uploadForm' + id);
+            const currentFolderSpan = document.getElementById('currentFolder' + id);
+
+            // Update tampilan folder number
+            currentFolderSpan.textContent = folder;
+
+            // Update action URL with the selected folder - PERBAIKAN PENTING!
+            const baseUrl = "{{ url('dbpks/upload-pdf') }}";
+            form.action = `${baseUrl}/${id}/${folder}`;
+
+            // Hide all folder actions
+            const allFolderActions = document.querySelectorAll(`[id^="folderActions${id}_"]`);
+            allFolderActions.forEach(function(element) {
+                element.style.display = 'none';
+            });
+
+            // Show current folder actions
+            const currentFolderActions = document.getElementById(`folderActions${id}_${folder}`);
+            if (currentFolderActions) {
+                currentFolderActions.style.display = 'block';
+            }
+
+            // Update current file name display
+            const selectElement = document.getElementById('folderSelect' + id);
+            const selectedOption = selectElement.options[selectElement.selectedIndex];
+            const fileName = selectedOption.text.split(': ')[1] || 'Tidak ada file';
+            const currentFileNameSpan = document.getElementById('currentFileName' + id);
+            if (fileName === 'Tidak ada file') {
+                currentFileNameSpan.textContent = '- Tidak ada file';
+            } else {
+                currentFileNameSpan.textContent = '- ' + fileName;
+            }
+        }
+
+        // Auto-hide alerts after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                const alerts = document.querySelectorAll('.alert');
+                alerts.forEach(function(alert) {
+                    if (alert.classList.contains('show')) {
+                        alert.classList.remove('show');
+                        setTimeout(() => alert.remove(), 150);
+                    }
+                });
+            }, 5000);
+        });
+    </script>
+
+
     {{-- File Name Display --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -611,6 +935,116 @@
                     fileNameDisplay.textContent = fileName;
                 });
             });
+        });
+    </script>
+
+
+    {{-- JS Modal Add --}}
+    <script>
+        // Searchable Ponpes dropdown functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const ponpesSearch = document.getElementById('ponpes_search');
+            const ponpesDropdown = document.getElementById('ponpesDropdownMenu');
+            const ponpesOptions = document.querySelectorAll('.ponpes-option');
+
+            if (ponpesSearch) {
+                ponpesSearch.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    let hasVisibleOption = false;
+
+                    ponpesOptions.forEach(option => {
+                        const text = option.textContent.toLowerCase();
+                        if (text.includes(searchTerm)) {
+                            option.style.display = 'block';
+                            hasVisibleOption = true;
+                        } else {
+                            option.style.display = 'none';
+                        }
+                    });
+
+                    if (searchTerm.length > 0 && hasVisibleOption) {
+                        ponpesDropdown.style.display = 'block';
+                    } else {
+                        ponpesDropdown.style.display = 'none';
+                    }
+                });
+
+                // Hapus event listener focus atau modifikasi agar tidak auto-open
+                ponpesSearch.addEventListener('focus', function() {
+                    // Hanya buka jika ada input
+                    if (this.value.length > 0) {
+                        const searchTerm = this.value.toLowerCase();
+                        let hasVisibleOption = false;
+
+                        ponpesOptions.forEach(option => {
+                            const text = option.textContent.toLowerCase();
+                            if (text.includes(searchTerm)) {
+                                option.style.display = 'block';
+                                hasVisibleOption = true;
+                            }
+                        });
+
+                        if (hasVisibleOption) {
+                            ponpesDropdown.style.display = 'block';
+                        }
+                    }
+                });
+            }
+
+            // Tutup dropdown saat klik di luar
+            document.addEventListener('click', function(event) {
+                if (!event.target.closest('.dropdown')) {
+                    if (ponpesDropdown) {
+                        ponpesDropdown.style.display = 'none';
+                    }
+                }
+            });
+        });
+
+        function togglePonpesDropdown() {
+            const ponpesDropdown = document.getElementById('ponpesDropdownMenu');
+            const ponpesOptions = document.querySelectorAll('.ponpes-option');
+
+            if (ponpesDropdown.style.display === 'none' || ponpesDropdown.style.display === '') {
+                ponpesOptions.forEach(option => {
+                    option.style.display = 'block';
+                });
+                ponpesDropdown.style.display = 'block';
+            } else {
+                ponpesDropdown.style.display = 'none';
+            }
+        }
+
+        function selectPonpes(namaPonpes, namaWilayah) {
+            document.getElementById('ponpes_search').value = namaPonpes;
+            document.getElementById('namaupt').value = namaPonpes;
+            document.getElementById('kanwil').value = namaWilayah;
+            document.getElementById('ponpesDropdownMenu').style.display = 'none';
+
+            // Tutup dropdown setelah pilihan dipilih
+            event.preventDefault();
+        }
+
+        // Clear selection when search is cleared
+        const ponpesSearchInput = document.getElementById('ponpes_search');
+        if (ponpesSearchInput) {
+            ponpesSearchInput.addEventListener('input', function() {
+                if (this.value === '') {
+                    document.getElementById('namaupt').value = '';
+                    document.getElementById('kanwil').value = '';
+                }
+            });
+        }
+        // Reset form when modal is closed
+        $('#addModal').on('hidden.bs.modal', function() {
+            document.getElementById('ponpes_search').value = '';
+            document.getElementById('namaupt').value = '';
+            document.getElementById('kanwil').value = '';
+            document.getElementById('tipe_display').value = '';
+            document.getElementById('tanggal').value = '';
+            document.getElementById('tanggal_kontrak').value = '';
+            document.getElementById('tanggal_jatuh_tempo').value = '';
+            document.getElementById('ponpesDropdownMenu').style.display = 'none';
         });
     </script>
 

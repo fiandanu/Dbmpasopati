@@ -1,7 +1,8 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\user;
 
+use App\Models\user\Kanwil;
 use App\Models\user\Upt;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -34,7 +35,7 @@ class UptFactory extends Factory
 
         return [
             'namaupt' => 'UPT ' . $this->faker->company . ' ' . $this->faker->city,
-            'kanwil' => $this->faker->randomElement($kanwilOptions),
+            'kanwil_id' => Kanwil::inRandomOrder()->first()?->id ?? Kanwil::factory(),
             'tipe' => $this->faker->randomElement($tipeOptions),
             'tanggal' => $this->faker->dateTimeBetween('-2 years', 'now'),
         ];
@@ -74,7 +75,7 @@ class UptFactory extends Factory
     }
 
     /**
-     * State untuk UPT tipe LPKA
+     * State untuk UPT tipe LPKA 
      */
     public function lpka(): static
     {
