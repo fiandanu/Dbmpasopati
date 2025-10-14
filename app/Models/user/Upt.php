@@ -48,8 +48,6 @@ class Upt extends Model
     }
 
 
-
-    
     // Alias untuk backward compatibility (default ke SPP untuk multi-folder)
     public function uploadFolder()
     {

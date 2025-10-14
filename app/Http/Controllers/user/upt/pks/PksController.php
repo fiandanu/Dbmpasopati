@@ -27,7 +27,7 @@ class PksController extends Controller
         if ($hasPdf1 && $hasPdf2) {
             return 'Sudah Upload (2/2)';
         } elseif ($hasPdf1 || $hasPdf2) {
-            return 'Sudah Upload (1/2)';
+            return 'Sebagian (1/2)';
         } else {
             return 'Belum Upload';
         }
@@ -140,8 +140,7 @@ class PksController extends Controller
 
     public function exportListCsv(Request $request): StreamedResponse
     {
-        // PERBAIKAN: Gunakan uploadFolderPks
-        $query = Upt::with('uploadFolderPks')->whereIn('tipe', ['vpas', 'reguler']);
+        $query = Upt::with('uploadFolderPks')->whereIn('tipe', ['vpas', 'reguler'])->whereHas('uploadFolderPks');
         $query = $this->applyFilters($query, $request);
 
         if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
@@ -173,7 +172,7 @@ class PksController extends Controller
             $rows[] = [
                 $no++,
                 $d->namaupt,
-                $d->kanwil,
+                $d->kanwil->kanwil,
                 ucfirst($d->tipe),
                 \Carbon\Carbon::parse($d->tanggal)->format('d M Y'),
                 $status
@@ -194,7 +193,7 @@ class PksController extends Controller
     public function exportListPdf(Request $request)
     {
         // PERBAIKAN: Gunakan uploadFolderPks
-        $query = Upt::with('uploadFolderPks')->whereIn('tipe', ['vpas', 'reguler']);
+        $query = Upt::with('uploadFolderPks')->whereIn('tipe', ['vpas', 'reguler'])->whereHas('uploadFolderPks');
         $query = $this->applyFilters($query, $request);
 
         if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
@@ -204,25 +203,14 @@ class PksController extends Controller
         $data = $query->get();
         $data = $this->applyPdfStatusFilter($data, $request);
 
-        $dataArray = [];
-        foreach ($data as $d) {
-            $dataItem = $d->toArray();
-            // PERBAIKAN: Gunakan uploadFolderPks
-            $dataItem['calculated_status'] = $this->calculatePdfStatus($d->uploadFolderPks);
-            $dataArray[] = $dataItem;
-        }
-
-        if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
-            usort($dataArray, function ($a, $b) {
-                $dateA = strtotime($a['tanggal']);
-                $dateB = strtotime($b['tanggal']);
-                return $dateA - $dateB;
-            });
-        }
+        $data = $data->map(function ($item) {
+            $item->calculated_status = $this->calculatePdfStatus($item->uploadFolderPks);
+            return $item;
+        });
 
         $pdfData = [
             'title' => 'List Data UPT PKS',
-            'data' => $dataArray,
+            'data' => $data,
             'generated_at' => Carbon::now()->format('d M Y H:i:s')
         ];
 
@@ -241,7 +229,7 @@ class PksController extends Controller
             }
 
             $upt = Upt::findOrFail($id);
-            $uploadFolder = \App\Models\db\upt\UploadFolderUptPks::where('data_upt_id', $id)->first();
+            $uploadFolder = UploadFolderUptPks::where('data_upt_id', $id)->first();
 
             $columnName = 'uploaded_pdf_' . $folderNumber;
 
@@ -290,8 +278,10 @@ class PksController extends Controller
                 return redirect()->back()->with('error', 'File tidak valid!');
             }
 
+            $originalFileName = $file->getClientOriginalName();
+
             // Gunakan namespace lengkap untuk model
-            $uploadFolder = \App\Models\db\upt\UploadFolderUptPks::firstOrCreate(
+            $uploadFolder = UploadFolderUptPks::firstOrCreate(
                 ['data_upt_id' => $id],
                 ['data_upt_id' => $id]
             );
@@ -327,7 +317,7 @@ class PksController extends Controller
 
             Log::info("PDF uploaded successfully for UPT PKS ID: {$id}, Folder: {$folderNumber}, Path: {$path}");
 
-            return redirect()->back()->with('success', 'PDF Folder ' . $folderNumber . ' berhasil di-upload!');
+            return redirect()->back()->with('success', 'PDF Folder ' . $originalFileName . ' berhasil di-upload!');
         } catch (\Illuminate\Validation\ValidationException $e) {
             return redirect()->back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
@@ -345,7 +335,7 @@ class PksController extends Controller
             }
 
             $upt = Upt::findOrFail($id);
-            $uploadFolder = \App\Models\db\upt\UploadFolderUptPks::where('data_upt_id', $id)->first();
+            $uploadFolder = UploadFolderUptPks::where('data_upt_id', $id)->first();
 
             $columnName = 'uploaded_pdf_' . $folderNumber;
 
@@ -367,7 +357,6 @@ class PksController extends Controller
         }
     }
 
-
     public function update(Request $request, $id)
     {
         try {
@@ -381,7 +370,7 @@ class PksController extends Controller
             $upt = Upt::findOrFail($id);
 
             // Update or create upload folder - PERBAIKAN: gunakan namespace lengkap
-            $uploadFolder = \App\Models\db\upt\UploadFolderUptPks::firstOrCreate(
+            $uploadFolder = UploadFolderUptPks::firstOrCreate(
                 ['data_upt_id' => $id],
                 ['data_upt_id' => $id]
             );
@@ -424,7 +413,7 @@ class PksController extends Controller
             }
 
             // Create atau Update UploadFolderUptPks dengan contract dates - PERBAIKAN: gunakan namespace lengkap
-            \App\Models\db\upt\UploadFolderUptPks::updateOrCreate(
+            UploadFolderUptPks::updateOrCreate(
                 ['data_upt_id' => $upt->id],
                 [
                     'tanggal_kontrak' => $request->tanggal_kontrak,
@@ -438,7 +427,6 @@ class PksController extends Controller
             return redirect()->back()->with('error', 'Gagal menambahkan data: ' . $e->getMessage())->withInput();
         }
     }
-
 
     public function DatabasePageDestroy($id)
     {

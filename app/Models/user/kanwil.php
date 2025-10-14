@@ -25,5 +25,4 @@ class Kanwil extends Model
         return $this->hasMany(Upt::class, 'kanwil_id');
     }
 
-
 }

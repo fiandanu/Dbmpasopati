@@ -6,7 +6,7 @@
             <div class="container-fluid">
                 <div class="row py-3 align-items-center">
                     <div class="col d-flex justify-content-between align-items-center">
-                        <!-- Left navbar links --> 
+                        <!-- Left navbar links -->
                         <div class="d-flex justify-center align-items-center gap-12">
                             <button class="btn-pushmenu" data-widget="pushmenu" role="button">
                                 <i class="fas fa-bars"></i></button>
@@ -40,26 +40,28 @@
                             title="Tanggal Sampai">
                     </div>
                 </div>
+
+                {{-- Tampilkan pesan sukses total --}}
+                @if (session('success'))
+                    <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm" role="alert">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-check-circle text-success"></i>
+                            </div>
+                            <div class="flex-grow-1 ml-3">
+                                <div class="alert-heading h5 mb-2">Berhasil!</div>
+                                <div class="small">{{ session('success') }}</div>
+                            </div>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    </div>
+                @endif
+
             </div>
         </section>
 
-        {{-- Tampilkan pesan sukses total --}}
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mx-4" role="alert">
-                <div class="d-flex">
-                    <div class="flex-shrink-0">
-                        <i class="fas fa-check-circle text-success"></i>
-                    </div>
-                    <div class="flex-grow-1 ml-3">
-                        <div class="alert-heading h5 mb-2">Berhasil!</div>
-                        <div class="small">{{ session('success') }}</div>
-                    </div>
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            </div>
-        @endif
 
         {{-- Tampilkan pesan sukses parsial --}}
         @if (session('partial_success'))
@@ -122,6 +124,7 @@
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
+
                 <div class="card">
                     <div class="card-body table-responsive p-0">
                         <table class="table table-hover text-nowrap" id="Table">
@@ -282,20 +285,24 @@
                                                                 onchange="updateFolder({{ $d->id }}, this.value)">
                                                                 @for ($i = 1; $i <= 10; $i++)
                                                                     @php
-                                                                        $fileName = null;
+                                                                        $originalFileName = null;
                                                                         if ($d->uploadFolder) {
                                                                             $column = 'pdf_folder_' . $i;
-                                                                            $fileName = !empty(
-                                                                                $d->uploadFolder->$column
-                                                                            )
-                                                                                ? basename($d->uploadFolder->$column)
-                                                                                : null;
+                                                                            $originalFileName = null;
+                                                                            if (!empty($d->uploadFolder->$column)) {
+                                                                                $fullName = basename(
+                                                                                    $d->uploadFolder->$column,
+                                                                                );
+                                                                                $parts = explode('_', $fullName, 3);
+                                                                                $originalFileName =
+                                                                                    $parts[2] ?? $fullName;
+                                                                            }
                                                                         }
                                                                     @endphp
                                                                     <option value="{{ $i }}">
-                                                                        @if ($fileName)
+                                                                        @if ($originalFileName)
                                                                             Folder {{ $i }}:
-                                                                            {{ $fileName }}
+                                                                            {{ $originalFileName }}
                                                                         @else
                                                                             Folder {{ $i }}: Tidak ada
                                                                             file
@@ -319,9 +326,11 @@
                                                                                 $d->uploadFolder &&
                                                                                 !empty($d->uploadFolder->pdf_folder_1)
                                                                             ) {
-                                                                                $firstFileName = basename(
+                                                                                $fullName = basename(
                                                                                     $d->uploadFolder->pdf_folder_1,
                                                                                 );
+                                                                                $parts = explode('_', $fullName, 3);
+                                                                                $firstFileName = $parts[2] ?? $fullName;
                                                                             }
                                                                         @endphp
                                                                         @if ($firstFileName)
@@ -443,37 +452,41 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="modal fade" id="deleteModal{{ $d->id }}" tabindex="-1" role="dialog"
-                        aria-labelledby="deleteModalLabel{{ $d->id }}" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-body text-center align-items-center">
-                                    <ion-icon name="alert-circle-outline"
-                                        class="text-9xl text-[var(--yellow-04)]"></ion-icon>
-                                    <p class="headline-large-32">Anda Yakin?</p>
-                                    <!-- UBAH TEKS INI -->
-                                    <label>Apakah Data SPP <b>{{ $d->nama_ponpes }}</b> ingin dihapus?</label>
-                                    <small class="text-muted d-block mt-2">
-                                        <i class="fas fa-info-circle"></i>
-                                        Hanya data SPP yang akan dihapus, data Ponpes tetap tersimpan.
-                                    </small>
-                                </div>
-                                <div class="modal-footer flex-row-reverse justify-content-between">
-                                    <button type="button" class="btn-cancel-modal" data-dismiss="modal">Batal</button>
-                                    <form action="{{ route('sppPonpes.destroy', $d->id) }}" method="POST"
-                                        style="display: inline;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn-delete">
-                                            Hapus
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
+                                        <div class="modal fade" id="deleteModal{{ $d->id }}" tabindex="-1"
+                                            role="dialog" aria-labelledby="deleteModalLabel{{ $d->id }}"
+                                            aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-body text-center align-items-center">
+                                                        <ion-icon name="alert-circle-outline"
+                                                            class="text-9xl text-[var(--yellow-04)]"></ion-icon>
+                                                        <p class="headline-large-32">Anda Yakin?</p>
+                                                        <!-- UBAH TEKS INI -->
+                                                        <label>Apakah Data SPP <b>{{ $d->namaupt }}</b> ingin
+                                                            dihapus?</label>
+                                                        <small class="text-muted d-block mt-2">
+                                                            <i class="fas fa-info-circle"></i>
+                                                            Hanya data SPP yang akan dihapus, data Ponpes tetap tersimpan.
+                                                        </small>
+                                                    </div>
+                                                    <div class="modal-footer flex-row-reverse justify-content-between">
+                                                        <button type="button" class="btn-cancel-modal"
+                                                            data-dismiss="modal">Batal</button>
+                                                        <form action="{{ route('spp.DataBasePageDestroy', $d->id) }}"
+                                                            method="POST" style="display: inline;">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="btn-delete">
+                                                                Hapus
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     @endfor
-                                    
+
                                 @empty
                                     <tr>
                                         <td colspan="7" class="text-center">
@@ -689,17 +702,17 @@
         }
 
         // Auto-hide alerts after 5 seconds
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(function() {
-                const alerts = document.querySelectorAll('.alert');
-                alerts.forEach(function(alert) {
-                    if (alert.classList.contains('show')) {
-                        alert.classList.remove('show');
-                        setTimeout(() => alert.remove(), 150);
-                    }
-                });
-            }, 5000);
-        });
+        // document.addEventListener('DOMContentLoaded', function() {
+        //     setTimeout(function() {
+        //         const alerts = document.querySelectorAll('.alert');
+        //         alerts.forEach(function(alert) {
+        //             if (alert.classList.contains('show')) {
+        //                 alert.classList.remove('show');
+        //                 setTimeout(() => alert.remove(), 150);
+        //             }
+        //         });
+        //     }, 5000);
+        // });
     </script>
 
     {{-- Search By Column JavaScript --}}

@@ -11,12 +11,6 @@ Route::prefix('dbpks')->name('dbpks.')->group(function () {
     Route::put('/update/{id}', [PksController::class, 'update'])->name('update');
     Route::delete('/DataBasePageDestroy/{id}', [PksController::class, 'DataBasePageDestroy'])->name('DataBasePageDestroy');
 
-    // PDF routes
-    // Route::post('/upload-pdf/{id}', [PksController::class, 'uploadFilePDFPks'])->name('uploadFilePDFPks');
-    // Route::get('/view-pdf/{id}', [PksController::class, 'viewUploadedPDF'])->name('viewpdf');
-    // Route::delete('/delete-pdf/{id}', [PksController::class, 'deleteFilePDF'])->name('deleteFilePDF');
-
-
     // PDF routes - Parameter harus {id}/{folder}
     Route::post('/upload-pdf/{id}/{folder}', [PksController::class, 'uploadFilePDFPks'])->name('uploadFilePDFPks');
     Route::get('/view-pdf/{id}/{folder}', [PksController::class, 'viewUploadedPDF'])->name('viewpdf');

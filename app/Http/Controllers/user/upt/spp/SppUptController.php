@@ -10,6 +10,7 @@ use App\Models\db\UploadFolderUptSpp;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -179,12 +180,9 @@ class SppUptController extends Controller
     }
 
 
-    public function DatabasePageDestroy($id)
+    public function DataBasePageDestroy($id)
     {
         try {
-            $dataupt = Upt::findOrFail($id);
-
-            // PERBAIKAN: Gunakan UploadFolderUptSpp
             $uploadFolder = UploadFolderUptSpp::where('data_upt_id', $id)->first();
 
             if ($uploadFolder) {
@@ -200,11 +198,11 @@ class SppUptController extends Controller
                 $uploadFolder->delete();
             }
 
-            $dataupt->delete();
-            return redirect()->route('spp.ListDataSpp')->with('success', 'Data berhasil dihapus');
+            // $dataupt->delete();
+            return redirect()->back()->with('success', 'Data berhasil dihapus');
         } catch (\Exception $e) {
             Log::error('Error deleting UPT: ' . $e->getMessage());
-            return redirect()->route('spp.ListDataSpp')->with('error', 'Gagal menghapus data: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal menghapus data: ' . $e->getMessage());
         }
     }
 
@@ -271,6 +269,9 @@ class SppUptController extends Controller
                 return redirect()->back()->with('error', 'File tidak valid!');
             }
 
+            // Ambil nama asli file
+            $originalFileName = $file->getClientOriginalName();
+
             // PERBAIKAN: Gunakan UploadFolderUptSpp
             $uploadFolder = UploadFolderUptSpp::firstOrCreate(
                 ['data_upt_id' => $id],
@@ -286,7 +287,8 @@ class SppUptController extends Controller
             // Buat nama file unik dengan sanitasi
             $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
             $sanitizedName = preg_replace('/[^A-Za-z0-9\-_.]/', '_', $originalName);
-            $filename = time() . '_' . $sanitizedName . '.pdf';
+            // $filename = time() . '_' . $sanitizedName . '.pdf';
+            $filename = time() . '_' . Str::random(8) . '_' . $sanitizedName . '.pdf';
 
             // Pastikan direktori ada - gunakan tipe UPT untuk folder
             $directory = 'upt/' . $upt->tipe . '/folder_' . $folder;
@@ -307,7 +309,7 @@ class SppUptController extends Controller
 
             Log::info("PDF uploaded successfully for UPT ID: {$id}, Folder: {$folder}, Path: {$path}");
 
-            return redirect()->back()->with('success', 'PDF berhasil di-upload ke folder ' . $folder . '!');
+            return redirect()->back()->with('success', 'PDF ' . $originalFileName . ' berhasil di-upload ke folder ' . $folder . '!');
         } catch (\Illuminate\Validation\ValidationException $e) {
             return redirect()->back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
@@ -316,6 +318,7 @@ class SppUptController extends Controller
         }
     }
 
+    // Delete File PDF
     public function deleteFilePDF($id, $folder)
     {
         try {
@@ -351,12 +354,11 @@ class SppUptController extends Controller
         }
     }
 
-
     // Export data CSV GLOBAL
     public function exportListCsv(Request $request): StreamedResponse
     {
         // PERBAIKAN: Gunakan uploadFolderSpp
-        $query = Upt::with('uploadFolderSpp', 'kanwil')->whereIn('tipe', ['vpas', 'reguler']);
+        $query = Upt::with('uploadFolderSpp', 'kanwil')->whereIn('tipe', ['vpas', 'reguler'])->whereHas('uploadFolderSpp');
         $query = $this->applyFilters($query, $request);
 
         // Add date sorting when date filters are applied
@@ -392,7 +394,7 @@ class SppUptController extends Controller
             $rows[] = [
                 $no++,
                 $d->namaupt,
-                $d->kanwil->kanwil ?? '',
+                $d->kanwil->kanwil,
                 ucfirst($d->tipe),
                 \Carbon\Carbon::parse($d->tanggal)->format('d M Y'),
                 $status
@@ -410,12 +412,11 @@ class SppUptController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
-
     // Export data PDF GLOBAL
     public function exportListPdf(Request $request)
     {
         // PERBAIKAN: Gunakan uploadFolderSpp
-        $query = Upt::with('uploadFolderSpp')->whereIn('tipe', ['vpas', 'reguler']);
+        $query = Upt::with('uploadFolderSpp')->whereIn('tipe', ['vpas', 'reguler'])->whereHas('uploadFolderSpp');
         $query = $this->applyFilters($query, $request);
 
         // Add date sorting when date filters are applied
@@ -425,11 +426,26 @@ class SppUptController extends Controller
 
         $data = $query->get();
 
+        // Calculate status for each item
+        $data = $data->map(function ($item) {
+            $totalFiles = $item->uploadFolderSpp?->uploaded_folders_count ?? 0;
+
+            if ($totalFiles === 0) {
+                $item->calculated_status = 'Belum Upload';
+            } elseif ($totalFiles < 10) {
+                $item->calculated_status = 'Upload Sebagian (' . $totalFiles . '/10)';
+            } else {
+                $item->calculated_status = 'Upload Lengkap';
+            }
+
+            return $item;
+        });
+
         // Apply status filter
         $data = $this->applyPdfStatusFilter($data, $request);
 
         $pdfData = [
-            'title' => 'List Data UPT VPAS & Reguler',
+            'title' => 'List Data UPT SPP',
             'data' => $data,
             'generated_at' => Carbon::now()->format('d M Y H:i:s')
         ];
@@ -439,5 +455,5 @@ class SppUptController extends Controller
 
         return $pdf->download($filename);
     }
-    
+
 }

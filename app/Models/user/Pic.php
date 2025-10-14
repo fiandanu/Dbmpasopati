@@ -37,8 +37,8 @@ class Pic extends Model
     public function getAllKunjungan()
     {
         return Kunjungan::where('pic_1', $this->nama_pic)
-                       ->orWhere('pic_2', $this->nama_pic)
-                       ->get();
+            ->orWhere('pic_2', $this->nama_pic)
+            ->get();
     }
 
     // Scope untuk mencari PIC berdasarkan nama

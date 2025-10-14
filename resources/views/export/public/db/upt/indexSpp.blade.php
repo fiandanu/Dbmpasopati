@@ -85,7 +85,7 @@
                     <th style="width: 30%;">Nama UPT</th>
                     <th style="width: 15%;">Kanwil</th>
                     <th style="width: 10%;">Tipe</th>
-                    <th style="width: 15%;">Tanggal Dibuat</th>
+                    <th style="width: 15%;">Tanggal</th>
                     <th style="width: 25%;">Status Upload PDF</th>
                 </tr>
             </thead>

@@ -1,61 +1,80 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>{{ $title }}</title>
     <style>
-        body { 
-            font-family: Arial, sans-serif; 
+        body {
+            font-family: Arial, sans-serif;
             margin: 20px;
             font-size: 12px;
         }
+
         .header {
             text-align: center;
             margin-bottom: 20px;
             border-bottom: 2px solid #333;
             padding-bottom: 10px;
         }
+
         .header h1 {
             margin: 0;
             font-size: 16px;
         }
+
         .info {
             margin-bottom: 15px;
             font-size: 10px;
             color: #666;
         }
-        table { 
-            width: 100%; 
-            border-collapse: collapse; 
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
             margin-top: 10px;
         }
-        th, td { 
-            border: 1px solid #333; 
-            padding: 6px; 
-            text-align: left; 
+
+        th,
+        td {
+            border: 1px solid #333;
+            padding: 6px;
+            text-align: left;
             font-size: 10px;
         }
-        th { 
-            background-color: #f2f2f2; 
+
+        th {
+            background-color: #f2f2f2;
             font-weight: bold;
             text-align: center;
         }
+
         .text-center {
             text-align: center;
         }
-        .status-belum { 
+
+        .status-belum {
             color: #dc3545;
             font-weight: bold;
         }
-        .status-sudah { 
+
+        .status-sudah {
             color: #28a745;
             font-weight: bold;
         }
+
+        .status-sebagian {
+            color: #ffc107;
+            /* Yellow/Orange */
+            font-weight: bold;
+        }
+
         .no-data {
             text-align: center;
             padding: 40px;
             color: #666;
             font-style: italic;
         }
+
         .pks-badge {
             background-color: #6c757d;
             color: white;
@@ -65,6 +84,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="header">
         <h1>{{ $title }}</h1>
@@ -89,26 +109,30 @@
                 @php $no = 1; @endphp
                 @foreach ($data as $d)
                     @php
-                        // Use calculated_status if available
-                        $status = $d['calculated_status'] ?? 'Unknown';
-                        
+                        /// Use calculated_status if available
+                        $status = $d->calculated_status ?? 'Unknown';
+
                         // Determine CSS class based on status
                         if (str_contains(strtolower($status), 'belum')) {
                             $statusClass = 'status-belum';
-                        } elseif (str_contains(strtolower($status), 'sudah')) {
+                        } elseif (str_contains(strtolower($status), '2/2')) {
+                            // Sudah upload lengkap (2/2)
                             $statusClass = 'status-sudah';
+                        } elseif (str_contains(strtolower($status), '1/2')) {
+                            // Sebagian upload (1/2)
+                            $statusClass = 'status-sebagian';
                         } else {
                             $statusClass = 'status-belum';
                         }
                     @endphp
                     <tr>
                         <td class="text-center">{{ $no++ }}</td>
-                        <td>{{ $d['namaupt'] }}</td>
-                        <td>{{ $d['kanwil'] }}</td>
+                        <td>{{ $d->namaupt }}</td>
+                        <td>{{ $d->kanwil->kanwil }}</td>
                         <td class="text-center">
-                            <span class="pks-badge">{{ ucfirst($d['tipe']) }}</span>
+                            <span class="pks-badge">{{ ucfirst($d->tipe) }}</span>
                         </td>
-                        <td class="text-center">{{ \Carbon\Carbon::parse($d['tanggal'])->format('d M Y') }}</td>
+                        <td class="text-center">{{ \Carbon\Carbon::parse($d->tanggal)->format('d M Y') }}</td>
                         <td class="text-center {{ $statusClass }}">{{ $status }}</td>
                     </tr>
                 @endforeach
@@ -120,4 +144,5 @@
         </div>
     @endif
 </body>
+
 </html>

@@ -293,7 +293,6 @@ class VpasController extends Controller
         }
     }
 
-
     public function DataBasePageDestroy($id)
     {
         $dataupt = Upt::find($id);
@@ -431,7 +430,6 @@ class VpasController extends Controller
         $pdf = Pdf::loadView('export.private.upt.indexUpt', $data);
         return $pdf->download('data_upt_vpas_' . $user->namaupt . '.pdf');
     }
-
 
     // Export data CSV GLOBAL
     public function exportListCsv(Request $request): StreamedResponse

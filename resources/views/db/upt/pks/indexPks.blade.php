@@ -164,7 +164,7 @@
                                         <span>Tanggal Kontrak</span>
                                     </th>
                                     <th class="text-center align-top">
-                                        <span>Tanggal Jatuh Tempo</span>
+                                        <span>Jatuh Tempo</span>
                                     </th>
                                     <th class="text-center align-top">
                                         <div class="d-flex justify-content-center align-items-center flex-column gap-12">
@@ -269,20 +269,24 @@
                                                                 onchange="updateFolder({{ $d->id }}, this.value)">
                                                                 @for ($i = 1; $i <= 2; $i++)
                                                                     @php
-                                                                        $fileName = null;
+                                                                        $originalFileName = null;
                                                                         if ($d->uploadFolderPks) {
                                                                             $column = 'uploaded_pdf_' . $i;
-                                                                            $fileName = !empty(
-                                                                                $d->uploadFolderPks->$column
-                                                                            )
-                                                                                ? basename($d->uploadFolderPks->$column)
-                                                                                : null;
+                                                                            $originalFileName = null;
+                                                                            if (!empty($d->uploadFolderPks->$column)) {
+                                                                                $fullName = basename(
+                                                                                    $d->uploadFolderPks->$column,
+                                                                                );
+                                                                                $parts = explode('_', $fullName, 3);
+                                                                                $originalFileName =
+                                                                                    $parts[2] ?? $fullName;
+                                                                            }
                                                                         }
                                                                     @endphp
                                                                     <option value="{{ $i }}">
-                                                                        @if ($fileName)
+                                                                        @if ($originalFileName)
                                                                             Folder {{ $i }}:
-                                                                            {{ $fileName }}
+                                                                            {{ $originalFileName }}
                                                                         @else
                                                                             Folder {{ $i }}: Tidak ada file
                                                                         @endif
@@ -301,15 +305,10 @@
                                                                         class="text-muted">
                                                                         @php
                                                                             $firstFileName = null;
-                                                                            if (
-                                                                                $d->uploadFolderPks &&
-                                                                                !empty(
-                                                                                    $d->uploadFolderPks->uploaded_pdf_1
-                                                                                )
-                                                                            ) {
-                                                                                $firstFileName = basename(
-                                                                                    $d->uploadFolderPks->uploaded_pdf_1,
-                                                                                );
+                                                                            if ($d->uploadFolderPks && !empty($d->uploadFolderPks->uploaded_pdf_1)) {
+                                                                                $fullName = basename($d->uploadFolderPks->uploaded_pdf_1);
+                                                                                $parts = explode('_', $fullName, 3);
+                                                                                $fisrtFileName = $parts[2] ?? $fullName;
                                                                             }
                                                                         @endphp
                                                                         @if ($firstFileName)
@@ -877,8 +876,9 @@
             currentFolderSpan.textContent = folder;
 
             // Update action URL with the selected folder - PERBAIKAN PENTING!
-            const baseUrl = "{{ url('dbpks/upload-pdf') }}";
-            form.action = `${baseUrl}/${id}/${folder}`;
+            form.action = "{{ route('dbpks.uploadFilePDFPks', [':id', ':folder']) }}"
+                .replace(':id', id)
+                .replace(':folder', folder);
 
             // Hide all folder actions
             const allFolderActions = document.querySelectorAll(`[id^="folderActions${id}_"]`);

@@ -25,13 +25,12 @@
                     <div class="col-md-3">
                         <div class="card-kategori">
                             <h3>PKS</h3>
-                            <p class="text-kategori mb-2">Layanan Pks</p>
+                            <p class="text-kategori mb-2">Surat Perjanjian Kerja Sama</p>
                             <div class="data-badge mb-3">
                                 <span class="checkmark">✓</span>
                                 100 Data
                             </div>
-                            <a href="{{ route('dbpks.ListDataPks') }}" class="list-button">List Data
-                                PKS</a>
+                            <a href="{{ route('dbpks.ListDataPks') }}" class="list-button">Selengkapnya</a>
                         </div>
                     </div>
 
@@ -39,13 +38,12 @@
                     <div class="col-md-3">
                         <div class="card-kategori">
                             <h3>SPP</h3>
-                            <p class="text-kategori mb-2">Layanan SPP</p>
+                            <p class="text-kategori mb-2">Surat Perintah Pemasangan</p>
                             <div class="data-badge mb-3">
                                 <span class="checkmark">✓</span>
                                 100 Data
                             </div>
-                            <a href="{{ route('spp.ListDataSpp') }}" class="list-button">List Data
-                                SPP</a>
+                            <a href="{{ route('spp.ListDataSpp') }}" class="list-button">Selengkapnya</a>
                         </div>
                     </div>
 
@@ -58,8 +56,7 @@
                                 <span class="checkmark">✓</span>
                                 100 Data
                             </div>
-                            <a href="{{ route('vpas.ListDataVpas') }}" class="list-button">List Data
-                                Customer</a>
+                            <a href="{{ route('vpas.ListDataVpas') }}" class="list-button">Selengkapnya</a>
                         </div>
                     </div>
 
@@ -72,8 +69,7 @@
                                 <span class="checkmark">✓</span>
                                 100 Data
                             </div>
-                            <a href="{{ route('upt.ListDataReguller') }}" class="list-button">List Data
-                                Customer</a>
+                            <a href="{{ route('upt.ListDataReguller') }}" class="list-button">Selengkapnya</a>
                         </div>
                     </div>
 
