@@ -178,7 +178,6 @@
                                         </div>
                                     </th>
                                     <th class="text-center align-top">Action</th>
-
                                 </tr>
                             </thead>
                             <tbody>
@@ -305,8 +304,15 @@
                                                                         class="text-muted">
                                                                         @php
                                                                             $firstFileName = null;
-                                                                            if ($d->uploadFolderPks && !empty($d->uploadFolderPks->uploaded_pdf_1)) {
-                                                                                $fullName = basename($d->uploadFolderPks->uploaded_pdf_1);
+                                                                            if (
+                                                                                $d->uploadFolderPks &&
+                                                                                !empty(
+                                                                                    $d->uploadFolderPks->uploaded_pdf_1
+                                                                                )
+                                                                            ) {
+                                                                                $fullName = basename(
+                                                                                    $d->uploadFolderPks->uploaded_pdf_1,
+                                                                                );
                                                                                 $parts = explode('_', $fullName, 3);
                                                                                 $fisrtFileName = $parts[2] ?? $fullName;
                                                                             }

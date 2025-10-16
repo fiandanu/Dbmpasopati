@@ -14,6 +14,8 @@ class UploadFolderUptPks extends Model
 
     protected $fillable = [
         'data_upt_id',
+        'tanggal_jatuh_tempo',
+        'tanggal_kontrak',
         'uploaded_pdf',
     ];
 

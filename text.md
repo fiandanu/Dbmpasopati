@@ -50,86 +50,67 @@ Auto Functions:
 
 ❌ [Tanggal] - [Deskripsi bug] - [Lokasi: ]
 
-
-
 =============================================================
 📝 KODE NULL SAFETY
 =============================================================
 
-Kode yang perlu dirapihin lagi di bagian 
+Kode yang perlu dirapihin lagi di bagian
+
 - app\Http\Controllers\user\ponpes\vtren\VtrenController.php [di method exportPonpesCsv $rows]
-
-
-
 
 =============================================================
 📝 CATATAN REVISI
 =============================================================
 
-
-
-
-
-
--- Check Ulang
-✅ Di kolom Tanggal menjadi 1 flex column ----- done
-✅ provider kendala  sama kanwil/nama wilayah dibuat export public all data Csv dan PDF
-✅ sidebar untuk memilih kategori tidak ketutup
-✅ Di setiap jenis kendala ditambahkan keterangan dan pdf/csv (limit 10 karakter) ----- done 
-✅ Kanwil dan Nama Wilayah dibuat menjadi dropdown saja ------- done
-✅ pada saat menentukan tanggal terlapor maka otomatis hari akan berjalan 
-✅ Nerapin Durasi Hari ke halaman yang pake ini di mclient Ponpes/UPT
-✅ pemindahan layout pencarian by tanggal keseluruhan 100%
-✅ pic 1 menjadi pic dan pic 2 menjadi penerima di bagian pengiriman alat ponpes 
-- (Nama Db Belum Diubah)
-✅ tanggal selesai di ganti menjadi tnaggal diterima di bagian pengiriman alat ponpes
-✅ perbaikan spasi bagian add data di user ponpes
-
-
-
+🔄 Di setiap jenis kendala ditambahkan keterangan dan pdf/csv (limit 10 karakter) Tinggal Di UPT
 -- On Prosses
-
-
 🔄 menampilkan keseluruhan total data di bawah perncarian kartu gsm vpas vtren
-   (Pembenaran Layout Dan Penambahan"Opsional")
-
-(Daffa Dalam Pengerjaan)
-- Di Page DB UPT Dan Ponpes di Pks dan spp ditambahkan data mirip seperti di Mclient reguller 
-
-
-
+(Pembenaran Layout)
 
 
 -- On Discuss
 - Jumlah SST Reguller Diambil dari jumlah extension
 - Jumlah SST Vpas Diambil dari jumlah extension
-- perbaikan pencarian status upload pdf di spp di bagian database upt dan ponpes
-- menu user di limit 1000 data  
-
-
-- kartu terpakai/hari menjadi kartu terpakai dibahian kartu
-- susunan tanggal di samping nama upt
-total keseluruhan kartu di pdf
-penambahan durasi hari di bagian pdf 
-pada bagian grafik menampilkan komplen, status pekerjaan, klasifikasi masalah pengelompokkan masalah, pengelompokan kartu, monitoring pks menampilkan tanggal pks sampai dengan tanggal, berapa jatuh tempo
-dibuatkan tombol edit penambahan tanggal kontrak dan tanggal selesai kontrak di bagian list data pks upt dan ponpes dan menghapus tipe vpas reg di bagian nama
 
 
 
+<!-- - menu user di limit 1000 data -->
+<!-- - kartu terpakai/hari menjadi kartu terpakai dibahian kartu -->
+- susunan tanggal di samping nama upt 
 
-Di Upt Pks
-add Column
+  total keseluruhan kartu di pdf
+  penambahan durasi hari di bagian pdf
 
-- Tanggal Kontrak dan Jatuh Tempo
-
-Di List Data Pks Upt
-- VpasReg Tidak di munculkan cuma hanya 1 nama UPT
-
-
+  pada bagian grafik menampilkan komplen, status pekerjaan, klasifikasi masalah pengelompokkan masalah, pengelompokan kartu, monitoring pks menampilkan tanggal pks sampai dengan tanggal, berapa jatuh tempo
 
 
+=============================================================
+✅ REVISI SELESAI
+=============================================================
+
+-- Check Ulang
+
+✅ Kanwil dan Nama Wilayah dibuat menjadi dropdown saja ------- done
+✅ pada saat menentukan tanggal terlapor maka otomatis hari akan berjalan
+✅ Nerapin Durasi Hari ke halaman yang pake ini di mclient Ponpes/UPT
+✅ pemindahan layout pencarian by tanggal keseluruhan 100%
+✅ perbaikan spasi bagian add data di user ponpes
+✅ Di kolom Tanggal menjadi 1 flex column ----- done
+✅ provider kendala sama kanwil/nama wilayah dibuat export public all data Csv dan PDF
+✅ sidebar untuk memilih kategori tidak ketutup
+✅ Di Page DB UPT Dan Ponpes di Pks dan spp ditambahkan data mirip seperti di Mclient reguller
+✅ dibuatkan tombol edit penambahan tanggal kontrak dan tanggal selesai kontrak di bagian list data pks upt dan ponpes dan menghapus tipe vpas reg di bagian nama
+✅ perbaikan pencarian status upload pdf di spp di bagian database upt dan ponpes
 
 
+
+
+    di bagian add modal dan edit belum
+✅ pic 1 menjadi pic dan pic 2 menjadi penerima di bagian pengiriman alat ponpes
+- (Nama Db Belum Diubah)
+✅ tanggal selesai di ganti menjadi tnaggal diterima di bagian pengiriman alat ponpes
+
+✅ Tanggal Kontrak dan Jatuh Tempo
 
 =============================================================
 📊 PROGRESS SUMMARY
