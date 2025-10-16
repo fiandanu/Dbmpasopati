@@ -133,12 +133,12 @@ class SettingPonpesController extends Controller
         $picList = Pic::orderBy('nama_pic')->get();
 
         // Get Ponpes list based on jenis layanan
-        $ponpesListVtren = Ponpes::select('nama_ponpes', 'nama_wilayah', 'tipe')
+        $ponpesListVtren = Ponpes::with('namaWilayah')
             ->where('tipe', 'vtren')
             ->orderBy('nama_ponpes')
             ->get();
 
-        $ponpesListReguler = Ponpes::select('nama_ponpes', 'nama_wilayah', 'tipe')
+        $ponpesListReguler = Ponpes::with('namaWilayah')
             ->where('tipe', 'reguler')
             ->orderBy('nama_ponpes')
             ->get();
@@ -264,64 +264,64 @@ class SettingPonpesController extends Controller
         }
     }
 
-public function MclientPonpesSettingUpdate(Request $request, $id)
-{
-    $validator = Validator::make(
-        $request->all(),
-        [
-            'nama_ponpes' => 'required|string|max:255',
-            'jenis_layanan' => 'required|string|in:vtren,reguler,vtrenreg',
-            'keterangan' => 'nullable|string',
-            'tanggal_terlapor' => 'nullable|date',
-            'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_terlapor',
-            'durasi_hari' => 'nullable|integer|min:0',
-            'status' => 'nullable|string|in:pending,proses,selesai,terjadwal',
-            'pic_1' => 'nullable|string|max:255',
-            'pic_2' => 'nullable|string|max:255',
-        ],
-        [
-            'nama_ponpes.required' => 'Nama Ponpes harus diisi.',
-            'nama_ponpes.string' => 'Nama Ponpes harus berupa teks.',
-            'nama_ponpes.max' => 'Nama Ponpes tidak boleh lebih dari 255 karakter.',
-            'jenis_layanan.required' => 'Jenis layanan harus dipilih.',
-            'jenis_layanan.in' => 'Jenis layanan harus salah satu dari: VTREN, Reguler, atau VTREN + Reguler.',
-            'keterangan.string' => 'Keterangan harus berupa teks.',
-            'tanggal_terlapor.date' => 'Format tanggal terlapor harus valid.',
-            'tanggal_selesai.date' => 'Format tanggal selesai harus valid.',
-            'tanggal_selesai.after_or_equal' => 'Tanggal selesai tidak boleh lebih awal dari tanggal terlapor.',
-            'durasi_hari.integer' => 'Durasi hari harus berupa angka.',
-            'durasi_hari.min' => 'Durasi hari tidak boleh negatif.',
-            'status.in' => 'Status harus salah satu dari: pending, proses, selesai, atau terjadwal.',
-            'pic_1.string' => 'PIC 1 harus berupa teks.',
-            'pic_1.max' => 'PIC 1 tidak boleh lebih dari 255 karakter.',
-            'pic_2.string' => 'PIC 2 harus berupa teks.',
-            'pic_2.max' => 'PIC 2 tidak boleh lebih dari 255 karakter.',
-        ]
-    );
+    public function MclientPonpesSettingUpdate(Request $request, $id)
+    {
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'nama_ponpes' => 'required|string|max:255',
+                'jenis_layanan' => 'required|string|in:vtren,reguler,vtrenreg',
+                'keterangan' => 'nullable|string',
+                'tanggal_terlapor' => 'nullable|date',
+                'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_terlapor',
+                'durasi_hari' => 'nullable|integer|min:0',
+                'status' => 'nullable|string|in:pending,proses,selesai,terjadwal',
+                'pic_1' => 'nullable|string|max:255',
+                'pic_2' => 'nullable|string|max:255',
+            ],
+            [
+                'nama_ponpes.required' => 'Nama Ponpes harus diisi.',
+                'nama_ponpes.string' => 'Nama Ponpes harus berupa teks.',
+                'nama_ponpes.max' => 'Nama Ponpes tidak boleh lebih dari 255 karakter.',
+                'jenis_layanan.required' => 'Jenis layanan harus dipilih.',
+                'jenis_layanan.in' => 'Jenis layanan harus salah satu dari: VTREN, Reguler, atau VTREN + Reguler.',
+                'keterangan.string' => 'Keterangan harus berupa teks.',
+                'tanggal_terlapor.date' => 'Format tanggal terlapor harus valid.',
+                'tanggal_selesai.date' => 'Format tanggal selesai harus valid.',
+                'tanggal_selesai.after_or_equal' => 'Tanggal selesai tidak boleh lebih awal dari tanggal terlapor.',
+                'durasi_hari.integer' => 'Durasi hari harus berupa angka.',
+                'durasi_hari.min' => 'Durasi hari tidak boleh negatif.',
+                'status.in' => 'Status harus salah satu dari: pending, proses, selesai, atau terjadwal.',
+                'pic_1.string' => 'PIC 1 harus berupa teks.',
+                'pic_1.max' => 'PIC 1 tidak boleh lebih dari 255 karakter.',
+                'pic_2.string' => 'PIC 2 harus berupa teks.',
+                'pic_2.max' => 'PIC 2 tidak boleh lebih dari 255 karakter.',
+            ]
+        );
 
-    try {
-        $data = SettingPonpes::findOrFail($id);
-        $updateData = $request->all();
+        try {
+            $data = SettingPonpes::findOrFail($id);
+            $updateData = $request->all();
 
-        // Hitung dan simpan durasi HANYA jika tanggal_selesai baru ditentukan
-        if ($request->tanggal_selesai && $request->tanggal_terlapor) {
-            $tanggalTerlapor = Carbon::parse($request->tanggal_terlapor);
-            $tanggalSelesai = Carbon::parse($request->tanggal_selesai);
-            $updateData['durasi_hari'] = $tanggalTerlapor->diffInDays($tanggalSelesai);
-        } elseif ($request->has('tanggal_selesai') && empty($request->tanggal_selesai)) {
-            // Jika tanggal_selesai dihapus, set durasi ke null
-            $updateData['durasi_hari'] = null;
+            // Hitung dan simpan durasi HANYA jika tanggal_selesai baru ditentukan
+            if ($request->tanggal_selesai && $request->tanggal_terlapor) {
+                $tanggalTerlapor = Carbon::parse($request->tanggal_terlapor);
+                $tanggalSelesai = Carbon::parse($request->tanggal_selesai);
+                $updateData['durasi_hari'] = $tanggalTerlapor->diffInDays($tanggalSelesai);
+            } elseif ($request->has('tanggal_selesai') && empty($request->tanggal_selesai)) {
+                // Jika tanggal_selesai dihapus, set durasi ke null
+                $updateData['durasi_hari'] = null;
+            }
+
+            $data->update($updateData);
+
+            return redirect()->back()->with('success', 'Data setting monitoring client Ponpes berhasil diupdate!');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Gagal update data: ' . $e->getMessage());
         }
-
-        $data->update($updateData);
-
-        return redirect()->back()->with('success', 'Data setting monitoring client Ponpes berhasil diupdate!');
-    } catch (\Exception $e) {
-        return redirect()->back()
-            ->withInput()
-            ->with('error', 'Gagal update data: ' . $e->getMessage());
     }
-}
 
     public function MclientPonpesSettingDestroy($id)
     {

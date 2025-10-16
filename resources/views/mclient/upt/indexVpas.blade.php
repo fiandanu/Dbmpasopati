@@ -418,9 +418,10 @@
                                                                 @foreach ($uptList as $upt)
                                                                     <a class="dropdown-item upt-option" href="#"
                                                                         data-value="{{ $upt->namaupt }}"
-                                                                        data-kanwil="{{ $upt->kanwil }}"
-                                                                        onclick="selectUpt('{{ $upt->namaupt }}', '{{ $upt->kanwil }}')">
-                                                                        {{ $upt->namaupt }} - {{ $upt->kanwil }}
+                                                                        data-kanwil="{{ $upt->kanwil->kanwil ?? '' }}"
+                                                                        onclick="selectUpt('{{ $upt->namaupt }}', '{{ addslashes($upt->kanwil->kanwil ?? '') }}')">
+                                                                        {{ $upt->namaupt }} -
+                                                                        {{ $upt->kanwil->kanwil ?? '-' }}
                                                                     </a>
                                                                 @endforeach
                                                             </div>
@@ -568,9 +569,18 @@
                                                         <div class="mb-3">
                                                             <label for="nama_upt_edit_{{ $d->id }}"
                                                                 class="form-label">Nama UPT</label>
-                                                            <input type="text" class="form-control"
+                                                            <select class="form-control"
                                                                 id="nama_upt_edit_{{ $d->id }}" name="nama_upt"
-                                                                value="{{ $d->nama_upt }}" readonly>
+                                                                onchange="updateKanwilEdit(this.value, {{ $d->id }})"
+                                                                required>
+                                                                <option value="">-- Pilih UPT --</option>
+                                                                @foreach ($uptList as $upt)
+                                                                    <option value="{{ $upt->namaupt }}"
+                                                                        data-kanwil="{{ $upt->kanwil->kanwil ?? '' }}"
+                                                                        {{ $d->nama_upt == $upt->namaupt ? 'selected' : '' }}>
+                                                                        {{ $upt->namaupt }}
+                                                                    </option>
+                                                                @endforeach
                                                             </select>
                                                         </div>
                                                         <div class="mb-3">
@@ -738,7 +748,7 @@
                                 </form>
                             </div>
                         @endforeach
-                        
+
                     </div>
                 </div>
                 <!-- /.row -->

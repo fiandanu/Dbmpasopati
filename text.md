@@ -56,6 +56,7 @@ Auto Functions:
 📝 KODE NULL SAFETY
 =============================================================
 
+Kode yang perlu dirapihin lagi di bagian 
 - app\Http\Controllers\user\ponpes\vtren\VtrenController.php [di method exportPonpesCsv $rows]
 
 
@@ -66,7 +67,7 @@ Auto Functions:
 =============================================================
 
 
-Kode yang perlu dirapihin lagi di bagian 
+
 
 
 
@@ -100,11 +101,11 @@ Kode yang perlu dirapihin lagi di bagian
 
 
 -- On Discuss
-
 - Jumlah SST Reguller Diambil dari jumlah extension
 - Jumlah SST Vpas Diambil dari jumlah extension
 - perbaikan pencarian status upload pdf di spp di bagian database upt dan ponpes
 - menu user di limit 1000 data  
+
 
 - kartu terpakai/hari menjadi kartu terpakai dibahian kartu
 - susunan tanggal di samping nama upt

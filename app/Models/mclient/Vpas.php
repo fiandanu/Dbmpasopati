@@ -2,6 +2,7 @@
 
 namespace App\Models\mclient;
 
+use App\Models\user\Kanwil;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\user\Upt;
@@ -44,6 +45,10 @@ class Vpas extends Model
     public function upt()
     {
         return $this->belongsTo(Upt::class, 'nama_upt', 'namaupt');
+    }
+
+    public function kanwil(){
+        return $this->belongsTo(Kanwil::class, 'kanwil_id', 'kanwil');
     }
 
     public function getFormattedTanggalTerlaporAttribute()

@@ -419,9 +419,10 @@
                                                                 @foreach ($uptList as $upt)
                                                                     <a class="dropdown-item upt-option" href="#"
                                                                         data-value="{{ $upt->namaupt }}"
-                                                                        data-kanwil="{{ $upt->kanwil }}"
-                                                                        onclick="selectUpt('{{ $upt->namaupt }}', '{{ $upt->kanwil }}')">
-                                                                        {{ $upt->namaupt }} - {{ $upt->kanwil }}
+                                                                        data-kanwil="{{ $upt->kanwil->kanwil ?? '' }}"
+                                                                        onclick="selectUpt('{{ $upt->namaupt }}', '{{ addslashes($upt->kanwil->kanwil ?? '') }}')">
+                                                                        {{ $upt->namaupt }} -
+                                                                        {{ $upt->kanwil->kanwil ?? '-' }}
                                                                     </a>
                                                                 @endforeach
                                                             </div>
@@ -573,7 +574,7 @@
                                                                 <option value="">-- Pilih UPT --</option>
                                                                 @foreach ($uptList as $upt)
                                                                     <option value="{{ $upt->namaupt }}"
-                                                                        data-kanwil="{{ $upt->kanwil }}"
+                                                                        data-kanwil="{{ $upt->kanwil->kanwil ?? '' }}"
                                                                         {{ $d->nama_upt == $upt->namaupt ? 'selected' : '' }}>
                                                                         {{ $upt->namaupt }}
                                                                     </option>

@@ -70,7 +70,7 @@ class CatatanController extends Controller
 
         $picList = Pic::orderBy('nama_pic')->get();
         $cardSupportingList = Pic::orderBy('nama_pic')->pluck('nama_pic');
-        $uptList = Upt::select('namaupt', 'kanwil')
+        $uptList = Upt::select('namaupt', 'kanwil_id')
             ->where('tipe', 'vpas')
             ->orderBy('namaupt')
             ->get();

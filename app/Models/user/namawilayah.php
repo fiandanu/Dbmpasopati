@@ -20,14 +20,6 @@ class NamaWilayah extends Model
         'updated_at' => 'datetime',
     ];
 
-    // ==========================================
-    // RELASI
-    // ==========================================
-
-    /**
-     * Relasi ke tabel data_ponpes (One to Many)
-     * BARU: Satu wilayah bisa punya banyak ponpes
-     */
     public function dataPonpes()
     {
         return $this->hasMany(Ponpes::class, 'nama_wilayah_id');

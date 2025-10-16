@@ -1,5 +1,5 @@
 <?php
-
+ 
 namespace App\Models\mclient;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;

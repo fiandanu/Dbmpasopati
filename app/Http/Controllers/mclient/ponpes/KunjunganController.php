@@ -133,12 +133,12 @@ class KunjunganController extends Controller
         $picList = Pic::orderBy('nama_pic')->get();
 
         // Get Ponpes list based on jenis layanan
-        $ponpesListVtren = Ponpes::select('nama_ponpes', 'nama_wilayah')
+        $ponpesListVtren = Ponpes::with('namaWilayah')
             ->where('tipe', 'vtren')
             ->orderBy('nama_ponpes')
             ->get();
 
-        $ponpesListReguler = Ponpes::select('nama_ponpes', 'nama_wilayah')
+        $ponpesListReguler = Ponpes::with('namaWilayah')
             ->where('tipe', 'reguler')
             ->orderBy('nama_ponpes')
             ->get();

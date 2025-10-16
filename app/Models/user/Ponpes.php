@@ -46,10 +46,7 @@ class Ponpes extends Model
         return $this->hasOne(UploadFolderPonpesSpp::class, 'data_ponpes_id');
     }
 
-    public function uploadFolder()
-    {
-        return $this->hasOne(UploadFolderPonpesSpp::class, 'data_ponpes_id');
-    }
+
 
 
     public function hasPdfInFolder($folderNumber)
@@ -95,7 +92,7 @@ class Ponpes extends Model
 
     public function getUploadedPdfAttribute()
     {
-        return $this->uploadFolderPks() ? $this->uploadFolderSpp->pdf_folder_1 : null;
+        return $this->uploadFolderSpp() ? $this->uploadFolderSpp->pdf_folder_1 : null;
     }
 
     public function getHasPdfAttribute()

@@ -64,84 +64,6 @@ class SettingAlatController extends Controller
         ];
     }
 
-    public function exportListPdf(Request $request)
-    {
-        $query = SettingAlat::query();
-        $query = $this->applyFilters($query, $request);
-
-        if (
-            $request->filled('search_tanggal_terlapor_dari') || $request->filled('search_tanggal_terlapor_sampai') ||
-            $request->filled('search_tanggal_selesai_dari') || $request->filled('search_tanggal_selesai_sampai')
-        ) {
-            $query = $query->orderBy('tanggal_terlapor', 'asc');
-        }
-
-        $data = $query->orderBy('created_at', 'desc')->get();
-
-        $pdfData = [
-            'title' => 'List Data Setting Alat UPT',
-            'data' => $data,
-            'generated_at' => Carbon::now()->format('d M Y H:i:s')
-        ];
-
-        $pdf = Pdf::loadView('export.public.mclient.upt.indexSettingAlat', $pdfData);
-        $filename = 'list_setting_alat_upt_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
-
-        return $pdf->download($filename);
-    }
-
-    public function exportListCsv(Request $request)
-    {
-        $query = SettingAlat::query();
-        $query = $this->applyFilters($query, $request);
-
-        if (
-            $request->filled('search_tanggal_terlapor_dari') || $request->filled('search_tanggal_terlapor_sampai') ||
-            $request->filled('search_tanggal_selesai_dari') || $request->filled('search_tanggal_selesai_sampai')
-        ) {
-            $query = $query->orderBy('tanggal_terlapor', 'asc');
-        }
-
-        $data = $query->orderBy('created_at', 'desc')->get();
-
-        $filename = 'List_Setting_Alat_Upt_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
-
-        $headers = [
-            'Content-type' => 'text/csv',
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
-        ];
-
-        $rows = [['No', 'Nama UPT', 'Jenis Layanan', 'Keterangan', 'Tanggal Terlapor', 'Tanggal Selesai', 'Durasi (Hari)', 'Status', 'PIC 1', 'PIC 2', 'Dibuat Pada']];
-        $no = 1;
-        foreach ($data as $row) {
-            $rows[] = [
-                $no++,
-                $row->nama_upt,
-                $row->jenis_layanan,
-                $row->keterangan,
-                $row->tanggal_terlapor ? $row->tanggal_terlapor->format('Y-m-d') : '',
-                $row->tanggal_selesai ? $row->tanggal_selesai->format('Y-m-d') : '',
-                $row->durasi_hari,
-                $row->status,
-                $row->pic_1,
-                $row->pic_2,
-                $row->created_at ? $row->created_at->format('Y-m-d H:i:s') : ''
-            ];
-        }
-
-        $callback = function () use ($rows) {
-            $file = fopen('php://output', 'w');
-            foreach ($rows as $row) {
-                fputcsv($file, $row);
-            }
-            fclose($file);
-        };
-        return response()->stream($callback, 200, $headers);
-    }
-
     public function ListDataMclientSettingAlat(Request $request)
     {
         $query = SettingAlat::query();
@@ -175,15 +97,27 @@ class SettingAlatController extends Controller
         $picList = Pic::orderBy('nama_pic')->get();
 
         // Get UPT list based on jenis layanan
-        $uptListVpas = Upt::select('namaupt', 'kanwil')
+        $uptListVpas = Upt::with('kanwil:id,kanwil')
             ->where('tipe', 'vpas')
             ->orderBy('namaupt')
-            ->get();
+            ->get()
+            ->map(function ($upt) {
+                return [
+                    'namaupt' => $upt->namaupt,
+                    'kanwil' => $upt->kanwil->kanwil ?? '-'
+                ];
+            });
 
-        $uptListReguler = Upt::select('namaupt', 'kanwil')
+        $uptListReguler = Upt::with('kanwil:id,kanwil')
             ->where('tipe', 'reguler')
             ->orderBy('namaupt')
-            ->get();
+            ->get()
+            ->map(function ($upt) {
+                return [
+                    'namaupt' => $upt->namaupt,
+                    'kanwil' => $upt->kanwil->kanwil ?? '-'
+                ];
+            });
 
         // Combine both lists for vpasreg
         $uptListAll = $uptListVpas->merge($uptListReguler)->unique('namaupt')->sortBy('namaupt');
@@ -441,5 +375,83 @@ class SettingAlatController extends Controller
             'status' => 'error',
             'message' => 'UPT not found untuk jenis layanan tersebut'
         ]);
+    }
+
+    public function exportListPdf(Request $request)
+    {
+        $query = SettingAlat::query();
+        $query = $this->applyFilters($query, $request);
+
+        if (
+            $request->filled('search_tanggal_terlapor_dari') || $request->filled('search_tanggal_terlapor_sampai') ||
+            $request->filled('search_tanggal_selesai_dari') || $request->filled('search_tanggal_selesai_sampai')
+        ) {
+            $query = $query->orderBy('tanggal_terlapor', 'asc');
+        }
+
+        $data = $query->orderBy('created_at', 'desc')->get();
+
+        $pdfData = [
+            'title' => 'List Data Setting Alat UPT',
+            'data' => $data,
+            'generated_at' => Carbon::now()->format('d M Y H:i:s')
+        ];
+
+        $pdf = Pdf::loadView('export.public.mclient.upt.indexSettingAlat', $pdfData);
+        $filename = 'list_setting_alat_upt_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
+
+        return $pdf->download($filename);
+    }
+
+    public function exportListCsv(Request $request)
+    {
+        $query = SettingAlat::query();
+        $query = $this->applyFilters($query, $request);
+
+        if (
+            $request->filled('search_tanggal_terlapor_dari') || $request->filled('search_tanggal_terlapor_sampai') ||
+            $request->filled('search_tanggal_selesai_dari') || $request->filled('search_tanggal_selesai_sampai')
+        ) {
+            $query = $query->orderBy('tanggal_terlapor', 'asc');
+        }
+
+        $data = $query->orderBy('created_at', 'desc')->get();
+
+        $filename = 'List_Setting_Alat_Upt_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
+
+        $headers = [
+            'Content-type' => 'text/csv',
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+
+        $rows = [['No', 'Nama UPT', 'Jenis Layanan', 'Keterangan', 'Tanggal Terlapor', 'Tanggal Selesai', 'Durasi (Hari)', 'Status', 'PIC 1', 'PIC 2', 'Dibuat Pada']];
+        $no = 1;
+        foreach ($data as $row) {
+            $rows[] = [
+                $no++,
+                $row->nama_upt,
+                $row->jenis_layanan,
+                $row->keterangan,
+                $row->tanggal_terlapor ? $row->tanggal_terlapor->format('Y-m-d') : '',
+                $row->tanggal_selesai ? $row->tanggal_selesai->format('Y-m-d') : '',
+                $row->durasi_hari,
+                $row->status,
+                $row->pic_1,
+                $row->pic_2,
+                $row->created_at ? $row->created_at->format('Y-m-d H:i:s') : ''
+            ];
+        }
+
+        $callback = function () use ($rows) {
+            $file = fopen('php://output', 'w');
+            foreach ($rows as $row) {
+                fputcsv($file, $row);
+            }
+            fclose($file);
+        };
+        return response()->stream($callback, 200, $headers);
     }
 }

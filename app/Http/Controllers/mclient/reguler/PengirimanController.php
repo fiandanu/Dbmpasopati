@@ -175,15 +175,27 @@ class PengirimanController extends Controller
         $picList = Pic::orderBy('nama_pic')->get();
 
         // Get UPT list based on jenis layanan
-        $uptListVpas = Upt::select('namaupt', 'kanwil')
+        $uptListVpas = Upt::with('kanwil:id,kanwil')
             ->where('tipe', 'vpas')
             ->orderBy('namaupt')
-            ->get();
+            ->get()
+            ->map(function ($upt) {
+                return [
+                    'namaupt' => $upt->namaupt,
+                    'kanwil' => $upt->kanwil->kanwil ?? '-'
+                ];
+            });
 
-        $uptListReguler = Upt::select('namaupt', 'kanwil')
+        $uptListReguler = Upt::with('kanwil:id,kanwil')
             ->where('tipe', 'reguler')
             ->orderBy('namaupt')
-            ->get();
+            ->get()
+            ->map(function ($upt) {
+                return [
+                    'namaupt' => $upt->namaupt,
+                    'kanwil' => $upt->kanwil->kanwil ?? '-'
+                ];
+            });
 
         // Combine both lists for vpasreg
         $uptListAll = $uptListVpas->merge($uptListReguler)->unique('namaupt')->sortBy('namaupt');

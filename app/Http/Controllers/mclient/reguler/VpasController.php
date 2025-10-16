@@ -19,7 +19,7 @@ class VpasController extends Controller
 
     public function ListDataMclientVpas(Request $request)
     {
-        $query = Vpas::query();
+        $query = Vpas::with('kanwil');
 
         // Apply filters
         $query = $this->applyFilters($query, $request);
@@ -51,7 +51,7 @@ class VpasController extends Controller
         $jenisKendala = Kendala::orderBy('jenis_kendala')->get();
         $picList = Pic::orderBy('nama_pic')->get();
 
-        $uptList = Upt::select('namaupt', 'kanwil')
+        $uptList = Upt::with('kanwil:id,kanwil') // sesuaikan nama kolom
             ->where('tipe', 'vpas')
             ->orderBy('namaupt')
             ->get();
@@ -169,7 +169,7 @@ class VpasController extends Controller
                 ->with('error', 'Gagal menambahkan data: ' . $e->getMessage());
         }
     }
-    
+
 
     public function MclientVpasUpdate(Request $request, $id)
     {
@@ -428,7 +428,7 @@ class VpasController extends Controller
         if ($upt) {
             return response()->json([
                 'status' => 'success',
-                'kanwil' => $upt->kanwil
+                'kanwil' => $upt->kanwil ? $upt->kanwil->namakanwil : ''
             ]);
         }
 

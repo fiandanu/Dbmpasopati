@@ -2,6 +2,7 @@
 
 namespace App\Models\mclient\ponpes;
 
+use App\Models\user\NamaWilayah;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\user\Ponpes;
@@ -15,7 +16,7 @@ class Vtren extends Model
 
     protected $fillable = [
         'nama_ponpes',
-        'nama_wilayah',
+        // 'nama_wilayah',
         'jenis_kendala',
         'detail_kendala',
         'tanggal_terlapor',
@@ -44,6 +45,10 @@ class Vtren extends Model
     public function ponpes()
     {
         return $this->belongsTo(Ponpes::class, 'nama_ponpes', 'nama_ponpes');
+    }
+
+    public function namaWilayah() {
+        return $this->hasMany(NamaWilayah::class, 'nama_wilayah');
     }
 
     public function getFormattedTanggalTerlaporAttribute()

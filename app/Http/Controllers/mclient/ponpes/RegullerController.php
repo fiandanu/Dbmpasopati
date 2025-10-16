@@ -49,7 +49,7 @@ class RegullerController extends Controller
         $jenisKendala = Kendala::orderBy('jenis_kendala')->get();
         $picList = Pic::orderBy('nama_pic')->get();
 
-        $ponpesList = Ponpes::select('nama_ponpes', 'nama_wilayah')
+        $ponpesList = Ponpes::select('nama_ponpes', 'nama_wilayah_id')
             ->where('tipe', 'reguler')
             ->orderBy('nama_ponpes')
             ->get();

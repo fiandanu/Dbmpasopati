@@ -74,7 +74,7 @@ class VtrenController extends Controller
 
         $picList = Pic::orderBy('nama_pic')->get();
         $cardSupportingList = Pic::orderBy('nama_pic')->pluck('nama_pic');
-        $uptList = Ponpes::select('nama_ponpes', 'nama_wilayah')
+        $uptList = Ponpes::select('nama_ponpes', 'nama_wilayah_id')
             ->where('tipe', 'vtren')
             ->orderBy('nama_ponpes')
             ->get();

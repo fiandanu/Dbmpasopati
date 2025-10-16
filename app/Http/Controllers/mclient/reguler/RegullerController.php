@@ -49,7 +49,7 @@ class RegullerController extends Controller
         $jenisKendala = Kendala::orderBy('jenis_kendala')->get();
         $picList = Pic::orderBy('nama_pic')->get();
 
-        $uptList = Upt::select('namaupt', 'kanwil')
+        $uptList = Upt::with('kanwil:id,kanwil')
             ->where('tipe', 'reguler')
             ->orderBy('namaupt')
             ->get();
@@ -422,12 +422,12 @@ class RegullerController extends Controller
     public function getUptData(Request $request)
     {
         $namaUpt = $request->input('nama_upt');
-        $upt = Upt::where('namaupt', $namaUpt)->first();
+        $upt = Upt::with('kanwil')->where('namaupt', $namaUpt)->first();
 
         if ($upt) {
             return response()->json([
                 'status' => 'success',
-                'kanwil' => $upt->kanwil
+                'kanwil' => $upt->kanwil ? $upt->kanwil->kanwil : null
             ]);
         }
 
