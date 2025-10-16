@@ -26,12 +26,12 @@
                     <div class="col-md-3">
                         <div class="card-kategori">
                             <h3>PKS</h3>
-                            <p class="text-kategori mb-2">Layanan Pks</p>
-                            <div class="data-badge mb-3">
+                            <p class="text-kategori mb-2">Surat Perjanjian Kerja Sama</p>
+                            {{-- <div class="data-badge mb-3">
                                 <span class="checkmark">✓</span>
                                 100 Data
-                            </div>
-                            <a href="{{ route('DbPonpes.pks.ListDataPks') }}" class="list-button">List Data PKS</a>
+                            </div> --}}
+                            <a href="{{ route('DbPonpes.pks.ListDataPks') }}" class="list-button">Selengkapnya</a>
                         </div>
                     </div>
 
@@ -39,12 +39,11 @@
                     <div class="col-md-3">
                         <div class="card-kategori">
                             <h3>SPP</h3>
-                            <p class="text-kategori mb-2">Layanan Spp</p>
-                            <span class="data-badge mb-3">
+                            <p class="text-kategori mb-2">Surat Perintah Pemasangan</p>
+                            {{-- <span class="data-badge mb-3">
                                 100 Data
-                            </span>
-                            <a href="{{ route('sppPonpes.ListDataSpp') }}" class="list-button">List
-                                Data SPP</a>
+                            </span> --}}
+                            <a href="{{ route('sppPonpes.ListDataSpp') }}" class="list-button">Selengkapnya</a>
                         </div>
                     </div>
 
@@ -53,12 +52,11 @@
                         <div class="card-kategori">
                             <h3>VTREN</h3>
                             <p class="text-kategori mb-2">Layanan Vtren</p>
-                            <div class="data-badge mb-3">
+                            {{-- <div class="data-badge mb-3">
                                 <span class="checkmark">✓</span>
                                 100 Data
-                            </div>
-                            <a href="{{ route('DbPonpes.ListDataVtrend') }}" class="list-button">List Data
-                                Vtren</a>
+                            </div> --}}
+                            <a href="{{ route('DbPonpes.ListDataVtrend') }}" class="list-button">Selengkapnya</a>
                         </div>
                     </div>
 
@@ -67,12 +65,12 @@
                         <div class="card-kategori">
                             <h3>REGULER</h3>
                             <p class="text-kategori mb-2">Layanan Reguler</p>
-                            <div class="data-badge mb-3">
+                            {{-- <div class="data-badge mb-3">
                                 <span class="checkmark">✓</span>
                                 100 Data
-                            </div>
+                            </div> --}}
                             <a href="{{ route('ponpes.ListDataPonpes') }}" class="list-button">
-                                List Data Reguler
+                                Selengkapnya
                             </a>
                         </div>
                     </div>
