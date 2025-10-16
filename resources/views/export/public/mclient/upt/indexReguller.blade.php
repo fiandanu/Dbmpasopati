@@ -3,8 +3,8 @@
 <head>
     <title>{{ $title }}</title>
     <style>
-        body { 
-            font-family: Arial, sans-serif; 
+        body {
+            font-family: Arial, sans-serif;
             margin: 20px;
             font-size: 12px;
         }
@@ -23,38 +23,38 @@
             font-size: 10px;
             color: #666;
         }
-        table { 
-            width: 100%; 
-            border-collapse: collapse; 
+        table {
+            width: 100%;
+            border-collapse: collapse;
             margin-top: 10px;
         }
-        th, td { 
-            border: 1px solid #333; 
-            padding: 6px; 
-            text-align: left; 
+        th, td {
+            border: 1px solid #333;
+            padding: 6px;
+            text-align: left;
             font-size: 10px;
         }
-        th { 
-            background-color: #f2f2f2; 
+        th {
+            background-color: #f2f2f2;
             font-weight: bold;
             text-align: center;
         }
         .text-center {
             text-align: center;
         }
-        .status-pending { 
+        .status-pending {
             color: #dc3545;
             font-weight: bold;
         }
-        .status-proses { 
+        .status-proses {
             color: #ffc107;
             font-weight: bold;
         }
-        .status-selesai { 
+        .status-selesai {
             color: #28a745;
             font-weight: bold;
         }
-        .status-terjadwal { 
+        .status-terjadwal {
             color: #007bff;
             font-weight: bold;
         }
@@ -115,6 +115,7 @@
                         <td>{{ $d->nama_upt ?? '-' }}</td>
                         <td>{{ $d->kanwil ?? '-' }}</td>
                         <td>{{ Str::limit($d->jenis_kendala ?? 'Belum ditentukan', 25) }}</td>
+                        <td>{{ Str::limit($d->detail_kendala ?? '-') }}</td>
                         <td class="text-center">{{ $d->tanggal_terlapor ? \Carbon\Carbon::parse($d->tanggal_terlapor)->format('d M Y') : '-' }}</td>
                         <td class="text-center">{{ $d->tanggal_selesai ? \Carbon\Carbon::parse($d->tanggal_selesai)->format('d M Y') : '-' }}</td>
                         <td class="text-center">{{ $d->durasi_hari ? $d->durasi_hari . ' hari' : '-' }}</td>

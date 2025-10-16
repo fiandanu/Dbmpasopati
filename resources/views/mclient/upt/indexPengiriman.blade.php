@@ -285,10 +285,30 @@
                                                         {{ $d->formatted_jenis_layanan }}
                                                     </span>
                                                 </td>
-                                                <td class="text-center">
-                                                    <span class="Tipereguller">
-                                                        {{ Str::limit($d->keterangan ?? 'Tidak ada keterangan', 40) }}
-                                                    </span>
+                                                    <td>
+                                                    @if ($d->keterangan && strlen($d->keterangan) > 20)
+                                                        <div id="short-text-{{ $d->id }}">
+                                                            <div>{{ Str::limit($d->keterangan, 20) }}</div>
+                                                            <a href="javascript:void(0)"
+                                                                onclick="toggleDetail({{ $d->id }})"
+                                                                class="text-primary">
+                                                                <small>Show</small>
+                                                            </a>
+                                                        </div>
+                                                        <div id="full-text-{{ $d->id }}" style="display: none;">
+                                                            <div
+                                                                style="white-space: pre-wrap; word-wrap: break-word; max-width: 300px;">
+                                                                {{ $d->keterangan }}
+                                                            </div>
+                                                            <a href="javascript:void(0)"
+                                                                onclick="toggleDetail({{ $d->id }})"
+                                                                class="text-primary">
+                                                                <small>Hide</small>
+                                                            </a>
+                                                        </div>
+                                                    @else
+                                                        {{ $d->keterangan ?? '-' }}
+                                                    @endif
                                                 </td>
                                                 <td class="text-center">
                                                     {{ $d->tanggal_pengiriman ? \Carbon\Carbon::parse($d->tanggal_pengiriman)->translatedFormat('d M Y') : '-' }}
@@ -1320,6 +1340,19 @@
                 console.log('Modal is closing');
             });
         });
+
+            function toggleDetail(id) {
+            const shortText = document.getElementById('short-text-' + id);
+            const fullText = document.getElementById('full-text-' + id);
+
+            if (shortText.style.display === 'none') {
+                shortText.style.display = 'inline';
+                fullText.style.display = 'none';
+            } else {
+                shortText.style.display = 'none';
+                fullText.style.display = 'inline';
+            }
+        }
     </script>
 
 @endsection

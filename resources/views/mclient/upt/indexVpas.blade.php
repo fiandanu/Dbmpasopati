@@ -179,8 +179,7 @@
                                                         <span>
                                                             <i class="fas fa-search"></i>
                                                         </span>
-                                                        <input type="text" id="search-nama-upt"
-                                                            name="search_nama_upt">
+                                                        <input type="text" id="search-nama-upt" name="search_nama_upt">
                                                     </div>
                                                 </div>
                                             </th>
@@ -204,6 +203,18 @@
                                                         </span>
                                                         <input type="text" id="search-jenis-kendala"
                                                             name="search_jenis_kendala">
+                                                    </div>
+                                                </div>
+                                            </th>
+                                            <th class="align-top">
+                                                <div class="d-flex flex-column gap-12">
+                                                    <span>Detail Kendala</span>
+                                                    <div class="btn-searchbar column-search">
+                                                        <span>
+                                                            <i class="fas fa-search"></i>
+                                                        </span>
+                                                        <input type="text" id="search-detail-kendala"
+                                                            name="search_detail_kendala">
                                                     </div>
                                                 </div>
                                             </th>
@@ -272,6 +283,29 @@
                                                         {{ Str::limit($d->jenis_kendala ?? 'Belum ditentukan', 30) }}
                                                     </span>
                                                 </td>
+                                                <td>
+                                                    @if ($d->detail_kendala && strlen($d->detail_kendala) > 20)
+                                                        <div id="short-text-{{ $d->id }}">
+                                                            <div>{{ Str::limit($d->detail_kendala, 20) }}</div>
+                                                            <a href="javascript:void(0)" onclick="toggleDetail({{ $d->id }})"
+                                                                class="text-primary">
+                                                                <small>Show</small>
+                                                            </a>
+                                                        </div>
+                                                        <div id="full-text-{{ $d->id }}" style="display: none;">
+                                                            <div
+                                                                style="white-space: pre-wrap; word-wrap: break-word; max-width: 300px;">
+                                                                {{ $d->detail_kendala }}
+                                                            </div>
+                                                            <a href="javascript:void(0)" onclick="toggleDetail({{ $d->id }})"
+                                                                class="text-primary">
+                                                                <small>Hide</small>
+                                                            </a>
+                                                        </div>
+                                                    @else
+                                                        {{ $d->detail_kendala ?? '-' }}
+                                                    @endif
+                                                </td>
                                                 <td class="text-center">
                                                     {{ $d->tanggal_terlapor ? \Carbon\Carbon::parse($d->tanggal_terlapor)->translatedFormat('d M Y') : '-' }}
                                                 </td>
@@ -324,8 +358,7 @@
                                                     </a>
 
                                                     {{-- Delete Button --}}
-                                                    <a data-toggle="modal"
-                                                        data-target="#modal-default{{ $d->id }}" class="">
+                                                    <a data-toggle="modal" data-target="#modal-default{{ $d->id }}" class="">
                                                         <button>
                                                             <ion-icon name="trash-outline"></ion-icon>
                                                         </button>
@@ -347,8 +380,7 @@
                                                         <div class="modal-footer flex-row-reverse justify-content-between">
                                                             <button type="button" class="btn-cancel-modal"
                                                                 data-dismiss="modal">Tutup</button>
-                                                            <form
-                                                                action="{{ route('mcvpas.MclientVpasDestroy', $d->id) }}"
+                                                            <form action="{{ route('mcvpas.MclientVpasDestroy', $d->id) }}"
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
@@ -402,12 +434,10 @@
                                                         </label>
                                                         <div class="dropdown">
                                                             <div class="input-group">
-                                                                <input type="text" class="form-control"
-                                                                    id="upt_search" placeholder="Cari UPT..."
-                                                                    autocomplete="off">
+                                                                <input type="text" class="form-control" id="upt_search"
+                                                                    placeholder="Cari UPT..." autocomplete="off">
                                                                 <div class="input-group-append">
-                                                                    <button type="button"
-                                                                        class="btn btn-outline-secondary"
+                                                                    <button type="button" class="btn btn-outline-secondary"
                                                                         onclick="toggleUptDropdown()">
                                                                         <i class="fas fa-chevron-down"></i>
                                                                     </button>
@@ -431,8 +461,8 @@
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="kanwil" class="form-label">Kanwil</label>
-                                                        <input type="text" class="form-control" id="kanwil"
-                                                            name="kanwil" readonly>
+                                                        <input type="text" class="form-control" id="kanwil" name="kanwil"
+                                                            readonly>
                                                     </div>
                                                 </div>
                                             </div>
@@ -459,7 +489,8 @@
                                                     <div class="mb-3">
                                                         <label for="detail_kendala" class="form-label">Detail
                                                             Kendala</label>
-                                                        <textarea class="form-control" id="detail_kendala" name="detail_kendala" rows="3"
+                                                        <textarea class="form-control" id="detail_kendala"
+                                                            name="detail_kendala" rows="3"
                                                             placeholder="Jelaskan detail kendala lebih spesifik (opsional)"></textarea>
                                                     </div>
                                                 </div>
@@ -567,17 +598,15 @@
                                                     </div>
                                                     <div class="column">
                                                         <div class="mb-3">
-                                                            <label for="nama_upt_edit_{{ $d->id }}"
-                                                                class="form-label">Nama UPT</label>
-                                                            <select class="form-control"
-                                                                id="nama_upt_edit_{{ $d->id }}" name="nama_upt"
-                                                                onchange="updateKanwilEdit(this.value, {{ $d->id }})"
-                                                                required>
+                                                            <label for="nama_upt_edit_{{ $d->id }}" class="form-label">Nama
+                                                                UPT</label>
+                                                            <select class="form-control" id="nama_upt_edit_{{ $d->id }}"
+                                                                name="nama_upt"
+                                                                onchange="updateKanwilEdit(this.value, {{ $d->id }})" required>
                                                                 <option value="">-- Pilih UPT --</option>
                                                                 @foreach ($uptList as $upt)
                                                                     <option value="{{ $upt->namaupt }}"
-                                                                        data-kanwil="{{ $upt->kanwil->kanwil ?? '' }}"
-                                                                        {{ $d->nama_upt == $upt->namaupt ? 'selected' : '' }}>
+                                                                        data-kanwil="{{ $upt->kanwil->kanwil ?? '' }}" {{ $d->nama_upt == $upt->namaupt ? 'selected' : '' }}>
                                                                         {{ $upt->namaupt }}
                                                                     </option>
                                                                 @endforeach
@@ -601,16 +630,14 @@
                                                     <div class="row">
                                                         <div class="col">
                                                             <div class="mb-3">
-                                                                <label for="jenis_kendala{{ $d->id }}"
-                                                                    class="form-label">Jenis Kendala</label>
-                                                                <select class="form-control"
-                                                                    id="jenis_kendala{{ $d->id }}"
+                                                                <label for="jenis_kendala{{ $d->id }}" class="form-label">Jenis
+                                                                    Kendala</label>
+                                                                <select class="form-control" id="jenis_kendala{{ $d->id }}"
                                                                     name="jenis_kendala">
                                                                     <option value="">-- Pilih Jenis Kendala --
                                                                     </option>
                                                                     @foreach ($jenisKendala as $kendala)
-                                                                        <option value="{{ $kendala->jenis_kendala }}"
-                                                                            {{ $d->jenis_kendala == $kendala->jenis_kendala ? 'selected' : '' }}>
+                                                                        <option value="{{ $kendala->jenis_kendala }}" {{ $d->jenis_kendala == $kendala->jenis_kendala ? 'selected' : '' }}>
                                                                             {{ $kendala->jenis_kendala }}
                                                                         </option>
                                                                     @endforeach
@@ -629,7 +656,8 @@
                                                             <div class="mb-3">
                                                                 <label for="detail_kendala{{ $d->id }}"
                                                                     class="form-label">Detail Kendala</label>
-                                                                <textarea class="form-control" id="detail_kendala{{ $d->id }}" name="detail_kendala" rows="3"
+                                                                <textarea class="form-control" id="detail_kendala{{ $d->id }}"
+                                                                    name="detail_kendala" rows="3"
                                                                     placeholder="Jelaskan detail kendala lebih spesifik (opsional)">{{ $d->detail_kendala ?? '' }}</textarea>
                                                             </div>
                                                         </div>
@@ -644,42 +672,32 @@
 
                                                     <div class="">
                                                         <div class="mb-3">
-                                                            <label for="tanggal_terlapor{{ $d->id }}"
-                                                                class="form-label">Tanggal
+                                                            <label for="tanggal_terlapor{{ $d->id }}" class="form-label">Tanggal
                                                                 Terlapor</label>
                                                             <input type="date" class="form-control"
-                                                                id="tanggal_terlapor{{ $d->id }}"
-                                                                name="tanggal_terlapor"
+                                                                id="tanggal_terlapor{{ $d->id }}" name="tanggal_terlapor"
                                                                 value="{{ $d->tanggal_terlapor ? $d->tanggal_terlapor->format('Y-m-d') : '' }}">
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label for="tanggal_selesai{{ $d->id }}"
-                                                                class="form-label">Tanggal
+                                                            <label for="tanggal_selesai{{ $d->id }}" class="form-label">Tanggal
                                                                 Selesai</label>
                                                             <input type="date" class="form-control"
-                                                                id="tanggal_selesai{{ $d->id }}"
-                                                                name="tanggal_selesai"
+                                                                id="tanggal_selesai{{ $d->id }}" name="tanggal_selesai"
                                                                 value="{{ $d->tanggal_selesai ? $d->tanggal_selesai->format('Y-m-d') : '' }}">
                                                         </div>
                                                     </div>
 
                                                     <div class="mb-3">
-                                                        <label for="status{{ $d->id }}"
-                                                            class="form-label">Status</label>
-                                                        <select class="form-control" id="status{{ $d->id }}"
-                                                            name="status">
+                                                        <label for="status{{ $d->id }}" class="form-label">Status</label>
+                                                        <select class="form-control" id="status{{ $d->id }}" name="status">
                                                             <option value="">-- Pilih Status --</option>
-                                                            <option value="pending"
-                                                                {{ $d->status == 'pending' ? 'selected' : '' }}>
+                                                            <option value="pending" {{ $d->status == 'pending' ? 'selected' : '' }}>
                                                                 Pending</option>
-                                                            <option value="proses"
-                                                                {{ $d->status == 'proses' ? 'selected' : '' }}>
+                                                            <option value="proses" {{ $d->status == 'proses' ? 'selected' : '' }}>
                                                                 Proses</option>
-                                                            <option value="selesai"
-                                                                {{ $d->status == 'selesai' ? 'selected' : '' }}>
+                                                            <option value="selesai" {{ $d->status == 'selesai' ? 'selected' : '' }}>
                                                                 Selesai</option>
-                                                            <option value="terjadwal"
-                                                                {{ $d->status == 'terjadwal' ? 'selected' : '' }}>
+                                                            <option value="terjadwal" {{ $d->status == 'terjadwal' ? 'selected' : '' }}>
                                                                 Terjadwal</option>
                                                         </select>
                                                     </div>
@@ -694,12 +712,10 @@
                                                         <div class="mb-3">
                                                             <label for="pic_1{{ $d->id }}" class="form-label">PIC
                                                                 1</label>
-                                                            <select class="form-control" id="pic_1{{ $d->id }}"
-                                                                name="pic_1">
+                                                            <select class="form-control" id="pic_1{{ $d->id }}" name="pic_1">
                                                                 <option value="">-- Pilih PIC 1 --</option>
                                                                 @foreach ($picList as $pic)
-                                                                    <option value="{{ $pic->nama_pic }}"
-                                                                        {{ $d->pic_1 == $pic->nama_pic ? 'selected' : '' }}>
+                                                                    <option value="{{ $pic->nama_pic }}" {{ $d->pic_1 == $pic->nama_pic ? 'selected' : '' }}>
                                                                         {{ $pic->nama_pic }}
                                                                     </option>
                                                                 @endforeach
@@ -718,12 +734,10 @@
                                                         <div class="mb-3">
                                                             <label for="pic_2{{ $d->id }}" class="form-label">PIC
                                                                 2</label>
-                                                            <select class="form-control" id="pic_2{{ $d->id }}"
-                                                                name="pic_2">
+                                                            <select class="form-control" id="pic_2{{ $d->id }}" name="pic_2">
                                                                 <option value="">-- Pilih PIC 2 --</option>
                                                                 @foreach ($picList as $pic)
-                                                                    <option value="{{ $pic->nama_pic }}"
-                                                                        {{ $d->pic_2 == $pic->nama_pic ? 'selected' : '' }}>
+                                                                    <option value="{{ $pic->nama_pic }}" {{ $d->pic_2 == $pic->nama_pic ? 'selected' : '' }}>
                                                                         {{ $pic->nama_pic }}
                                                                     </option>
                                                                 @endforeach
@@ -761,8 +775,7 @@
                             <form method="GET" class="d-flex align-items-center">
                                 <!-- Preserve all search parameters -->
                                 @if (request('search_nama_upt'))
-                                    <input type="hidden" name="search_nama_upt"
-                                        value="{{ request('search_nama_upt') }}">
+                                    <input type="hidden" name="search_nama_upt" value="{{ request('search_nama_upt') }}">
                                 @endif
                                 @if (request('search_kanwil'))
                                     <input type="hidden" name="search_kanwil" value="{{ request('search_kanwil') }}">
@@ -798,8 +811,8 @@
                                 @endif
 
                                 <div class="d-flex align-items-center">
-                                    <select name="per_page" class="form-control form-control-sm pr-2"
-                                        style="width: auto;" onchange="this.form.submit()">
+                                    <select name="per_page" class="form-control form-control-sm pr-2" style="width: auto;"
+                                        onchange="this.form.submit()">
                                         <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10
                                         </option>
                                         <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>15
@@ -886,7 +899,7 @@
 
         // Update semua durasi yang masih berjalan di tabel
         function updateDurasiRealtime() {
-            document.querySelectorAll('.durasi-realtime').forEach(function(element) {
+            document.querySelectorAll('.durasi-realtime').forEach(function (element) {
                 const createdAtStr = element.getAttribute('data-created');
 
                 if (createdAtStr) {
@@ -902,7 +915,7 @@
 
         // Update durasi di modal edit yang terbuka
         function updateDurasiModal() {
-            document.querySelectorAll('.durasi-realtime-modal').forEach(function(element) {
+            document.querySelectorAll('.durasi-realtime-modal').forEach(function (element) {
                 const createdAtStr = element.getAttribute('data-created');
 
                 if (createdAtStr) {
@@ -915,25 +928,25 @@
         // Update setiap 1 detik
         let durasiInterval;
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Update pertama kali
             updateDurasiRealtime();
             updateDurasiModal();
 
             // Set interval untuk update setiap detik
-            durasiInterval = setInterval(function() {
+            durasiInterval = setInterval(function () {
                 updateDurasiRealtime();
                 updateDurasiModal();
             }, 1000);
         });
 
         // Update saat modal dibuka
-        $('.modal').on('shown.bs.modal', function() {
+        $('.modal').on('shown.bs.modal', function () {
             updateDurasiModal();
         });
 
         // Bersihkan interval saat halaman di-unload
-        window.addEventListener('beforeunload', function() {
+        window.addEventListener('beforeunload', function () {
             if (durasiInterval) {
                 clearInterval(durasiInterval);
             }
@@ -975,7 +988,7 @@
         }
 
         // Set kanwil untuk edit modal saat modal dibuka
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Set initial kanwil values for all edit modals
             @foreach ($data as $d)
                 const selectEdit{{ $d->id }} = document.getElementById(
@@ -994,16 +1007,16 @@
                     }
                 }
             @endforeach
-        });
+            });
 
         // Searchable UPT dropdown functionality
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const uptSearch = document.getElementById('upt_search');
             const uptDropdown = document.getElementById('uptDropdownMenu');
             const uptOptions = document.querySelectorAll('.upt-option');
 
             // Filter UPT options based on search input
-            uptSearch.addEventListener('input', function() {
+            uptSearch.addEventListener('input', function () {
                 const searchTerm = this.value.toLowerCase();
                 let hasVisibleOption = false;
 
@@ -1026,7 +1039,7 @@
             });
 
             // Show all options when clicking on search input
-            uptSearch.addEventListener('focus', function() {
+            uptSearch.addEventListener('focus', function () {
                 if (this.value.length > 0) {
                     const searchTerm = this.value.toLowerCase();
                     let hasVisibleOption = false;
@@ -1048,7 +1061,7 @@
             });
 
             // Hide dropdown when clicking outside
-            document.addEventListener('click', function(event) {
+            document.addEventListener('click', function (event) {
                 if (!event.target.closest('.dropdown')) {
                     uptDropdown.style.display = 'none';
                 }
@@ -1080,7 +1093,7 @@
         }
 
         // Clear UPT selection when search is cleared
-        document.getElementById('upt_search').addEventListener('input', function() {
+        document.getElementById('upt_search').addEventListener('input', function () {
             if (this.value === '') {
                 document.getElementById('nama_upt').value = '';
                 document.getElementById('kanwil').value = '';
@@ -1088,7 +1101,7 @@
         });
 
         // Reset form when modal is closed
-        $('#addModal').on('hidden.bs.modal', function() {
+        $('#addModal').on('hidden.bs.modal', function () {
             document.getElementById('upt_search').value = '';
             document.getElementById('nama_upt').value = '';
             document.getElementById('kanwil').value = '';
@@ -1098,7 +1111,7 @@
 
     {{-- Search and Filter JavaScript --}}
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             // Function to get current filter values
             function getFilters() {
                 return {
@@ -1117,7 +1130,7 @@
             }
 
             // Function to apply filters and redirect (GLOBAL - bisa dipanggil dari tombol)
-            window.applyFilters = function() {
+            window.applyFilters = function () {
                 let filters = getFilters();
                 let url = new URL(window.location.href);
 
@@ -1145,7 +1158,7 @@
             };
 
             // Function to clear all search filters (GLOBAL - bisa dipanggil dari tombol Reset)
-            window.clearAllFilters = function() {
+            window.clearAllFilters = function () {
                 // Clear semua input field dulu
                 $('#search-nama-upt').val('');
                 $('#search-kanwil').val('');
@@ -1177,21 +1190,21 @@
             };
 
             // Bind keypress event to all search input fields (Enter masih berfungsi)
-            $('.column-search input').on('keypress', function(e) {
+            $('.column-search input').on('keypress', function (e) {
                 if (e.which === 13) { // Enter key
                     applyFilters();
                 }
             });
 
             // Clear individual column search when input is emptied
-            $('.column-search input').on('keyup', function(e) {
+            $('.column-search input').on('keyup', function (e) {
                 if (e.which === 13 && $(this).val().trim() === '') {
                     applyFilters(); // Apply filters to update URL (removing empty filter)
                 }
             });
 
             // Download functions with current filters
-            window.downloadCsv = function() {
+            window.downloadCsv = function () {
                 let filters = getFilters();
                 let form = document.createElement('form');
                 form.method = 'GET';
@@ -1213,7 +1226,7 @@
                 document.body.removeChild(form);
             };
 
-            window.downloadPdf = function() {
+            window.downloadPdf = function () {
                 let filters = getFilters();
                 let form = document.createElement('form');
                 form.method = 'GET';
@@ -1276,18 +1289,31 @@
             }
 
             // Handle modal events
-            $('.modal').on('show.bs.modal', function(e) {
+            $('.modal').on('show.bs.modal', function (e) {
                 console.log('Modal is opening');
             });
 
-            $('.modal').on('shown.bs.modal', function(e) {
+            $('.modal').on('shown.bs.modal', function (e) {
                 console.log('Modal is fully visible');
             });
 
-            $('.modal').on('hide.bs.modal', function(e) {
+            $('.modal').on('hide.bs.modal', function (e) {
                 console.log('Modal is closing');
             });
         });
+            function toggleDetail(id) {
+            const shortText = document.getElementById('short-text-' + id);
+            const fullText = document.getElementById('full-text-' + id);
+
+            if (shortText.style.display === 'none') {
+                shortText.style.display = 'inline';
+                fullText.style.display = 'none';
+            } else {
+                shortText.style.display = 'none';
+                fullText.style.display = 'inline';
+            }
+        }
     </script>
+
 
 @endsection

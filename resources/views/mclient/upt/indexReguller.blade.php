@@ -207,6 +207,18 @@
                                                     </div>
                                                 </div>
                                             </th>
+                                            <th class="align-top">
+                                                <div class="d-flex flex-column gap-12">
+                                                    <span>Detail Kendala</span>
+                                                    <div class="btn-searchbar column-search">
+                                                        <span>
+                                                            <i class="fas fa-search"></i>
+                                                        </span>
+                                                        <input type="text" id="search-detail-kendala"
+                                                            name="search_detail_kendala"> placeholder="Search">
+                                                    </div>
+                                                </div>
+                                            </th>
                                             <th class="text-center align-top">
                                                 <span>Tanggal Terlapor</span>
                                             </th>
@@ -274,6 +286,29 @@
                                                     <span class="Tipereguller">
                                                         {{ Str::limit($d->jenis_kendala ?? 'Belum ditentukan', 30) }}
                                                     </span>
+                                                </td>
+                                                <td>
+                                                    @if ($d->detail_kendala && strlen($d->detail_kendala) > 20)
+                                                        <div id="short-text-{{ $d->id }}">
+                                                            <div>{{ Str::limit($d->detail_kendala, 20) }}</div>
+                                                            <a href="javascript:void(0)" onclick="toggleDetail({{ $d->id }})"
+                                                                class="text-primary">
+                                                                <small>Show</small>
+                                                            </a>
+                                                        </div>
+                                                        <div id="full-text-{{ $d->id }}" style="display: none;">
+                                                            <div
+                                                                style="white-space: pre-wrap; word-wrap: break-word; max-width: 300px;">
+                                                                {{ $d->detail_kendala }}
+                                                            </div>
+                                                            <a href="javascript:void(0)" onclick="toggleDetail({{ $d->id }})"
+                                                                class="text-primary">
+                                                                <small>Hide</small>
+                                                            </a>
+                                                        </div>
+                                                    @else
+                                                        {{ $d->detail_kendala ?? '-' }}
+                                                    @endif
                                                 </td>
                                                 <td class="text-center">
                                                     {{ $d->tanggal_terlapor ? \Carbon\Carbon::parse($d->tanggal_terlapor)->translatedFormat('d M Y') : '-' }}
@@ -1255,6 +1290,18 @@
                 console.log('Modal is closing');
             });
         });
+            function toggleDetail(id) {
+            const shortText = document.getElementById('short-text-' + id);
+            const fullText = document.getElementById('full-text-' + id);
+
+            if (shortText.style.display === 'none') {
+                shortText.style.display = 'inline';
+                fullText.style.display = 'none';
+            } else {
+                shortText.style.display = 'none';
+                fullText.style.display = 'inline';
+            }
+        }
     </script>
 
 @endsection
