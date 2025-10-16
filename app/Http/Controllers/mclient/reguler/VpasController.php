@@ -61,22 +61,6 @@ class VpasController extends Controller
 
     private function applyFilters($query, Request $request)
     {
-        // Global search
-        if ($request->has('table_search') && !empty($request->table_search)) {
-            $searchTerm = $request->table_search;
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('nama_upt', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('kanwil', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('jenis_kendala', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('detail_kendala', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('status', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('pic_1', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('pic_2', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('tanggal_terlapor', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('tanggal_selesai', 'LIKE', '%' . $searchTerm . '%');
-            });
-        }
-
         // Column-specific searches
         if ($request->has('search_nama_upt') && !empty($request->search_nama_upt)) {
             $query->where('nama_upt', 'LIKE', '%' . $request->search_nama_upt . '%');

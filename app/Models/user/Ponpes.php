@@ -36,7 +36,6 @@ class Ponpes extends Model
         return $this->hasOne(DataOpsionalPonpes::class, 'data_ponpes_id');
     }
 
-
     public function uploadFolderPks()
     {
         return $this->hasOne(UploadFolderPonpesPks::class, 'data_ponpes_id');

@@ -50,9 +50,24 @@ Auto Functions:
 
 ❌ [Tanggal] - [Deskripsi bug] - [Lokasi: ]
 
+
+
+=============================================================
+📝 KODE NULL SAFETY
+=============================================================
+
+- app\Http\Controllers\user\ponpes\vtren\VtrenController.php [di method exportPonpesCsv $rows]
+
+
+
+
 =============================================================
 📝 CATATAN REVISI
 =============================================================
+
+
+Kode yang perlu dirapihin lagi di bagian 
+
 
 
 -- Check Ulang

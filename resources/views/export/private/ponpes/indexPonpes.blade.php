@@ -84,7 +84,7 @@
         </tr>
         <tr>
             <td>Wilayah</td>
-            <td>{{ $ponpes->nama_wilayah }}</td>
+            <td>{{ $ponpes->namaWilayah->nama_wilayah }}</td>
         </tr>
         <tr>
             <td>Jumlah WBP</td>
@@ -170,7 +170,7 @@
         </tr>
         <tr>
             <td>Jenis VPN</td>
-            <td>{{ $ponpes->dataOpsional->jenis_vpn ?? '' }}</td>
+            <td>{{ $ponpes->dataOpsional->vpn->jenis_vpn ?? '' }}</td>
         </tr>
 
         <tr>

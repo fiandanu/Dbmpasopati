@@ -5,6 +5,8 @@ namespace App\Models\db\ponpes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\user\Ponpes;
+use App\Models\user\Provider;
+use App\Models\user\Vpn;
 
 class DataOpsionalPonpes extends Model
 {
@@ -77,7 +79,7 @@ class DataOpsionalPonpes extends Model
      */
     public function vpn()
     {
-        return $this->belongsTo(\App\Models\user\Vpn::class, 'vpns_id');
+        return $this->belongsTo(Vpn::class, 'vpns_id');
     }
 
     /**
@@ -86,12 +88,8 @@ class DataOpsionalPonpes extends Model
      */
     public function provider()
     {
-        return $this->belongsTo(\App\Models\user\Provider::class, 'provider_id');
+        return $this->belongsTo(Provider::class, 'provider_id');
     }
-
-    // ==========================================
-    // HELPER METHODS
-    // ==========================================
 
     /**
      * Cek apakah data opsional lengkap
@@ -153,11 +151,14 @@ class DataOpsionalPonpes extends Model
      */
     public function getFormattedTarifWartelAttribute()
     {
-        if (empty($this->tarif_wartel)) {
+        // Pastikan nilai adalah angka dan > 0
+        $tarif = $this->tarif_wartel ?? 0;
+
+        if (!is_numeric($tarif) || $tarif <= 0) {
             return 'Rp 0';
         }
 
-        return 'Rp ' . number_format($this->tarif_wartel, 0, ',', '.');
+        return 'Rp ' . number_format($tarif, 0, ',', '.');
     }
 
     /**

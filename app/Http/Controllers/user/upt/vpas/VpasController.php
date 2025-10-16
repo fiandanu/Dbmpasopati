@@ -364,6 +364,7 @@ class VpasController extends Controller
         return ucfirst($status);
     }
 
+    
     // Export data PDF INDIVIDUAL
     public function exportVerticalCsv($id): StreamedResponse
     {
@@ -430,6 +431,7 @@ class VpasController extends Controller
         $pdf = Pdf::loadView('export.private.upt.indexUpt', $data);
         return $pdf->download('data_upt_vpas_' . $user->namaupt . '.pdf');
     }
+
 
     // Export data CSV GLOBAL
     public function exportListCsv(Request $request): StreamedResponse

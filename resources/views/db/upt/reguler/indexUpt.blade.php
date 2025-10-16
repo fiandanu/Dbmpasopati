@@ -120,17 +120,6 @@
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
-                @if (request('table_search'))
-                    <div>
-                        <div class="alert alert-info">
-                            <i class="fas fa-info-circle"></i>
-                            Hasil pencarian untuk: "<strong>{{ request('table_search') }}</strong>"
-                            <a href="{{ route('upt.ListDataReguller') }}" class="btn btn-sm btn-secondary ml-2">
-                                <i class="fas fa-times"></i> Clear
-                            </a>
-                        </div>
-                    </div>
-                @endif
                 <div class="card">
                     <div class="card-body table-responsive p-0">
                         <table class="table table-hover text-nowrap" id="Table">
@@ -596,10 +585,6 @@
                     <div class="d-flex align-items-center gap-3">
                         <div class="btn-datakolom">
                             <form method="GET" class="d-flex align-items-center">
-                                <!-- Preserve all search parameters -->
-                                @if (request('table_search'))
-                                    <input type="hidden" name="table_search" value="{{ request('table_search') }}">
-                                @endif
                                 @if (request('search_namaupt'))
                                     <input type="hidden" name="search_namaupt"
                                         value="{{ request('search_namaupt') }}">
@@ -733,7 +718,6 @@
                 let url = new URL(window.location.href);
 
                 // Remove all search parameters
-                url.searchParams.delete('table_search');
                 url.searchParams.delete('search_namaupt');
                 url.searchParams.delete('search_kanwil');
                 url.searchParams.delete('search_tipe');

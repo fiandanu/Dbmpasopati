@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\db\ponpes\DataOpsionalPonpes;
+use App\Models\user\NamaWilayah;
 use App\Models\user\Ponpes;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -91,7 +92,7 @@ class PonpesFactory extends Factory
             'nama_ponpes' => $this->faker->randomElement($ponpesPrefixes) . ' ' .
                 $this->faker->randomElement($ponpesNames) . ' ' .
                 $this->faker->city,
-            'nama_wilayah' => $this->faker->randomElement($wilayahOptions),
+            'nama_wilayah_id' => NamaWilayah::all()->random()->id, // sesuai jumlah data di tabel nama_wilayah
             'tipe' => $this->faker->randomElement($tipeOptions),
             'tanggal' => $this->faker->dateTimeBetween('-2 years', 'now'),
         ];
@@ -132,7 +133,7 @@ class PonpesFactory extends Factory
         ];
 
         return $this->state(fn(array $attributes) => [
-            'nama_wilayah' => $this->faker->randomElement($wilayahJawa),
+            'nama_wilayah_id' => $this->faker->randomElement($wilayahJawa),
         ]);
     }
 
@@ -153,7 +154,7 @@ class PonpesFactory extends Factory
         ];
 
         return $this->state(fn(array $attributes) => [
-            'nama_wilayah' => $this->faker->randomElement($wilayahSumatera),
+            'nama_wilayah_id' => $this->faker->randomElement($wilayahSumatera),
         ]);
     }
 
@@ -171,7 +172,7 @@ class PonpesFactory extends Factory
         ];
 
         return $this->state(fn(array $attributes) => [
-            'nama_wilayah' => $this->faker->randomElement($wilayahKalimantan),
+            'nama_wilayah_id' => $this->faker->randomElement($wilayahKalimantan),
         ]);
     }
 
@@ -190,7 +191,7 @@ class PonpesFactory extends Factory
         ];
 
         return $this->state(fn(array $attributes) => [
-            'nama_wilayah' => $this->faker->randomElement($wilayahSulawesi),
+            'nama_wilayah_id' => $this->faker->randomElement($wilayahSulawesi),
         ]);
     }
 
@@ -200,7 +201,7 @@ class PonpesFactory extends Factory
     public function withRegionalName(): static
     {
         return $this->state(function (array $attributes) {
-            $wilayah = $attributes['nama_wilayah'] ?? $this->faker->randomElement([
+            $wilayah = $attributes['nama_wilayah_id'] ?? $this->faker->randomElement([
                 'Aceh',
                 'Jawa Barat',
                 'Jawa Timur',
@@ -220,7 +221,7 @@ class PonpesFactory extends Factory
             return [
                 'nama_ponpes' => 'Pondok Pesantren ' . $this->faker->randomElement($names) . ' ' .
                     $this->faker->city,
-                'nama_wilayah' => $wilayah,
+                'nama_wilayah_id' => $wilayah,
             ];
         });
     }

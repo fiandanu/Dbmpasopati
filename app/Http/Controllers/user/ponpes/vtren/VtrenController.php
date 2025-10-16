@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 class VtrenController extends Controller
 {
     private $optionalFields = [
+        'vpns_id',
         'pic_ponpes',
         'no_telpon',
         'alamat',
@@ -32,10 +33,7 @@ class VtrenController extends Controller
         'internet_protocol',
         'vpn_user',
         'vpn_password',
-        'jenis_vpn',
         'jumlah_extension',
-        'no_extension',
-        'extension_password',
         'pin_tes',
         'no_pemanggil',
         'email_airdroid',
@@ -67,27 +65,15 @@ class VtrenController extends Controller
 
     private function applyFilters($query, Request $request)
     {
-        // Global search
-        if ($request->has('table_search') && !empty($request->table_search)) {
-            $searchTerm = $request->table_search;
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('nama_ponpes', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('nama_wilayah', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('tanggal', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhereHas('dataOpsional', function ($subQuery) use ($searchTerm) {
-                        $subQuery->where('pic_ponpes', 'LIKE', '%' . $searchTerm . '%')
-                            ->orWhere('alamat', 'LIKE', '%' . $searchTerm . '%')
-                            ->orWhere('provider_internet', 'LIKE', '%' . $searchTerm . '%');
-                    });
-            });
-        }
 
         // Column-specific searches
         if ($request->has('search_namaponpes') && !empty($request->search_namaponpes)) {
             $query->where('nama_ponpes', 'LIKE', '%' . $request->search_namaponpes . '%');
         }
         if ($request->has('search_wilayah') && !empty($request->search_wilayah)) {
-            $query->where('nama_wilayah', 'LIKE', '%' . $request->search_wilayah . '%');
+            $query->whereHas('namaWilayah', function ($q) use ($request) {
+                $q->where('nama_wilayah', 'LIKE', '%' . $request->search_wilayah . '%');
+            });
         }
         if ($request->has('search_tipe') && !empty($request->search_tipe)) {
             $query->where('tipe', 'LIKE', '%' . $request->search_tipe . '%');
@@ -175,6 +161,187 @@ class VtrenController extends Controller
         return view('db.ponpes.vtren.indexVtren', compact('data', 'providers', 'vpns'));
     }
 
+
+    public function ListDataPonpesUpdate(Request $request, $id)
+    {
+        $validator = Validator::make(
+            $request->all(),
+            [
+                // Field Wajib Form Ponpes (tidak diupdate karena readonly di form)
+                'nama_ponpes' => 'nullable|string|max:255',
+                'nama_wilayah' => 'nullable|string|max:255',
+                'tipe' => 'nullable|string|max:255',
+                'tanggal' => 'nullable|date',
+
+                // Data Opsional
+                'pic_ponpes' => 'nullable|string|max:255',
+                'no_telpon' => 'nullable|string|regex:/^([0-9\s\-\+\(\)]*)$/|max:20',
+                'alamat' => 'nullable|string',
+                'jumlah_wbp' => 'nullable|integer|min:0',
+                'jumlah_line' => 'nullable|integer|min:0',
+                'provider_internet' => 'nullable|string|max:255',
+                'kecepatan_internet' => 'nullable|string|max:255',
+                'tarif_wartel' => 'nullable|string|max:255',
+                'status_wartel' => 'nullable|string',
+
+                // IMC PAS
+                'akses_topup_pulsa' => 'nullable|string',
+                'password_topup' => 'nullable|string|max:255',
+                'akses_download_rekaman' => 'nullable|string',
+                'password_download' => 'nullable|string|max:255',
+
+                // VPN
+                'internet_protocol' => 'nullable|string|max:255',
+                'vpn_user' => 'nullable|string|max:255',
+                'vpn_password' => 'nullable|string|max:255',
+                'vpns_id' => 'nullable|exists:vpns,id',
+
+                // Extension Reguler
+                'jumlah_extension' => 'nullable|integer|min:0',
+                'pin_tes' => 'nullable|string',
+                'no_pemanggil' => 'nullable|string',
+                'email_airdroid' => 'nullable|string',
+                'password' => 'nullable|string',
+            ],
+            [
+                'nama_ponpes.string' => 'Nama Ponpes harus berupa teks.',
+                'nama_wilayah.string' => 'Nama Wilayah harus berupa teks.',
+                'tanggal.date' => 'Format tanggal harus sesuai (YYYY-MM-DD).',
+
+                'pic_ponpes.string' => 'PIC Ponpes harus berupa teks.',
+                'no_telpon.regex' => 'Format nomor telepon tidak valid.',
+                'alamat.string' => 'Alamat harus berupa teks.',
+                'jumlah_wbp.integer' => 'Jumlah Santri harus berupa angka.',
+                'jumlah_wbp.min' => 'Jumlah Santri tidak boleh negatif.',
+                'jumlah_line.integer' => 'Jumlah line reguler harus berupa angka.',
+                'jumlah_line.min' => 'Jumlah line reguler tidak boleh negatif.',
+                'provider_internet.string' => 'Provider internet harus berupa teks.',
+                'kecepatan_internet.string' => 'Kecepatan internet harus berupa teks.',
+                'tarif_wartel.string' => 'Tarif wartel harus berupa teks.',
+                'status_wartel.string' => 'Status wartel harus Aktif atau Tidak Aktif.',
+
+                'akses_topup_pulsa.string' => 'Akses top up pulsa harus berupa teks.',
+                'password_topup.string' => 'Password top up harus berupa teks.',
+                'akses_download_rekaman.string' => 'Akses download rekaman harus berupa teks.',
+                'password_download.string' => 'Password download rekaman harus berupa teks.',
+
+                'internet_protocol.string' => 'Internet Protocol harus berupa teks.',
+                'vpn_user.string' => 'User VPN harus berupa teks.',
+                'vpn_password.string' => 'Password VPN harus berupa teks.',
+                'vpns_id.exists' => 'Jenis VPN harus berupa teks.',
+
+                'jumlah_extension.integer' => 'Jumlah extension harus berupa angka.',
+                'jumlah_extension.min' => 'Jumlah extension tidak boleh negatif.',
+                'pin_tes.string' => 'PIN Tes harus berupa teks.',
+                'no_pemanggil.string' => 'No Pemanggil harus berupa teks.',
+                'email_airdroid.string' => 'Email Airdroid harus berupa teks.',
+                'password.string' => 'Password harus berupa teks.',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput()
+                ->with('error', 'Validasi gagal. Silakan periksa input Anda.');
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $ponpes = Ponpes::findOrFail($id);
+
+            $ponpesData = [
+                'nama_ponpes' => $request->nama_ponpes,
+                'nama_wilayah' => $request->nama_wilayah,
+                'tipe' => $request->tipe,
+                'tanggal' => $request->tanggal ?? $ponpes->tanggal,
+            ];
+
+            $ponpes->update($ponpesData);
+
+            $opsionalData = [
+                'pic_ponpes' => $request->pic_ponpes,
+                'no_telpon' => $request->no_telpon,
+                'alamat' => $request->alamat,
+                'jumlah_wbp' => $request->jumlah_wbp,
+                'jumlah_line' => $request->jumlah_line,
+                'provider_internet' => $request->provider_internet,
+                'kecepatan_internet' => $request->kecepatan_internet,
+                'tarif_wartel' => $request->tarif_wartel,
+                'status_wartel' => $request->status_wartel,
+                'akses_topup_pulsa' => $request->akses_topup_pulsa,
+                'password_topup' => $request->password_topup,
+                'akses_download_rekaman' => $request->akses_download_rekaman,
+                'password_download' => $request->password_download,
+                'internet_protocol' => $request->internet_protocol,
+                'vpn_user' => $request->vpn_user,
+                'vpn_password' => $request->vpn_password,
+                'vpns_id' => $request->vpns_id,
+                'jumlah_extension' => $request->jumlah_extension,
+                'pin_tes' => $request->pin_tes,
+                'no_pemanggil' => $request->no_pemanggil,
+                'email_airdroid' => $request->email_airdroid,
+                'password' => $request->password,
+            ];
+
+            $ponpes->dataOpsional()->updateOrCreate(
+                ['data_ponpes_id' => $ponpes->id],
+                $opsionalData
+            );
+
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Data berhasil diupdate!');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()->with('error', 'Gagal update data: ' . $e->getMessage());
+        }
+    }
+
+    public function PonpesPageDestroy($id)
+    {
+        try {
+            DB::beginTransaction();
+
+            $ponpes = Ponpes::findOrFail($id);
+
+            if ($ponpes->dataOpsional) {
+                $ponpes->dataOpsional->delete();
+            }
+
+            $ponpes->delete();
+
+            DB::commit();
+
+            return redirect()->route('ListDataVtrend')->with('success', 'Data Ponpes berhasil dihapus!');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()->with('error', 'Gagal menghapus data: ' . $e->getMessage());
+        }
+    }
+
+    private function formatStatusWartel($status)
+    {
+        if (empty($status)) {
+            return '';
+        }
+
+        // Normalisasi status ke format yang benar
+        $status = strtolower(trim($status));
+
+        if ($status === 'aktif' || $status === '1' || $status === 'active') {
+            return 'Aktif';
+        } elseif ($status === 'tidak aktif' || $status === 'nonaktif' || $status === '0' || $status === 'inactive') {
+            return 'Tidak Aktif';
+        }
+
+        // Jika sudah dalam format yang benar, kembalikan seperti semula
+        return ucfirst($status);
+    }
+
+
+    // Export Data CSV GLOBAL
     public function exportListCsv(Request $request): StreamedResponse
     {
         $query = Ponpes::with('dataOpsional')->where('tipe', 'vtren');
@@ -230,6 +397,7 @@ class VtrenController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
+    // Export Data PDF GLOBAL
     public function exportListPdf(Request $request)
     {
         $query = Ponpes::with('dataOpsional')->where('tipe', 'vtren');
@@ -245,26 +413,14 @@ class VtrenController extends Controller
         // Apply status filter
         $data = $this->applyStatusFilter($data, $request);
 
-        // Convert collection to array with calculated status
-        $dataArray = [];
-        foreach ($data as $d) {
-            $dataItem = $d->toArray();
-            $dataItem['calculated_status'] = $this->calculateStatus($d->dataOpsional);
-            $dataArray[] = $dataItem;
-        }
-
-        // Additional sorting using correct field name
-        if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
-            usort($dataArray, function ($a, $b) {
-                $dateA = strtotime($a['tanggal']);
-                $dateB = strtotime($b['tanggal']);
-                return $dateA - $dateB;
-            });
-        }
+        $data->transform(function ($ponpes) {
+            $ponpes->calculated_status = $this->calculateStatus($ponpes->dataOpsional);
+            return $ponpes;
+        });
 
         $pdfData = [
             'title' => 'List Data Ponpes Vtren',
-            'data' => $dataArray,
+            'data' => $data,
             'optionalFields' => $this->optionalFields,
             'generated_at' => Carbon::now()->format('d M Y H:i:s')
         ];
@@ -275,174 +431,11 @@ class VtrenController extends Controller
         return $pdf->download($filename);
     }
 
-    public function ListDataPonpesUpdate(Request $request, $id)
-    {
-        $validator = Validator::make(
-            $request->all(),
-            [
-                // Field Wajib Form Ponpes (tidak diupdate karena readonly di form)
-                'nama_ponpes' => 'nullable|string|max:255',
-                'nama_wilayah' => 'nullable|string|max:255',
-                'tipe' => 'nullable|string|max:255',
-                'tanggal' => 'nullable|date',
 
-                // Data Opsional
-                'pic_ponpes' => 'nullable|string|max:255',
-                'no_telpon' => 'nullable|string|regex:/^([0-9\s\-\+\(\)]*)$/|max:20',
-                'alamat' => 'nullable|string',
-                'jumlah_wbp' => 'nullable|integer|min:0',
-                'jumlah_line' => 'nullable|integer|min:0',
-                'provider_internet' => 'nullable|string|max:255',
-                'kecepatan_internet' => 'nullable|string|max:255',
-                'tarif_wartel' => 'nullable|string|max:255',
-                'status_wartel' => 'nullable|string',
-
-                // IMC PAS
-                'akses_topup_pulsa' => 'nullable|string',
-                'password_topup' => 'nullable|string|max:255',
-                'akses_download_rekaman' => 'nullable|string',
-                'password_download' => 'nullable|string|max:255',
-
-                // VPN
-                'internet_protocol' => 'nullable|string|max:255',
-                'vpn_user' => 'nullable|string|max:255',
-                'vpn_password' => 'nullable|string|max:255',
-                'jenis_vpn' => 'nullable|string|max:255',
-
-                // Extension Reguler
-                'jumlah_extension' => 'nullable|integer|min:0',
-                'no_extension' => 'nullable|string',
-                'extension_password' => 'nullable|string',
-                'pin_tes' => 'nullable|string',
-                'no_pemanggil' => 'nullable|string',
-                'email_airdroid' => 'nullable|string',
-                'password' => 'nullable|string',
-            ],
-            [
-                'nama_ponpes.string' => 'Nama Ponpes harus berupa teks.',
-                'nama_wilayah.string' => 'Nama Wilayah harus berupa teks.',
-                'tanggal.date' => 'Format tanggal harus sesuai (YYYY-MM-DD).',
-
-                'pic_ponpes.string' => 'PIC Ponpes harus berupa teks.',
-                'no_telpon.regex' => 'Format nomor telepon tidak valid.',
-                'alamat.string' => 'Alamat harus berupa teks.',
-                'jumlah_wbp.integer' => 'Jumlah Santri harus berupa angka.',
-                'jumlah_wbp.min' => 'Jumlah Santri tidak boleh negatif.',
-                'jumlah_line.integer' => 'Jumlah line reguler harus berupa angka.',
-                'jumlah_line.min' => 'Jumlah line reguler tidak boleh negatif.',
-                'provider_internet.string' => 'Provider internet harus berupa teks.',
-                'kecepatan_internet.string' => 'Kecepatan internet harus berupa teks.',
-                'tarif_wartel.string' => 'Tarif wartel harus berupa teks.',
-                'status_wartel.string' => 'Status wartel harus Aktif atau Tidak Aktif.',
-
-                'akses_topup_pulsa.string' => 'Akses top up pulsa harus berupa teks.',
-                'password_topup.string' => 'Password top up harus berupa teks.',
-                'akses_download_rekaman.string' => 'Akses download rekaman harus berupa teks.',
-                'password_download.string' => 'Password download rekaman harus berupa teks.',
-
-                'internet_protocol.string' => 'Internet Protocol harus berupa teks.',
-                'vpn_user.string' => 'User VPN harus berupa teks.',
-                'vpn_password.string' => 'Password VPN harus berupa teks.',
-                'jenis_vpn.string' => 'Jenis VPN harus berupa teks.',
-
-                'jumlah_extension.integer' => 'Jumlah extension harus berupa angka.',
-                'jumlah_extension.min' => 'Jumlah extension tidak boleh negatif.',
-                'no_extension.string' => 'Nomor extension harus berupa teks.',
-                'extension_password.string' => 'Password extension harus berupa teks.',
-                'pin_tes.string' => 'PIN Tes harus berupa teks.',
-                'no_pemanggil.string' => 'No Pemanggil harus berupa teks.',
-                'email_airdroid.string' => 'Email Airdroid harus berupa teks.',
-                'password.string' => 'Password harus berupa teks.',
-            ]
-        );
-
-        if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput()
-                ->with('error', 'Validasi gagal. Silakan periksa input Anda.');
-        }
-
-        try {
-            DB::beginTransaction();
-
-            $ponpes = Ponpes::findOrFail($id);
-
-            $ponpesData = [
-                'nama_ponpes' => $request->nama_ponpes,
-                'nama_wilayah' => $request->nama_wilayah,
-                'tipe' => $request->tipe,
-                'tanggal' => $request->tanggal ?? $ponpes->tanggal,
-            ];
-
-            $ponpes->update($ponpesData);
-
-            $opsionalData = [
-                'pic_ponpes' => $request->pic_ponpes,
-                'no_telpon' => $request->no_telpon,
-                'alamat' => $request->alamat,
-                'jumlah_wbp' => $request->jumlah_wbp,
-                'jumlah_line' => $request->jumlah_line,
-                'provider_internet' => $request->provider_internet,
-                'kecepatan_internet' => $request->kecepatan_internet,
-                'tarif_wartel' => $request->tarif_wartel,
-                'status_wartel' => $request->status_wartel,
-                'akses_topup_pulsa' => $request->akses_topup_pulsa,
-                'password_topup' => $request->password_topup,
-                'akses_download_rekaman' => $request->akses_download_rekaman,
-                'password_download' => $request->password_download,
-                'internet_protocol' => $request->internet_protocol,
-                'vpn_user' => $request->vpn_user,
-                'vpn_password' => $request->vpn_password,
-                'jenis_vpn' => $request->jenis_vpn,
-                'jumlah_extension' => $request->jumlah_extension,
-                'pin_tes' => $request->pin_tes,
-                'no_extension' => $request->no_extension,
-                'extension_password' => $request->extension_password,
-                'no_pemanggil' => $request->no_pemanggil,
-                'email_airdroid' => $request->email_airdroid,
-                'password' => $request->password,
-            ];
-
-            $ponpes->dataOpsional()->updateOrCreate(
-                ['ponpes_id' => $ponpes->id],
-                $opsionalData
-            );
-
-            DB::commit();
-
-            return redirect()->back()->with('success', 'Data berhasil diupdate!');
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect()->back()->with('error', 'Gagal update data: ' . $e->getMessage());
-        }
-    }
-
-    public function PonpesPageDestroy($id)
-    {
-        try {
-            DB::beginTransaction();
-
-            $ponpes = Ponpes::findOrFail($id);
-
-            if ($ponpes->dataOpsional) {
-                $ponpes->dataOpsional->delete();
-            }
-
-            $ponpes->delete();
-
-            DB::commit();
-
-            return redirect()->route('ListDataVtrend')->with('success', 'Data Ponpes berhasil dihapus!');
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect()->back()->with('error', 'Gagal menghapus data: ' . $e->getMessage());
-        }
-    }
-
+    // Export data CSV INDIVIDUAL
     public function exportPonpesCsv($id): StreamedResponse
     {
-        $ponpes = Ponpes::with('dataOpsional')->findOrFail($id);
+        $ponpes = Ponpes::with('dataOpsional.vpn')->findOrFail($id);
         $dataOpsional = $ponpes->dataOpsional;
 
         $filename = 'data_ponpes_vtren_' . str_replace(' ', '_', $ponpes->nama_ponpes) . '_' . date('Y-m-d') . '.csv';
@@ -458,7 +451,7 @@ class VtrenController extends Controller
         $rows = [
             ['Field', 'Value'],
             ['Nama Ponpes', $ponpes->nama_ponpes],
-            ['Nama Wilayah', $ponpes->nama_wilayah],
+            ['Nama Wilayah', $ponpes->namaWilayah->nama_wilayah],
             ['Tipe', $ponpes->tipe],
             ['Tanggal', $ponpes->tanggal],
             ['PIC Ponpes', $dataOpsional ? $dataOpsional->pic_ponpes : ''],
@@ -477,10 +470,8 @@ class VtrenController extends Controller
             ['Internet Protocol', $dataOpsional ? $dataOpsional->internet_protocol : ''],
             ['VPN User', $dataOpsional ? $dataOpsional->vpn_user : ''],
             ['VPN Password', $dataOpsional ? $dataOpsional->vpn_password : ''],
-            ['Jenis VPN', $dataOpsional ? $dataOpsional->jenis_vpn : ''],
+            ['Jenis VPN', $dataOpsional ? $dataOpsional->vpn->jenis_vpn : ''],
             ['Jumlah Extension', $dataOpsional ? $dataOpsional->jumlah_extension : ''],
-            ['No Extension', $dataOpsional ? $dataOpsional->no_extension : ''],
-            ['Extension Password', $dataOpsional ? $dataOpsional->extension_password : ''],
             ['PIN Tes', $dataOpsional ? $dataOpsional->pin_tes : ''],
             ['No Pemanggil', $dataOpsional ? $dataOpsional->no_pemanggil : ''],
             ['Email Airdroid', $dataOpsional ? $dataOpsional->email_airdroid : ''],
@@ -500,25 +491,7 @@ class VtrenController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
-    private function formatStatusWartel($status)
-    {
-        if (empty($status)) {
-            return '';
-        }
-
-        // Normalisasi status ke format yang benar
-        $status = strtolower(trim($status));
-
-        if ($status === 'aktif' || $status === '1' || $status === 'active') {
-            return 'Aktif';
-        } elseif ($status === 'tidak aktif' || $status === 'nonaktif' || $status === '0' || $status === 'inactive') {
-            return 'Tidak Aktif';
-        }
-
-        // Jika sudah dalam format yang benar, kembalikan seperti semula
-        return ucfirst($status);
-    }
-
+    // Export data PDF INDIVIDUAL
     public function exportPonpesPdf($id)
     {
         $ponpes = Ponpes::with('dataOpsional')->findOrFail($id);

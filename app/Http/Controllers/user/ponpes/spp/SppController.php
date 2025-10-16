@@ -15,7 +15,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class SppController extends Controller
 {
-    private function calculatePdfStatus($uploadFolder)
+    private function calculateStatus($uploadFolder)
     {
         if (!$uploadFolder) {
             return 'Belum Upload';
@@ -42,18 +42,6 @@ class SppController extends Controller
 
     private function applyFilters($query, Request $request)
     {
-        // Global search
-        if ($request->has('table_search') && !empty($request->table_search)) {
-            $searchTerm = $request->table_search;
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('nama_ponpes', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhereHas('namaWilayah', function ($q) use ($searchTerm) {
-                        $q->where('nama_wilayah', 'LIKE', '%' . $searchTerm . '%');
-                    })
-                    ->orWhere('tanggal', 'LIKE', '%' . $searchTerm . '%');
-            });
-        }
-
         // Column-specific searches
         if ($request->has('search_namaponpes') && !empty($request->search_namaponpes)) {
             $query->where('nama_ponpes', 'LIKE', '%' . $request->search_namaponpes . '%');
@@ -86,7 +74,7 @@ class SppController extends Controller
             $statusSearch = strtolower($request->search_status);
             return $data->filter(function ($d) use ($statusSearch) {
                 // PERBAIKAN: Gunakan uploadFolderSpp
-                $status = strtolower($this->calculatePdfStatus($d->uploadFolderSpp));
+                $status = strtolower($this->calculateStatus($d->uploadFolderSpp));
                 return strpos($status, $statusSearch) !== false;
             });
         }
@@ -159,7 +147,7 @@ class SppController extends Controller
 
     public function exportListCsv(Request $request): StreamedResponse
     {
-        $query = Ponpes::with(['uploadFolderSpp', 'namaWilayah']);
+        $query = Ponpes::with(['uploadFolderSpp', 'namaWilayah'])->whereIn('tipe', ['vtren', 'reguler'])->whereHas('uploadFolderSpp');
         $query = $this->applyFilters($query, $request);
 
         if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
@@ -187,7 +175,7 @@ class SppController extends Controller
         $no = 1;
         foreach ($data as $d) {
             // PERBAIKAN: Gunakan uploadFolderSpp
-            $status = $this->calculatePdfStatus($d->uploadFolderSpp);
+            $status = $this->calculateStatus($d->uploadFolderSpp);
             $rows[] = [
                 $no++,
                 $d->nama_ponpes,
@@ -211,7 +199,7 @@ class SppController extends Controller
 
     public function exportListPdf(Request $request)
     {
-        $query = Ponpes::with(['uploadFolderSpp', 'namaWilayah']);
+        $query = Ponpes::with('uploadFolderSpp', 'namaWilayah')->whereIn('tipe', ['vtren', 'reguler' ])->whereHas('uploadFolderSpp');
         $query = $this->applyFilters($query, $request);
 
         if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
@@ -221,25 +209,14 @@ class SppController extends Controller
         $data = $query->get();
         $data = $this->applyPdfStatusFilter($data, $request);
 
-        $dataArray = [];
-        foreach ($data as $d) {
-            $dataItem = $d->toArray();
-            // PERBAIKAN: Gunakan uploadFolderSpp
-            $dataItem['calculated_status'] = $this->calculatePdfStatus($d->uploadFolderSpp);
-            $dataArray[] = $dataItem;
-        }
-
-        if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
-            usort($dataArray, function ($a, $b) {
-                $dateA = strtotime($a['tanggal']);
-                $dateB = strtotime($b['tanggal']);
-                return $dateA - $dateB;
-            });
-        }
+        $data->transform(function ($ponpes) {
+            $ponpes->calculated_status = $this->calculateStatus($ponpes->uploadFolderSpp);
+            return $ponpes;
+        });
 
         $pdfData = [
             'title' => 'List Data Ponpes SPP',
-            'data' => $dataArray,
+            'data' => $data,
             'generated_at' => Carbon::now()->format('d M Y H:i:s')
         ];
 
@@ -444,4 +421,5 @@ class SppController extends Controller
             return redirect()->back()->with('error', 'Gagal menghapus file: ' . $e->getMessage());
         }
     }
+
 }

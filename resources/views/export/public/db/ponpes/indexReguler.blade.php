@@ -92,7 +92,7 @@
                     <th style="width: 30%;">Nama Ponpes</th>
                     <th style="width: 15%;">Nama Wilayah</th>
                     <th style="width: 10%;">Tipe</th>
-                    <th style="width: 15%;">Tanggal Dibuat</th>
+                    <th style="width: 15%;">Tanggal</th>
                     <th style="width: 25%;">Status Update</th>
                 </tr>
             </thead>
@@ -100,31 +100,8 @@
                 @php $no = 1; @endphp
                 @foreach ($data as $d)
                     @php
-                        // FIXED: Use calculated_status if available, otherwise calculate
-                        if (isset($d['calculated_status'])) {
-                            $status = $d['calculated_status'];
-                        } else {
-                            // Fallback calculation if calculated_status not available
-                            $dataOpsional = (object) ($d['db_opsional_upt'] ?? null);
-                            $filledFields = 0;
-                            if ($dataOpsional) {
-                                foreach ($optionalFields as $field) {
-                                    if (!empty($dataOpsional->$field ?? '')) {
-                                        $filledFields++;
-                                    }
-                                }
-                            }
-                            $totalFields = count($optionalFields);
-                            $percentage = $totalFields > 0 ? round(($filledFields / $totalFields) * 100) : 0;
-
-                            if ($filledFields == 0) {
-                                $status = 'Belum di Update';
-                            } elseif ($filledFields == $totalFields) {
-                                $status = 'Sudah Update';
-                            } else {
-                                $status = "Sebagian ({$percentage}%)";
-                            }
-                        }
+                        // Gunakan calculated_status yang sudah disiapkan dari controller
+                        $status = $d->calculated_status ?? 'Belum di Update';
 
                         // Determine CSS class based on status
                         if (str_contains(strtolower($status), 'belum')) {
@@ -137,10 +114,10 @@
                     @endphp
                     <tr>
                         <td class="text-center">{{ $no++ }}</td>
-                        <td>{{ $d['nama_ponpes'] }}</td>
-                        <td>{{ $d['nama_wilayah'] }}</td>
-                        <td class="text-center">{{ ucfirst($d['tipe']) }}</td>
-                        <td class="text-center">{{ \Carbon\Carbon::parse($d['tanggal'])->format('d M Y') }}</td>
+                        <td>{{ $d->nama_ponpes }}</td>
+                        <td>{{ $d->namaWilayah->nama_wilayah }}</td>
+                        <td class="text-center">{{ ucfirst($d->tipe) }}</td>
+                        <td class="text-center">{{ \Carbon\Carbon::parse($d->tanggal)->format('d M Y') }}</td>
                         <td class="text-center {{ $statusClass }}">{{ $status }}</td>
                     </tr>
                 @endforeach
