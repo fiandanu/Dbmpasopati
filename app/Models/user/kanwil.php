@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Models\user;
+namespace App\Models\User;
 
+use App\Models\user\Upt;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
