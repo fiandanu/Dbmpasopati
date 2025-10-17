@@ -2,7 +2,7 @@
 
 namespace Database\Factories\user;
 
-use App\Models\User\Kanwil;
+use App\Models\user\Kanwil;
 use App\Models\User\Upt;
 use Illuminate\Database\Eloquent\Factories\Factory;
 

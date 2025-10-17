@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\User\Kanwil;
+use App\Models\user\Kanwil;
 use App\Models\User\NamaWilayah;
 
 class DatabaseSeeder extends Seeder

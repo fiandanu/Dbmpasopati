@@ -2,7 +2,7 @@
 
 namespace App\Models\mclient;
 
-use App\Models\User\Kanwil;
+use App\Models\user\Kanwil;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User\Upt;
