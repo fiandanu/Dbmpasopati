@@ -306,7 +306,7 @@
                             class="nav-item {{ Route::is('User.UserPage') || Route::is('UserPonpes.UserPage') || Route::is('provider.DataProvider') || Route::is('kendala.DataKendala') || Route::is('kanwil.DataKanwil') ? 'menu-open' : '' }}">
                             <a href="#" class="nav-link">
                                 <i class="fas fa-user nav-icon"></i>
-                                <p>User<i class="right fas fa-angle-left"></i></p>
+                                <p>Data Manajemen<i class="right fas fa-angle-left"></i></p>
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">

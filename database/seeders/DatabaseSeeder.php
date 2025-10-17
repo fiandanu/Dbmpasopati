@@ -4,13 +4,12 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\user\Kanwil;
-use App\Models\user\Upt;
 use App\Models\user\NamaWilayah;
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
-    {
+    { 
         // 1. Buat Kanwil dulu
         $kanwilData = [
             ['kanwil' => 'Kanwil Banten'],

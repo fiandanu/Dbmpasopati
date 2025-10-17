@@ -62,6 +62,30 @@ Kode yang perlu dirapihin lagi di bagian
 📝 CATATAN REVISI
 =============================================================
 
+- KHUSUS ROLE USER
+ Super Admin,Teknisi, Marketing
+
+ kolom di role 
+ - username
+ - nama
+ - password
+ - keterangan
+ - status kalo aktif role bisa login, dan sebaliknya
+ - level akses 
+ - history login 
+ - tanggal pembuatan
+
+ dibuat kolom untuk di halaman home usernya itu 
+ terakhir login dan tanggal pembuatan user
+
+
+
+- di halaman pengiriman alat di kolom penerima diketik sendiri DI HALAMAN PONPES DAN UPT MCLIENT
+- di halaman UPT PONPES dibuat untuk halaman Export PDF dan CSV
+-
+
+
+
 🔄 Di setiap jenis kendala ditambahkan keterangan dan pdf/csv (limit 10 karakter) Tinggal Di UPT
 -- On Prosses
 🔄 menampilkan keseluruhan total data di bawah perncarian kartu gsm vpas vtren
@@ -101,7 +125,6 @@ Kode yang perlu dirapihin lagi di bagian
 ✅ Di Page DB UPT Dan Ponpes di Pks dan spp ditambahkan data mirip seperti di Mclient reguller
 ✅ dibuatkan tombol edit penambahan tanggal kontrak dan tanggal selesai kontrak di bagian list data pks upt dan ponpes dan menghapus tipe vpas reg di bagian nama
 ✅ perbaikan pencarian status upload pdf di spp di bagian database upt dan ponpes
-
 
 
 
