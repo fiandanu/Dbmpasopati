@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\user\upt;
 
 use App\Http\Controllers\Controller;
-use App\Models\user\Upt;
+use App\Models\User\Upt;
 
 class DashboardUptController extends Controller
 {

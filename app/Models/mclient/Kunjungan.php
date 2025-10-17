@@ -4,7 +4,7 @@ namespace App\Models\mclient;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\user\Upt;
+use App\Models\User\Upt;
 use Carbon\Carbon;
 
 class Kunjungan extends Model

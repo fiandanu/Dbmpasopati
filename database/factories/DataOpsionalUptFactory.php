@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\db\DataOpsionalUpt;
-use App\Models\user\Upt;
+use App\Models\User\Upt;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

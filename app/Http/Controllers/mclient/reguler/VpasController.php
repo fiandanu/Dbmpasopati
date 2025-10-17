@@ -4,7 +4,7 @@ namespace App\Http\Controllers\mclient\reguler;
 
 use App\Http\Controllers\Controller;
 use App\Models\mclient\Vpas;
-use App\Models\user\Upt;
+use App\Models\User\Upt;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;

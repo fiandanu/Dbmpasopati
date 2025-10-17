@@ -3,7 +3,7 @@
 namespace Database\Factories\Mclient\Upt;
 
 use App\Models\mclient\Reguller;
-use App\Models\user\Upt;
+use App\Models\User\Upt;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Carbon\Carbon;
 

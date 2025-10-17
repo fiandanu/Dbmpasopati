@@ -4,7 +4,7 @@ namespace App\Http\Controllers\user\upt\pks;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\user\Upt;
+use App\Models\User\Upt;
 use App\Models\db\UploadFolderUptPks;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;

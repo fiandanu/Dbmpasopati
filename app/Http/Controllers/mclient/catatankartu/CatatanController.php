@@ -5,7 +5,7 @@ namespace App\Http\Controllers\mclient\catatankartu;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\mclient\catatankartu\Catatan;
-use App\Models\user\Upt;
+use App\Models\User\Upt;
 use App\Models\user\Pic;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;

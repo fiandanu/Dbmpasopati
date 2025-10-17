@@ -2,7 +2,7 @@
 
 namespace App\Models\db\upt;
 
-use App\Models\user\Upt;
+use App\Models\User\Upt;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
