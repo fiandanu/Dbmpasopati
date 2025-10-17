@@ -27,11 +27,11 @@
                         <div class="card-kategori">
                             <h3>VTREN</h3>
                             <p class="text-kategori mb-2">Layanan VTREN</p>
-                            <div class="data-badge mb-3">
+                            {{-- <div class="data-badge mb-3">
                                 <span class="checkmark">✓</span>
                                 100 Data
-                            </div>
-                            <a href="{{ route('mcvtren.ListDataMclientVtren') }}" class="list-button">Data VTREN</a>
+                            </div> --}}
+                            <a href="{{ route('mcvtren.ListDataMclientVtren') }}" class="list-button">Selengkapnya</a>
                         </div>
                     </div>
 
@@ -40,12 +40,11 @@
                         <div class="card-kategori">
                             <h3>Reguller</h3>
                             <p class="text-kategori mb-2">Layanan Reguller</p>
-                            <div class="data-badge mb-3">
+                            {{-- <div class="data-badge mb-3">
                                 <span class="checkmark">✓</span>
                                 100 Data
-                            </div>
-                            <a href="{{ route('mcponpesreguler.ListDataMclientPonpesReguller') }}" class="list-button">Data
-                                Reguller</a>
+                            </div> --}}
+                            <a href="{{ route('mcponpesreguler.ListDataMclientPonpesReguller') }}" class="list-button">Selengkapnya</a>
                         </div>
                     </div>
 
@@ -53,24 +52,24 @@
                     <div class="col-md-3 mb-3">
                         <div class="card-kategori">
                             <h3>Kunjungan Ponpes</h3>
-                            <p class="text-kategori mb-2">Layanan Kunjungan Ponpes</p>
-                            <div class="data-badge mb-3">
+                            <p class="text-kategori mb-2">Laporan dan rekap kunjungan pondok persantren</p>
+                            {{-- <div class="data-badge mb-3">
                                 <span class="checkmark">✓</span>
                                 {{ $ponpesKunjunganCount ?? 0 }} Data
-                            </div>
-                            <a href="{{ route('mckunjunganponpes.ListDataMclientPonpesKunjungan') }}" class="list-button">Kunjungan Ponpes</a>
+                            </div> --}}
+                            <a href="{{ route('mckunjunganponpes.ListDataMclientPonpesKunjungan') }}" class="list-button">Selengkapnya</a>
                         </div>
                     </div>
 
                     <div class="col-md-3 mb-3">
                         <div class="card-kategori">
-                            <h3>Setting Ponpes</h3>
-                            <p class="text-kategori mb-2">Layanan Setting Ponpes</p>
-                            <div class="data-badge mb-3">
+                            <h3>Setting Alat Ponpes</h3>
+                            <p class="text-kategori mb-2">Kelola dan pantau data alat pondok pesantren yang terpasang</p>
+                            {{-- <div class="data-badge mb-3">
                                 <span class="checkmark">✓</span>
                                 {{ $ponpesSettingCount ?? 0 }} Data
-                            </div>
-                            <a href="{{ route('mclientponpessetting.ListDataMclientPonpesSetting')}}" class="list-button">Setting Ponpes</a>
+                            </div> --}}
+                            <a href="{{ route('mclientponpessetting.ListDataMclientPonpesSetting')}}" class="list-button">Selengkapnya</a>
                         </div>
                     </div>
 
@@ -78,12 +77,12 @@
                     <div class="col-md-3 mb-3">
                         <div class="card-kategori">
                             <h3>Pengiriman Alat Ponpes</h3>
-                            <p class="text-kategori mb-2">Layanan Pengiriman Alat Ponpes</p>
-                            <div class="data-badge mb-3">
+                            <p class="text-kategori mb-2">Rekap pengiriman alat untuk setiap pondok pesantren</p>
+                            {{-- <div class="data-badge mb-3">
                                 <span class="checkmark">✓</span>
                                 100 Data
-                            </div>
-                            <a href="{{ route('mclientpengirimanponpes.ListDataMclientPonpesPengiriman') }}" class="list-button">Pengiriman Alat Ponpes</a>
+                            </div> --}}
+                            <a href="{{ route('mclientpengirimanponpes.ListDataMclientPonpesPengiriman') }}" class="list-button">Selengkapnya</a>
                         </div>
                     </div>
                     

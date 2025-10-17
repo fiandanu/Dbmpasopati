@@ -51,7 +51,7 @@
                     <div class="col-md-3">
                         <div class="card-kategori">
                             <h3>VPAS</h3>
-                            <p class="text-kategori mb-2">Layanan Vpas</p>
+                            <p class="text-kategori mb-2">Layanan VPAS</p>
                             {{-- <div class="data-badge mb-3">
                                 <span class="checkmark">✓</span>
                                 100 Data

@@ -6,7 +6,9 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\DataBaseController;
 use App\Http\Controllers\MonitoringServerController;
 use App\Http\Controllers\user\PageUser;
+use App\Http\Controllers\user\upt\DashboardUptController;
 use App\Http\Controllers\user\upt\reguler\RegullerController;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 Route::get('/', [LoginController::class, 'login'])->name('login');
 Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
@@ -16,11 +18,6 @@ Route::get('/DbPks', [DataBaseController::class, 'DbPks'])->name('DbPks');
 Route::get('/DbCreatePks', [DataBaseController::class, 'DbCreatePks'])->name('DbCreatePks');
 Route::post('/PksStore', [DataBaseController::class, 'PksStore'])->name('PksStore');
 Route::get('/DbVpas', [DataBaseController::class, 'DbVpas'])->name('DbVpas');
-
-Route::prefix('database')->name('database.')->group(function () {
-    Route::get('/DbUpt', [PageUser::class, 'DbUpt'])->name('DbUpt');
-    Route::get('/DataBasePonpes', [PageUser::class, 'DataBasePonpes'])->name('DataBasePonpes');
-});
 
 // Monitoring Server
 Route::get('/GrafikServer', [MonitoringServerController::class, 'GrafikServer'])->name('GrafikServer');
@@ -34,5 +31,5 @@ Route::get('/KomplainPonpes', [HomeController::class, 'KomplainPonpes'])->name('
 Route::get('/PencatatanKartu', [HomeController::class, 'PencatatanKartu'])->name('PencatatanKartu');
 
 
-// Route::get('/export-list-csv', [RegullerController::class, 'exportListCsv'])->name('export.list.csv');
-// Route::get('/export-list-pdf', [RegullerController::class, 'exportListPdf'])->name('export.list.pdf');
+
+
