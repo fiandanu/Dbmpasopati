@@ -5,7 +5,7 @@ namespace App\Http\Controllers\user\user;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\user\Kanwil;
-use App\Models\User\NamaWilayah;
+use App\Models\user\NamaWilayah;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Carbon\Carbon;

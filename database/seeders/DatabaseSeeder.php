@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\user\Kanwil;
-use App\Models\User\NamaWilayah;
+use App\Models\user\NamaWilayah;
 
 class DatabaseSeeder extends Seeder
 {
