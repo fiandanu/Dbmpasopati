@@ -5,7 +5,7 @@ namespace App\Http\Controllers\user\upt\reguler;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\user\Provider;
-use App\Models\User\Upt;
+use App\Models\user\Upt;
 use App\Models\db\DataOpsionalUpt;
 use App\Models\user\Vpn;
 use Carbon\Carbon;

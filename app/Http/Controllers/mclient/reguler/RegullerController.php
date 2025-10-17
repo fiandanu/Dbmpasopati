@@ -5,7 +5,7 @@ namespace App\Http\Controllers\mclient\reguler;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\mclient\Reguller;
-use App\Models\User\Upt;
+use App\Models\user\Upt;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 use App\Models\user\Kendala;

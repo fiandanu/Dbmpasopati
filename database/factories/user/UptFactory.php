@@ -3,7 +3,7 @@
 namespace Database\Factories\user;
 
 use App\Models\user\Kanwil;
-use App\Models\User\Upt;
+use App\Models\user\Upt;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class UptFactory extends Factory

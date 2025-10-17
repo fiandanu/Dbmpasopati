@@ -4,7 +4,7 @@ namespace App\Models\mclient;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User\Upt;
+use App\Models\user\Upt;
 use Carbon\Carbon;
 
 class SettingAlat extends Model

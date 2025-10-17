@@ -5,7 +5,7 @@ namespace App\Http\Controllers\user\user;
 use App\Http\Controllers\Controller;
 use App\Models\user\Provider;
 use Illuminate\Http\Request;
-use App\Models\User\Upt;
+use App\Models\user\Upt;
 use App\Models\user\Vpn;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
