@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Support\Facades\Route; 
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\user\ponpes\pks\PksController;
 
 // PKS Ponpes
@@ -13,10 +13,10 @@ Route::prefix('DbPonpes.pks.')->name('DbPonpes.pks.')->group(function () {
     Route::put('/update/{id}', [PksController::class, 'update'])->name('update');
     Route::delete('/DataBasePageDestroy/{id}', [PksController::class, 'DataBasePageDestroy'])->name('DataBasePageDestroy');
 
-    // Upload PDF
-    Route::post('/upload-pdf-ponpes/{id}', [PksController::class, 'uploadFilePDFPonpesPks'])->name('uploadFilePDFPonpesPks');
-    Route::get('/view-pdf-ponpes/{id}', [PksController::class, 'viewUploadedPDF'])->name('viewpdf.ponpes');
-    Route::delete('/delete-pdf-ponpes/{id}', [PksController::class, 'deleteFilePDF'])->name('deleteFilePDF.ponpes');
+    // Upload PDF - PERBAIKAN: Tambahkan {folderNumber}
+    Route::post('/upload-pdf-ponpes/{id}/{folderNumber}', [PksController::class, 'uploadFilePDFPonpesPks'])->name('uploadFilePDFPonpesPks');
+    Route::get('/view-pdf-ponpes/{id}/{folderNumber}', [PksController::class, 'viewUploadedPDF'])->name('viewpdf.ponpes');
+    Route::delete('/delete-pdf-ponpes/{id}/{folderNumber}', [PksController::class, 'deleteFilePDF'])->name('deleteFilePDF.ponpes');
 
     // Export Data Global
     Route::get('/ponpes/pks/export-csv', [PksController::class, 'exportListCsv'])->name('export.list.csv');

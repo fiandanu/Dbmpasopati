@@ -352,12 +352,17 @@ class PksController extends Controller
                 return redirect()->back()->with('error', 'File PDF belum di-upload untuk folder ini.');
             }
 
+            // Simpan nama file untuk pesan sukses
+            $fileName = basename($uploadFolder->$columnName);
+
             if (Storage::disk('public')->exists($uploadFolder->$columnName)) {
                 Storage::disk('public')->delete($uploadFolder->$columnName);
             }
 
             $uploadFolder->$columnName = null;
             $uploadFolder->save();
+
+            Log::info("PDF deleted successfully for Ponpes PKS ID: {$id}, Folder: {$folderNumber}");
 
             return redirect()->back()->with('success', 'File PDF Folder ' . $folderNumber . ' berhasil dihapus');
         } catch (\Exception $e) {
@@ -438,7 +443,7 @@ class PksController extends Controller
             $uploadFolder = UploadFolderPonpesPks::where('data_ponpes_id', $id)->first();
 
             if ($uploadFolder) {
-                // Hapus file PDF yang terkait
+                // Hapus file PDF yang terkait (kedua folder)
                 if (!empty($uploadFolder->uploaded_pdf_1) && Storage::disk('public')->exists($uploadFolder->uploaded_pdf_1)) {
                     Storage::disk('public')->delete($uploadFolder->uploaded_pdf_1);
                 }
@@ -449,9 +454,11 @@ class PksController extends Controller
 
                 // Hapus record upload folder
                 $uploadFolder->delete();
+
+                Log::info("Upload folder and PDFs deleted successfully for Ponpes PKS ID: {$id}");
             }
 
-            return redirect()->back()->with('success', 'Data berhasil dihapus');
+            return redirect()->back()->with('success', 'Data PKS berhasil dihapus');
         } catch (\Exception $e) {
             Log::error('Error deleting Ponpes PKS: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Gagal menghapus data: ' . $e->getMessage());
