@@ -5,7 +5,6 @@ namespace App\Models\mclient\catatankartu;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User\Upt;
-use Carbon\Carbon;
 
 class Catatan extends Model
 {
@@ -51,9 +50,9 @@ class Catatan extends Model
 
     public function getTotalSpamVpasAttribute()
     {
-        return (intval($this->spam_vpas_kartu_baru ?? '0')) + 
-               (intval($this->spam_vpas_kartu_bekas ?? '0')) + 
-               (intval($this->spam_vpas_kartu_goip ?? '0'));
+        return (intval($this->spam_vpas_kartu_baru ?? '0')) +
+            (intval($this->spam_vpas_kartu_bekas ?? '0')) +
+            (intval($this->spam_vpas_kartu_goip ?? '0'));
     }
 
     public function getTotalKartuTertanganiAttribute()
@@ -89,11 +88,11 @@ class Catatan extends Model
     {
         $total = intval($this->card_supporting ?? '0');
         $used = intval($this->jumlah_kartu_terpakai_perhari ?? '0');
-        
+
         if ($total == 0) {
             return 0;
         }
-        
+
         return round(($used / $total) * 100, 1);
     }
 
