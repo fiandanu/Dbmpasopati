@@ -6,9 +6,7 @@ use App\Models\db\upt\DataOpsionalUpt;
 use App\Models\user\upt\Upt;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\db\DataOpsionalUpt>
- */
+
 class DataOpsionalUptFactory extends Factory
 {
     protected $model = DataOpsionalUpt::class;

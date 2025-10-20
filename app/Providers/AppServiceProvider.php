@@ -29,6 +29,11 @@ class AppServiceProvider extends ServiceProvider
             database_path('migrations/db/ponpes'),
 
 
+            // Mclient --------------------------------
+            database_path('migrations/mclient/ponpes'),
+            database_path('migrations/mclient/upt'),
+
+
             // User --------------------------------
             database_path('migrations/user/upt'),
             database_path('migrations/user/ponpes'),

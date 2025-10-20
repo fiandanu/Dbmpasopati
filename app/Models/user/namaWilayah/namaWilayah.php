@@ -34,45 +34,22 @@ class NamaWilayah extends Model
         return $this->dataPonpes();
     }
 
-    // ==========================================
-    // SCOPES
-    // ==========================================
-
-    /**
-     * Scope untuk mencari wilayah berdasarkan nama
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param string $term
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
     public function scopeSearch($query, $term)
     {
         return $query->where('nama_wilayah', 'LIKE', "%{$term}%");
     }
 
-    /**
-     * Scope untuk wilayah yang memiliki ponpes
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
     public function scopeHasPonpes($query)
     {
         return $query->whereHas('dataPonpes');
     }
 
-    /**
-     * Scope untuk ordering berdasarkan nama
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param string $direction
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
+
     public function scopeOrderByName($query, $direction = 'asc')
     {
         return $query->orderBy('nama_wilayah', $direction);
     }
 
-    // ==========================================
-    // ACCESSORS
-    // ==========================================
 
     /**
      * Accessor untuk menampilkan nama wilayah dengan format yang konsisten
@@ -83,9 +60,6 @@ class NamaWilayah extends Model
         return ucwords(strtolower($this->nama_wilayah));
     }
 
-    // ==========================================
-    // HELPER METHODS
-    // ==========================================
 
     /**
      * Hitung jumlah ponpes di wilayah ini

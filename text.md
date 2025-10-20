@@ -78,10 +78,12 @@ Kode yang perlu dirapihin lagi di bagian
  dibuat kolom untuk di halaman home usernya itu 
  terakhir login dan tanggal pembuatan user
 
+ 
+
 
 
 - di halaman pengiriman alat di kolom penerima diketik sendiri DI HALAMAN PONPES DAN UPT MCLIENT
-- di halaman UPT PONPES dibuat untuk halaman Export PDF dan CSV
+- di halaman DB UPT PONPES dibuat untuk halaman Export PDF dan CSV
 -
 
 
@@ -112,8 +114,8 @@ Kode yang perlu dirapihin lagi di bagian
 ✅ REVISI SELESAI
 =============================================================
 
--- Check Ulang
-
+-- Check Ulang 
+20/10/2025
 ✅ Kanwil dan Nama Wilayah dibuat menjadi dropdown saja ------- done
 ✅ pada saat menentukan tanggal terlapor maka otomatis hari akan berjalan
 ✅ Nerapin Durasi Hari ke halaman yang pake ini di mclient Ponpes/UPT
@@ -126,14 +128,13 @@ Kode yang perlu dirapihin lagi di bagian
 ✅ dibuatkan tombol edit penambahan tanggal kontrak dan tanggal selesai kontrak di bagian list data pks upt dan ponpes dan menghapus tipe vpas reg di bagian nama
 ✅ perbaikan pencarian status upload pdf di spp di bagian database upt dan ponpes
 
-
-
     di bagian add modal dan edit belum
 ✅ pic 1 menjadi pic dan pic 2 menjadi penerima di bagian pengiriman alat ponpes
 - (Nama Db Belum Diubah)
 ✅ tanggal selesai di ganti menjadi tnaggal diterima di bagian pengiriman alat ponpes
-
 ✅ Tanggal Kontrak dan Jatuh Tempo
+
+
 
 =============================================================
 📊 PROGRESS SUMMARY

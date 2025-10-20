@@ -7,9 +7,6 @@ use App\Models\user\namaWilayah\NamaWilayah;
 use App\Models\user\ponpes\Ponpes;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\user\Ponpes>
- */
 class PonpesFactory extends Factory
 {
     protected $model = Ponpes::class;

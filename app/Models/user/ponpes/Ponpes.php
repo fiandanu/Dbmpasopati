@@ -48,8 +48,6 @@ class Ponpes extends Model
     }
 
 
-
-
     public function hasPdfInFolder($folderNumber)
     {
         if (!$this->uploadFolderSpp) {
