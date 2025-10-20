@@ -3,17 +3,17 @@
 namespace App\Http\Controllers\user\user;
 
 use App\Http\Controllers\Controller;
-use App\Models\user\Provider;
+use App\Models\user\provider\Provider;
 use Illuminate\Http\Request;
-use App\Models\user\Upt;
-use App\Models\user\Vpn;
+use App\Models\user\upt\Upt;
+use App\Models\user\vpn\Vpn;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Barryvdh\DomPDF\Facade\Pdf;
-use App\Models\user\Kanwil;
+use App\Models\user\kanwil\Kanwil;
 
 class ListDataUptController extends Controller
 {

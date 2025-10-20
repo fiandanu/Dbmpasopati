@@ -4,8 +4,8 @@ namespace App\Http\Controllers\user\user;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\user\NamaWilayah;
-use App\Models\user\Kanwil;
+use App\Models\user\namaWilayah\NamaWilayah;
+use App\Models\user\kanwil\Kanwil;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Carbon\Carbon;

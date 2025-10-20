@@ -4,8 +4,8 @@ namespace App\Http\Controllers\user\provider;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\user\Provider;
-use App\Models\user\Vpn;
+use App\Models\user\provider\Provider;
+use App\Models\user\vpn\Vpn;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Carbon\Carbon;

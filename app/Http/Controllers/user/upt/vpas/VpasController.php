@@ -4,10 +4,10 @@ namespace App\Http\Controllers\user\upt\vpas;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\user\Provider;
-use App\Models\user\Upt;
-use App\Models\db\DataOpsionalUpt;
-use App\Models\user\Vpn;
+use App\Models\user\provider\Provider;
+use App\Models\user\upt\Upt;
+use App\Models\db\upt\DataOpsionalUpt;
+use App\Models\user\vpn\Vpn;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;

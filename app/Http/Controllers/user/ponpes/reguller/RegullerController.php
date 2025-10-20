@@ -4,9 +4,9 @@ namespace App\Http\Controllers\user\ponpes\reguller;
 
 use App\Http\Controllers\Controller;
 use App\Models\db\ponpes\DataOpsionalPonpes;
-use App\Models\user\Provider;
-use App\Models\user\Ponpes;
-use App\Models\user\Vpn;
+use App\Models\user\provider\Provider;
+use App\Models\user\ponpes\Ponpes;
+use App\Models\user\vpn\Vpn;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;

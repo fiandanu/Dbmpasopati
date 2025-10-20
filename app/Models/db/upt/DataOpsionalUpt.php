@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Models\db;
+namespace App\Models\db\upt;
 
-use App\Models\user\Upt;
-use App\Models\user\Vpn;
+use App\Models\user\upt\Upt;
+use App\Models\user\vpn\Vpn;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -104,8 +104,8 @@ class DataOpsionalUpt extends Model
         return $this->hasOne(Upt::class, 'data_upt_id');
     }
 
-    public function vpn() {
+    public function vpn()
+    {
         return $this->belongsTo(Vpn::class, 'vpns_id');
     }
-
 }

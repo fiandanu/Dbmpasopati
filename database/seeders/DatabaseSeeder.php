@@ -3,12 +3,12 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\user\Kanwil;
-use App\Models\user\Kendala;
-use App\Models\user\NamaWilayah;
-use App\Models\user\Pic;
-use App\Models\user\Provider;
-use App\Models\user\Vpn;
+use App\Models\user\kanwil\Kanwil;
+use App\Models\user\kendala\Kendala;
+use App\Models\user\namaWilayah\NamaWilayah;
+use App\Models\user\pic\Pic;
+use App\Models\user\provider\Provider;
+use App\Models\user\vpn\Vpn;
 
 class DatabaseSeeder extends Seeder
 {

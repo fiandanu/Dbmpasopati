@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\user;
+namespace App\Models\user\kendala;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

@@ -4,11 +4,11 @@ namespace App\Http\Controllers\mclient\ponpes;
 
 use App\Http\Controllers\Controller;
 use App\Models\mclient\ponpes\Kunjungan;
-use App\Models\user\Ponpes;
+use App\Models\user\ponpes\Ponpes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
-use App\Models\user\Pic;
+use App\Models\user\pic\Pic;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class KunjunganController extends Controller

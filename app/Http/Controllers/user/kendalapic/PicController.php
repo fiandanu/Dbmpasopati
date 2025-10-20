@@ -4,8 +4,8 @@ namespace App\Http\Controllers\user\kendalapic;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\user\Pic;
-use App\Models\user\Kendala;
+use App\Models\user\pic\Pic;
+use App\Models\user\kendala\Kendala;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Carbon\Carbon;

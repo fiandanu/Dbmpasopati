@@ -4,8 +4,8 @@ namespace Database\Factories\mclient\catatankartu;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\mclient\catatankartu\Catatan;
-use App\Models\user\Upt;
-use App\Models\user\Pic;
+use App\Models\user\upt\Upt;
+use App\Models\user\pic\Pic;
 
 
 class VpasFactory extends Factory

@@ -4,7 +4,7 @@ namespace App\Models\mclient\catatankartu;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\user\Upt;
+use App\Models\user\upt\Upt;
 
 class Catatan extends Model
 {

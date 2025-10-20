@@ -2,7 +2,7 @@
 
 namespace App\Models\db\upt;
 
-use App\Models\user\Upt;
+use App\Models\user\upt\Upt;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,19 +14,28 @@ class UploadFolderUptPks extends Model
 
     protected $fillable = [
         'data_upt_id',
-        'tanggal_kontrak',
         'tanggal_jatuh_tempo',
-        'uploaded_pdf_1',
-        'uploaded_pdf_2',
-    ];
-
-    protected $casts = [
-        'tanggal_kontrak' => 'date',
-        'tanggal_jatuh_tempo' => 'date',
+        'tanggal_kontrak',
+        'uploaded_pdf',
     ];
 
     public function upt()
     {
         return $this->belongsTo(Upt::class, 'data_upt_id');
+    }
+
+    // Helper method untuk cek apakah sudah upload
+    public function hasUploadedPdf()
+    {
+        return !empty($this->uploaded_pdf);
+    }
+
+    // Get file name
+    public function getPdfFileName()
+    {
+        if (!empty($this->uploaded_pdf)) {
+            return basename($this->uploaded_pdf);
+        }
+        return null;
     }
 }

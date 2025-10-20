@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Models\user;
+namespace App\Models\user\upt;
 
-use App\Models\db\DataOpsionalUpt;
-use App\Models\db\UploadFolderUptPks;
-use App\Models\db\UploadFolderUptSpp;
+use App\Models\db\upt\DataOpsionalUpt;
+use App\Models\db\upt\UploadFolderUptPks;
+use App\Models\db\upt\UploadFolderUptSpp;
+use App\Models\user\kanwil\Kanwil;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 

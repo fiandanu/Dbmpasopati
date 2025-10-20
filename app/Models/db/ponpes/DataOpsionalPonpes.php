@@ -4,9 +4,9 @@ namespace App\Models\db\ponpes;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\user\Ponpes;
-use App\Models\user\Provider;
-use App\Models\user\Vpn;
+use App\Models\user\ponpes\Ponpes;
+use App\Models\user\provider\Provider;
+use App\Models\user\vpn\Vpn;
 
 class DataOpsionalPonpes extends Model
 {

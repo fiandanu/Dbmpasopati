@@ -4,8 +4,8 @@ namespace App\Http\Controllers\mclient\catatankartu;
 
 use App\Http\Controllers\Controller;
 use App\Models\mclient\catatankartu\Vtren;
-use App\Models\user\Pic;
-use App\Models\user\Ponpes;
+use App\Models\user\pic\Pic;
+use App\Models\user\ponpes\Ponpes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;

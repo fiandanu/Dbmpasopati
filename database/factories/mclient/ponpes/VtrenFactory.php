@@ -3,7 +3,7 @@
 namespace Database\Factories\Mclient\Ponpes;
 
 use App\Models\mclient\ponpes\Vtren;
-use App\Models\user\Ponpes;
+use App\Models\user\ponpes\Ponpes;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Carbon\Carbon;
 

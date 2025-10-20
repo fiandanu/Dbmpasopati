@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Models\user;
+namespace App\Models\user\ponpes;
 
 use App\Models\db\ponpes\DataOpsionalPonpes;
 use App\Models\db\ponpes\UploadFolderPonpesPks;
 use App\Models\db\ponpes\UploadFolderPonpesSpp;
+use App\Models\user\namaWilayah\NamaWilayah;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 

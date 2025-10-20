@@ -2,8 +2,8 @@
 
 namespace Database\Factories\user;
 
-use App\Models\user\Kanwil;
-use App\Models\user\Upt;
+use App\Models\user\kanwil\Kanwil;
+use App\Models\user\upt\Upt;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class UptFactory extends Factory

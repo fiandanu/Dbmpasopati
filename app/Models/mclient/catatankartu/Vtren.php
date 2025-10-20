@@ -2,7 +2,7 @@
 
 namespace App\Models\mclient\catatankartu;
 
-use App\Models\user\Ponpes;
+use App\Models\user\ponpes\Ponpes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 

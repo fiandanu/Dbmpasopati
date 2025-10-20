@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Models\db\DataOpsionalUpt;
-use App\Models\user\Upt;
+use App\Models\db\upt\DataOpsionalUpt;
+use App\Models\user\upt\Upt;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

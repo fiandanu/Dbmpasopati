@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Models\User;
+namespace App\Models\user\kanwil;
 
-use App\Models\user\Upt;
+use App\Models\user\upt\Upt;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -25,5 +25,4 @@ class Kanwil extends Model
     {
         return $this->hasMany(Upt::class, 'kanwil_id');
     }
-
 }

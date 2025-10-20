@@ -4,9 +4,9 @@ namespace App\Http\Controllers\user\ponpes\vtren;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\user\Provider;
-use App\Models\user\Ponpes;
-use App\Models\user\Vpn;
+use App\Models\user\provider\Provider;
+use App\Models\user\ponpes\Ponpes;
+use App\Models\user\vpn\Vpn;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\StreamedResponse;

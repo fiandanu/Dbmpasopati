@@ -4,8 +4,8 @@ namespace App\Http\Controllers\user\ponpes\spp;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\user\Ponpes;
-use App\Models\user\Provider;
+use App\Models\user\ponpes\Ponpes;
+use App\Models\user\provider\Provider;
 use App\Models\db\ponpes\UploadFolderPonpesSpp;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;

@@ -3,7 +3,7 @@
 namespace Database\Factories\Mclient\Upt;
 
 use App\Models\mclient\Vpas;
-use App\Models\user\Upt;
+use App\Models\user\upt\Upt;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Carbon\Carbon;
 

@@ -2,10 +2,10 @@
 
 namespace App\Models\mclient\ponpes;
 
-use App\Models\user\NamaWilayah;
+use App\Models\user\namaWilayah\NamaWilayah;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\user\Ponpes;
+use App\Models\user\ponpes\Ponpes;
 use Carbon\Carbon;
 
 class Vtren extends Model

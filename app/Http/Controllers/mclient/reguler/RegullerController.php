@@ -5,11 +5,11 @@ namespace App\Http\Controllers\mclient\reguler;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\mclient\Reguller;
-use App\Models\user\Upt;
+use App\Models\user\upt\Upt;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
-use App\Models\user\Kendala;
-use App\Models\user\Pic;
+use App\Models\user\kendala\Kendala;
+use App\Models\user\pic\Pic;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Barryvdh\DomPDF\Facade\Pdf;
 

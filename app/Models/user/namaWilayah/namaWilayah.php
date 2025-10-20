@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Models\user;
+namespace App\Models\user\namaWilayah;
 
+use App\Models\user\ponpes\Ponpes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 

@@ -3,8 +3,8 @@
 namespace Database\Factories;
 
 use App\Models\db\ponpes\DataOpsionalPonpes;
-use App\Models\user\NamaWilayah;
-use App\Models\user\Ponpes;
+use App\Models\user\namaWilayah\NamaWilayah;
+use App\Models\user\ponpes\Ponpes;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
