@@ -9,9 +9,6 @@ Route::prefix('mclient-ponpes-setting')->name('mclientponpessetting.')->group(fu
     Route::put('/update/{id}', [SettingPonpesController::class, 'MclientPonpesSettingUpdate'])->name('MclientPonpesSettingUpdate');
     Route::delete('/destroy/{id}', [SettingPonpesController::class, 'MclientPonpesSettingDestroy'])->name('MclientPonpesSettingDestroy');
 
-    Route::get('/dashboard-stats', [SettingPonpesController::class, 'getDashboardStats'])->name('MclientPonpesSetting.dashboard.stats');
-    Route::get('/get-ponpes-data', [SettingPonpesController::class, 'getPonpesData'])->name('MclientPonpesSetting.getPonpesData');
-
     // Global export with filters
     Route::get('/export/pdf', [SettingPonpesController::class, 'exportListPdf'])->name('mclientsettingponpes.export.list.pdf');
     Route::get('/export/csv', [SettingPonpesController::class, 'exportListCsv'])->name('mclientsettingponpes.export.list.csv');

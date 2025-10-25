@@ -2,7 +2,6 @@
 
 namespace App\Models\mclient;
 
-use App\Models\user\kanwil\Kanwil;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\user\upt\Upt;
@@ -15,8 +14,7 @@ class Vpas extends Model
     protected $table = 'mclient_vpas';
 
     protected $fillable = [
-        'nama_upt', 
-        'kanwil', 
+        'data_upt_id',
         'jenis_kendala',
         'detail_kendala',
         'tanggal_terlapor',
@@ -44,12 +42,9 @@ class Vpas extends Model
 
     public function upt()
     {
-        return $this->belongsTo(Upt::class, 'nama_upt', 'namaupt');
+        return $this->belongsTo(Upt::class, 'data_upt_id');
     }
 
-    public function kanwil(){
-        return $this->belongsTo(Kanwil::class, 'kanwil_id', 'kanwil');
-    }
 
     public function getFormattedTanggalTerlaporAttribute()
     {

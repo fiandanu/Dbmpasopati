@@ -14,7 +14,7 @@ class SettingAlat extends Model
     protected $table = 'setting_alat_upt';
 
     protected $fillable = [
-        'nama_upt',
+        'data_upt_id',
         'jenis_layanan',
         'keterangan',
         'tanggal_terlapor',
@@ -42,7 +42,7 @@ class SettingAlat extends Model
 
     public function upt()
     {
-        return $this->belongsTo(Upt::class, 'nama_upt', 'namaupt');
+        return $this->belongsTo(Upt::class, 'data_upt_id');
     }
 
     public function getFormattedtanggal_terlaporAttribute()

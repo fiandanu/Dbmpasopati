@@ -14,7 +14,7 @@ class SettingPonpes extends Model
     protected $table = 'mclient_ponpes_setting';
 
     protected $fillable = [
-        'nama_ponpes',
+        'data_ponpes_id',
         'jenis_layanan',
         'keterangan',
         'tanggal_terlapor',
@@ -42,7 +42,7 @@ class SettingPonpes extends Model
 
     public function ponpes()
     {
-        return $this->belongsTo(Ponpes::class, 'nama_ponpes', 'nama_ponpes');
+        return $this->belongsTo(Ponpes::class, 'data_ponpes_id');
     }
 
     public function getFormattedTanggalTerlaporAttribute()

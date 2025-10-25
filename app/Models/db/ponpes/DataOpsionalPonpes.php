@@ -40,7 +40,6 @@ class DataOpsionalPonpes extends Model
         'no_pemanggil',
         'email_airdroid',
         'password',
-        // BARU: Dari migrasi
         'vpns_id',
         'provider_id',
     ];

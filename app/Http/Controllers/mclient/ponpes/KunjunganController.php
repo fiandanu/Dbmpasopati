@@ -102,7 +102,7 @@ class KunjunganController extends Controller
 
     public function ListDataMclientPonpesKunjungan(Request $request)
     {
-        $query = Kunjungan::query();
+        $query = Kunjungan::with('ponpes.namaWilayah');
 
         // Apply filters
         $query = $this->applyFilters($query, $request);
@@ -217,8 +217,6 @@ class KunjunganController extends Controller
             ],
             [
                 'nama_ponpes.required' => 'Nama Ponpes harus diisi.',
-                'nama_ponpes.string' => 'Nama Ponpes harus berupa teks.',
-                'nama_ponpes.max' => 'Nama Ponpes tidak boleh lebih dari 255 karakter.',
                 'jenis_layanan.required' => 'Jenis layanan harus dipilih.',
                 'jenis_layanan.in' => 'Jenis layanan harus salah satu dari: VTREN, Reguler, atau VTREN + Reguler.',
                 'keterangan.string' => 'Keterangan maksimal 100 karakter.',
@@ -245,6 +243,9 @@ class KunjunganController extends Controller
         try {
             $data = $request->all();
 
+            $data['data_ponpes_id'] = $request->nama_ponpes;
+            unset($data['nama_ponpes']);
+
             // Hitung durasi HANYA jika tanggal_selesai ada
             if ($request->tanggal_selesai && $request->jadwal) {
                 $jadwal = Carbon::parse($request->jadwal);
@@ -270,7 +271,7 @@ class KunjunganController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'nama_ponpes' => 'required|string|max:255',
+                'nama_ponpes' => 'required|string|exists:data_ponpes,id',
                 'jenis_layanan' => 'required|string|in:vtren,reguler,vtrenreg',
                 'keterangan' => 'nullable|string|max:100',
                 'jadwal' => 'nullable|date',
@@ -282,8 +283,7 @@ class KunjunganController extends Controller
             ],
             [
                 'nama_ponpes.required' => 'Nama Ponpes harus diisi.',
-                'nama_ponpes.string' => 'Nama Ponpes harus berupa teks.',
-                'nama_ponpes.max' => 'Nama Ponpes tidak boleh lebih dari 255 karakter.',
+                'nama_ponpes.exists' => 'Nama Ponpes tidak ditemukan.',
                 'jenis_layanan.required' => 'Jenis layanan harus dipilih.',
                 'jenis_layanan.in' => 'Jenis layanan harus salah satu dari: VTREN, Reguler, atau VTREN + Reguler.',
                 'keterangan.string' => 'Keterangan maksimal 100 karakter.',
@@ -303,6 +303,10 @@ class KunjunganController extends Controller
         try {
             $data = Kunjungan::findOrFail($id);
             $updateData = $request->all();
+
+            // Update ID ponpes
+            $updateData['data_ponpes_id'] = $request->nama_ponpes;
+            unset($updateData['nama_ponpes']); // Hapus nama_ponpes dari array
 
             // Hitung dan simpan durasi HANYA jika tanggal_selesai baru ditentukan
             if ($request->tanggal_selesai && $request->jadwal) {
@@ -340,83 +344,4 @@ class KunjunganController extends Controller
         }
     }
 
-    public function getDashboardStats()
-    {
-        $totalData = Kunjungan::count();
-        $statusPending = Kunjungan::where('status', 'pending')->count();
-        $statusProses = Kunjungan::where('status', 'proses')->count();
-        $statusSelesai = Kunjungan::where('status', 'selesai')->count();
-        $statusTerjadwal = Kunjungan::where('status', 'terjadwal')->count();
-
-        $jenisVtren = Kunjungan::where('jenis_layanan', 'vtren')->count();
-        $jenisReguler = Kunjungan::where('jenis_layanan', 'reguler')->count();
-        $jenisVtrenReg = Kunjungan::where('jenis_layanan', 'vtrenreg')->count();
-
-        $bulanIni = Kunjungan::whereMonth('created_at', now()->month)
-            ->whereYear('created_at', now()->year)
-            ->count();
-
-        $avgDurasi = Kunjungan::where('status', 'selesai')
-            ->whereNotNull('durasi_hari')
-            ->avg('durasi_hari');
-
-        return [
-            'total' => $totalData,
-            'pending' => $statusPending,
-            'proses' => $statusProses,
-            'selesai' => $statusSelesai,
-            'terjadwal' => $statusTerjadwal,
-            'vtren' => $jenisVtren,
-            'reguler' => $jenisReguler,
-            'vtrenreg' => $jenisVtrenReg,
-            'bulan_ini' => $bulanIni,
-            'avg_durasi' => round($avgDurasi, 1)
-        ];
-    }
-
-    public function getPonpesData(Request $request)
-    {
-        $namaPonpes = $request->input('nama_ponpes');
-        $jenisLayanan = $request->input('jenis_layanan');
-
-        // Determine which Ponpes table to query based on jenis layanan
-        $tipePonpes = '';
-        switch ($jenisLayanan) {
-            case 'vtren':
-                $tipePonpes = 'vtren';
-                break;
-            case 'reguler':
-                $tipePonpes = 'reguler';
-                break;
-            case 'vtrenreg':
-                // For vtrenreg, check both vtren and reguler
-                $ponpes = Ponpes::where('nama_ponpes', $namaPonpes)
-                    ->whereIn('tipe', ['vtren', 'reguler'])
-                    ->first();
-                break;
-            default:
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Jenis layanan tidak valid'
-                ]);
-        }
-
-        if ($jenisLayanan !== 'vtrenreg') {
-            $ponpes = Ponpes::where('nama_ponpes', $namaPonpes)
-                ->where('tipe', $tipePonpes)
-                ->first();
-        }
-
-        if (isset($ponpes) && $ponpes) {
-            return response()->json([
-                'status' => 'success',
-                'nama_wilayah' => $ponpes->nama_wilayah
-            ]);
-        }
-
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Ponpes not found untuk jenis layanan tersebut'
-        ]);
-    }
 }

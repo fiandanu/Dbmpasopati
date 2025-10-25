@@ -18,7 +18,7 @@ class VtrenController extends Controller
 
     public function ListDataMclientVtren(Request $request)
     {
-        $query = Vtren::query();
+        $query = Vtren::with(['ponpes.namaWilayah']);
 
         // Apply filters
         $query = $this->applyFilters($query, $request);
@@ -50,7 +50,7 @@ class VtrenController extends Controller
         $jenisKendala = Kendala::orderBy('jenis_kendala')->get();
         $picList = Pic::orderBy('nama_pic')->get();
 
-        $ponpesList = Ponpes::select('nama_ponpes', 'nama_wilayah_id')
+        $ponpesList = Ponpes::with('namaWilayah')
             ->where('tipe', 'vtren')
             ->orderBy('nama_ponpes')
             ->get();
@@ -60,38 +60,49 @@ class VtrenController extends Controller
 
     private function applyFilters($query, Request $request)
     {
-        // Global search
-        if ($request->has('table_search') && !empty($request->table_search)) {
-            $searchTerm = $request->table_search;
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('nama_ponpes', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('nama_wilayah', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('jenis_kendala', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('detail_kendala', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('status', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('pic_1', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('pic_2', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('tanggal_terlapor', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('tanggal_selesai', 'LIKE', '%' . $searchTerm . '%');
+        // Column-specific searches
+        if ($request->has('search_nama_ponpes') && !empty($request->search_nama_ponpes)) {
+            $query->whereHas('ponpes.namaWilayah', function ($q) use ($request) {
+                $q->where('nama_ponpes', 'LIKE', '%' . $request->search_nama_ponpes . '%');
+            });
+        }
+        if ($request->has('search_nama_wilayah') && !empty($request->search_nama_wilayah)) {
+            $query->whereHas('ponpes.namaWilayah', function ($q) use ($request) {
+                $q->where('nama_wilayah', 'LIKE', '%' . $request->search_nama_wilayah . '%');
             });
         }
 
-        // Column-specific searches
-        if ($request->has('search_nama_ponpes') && !empty($request->search_nama_ponpes)) {
-            $query->where('nama_ponpes', 'LIKE', '%' . $request->search_nama_ponpes . '%');
-        }
-        if ($request->has('search_nama_wilayah') && !empty($request->search_nama_wilayah)) {
-            $query->where('nama_wilayah', 'LIKE', '%' . $request->search_nama_wilayah . '%');
-        }
         if ($request->has('search_jenis_kendala') && !empty($request->search_jenis_kendala)) {
-            $query->where('jenis_kendala', 'LIKE', '%' . $request->search_jenis_kendala . '%');
+            $searchJenisKendala = strtolower($request->search_jenis_kendala);
+            $query->where(function ($q) use ($searchJenisKendala) {
+                $q->where('jenis_kendala', 'LIKE', '%' . $searchJenisKendala . '%');
+                // Jika mencari "belum" atau "ditentukan", include yang NULL/empty
+                if (str_contains($searchJenisKendala, 'belum') || str_contains($searchJenisKendala, 'ditentukan')) {
+                    $q->orWhereNull('jenis_kendala')
+                        ->orWhere('jenis_kendala', '');
+                }
+            });
         }
+
         if ($request->has('search_detail_kendala') && !empty($request->search_detail_kendala)) {
             $query->where('detail_kendala', 'LIKE', '%' . $request->search_detail_kendala . '%');
         }
+
         if ($request->has('search_status') && !empty($request->search_status)) {
-            $query->where('status', 'LIKE', '%' . $request->search_status . '%');
+            $searchStatus = strtolower($request->search_status);
+
+            $query->where(function ($q) use ($searchStatus) {
+                $q->where('status', 'LIKE', '%' . $searchStatus . '%');
+
+                // Jika mencari "belum" atau "ditentukan", include yang NULL/empty
+                if (str_contains($searchStatus, 'belum') || str_contains($searchStatus, 'ditentukan')) {
+                    $q->orWhereNull('status')
+                        ->orWhere('status', '');
+                }
+            });
         }
+
+
         if ($request->has('search_pic_1') && !empty($request->search_pic_1)) {
             $query->where('pic_1', 'LIKE', '%' . $request->search_pic_1 . '%');
         }
@@ -121,8 +132,7 @@ class VtrenController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'nama_ponpes' => 'required|string|max:255',
-                'nama_wilayah' => 'nullable|string|max:255',
+                'data_ponpes_id' => 'required|exists:data_ponpes,id',
                 'jenis_kendala' => 'nullable|string',
                 'detail_kendala' => 'nullable|string|max:100',
                 'tanggal_terlapor' => 'nullable|date',
@@ -132,7 +142,9 @@ class VtrenController extends Controller
                 'pic_2' => 'nullable|string|max:255',
             ],
             [
-                // pesan validasi 
+                'data_ponpes_id.required' => 'Nama PONPES wajib dipilih',
+                'data_ponpes_id.exists' => 'PONPES yang dipilih tidak valid',
+                // pesan validasi lainnya...
             ]
         );
 
@@ -148,7 +160,7 @@ class VtrenController extends Controller
 
             // Hitung durasi HANYA jika tanggal_selesai ada
             if ($request->tanggal_selesai) {
-                // ✅ Gunakan tanggal_terlapor sebagai acuan
+                // Gunakan tanggal_terlapor sebagai acuan
                 if ($request->tanggal_terlapor) {
                     $tanggalTerlapor = Carbon::parse($request->tanggal_terlapor);
                 } else {
@@ -177,9 +189,18 @@ class VtrenController extends Controller
             $data = Vtren::findOrFail($id);
             $updateData = $request->all();
 
+
+            // Update data_ponpes_id jika nama_ponpes berubah
+            if ($request->nama_ponpes) {
+                $ponpes = Ponpes::where('nama_ponpes', $request->nama_ponpes)->first();
+                if ($ponpes) {
+                    $updateData['data_ponpes_id'] = $ponpes->id;
+                }
+            }
+
             // Hitung durasi jika tanggal_selesai ada
             if ($request->tanggal_selesai) {
-                // ✅ Gunakan tanggal_terlapor dari data yang sudah ada atau yang baru
+                // Gunakan tanggal_terlapor dari data yang sudah ada atau yang baru
                 if ($request->tanggal_terlapor) {
                     $tanggalTerlapor = Carbon::parse($request->tanggal_terlapor);
                 } else {
@@ -206,7 +227,7 @@ class VtrenController extends Controller
     {
         try {
             $data = Vtren::findOrFail($id);
-            $nama_ponpes = $data->nama_ponpes;
+            $nama_ponpes = $data->ponpes->nama_ponpes ?? 'Unknown';
             $data->delete();
 
             return redirect()->back()

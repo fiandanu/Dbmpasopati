@@ -13,15 +13,17 @@ return new class extends Migration
     {
         Schema::create('pengiriman_upt', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_upt')->nullable();
-            $table->string('jenis_layanan')->nullable(); // vpas, reguler, vpasreg
+            $table->string('jenis_layanan')->nullable();
             $table->text('keterangan')->nullable();
             $table->date('tanggal_pengiriman')->nullable();
             $table->date('tanggal_sampai')->nullable();
             $table->integer('durasi_hari')->nullable();
             $table->string('pic_1')->nullable();
             $table->string('pic_2')->nullable();
-            $table->string('status')->nullable(); // pending, proses, selesai, terjadwal
+            $table->string('status')->nullable();
+
+            $table->foreignId('data_upt_id')->nullable()->constrained('data_upt')->onDelete('cascade');
+
             $table->timestamps();
         });
     }

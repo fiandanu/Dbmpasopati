@@ -2,6 +2,7 @@
 
 namespace App\Models\mclient;
 
+use App\Models\user\kanwil\Kanwil;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\user\upt\Upt;
@@ -14,7 +15,7 @@ class Kunjungan extends Model
     protected $table = 'mclient_kunjungan';
 
     protected $fillable = [
-        'nama_upt',
+        'data_upt_id',
         'jenis_layanan',
         'keterangan',
         'jadwal',
@@ -42,8 +43,9 @@ class Kunjungan extends Model
 
     public function upt()
     {
-        return $this->belongsTo(Upt::class, 'nama_upt', 'namaupt');
+        return $this->belongsTo(Upt::class, 'data_upt_id');
     }
+
 
     public function getFormattedJadwalAttribute()
     {

@@ -186,6 +186,18 @@
                                                     </div>
                                                 </div>
                                             </th>
+                                            <th class="align-top">
+                                                <div class="d-flex flex-column gap-12">
+                                                    <span>Nama Wilayah</span>
+                                                    <div class="btn-searchbar column-search">
+                                                        <span>
+                                                            <i class="fas fa-search"></i>
+                                                        </span>
+                                                        <input type="text" id="search-nama-wilayah"
+                                                            name="search_nama_wilayah" placeholder="Search">
+                                                    </div>
+                                                </div>
+                                            </th>
                                             <th class="text-center align-top">
                                                 <div
                                                     class="d-flex justify-content-center align-items-center flex-column gap-12">
@@ -234,7 +246,7 @@
                                             </th>
                                             <th class="text-center align-top">
                                                 <div class="d-flex flex-column gap-12">
-                                                    <span>PIC 1</span>
+                                                    <span>PIC</span>
                                                     <div class="btn-searchbar column-search">
                                                         <span>
                                                             <i class="fas fa-search"></i>
@@ -246,7 +258,7 @@
                                             </th>
                                             <th class="text-center align-top">
                                                 <div class="d-flex flex-column gap-12">
-                                                    <span>PIC 2</span>
+                                                    <span>PIC</span>
                                                     <div class="btn-searchbar column-search">
                                                         <span>
                                                             <i class="fas fa-search"></i>
@@ -271,7 +283,8 @@
                                         @forelse ($data as $d)
                                             <tr>
                                                 <td class="text-center">{{ $no++ }}</td>
-                                                <td>{{ $d->nama_ponpes ?? '-' }}</td>
+                                                <td>{{ $d->ponpes->nama_ponpes ?? '-' }}</td>
+                                                <td>{{ $d->ponpes->namaWilayah->nama_wilayah ?? '-' }}</td>
                                                 <td class="text-center">
                                                     @php
                                                         $layananClass = match (strtolower($d->jenis_layanan ?? '')) {
@@ -403,6 +416,7 @@
                                 </div>
                             @endif
                         </div>
+
                         {{-- Add Modal --}}
                         <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel"
                             aria-hidden="true">
@@ -499,12 +513,6 @@
                                                     </div>
                                                 </div>
 
-<div class="mb-3">
-    <label for="durasi_hari" class="form-label">Durasi</label>
-    <input type="text" class="form-control" id="durasi_hari"
-        value="Akan dihitung otomatis" readonly>
-    <small class="form-text text-muted">Durasi akan dihitung otomatis setelah data disimpan</small>
-</div>
                                                 <div class="column">
                                                     <div class="mb-3">
                                                         <label for="status">Status</label>
@@ -527,9 +535,9 @@
 
                                                 <div class="column">
                                                     <div class="mb-3">
-                                                        <label for="pic_1">PIC 1</label>
+                                                        <label for="pic_1">PIC</label>
                                                         <select class="form-control" id="pic_1" name="pic_1">
-                                                            <option value="">-- Pilih PIC 1 --</option>
+                                                            <option value="">-- Pilih PIC --</option>
                                                             @foreach ($picList as $pic)
                                                                 <option value="{{ $pic->nama_pic }}">
                                                                     {{ $pic->nama_pic }}</option>
@@ -539,9 +547,9 @@
                                                 </div>
                                                 <div class="column">
                                                     <div class="mb-3">
-                                                        <label for="pic_2">PIC 2</label>
+                                                        <label for="pic_2">PIC</label>
                                                         <select class="form-control" id="pic_2" name="pic_2">
-                                                            <option value="">-- Pilih PIC 2 --</option>
+                                                            <option value="">-- Pilih PIC --</option>
                                                             @foreach ($picList as $pic)
                                                                 <option value="{{ $pic->nama_pic }}">
                                                                     {{ $pic->nama_pic }}</option>
@@ -594,10 +602,11 @@
                                                     <div class="mb-3">
                                                         <label for="jenis_layanan_edit_{{ $d->id }}">Jenis Layanan
                                                             <span class="text-danger">*</span></label>
-                                                        <select class="form-control"
+                                                        <select class="form-control text-muted"
                                                             id="jenis_layanan_edit_{{ $d->id }}"
-                                                            name="jenis_layanan" required
-                                                            onchange="updatePonpesOptionsEdit({{ $d->id }})">
+                                                            name="jenis_layanan_display"
+                                                            onchange="updatePonpesOptionsEdit({{ $d->id }})"
+                                                            disabled>
                                                             <option value="">-- Pilih Jenis Layanan --</option>
                                                             @foreach ($jenisLayananOptions as $key => $value)
                                                                 <option value="{{ $key }}"
@@ -606,16 +615,22 @@
                                                                 </option>
                                                             @endforeach
                                                         </select>
+                                                        <!-- Hidden input untuk mengirim nilai jenis_layanan -->
+                                                        <input type="hidden" name="jenis_layanan"
+                                                            value="{{ $d->jenis_layanan }}">
                                                     </div>
 
                                                     <div class="mb-3">
                                                         <label for="nama_ponpes_edit_{{ $d->id }}">Nama Ponpes
                                                             <span class="text-danger">*</span></label>
-                                                        <select class="form-control"
-                                                            id="nama_ponpes_edit_{{ $d->id }}" name="nama_ponpes"
-                                                            required>
+                                                        <select class="form-control text-muted"
+                                                            id="nama_ponpes_edit_{{ $d->id }}"
+                                                            name="nama_ponpes_display" disabled>
                                                             <option value="">-- Pilih Ponpes --</option>
                                                         </select>
+                                                        <!-- Hidden input untuk mengirim nilai nama_ponpes -->
+                                                        <input type="hidden" name="nama_ponpes"
+                                                            value="{{ $d->data_ponpes_id }}">
                                                     </div>
                                                 </div>
 
@@ -661,18 +676,22 @@
 
                                                     <div class="column">
                                                         <div class="mb-3">
-                                                            <label for="durasi_hari{{ $d->id }}" class="form-label">Durasi</label>
+                                                            <label for="durasi_hari{{ $d->id }}"
+                                                                class="form-label">Durasi</label>
                                                             @if ($d->tanggal_selesai)
                                                                 <input type="text" class="form-control"
                                                                     id="durasi_hari{{ $d->id }}"
                                                                     value="{{ $d->durasi_hari }} hari (Final)" readonly>
-                                                                <small class="form-text text-muted">Durasi final telah ditetapkan</small>
+                                                                <small class="form-text text-muted">Durasi final telah
+                                                                    ditetapkan</small>
                                                             @else
-                                                                <input type="text" class="form-control durasi-realtime-modal"
+                                                                <input type="text"
+                                                                    class="form-control durasi-realtime-modal"
                                                                     id="durasi_hari{{ $d->id }}"
                                                                     data-created="{{ $d->created_at->format('Y-m-d H:i:s') }}"
                                                                     value="Menghitung..." readonly>
-                                                                <small class="form-text text-muted">Durasi masih berjalan secara real-time</small>
+                                                                <small class="form-text text-muted">Durasi masih berjalan
+                                                                    secara real-time</small>
                                                             @endif
                                                         </div>
                                                     </div>
@@ -707,10 +726,10 @@
 
                                                     <div class="column">
                                                         <div class="mb-3">
-                                                            <label for="pic_1{{ $d->id }}">PIC 1</label>
+                                                            <label for="pic_1{{ $d->id }}">PIC</label>
                                                             <select class="form-control" id="pic_1{{ $d->id }}"
                                                                 name="pic_1">
-                                                                <option value="">-- Pilih PIC 1 --</option>
+                                                                <option value="">-- Pilih PIC --</option>
                                                                 @foreach ($picList as $pic)
                                                                     <option value="{{ $pic->nama_pic }}"
                                                                         {{ $d->pic_1 == $pic->nama_pic ? 'selected' : '' }}>
@@ -731,10 +750,10 @@
                                                     </div>
                                                     <div class="column">
                                                         <div class="mb-3">
-                                                            <label for="pic_2{{ $d->id }}">PIC 2</label>
+                                                            <label for="pic_2{{ $d->id }}">PIC</label>
                                                             <select class="form-control" id="pic_2{{ $d->id }}"
                                                                 name="pic_2">
-                                                                <option value="">-- Pilih PIC 2 --</option>
+                                                                <option value="">-- Pilih PIC --</option>
                                                                 @foreach ($picList as $pic)
                                                                     <option value="{{ $pic->nama_pic }}"
                                                                         {{ $d->pic_2 == $pic->nama_pic ? 'selected' : '' }}>
@@ -761,6 +780,7 @@
                                 </form>
                             </div>
                         @endforeach
+
                     </div>
                 </div>
                 <!-- Custom Pagination dengan Dropdown -->
@@ -772,6 +792,10 @@
                                 @if (request('search_nama_ponpes'))
                                     <input type="hidden" name="search_nama_ponpes"
                                         value="{{ request('search_nama_ponpes') }}">
+                                @endif
+                                @if (request('search_nama_wilayah'))
+                                    <input type="hidden" name="search_nama_wilayah"
+                                        value="{{ request('search_nama_wilayah') }}">
                                 @endif
                                 @if (request('search_jenis_layanan'))
                                     <input type="hidden" name="search_jenis_layanan"
@@ -943,6 +967,7 @@
             }
         });
     </script>
+
     {{-- DROPDOWN UNTUK ADD MODAL DAN EDIT MODAL --}}
     <script>
         // Ponpes Lists for different service types
@@ -950,7 +975,7 @@
         const ponpesListReguler = @json($ponpesListReguler);
         const ponpesListAll = @json($ponpesListAll);
 
-        // Update Ponpes options based on selected service type for Add Modal
+        // JS ADD MODAL
         function updatePonpesOptions() {
             const jenisLayanan = document.getElementById('jenis_layanan').value;
             const ponpesSearch = document.getElementById('ponpes_search');
@@ -994,17 +1019,17 @@
                 const option = document.createElement('a');
                 option.className = 'dropdown-item ponpes-option';
                 option.href = '#';
-                option.textContent = `${ponpes.nama_ponpes} - ${ponpes.nama_wilayah}`;
-                option.setAttribute('data-value', ponpes.nama_ponpes);
-                option.setAttribute('data-nama-wilayah', ponpes.nama_wilayah);
+                option.textContent =`${ponpes.nama_ponpes} - ${ponpes.nama_wilayah?.nama_wilayah || 'Wilayah tidak tersedia'}`;
+                option.setAttribute('data-value', ponpes.id);
+                option.setAttribute('data-nama-wilayah', ponpes.nama_wilayah?.nama_wilayah || '');
                 option.onclick = function() {
-                    selectPonpes(ponpes.nama_ponpes, ponpes.nama_wilayah);
+                    selectPonpes(ponpes.id, ponpes.nama_ponpes, ponpes.nama_wilayah?.nama_wilayah);
                 };
                 ponpesDropdown.appendChild(option);
             });
         }
 
-        // Update Ponpes options for Edit Modal
+        // JS UNTUK EDIT MODAL
         function updatePonpesOptionsEdit(id) {
             const jenisLayanan = document.getElementById(`jenis_layanan_edit_${id}`).value;
             const namaPonpesSelect = document.getElementById(`nama_ponpes_edit_${id}`);
@@ -1033,7 +1058,7 @@
             // Populate select options
             ponpesList.forEach(ponpes => {
                 const option = document.createElement('option');
-                option.value = ponpes.nama_ponpes;
+                option.value = ponpes.id; // UBAH: gunakan ID
                 option.textContent = ponpes.nama_ponpes;
                 option.setAttribute('data-nama-wilayah', ponpes.nama_wilayah);
                 namaPonpesSelect.appendChild(option);
@@ -1041,9 +1066,9 @@
         }
 
         // Select Ponpes option
-        function selectPonpes(namaPonpes, namaWilayah) {
-            document.getElementById('ponpes_search').value = namaPonpes;
-            document.getElementById('nama_ponpes').value = namaPonpes;
+        function selectPonpes(ponpesId, namaPonpes, namaWilayah) {
+            document.getElementById('ponpes_search').value = namaPonpes; // Tampilkan nama
+            document.getElementById('nama_ponpes').value = ponpesId; // Simpan ID
             document.getElementById('ponpesDropdownMenu').style.display = 'none';
         }
 
@@ -1066,12 +1091,12 @@
         document.addEventListener('DOMContentLoaded', function() {
             @foreach ($data as $d)
                 updatePonpesOptionsEdit({{ $d->id }});
-                // Set current value
-                const currentPonpes{{ $d->id }} = '{{ $d->nama_ponpes }}';
+                const currentPonpesId{{ $d->id }} =
+                    '{{ $d->data_ponpes_id }}'; // UBAH: gunakan data_ponpes_id
                 const selectElement{{ $d->id }} = document.getElementById(
                     'nama_ponpes_edit_{{ $d->id }}');
-                if (selectElement{{ $d->id }} && currentPonpes{{ $d->id }}) {
-                    selectElement{{ $d->id }}.value = currentPonpes{{ $d->id }};
+                if (selectElement{{ $d->id }} && currentPonpesId{{ $d->id }}) {
+                    selectElement{{ $d->id }}.value = currentPonpesId{{ $d->id }};
                 }
             @endforeach
 
@@ -1152,6 +1177,8 @@
         });
     </script>
 
+
+
     {{-- Search and Filter JavaScript --}}
     <script>
         $(document).ready(function() {
@@ -1159,6 +1186,7 @@
             function getFilters() {
                 return {
                     search_nama_ponpes: $('#search-nama_ponpes').val().trim(),
+                    search_nama_wilayah: $('#search-nama-wilayah').val().trim(),
                     search_jenis_layanan: $('#search-jenis_layanan').val().trim(),
                     search_keterangan: $('#search-keterangan').val().trim(),
                     search_status: $('#search-status').val().trim(),
@@ -1179,6 +1207,7 @@
 
                 // Remove existing filter parameters
                 url.searchParams.delete('search_nama_ponpes');
+                url.searchParams.delete('search_nama_wilayah');
                 url.searchParams.delete('search_jenis_layanan');
                 url.searchParams.delete('search_keterangan');
                 url.searchParams.delete('search_status');
@@ -1204,6 +1233,7 @@
             window.clearAllFilters = function() {
                 // Clear semua input field dulu
                 $('#search-nama_ponpes').val('');
+                $('#search-nama-wilayah').val('');
                 $('#search-jenis_layanan').val('');
                 $('#search-keterangan').val('');
                 $('#search-status').val('');
@@ -1218,6 +1248,7 @@
 
                 // Remove all search parameters
                 url.searchParams.delete('search_nama_ponpes');
+                url.searchParams.delete('search_nama_wilayah');
                 url.searchParams.delete('search_jenis_layanan');
                 url.searchParams.delete('search_keterangan');
                 url.searchParams.delete('search_status');
@@ -1296,6 +1327,9 @@
             if (urlParams.get('search_nama_ponpes')) {
                 $('#search-nama_ponpes').val(urlParams.get('search_nama_ponpes'));
             }
+            if (urlParams.get('search_nama_wilayah')) {
+                $('#search-nama-wilayah').val(urlParams.get('search_nama_wilayah'));
+            }
             if (urlParams.get('search_jenis_layanan')) {
                 $('#search-jenis_layanan').val(urlParams.get('search_jenis_layanan'));
             }
@@ -1345,7 +1379,7 @@
             });
         });
 
-                function toggleDetail(id) {
+        function toggleDetail(id) {
             const shortText = document.getElementById('short-text-' + id);
             const fullText = document.getElementById('full-text-' + id);
 

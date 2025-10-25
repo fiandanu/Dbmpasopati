@@ -17,7 +17,7 @@ class RegullerController extends Controller
 {
     public function ListDataMclientPonpesReguller(Request $request)
     {
-        $query = Reguller::query();
+        $query = Reguller::with('ponpes.namaWilayah');
 
         // Apply filter
         $query = $this->applyFilters($query, $request);
@@ -49,7 +49,7 @@ class RegullerController extends Controller
         $jenisKendala = Kendala::orderBy('jenis_kendala')->get();
         $picList = Pic::orderBy('nama_pic')->get();
 
-        $ponpesList = Ponpes::select('nama_ponpes', 'nama_wilayah_id')
+        $ponpesList = Ponpes::with('namaWilayah')
             ->where('tipe', 'reguler')
             ->orderBy('nama_ponpes')
             ->get();
@@ -61,19 +61,41 @@ class RegullerController extends Controller
     {
         // Column-specific searches
         if ($request->has('search_nama_ponpes') && !empty($request->search_nama_ponpes)) {
-            $query->where('nama_ponpes', 'LIKE', '%' . $request->search_nama_ponpes . '%');
+            $query->whereHas('ponpes.namaWilayah', function ($q) use ($request) {
+                $q->where('nama_ponpes', 'LIKE', '%' . $request->search_nama_ponpes . '%');
+            });
         }
         if ($request->has('search_nama_wilayah') && !empty($request->search_nama_wilayah)) {
-            $query->where('nama_wilayah', 'LIKE', '%' . $request->search_nama_wilayah . '%');
+            $query->whereHas('ponpes.namaWilayah', function ($q) use ($request) {
+                $q->where('nama_wilayah', 'LIKE', '%' . $request->search_nama_wilayah . '%');
+            });
         }
         if ($request->has('search_jenis_kendala') && !empty($request->search_jenis_kendala)) {
-            $query->where('jenis_kendala', 'LIKE', '%' . $request->search_jenis_kendala . '%');
+            $searchJenisKendala = strtolower($request->search_jenis_kendala);
+            $query->where(function ($q) use ($searchJenisKendala) {
+                $q->where('jenis_kendala', 'LIKE', '%' . $searchJenisKendala . '%');
+                // Jika mencari "belum" atau "ditentukan", include yang NULL/empty
+                if (str_contains($searchJenisKendala, 'belum') || str_contains($searchJenisKendala, 'ditentukan')) {
+                    $q->orWhereNull('jenis_kendala')
+                        ->orWhere('jenis_kendala', '');
+                }
+            });
         }
         if ($request->has('search_detail_kendala') && !empty($request->search_detail_kendala)) {
             $query->where('detail_kendala', 'LIKE', '%' . $request->search_detail_kendala . '%');
         }
         if ($request->has('search_status') && !empty($request->search_status)) {
-            $query->where('status', 'LIKE', '%' . $request->search_status . '%');
+            $searchStatus = strtolower($request->search_status);
+
+            $query->where(function ($q) use ($searchStatus) {
+                $q->where('status', 'LIKE', '%' . $searchStatus . '%');
+
+                // Jika mencari "belum" atau "ditentukan", include yang NULL/empty
+                if (str_contains($searchStatus, 'belum') || str_contains($searchStatus, 'ditentukan')) {
+                    $q->orWhereNull('status')
+                        ->orWhere('status', '');
+                }
+            });
         }
         if ($request->has('search_pic_1') && !empty($request->search_pic_1)) {
             $query->where('pic_1', 'LIKE', '%' . $request->search_pic_1 . '%');
@@ -104,8 +126,7 @@ class RegullerController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'nama_ponpes' => 'required|string|max:255',
-                'nama_wilayah' => 'nullable|string|max:255',
+                'data_ponpes_id' => 'required|string|exists:data_ponpes,id',
                 'jenis_kendala' => 'nullable|string',
                 'detail_kendala' => 'nullable|string',
                 'tanggal_terlapor' => 'nullable|date',
@@ -116,11 +137,8 @@ class RegullerController extends Controller
                 'pic_2' => 'nullable|string|max:255',
             ],
             [
-                'nama_ponpes.required' => 'Nama Ponpes harus diisi.',
-                'nama_ponpes.string' => 'Nama Ponpes harus berupa teks.',
-                'nama_ponpes.max' => 'Nama Ponpes tidak boleh lebih dari 255 karakter.',
-                'nama_wilayah.string' => 'Nama wilayah harus berupa teks.',
-                'nama_wilayah.max' => 'Nama wilayah tidak boleh lebih dari 255 karakter.',
+                'data_ponpes_id.required' => 'Nama Ponpes harus diisi.',
+                'data_ponpes_id.exists' => 'Nama Ponpes tidak ditemukan.',
                 'jenis_kendala.string' => 'Kendala Reguller harus berupa teks.',
                 'detail_kendala.string' => 'Detail kendala Reguller harus berupa teks.',
                 'tanggal_terlapor.date' => 'Format tanggal terlapor harus valid.',
@@ -137,8 +155,12 @@ class RegullerController extends Controller
         );
 
         if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput()
+                ->with('error', 'Silakan periksa kembali data yang dimasukkan.');
         }
+
 
         $validatedData = $validator->validated();
 
@@ -163,8 +185,7 @@ class RegullerController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'nama_ponpes' => 'required|string|max:255',
-                'nama_wilayah' => 'nullable|string|max:255',
+                'data_ponpes_id' => 'required|string|exists:data_ponpes,id',
                 'jenis_kendala' => 'nullable|string',
                 'detail_kendala' => 'nullable|string',
                 'tanggal_terlapor' => 'nullable|date',
@@ -175,9 +196,8 @@ class RegullerController extends Controller
                 'pic_2' => 'nullable|string|max:255',
             ],
             [
-                'nama_ponpes.required' => 'Nama Ponpes harus diisi.',
-                'nama_ponpes.string' => 'Nama Ponpes harus berupa teks.',
-                'nama_ponpes.max' => 'Nama Ponpes tidak boleh lebih dari 255 karakter.',
+                'data_ponpes_id.required' => 'Nama Ponpes harus diisi.',
+                'data_ponpes_id.exists' => 'Nama Ponpes tidak ditemukan.',
                 'nama_wilayah.string' => 'Nama wilayah harus berupa teks.',
                 'nama_wilayah.max' => 'Nama wilayah tidak boleh lebih dari 255 karakter.',
                 'jenis_kendala.string' => 'Kendala Reguller harus berupa teks.',
@@ -196,7 +216,10 @@ class RegullerController extends Controller
         );
 
         if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput()
+                ->with('error', 'Silakan periksa kembali data yang dimasukkan.');
         }
 
         $validatedData = $validator->validated();
@@ -303,107 +326,5 @@ class RegullerController extends Controller
         };
 
         return response()->stream($callback, 200, $headers);
-    }
-
-    public function exportCsv()
-    {
-        $data = Reguller::orderBy('created_at', 'desc')->get();
-
-        $filename = 'monitoring_client_ponpes_reguller_' . date('Y-m-d_H-i-s') . '.csv';
-
-        $headers = [
-            "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
-        ];
-
-        $callback = function () use ($data) {
-            $file = fopen('php://output', 'w');
-
-            fputcsv($file, [
-                'Nama Ponpes',
-                'Nama Wilayah',
-                'Kendala Reguller',
-                'Detail Kendala',
-                'Tanggal Terlapor',
-                'Tanggal Selesai',
-                'Durasi (Hari)',
-                'Status',
-                'PIC 1',
-                'PIC 2',
-                'Dibuat Pada',
-                'Diupdate Pada'
-            ]);
-
-            $no = 1;
-            foreach ($data as $row) {
-                fputcsv($file, [
-                    $no++,
-                    $row->nama_ponpes,
-                    $row->nama_wilayah,
-                    $row->jenis_kendala,
-                    $row->detail_kendala,
-                    $row->tanggal_terlapor ? $row->tanggal_terlapor->format('Y-m-d') : '',
-                    $row->tanggal_selesai ? $row->tanggal_selesai->format('Y-m-d') : '',
-                    $row->durasi_hari,
-                    $row->status,
-                    $row->pic_1,
-                    $row->pic_2,
-                    $row->created_at ? $row->created_at->format('Y-m-d H:i:s') : '',
-                    $row->updated_at ? $row->updated_at->format('Y-m-d H:i:s') : ''
-                ]);
-            }
-
-            fclose($file);
-        };
-
-        return response()->stream($callback, 200, $headers);
-    }
-
-    public function getDashboardStats()
-    {
-        $totalData = Reguller::count();
-        $statusPending = Reguller::where('status', 'pending')->count();
-        $statusProses = Reguller::where('status', 'proses')->count();
-        $statusSelesai = Reguller::where('status', 'selesai')->count();
-        $statusTerjadwal = Reguller::where('status', 'terjadwal')->count();
-
-        $bulanIni = Reguller::whereMonth('created_at', now()->month)
-            ->whereYear('created_at', now()->year)
-            ->count();
-
-        $avgDurasi = Reguller::where('status', 'selesai')
-            ->whereNotNull('durasi_hari')
-            ->avg('durasi_hari');
-
-        return [
-            'total' => $totalData,
-            'pending' => $statusPending,
-            'proses' => $statusProses,
-            'selesai' => $statusSelesai,
-            'terjadwal' => $statusTerjadwal,
-            'bulan_ini' => $bulanIni,
-            'avg_durasi' => round($avgDurasi, 1)
-        ];
-    }
-
-    public function getPonpesData(Request $request)
-    {
-        $namaPonpes = $request->input('nama_ponpes');
-        $ponpes = Ponpes::where('nama_ponpes', $namaPonpes)->first();
-
-        if ($ponpes) {
-            return response()->json([
-                'status' => 'success',
-                'nama_wilayah' => $ponpes->nama_wilayah
-            ]);
-        }
-
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Ponpes not found'
-        ]);
     }
 }

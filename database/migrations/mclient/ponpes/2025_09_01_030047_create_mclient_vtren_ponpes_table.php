@@ -13,8 +13,6 @@ return new class extends Migration
     {
         Schema::create('mclient_ponpes_vtren', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_ponpes')->nullable();
-            $table->string('nama_wilayah')->nullable();
             $table->string('jenis_kendala')->nullable();
             $table->string('detail_kendala')->nullable();
             $table->string('tanggal_terlapor')->nullable();
@@ -23,6 +21,9 @@ return new class extends Migration
             $table->string('status')->nullable();
             $table->string('pic_1')->nullable();
             $table->string('pic_2')->nullable();
+
+            $table->foreignId('data_ponpes_id')->nullable()->constrained('data_ponpes')->onDelete('cascade');
+
             $table->timestamps();
         });
     }

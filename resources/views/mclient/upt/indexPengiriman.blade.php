@@ -186,6 +186,18 @@
                                                     </div>
                                                 </div>
                                             </th>
+                                            <th class="align-top">
+                                                <div class="d-flex flex-column gap-12">
+                                                    <span>kanwil</span>
+                                                    <div class="btn-searchbar column-search">
+                                                        <span>
+                                                            <i class="fas fa-search"></i>
+                                                        </span>
+                                                        <input type="text" id="search-kanwil" name="search_kanwil"
+                                                            placeholder="Search">
+                                                    </div>
+                                                </div>
+                                            </th>
                                             <th class="text-center align-top">
                                                 <div
                                                     class="d-flex justify-content-center align-items-center flex-column gap-12">
@@ -246,7 +258,7 @@
                                             </th>
                                             <th class="text-center align-top">
                                                 <div class="d-flex flex-column gap-12">
-                                                    <span>Pengiriman</span>
+                                                    <span>Penerima</span>
                                                     <div class="btn-searchbar column-search">
                                                         <span>
                                                             <i class="fas fa-search"></i>
@@ -271,7 +283,8 @@
                                         @forelse ($data as $d)
                                             <tr>
                                                 <td class="text-center">{{ $no++ }}</td>
-                                                <td>{{ $d->nama_upt ?? '-' }}</td>
+                                                <td>{{ $d->upt->namaupt ?? '-' }}</td>
+                                                <td>{{ $d->upt->kanwil->kanwil ?? '-' }}</td>
                                                 <td class="text-center">
                                                     @php
                                                         $layananClass = match (strtolower($d->jenis_layanan ?? '')) {
@@ -285,7 +298,7 @@
                                                         {{ $d->formatted_jenis_layanan }}
                                                     </span>
                                                 </td>
-                                                    <td>
+                                                <td>
                                                     @if ($d->keterangan && strlen($d->keterangan) > 20)
                                                         <div id="short-text-{{ $d->id }}">
                                                             <div>{{ Str::limit($d->keterangan, 20) }}</div>
@@ -493,14 +506,6 @@
 
                                                 <div class="column">
                                                     <div class="mb-3">
-                                                        <label for="durasi_hari">Durasi (Hari)</label>
-                                                        <input type="number" class="form-control" id="durasi_hari"
-                                                            name="durasi_hari" min="0"
-                                                            placeholder="Masukkan durasi dalam hari">
-                                                    </div>
-                                                </div>
-                                                <div class="column">
-                                                    <div class="mb-3">
                                                         <label for="status">Status</label>
                                                         <select class="form-control" id="status" name="status">
                                                             <option value="">-- Pilih Status --</option>
@@ -521,9 +526,9 @@
 
                                                 <div class="column">
                                                     <div class="mb-3">
-                                                        <label for="pic_1">PIC 1</label>
+                                                        <label for="pic_1">PIC</label>
                                                         <select class="form-control" id="pic_1" name="pic_1">
-                                                            <option value="">-- Pilih PIC 1 --</option>
+                                                            <option value="">-- Pilih PIC --</option>
                                                             @foreach ($picList as $pic)
                                                                 <option value="{{ $pic->nama_pic }}">
                                                                     {{ $pic->nama_pic }}</option>
@@ -533,14 +538,9 @@
                                                 </div>
                                                 <div class="column">
                                                     <div class="mb-3">
-                                                        <label for="pic_2">PIC 2</label>
-                                                        <select class="form-control" id="pic_2" name="pic_2">
-                                                            <option value="">-- Pilih PIC 2 --</option>
-                                                            @foreach ($picList as $pic)
-                                                                <option value="{{ $pic->nama_pic }}">
-                                                                    {{ $pic->nama_pic }}</option>
-                                                            @endforeach
-                                                        </select>
+                                                        <label for="pic_2">Penerima</label>
+                                                        <input type="text" class="form-control" id="pic_2"
+                                                            name="pic_2" placeholder="Masukan nama penerima">
                                                     </div>
                                                 </div>
                                             </div>
@@ -588,10 +588,10 @@
                                                     <div class="mb-3">
                                                         <label for="jenis_layanan_edit_{{ $d->id }}">Jenis Layanan
                                                             <span class="text-danger">*</span></label>
-                                                        <select class="form-control"
+                                                        <select class="form-control text-muted"
                                                             id="jenis_layanan_edit_{{ $d->id }}"
-                                                            name="jenis_layanan" required
-                                                            onchange="updateUptOptionsEdit({{ $d->id }})">
+                                                            name="jenis_layanan_display"
+                                                            onchange="updateUptOptionsEdit({{ $d->id }})" disabled>
                                                             <option value="">-- Pilih Jenis Layanan --</option>
                                                             @foreach ($jenisLayananOptions as $key => $value)
                                                                 <option value="{{ $key }}"
@@ -600,16 +600,22 @@
                                                                 </option>
                                                             @endforeach
                                                         </select>
+                                                        <!-- Hidden input untuk mengirim nilai jenis_layanan -->
+                                                        <input type="hidden" name="jenis_layanan"
+                                                            value="{{ $d->jenis_layanan }}">
                                                     </div>
 
                                                     <div class="mb-3">
                                                         <label for="nama_upt_edit_{{ $d->id }}">Nama UPT <span
                                                                 class="text-danger">*</span></label>
-                                                        <select class="form-control"
-                                                            id="nama_upt_edit_{{ $d->id }}" name="nama_upt"
-                                                            required>
+                                                        <select class="form-control text-muted"
+                                                            id="nama_upt_edit_{{ $d->id }}"
+                                                            name="nama_upt_display" disabled>
                                                             <option value="">-- Pilih UPT --</option>
                                                         </select>
+                                                        <!-- Hidden input untuk mengirim nilai nama_upt -->
+                                                        <input type="hidden" name="nama_upt"
+                                                            value="{{ $d->upt->namaupt ?? '' }}">
                                                     </div>
                                                 </div>
 
@@ -694,10 +700,10 @@
 
                                                     <div class="column">
                                                         <div class="mb-3">
-                                                            <label for="pic_1{{ $d->id }}">PIC 1</label>
+                                                            <label for="pic_1{{ $d->id }}">PIC</label>
                                                             <select class="form-control" id="pic_1{{ $d->id }}"
                                                                 name="pic_1">
-                                                                <option value="">-- Pilih PIC 1 --</option>
+                                                                <option value="">-- Pilih PIC --</option>
                                                                 @foreach ($picList as $pic)
                                                                     <option value="{{ $pic->nama_pic }}"
                                                                         {{ $d->pic_1 == $pic->nama_pic ? 'selected' : '' }}>
@@ -718,21 +724,13 @@
                                                     </div>
                                                     <div class="column">
                                                         <div class="mb-3">
-                                                            <label for="pic_2{{ $d->id }}">PIC 2</label>
-                                                            <select class="form-control" id="pic_2{{ $d->id }}"
-                                                                name="pic_2">
-                                                                <option value="">-- Pilih PIC 2 --</option>
-                                                                @foreach ($picList as $pic)
-                                                                    <option value="{{ $pic->nama_pic }}"
-                                                                        {{ $d->pic_2 == $pic->nama_pic ? 'selected' : '' }}>
-                                                                        {{ $pic->nama_pic }}
-                                                                    </option>
-                                                                @endforeach
-                                                                @if ($d->pic_2 && !in_array($d->pic_2, $existingPics))
-                                                                    <option value="{{ $d->pic_2 }}" selected>
-                                                                        {{ $d->pic_2 }} (Custom)</option>
-                                                                @endif
-                                                            </select>
+                                                            <label for="pic_2{{ $d->id }}">Penerima</label>
+                                                            <input type="text"
+                                                                class="form-control" 
+                                                                name="pic_2"
+                                                                id="pic-2"
+                                                                value="{{ $d->pic_2 ?? '' }}"
+                                                                placeholder="Edit nama penerima">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -760,6 +758,9 @@
                                 @if (request('search_nama_upt'))
                                     <input type="hidden" name="search_nama_upt"
                                         value="{{ request('search_nama_upt') }}">
+                                @endif
+                                @if (request('search_kanwil'))
+                                    <input type="hidden" name="search_kanwil" value="{{ request('search_kanwil') }}">
                                 @endif
                                 @if (request('search_jenis_layanan'))
                                     <input type="hidden" name="search_jenis_layanan"
@@ -859,6 +860,7 @@
         integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+
     {{-- JS Real-time Duration Counter --}}
     <script>
         // Fungsi untuk menghitung dan format durasi real-time
@@ -946,7 +948,7 @@
         const uptListReguler = @json($uptListReguler);
         const uptListAll = @json($uptListAll);
 
-        // Update UPT options based on selected service type for Add Modal
+        // JS UNTUK ADD MODAL
         function updateUptOptions() {
             const jenisLayanan = document.getElementById('jenis_layanan').value;
             const uptSearch = document.getElementById('upt_search');
@@ -1000,7 +1002,8 @@
             });
         }
 
-        // Update UPT options for Edit Modal
+
+        // JS UNTUK EDIT MODAL
         function updateUptOptionsEdit(id) {
             const jenisLayanan = document.getElementById(`jenis_layanan_edit_${id}`).value;
             const namaUptSelect = document.getElementById(`nama_upt_edit_${id}`);
@@ -1036,6 +1039,7 @@
             });
         }
 
+
         // Select UPT option
         function selectUpt(namaUpt, kanwil) {
             document.getElementById('upt_search').value = namaUpt;
@@ -1063,7 +1067,7 @@
             @foreach ($data as $d)
                 updateUptOptionsEdit({{ $d->id }});
                 // Set current value
-                const currentUpt{{ $d->id }} = '{{ $d->nama_upt }}';
+                const currentUpt{{ $d->id }} = '{{ $d->upt->namaupt ?? '' }}';
                 const selectElement{{ $d->id }} = document.getElementById(
                     'nama_upt_edit_{{ $d->id }}');
                 if (selectElement{{ $d->id }} && currentUpt{{ $d->id }}) {
@@ -1155,6 +1159,7 @@
             function getFilters() {
                 return {
                     search_nama_upt: $('#search-nama_upt').val().trim(),
+                    search_kanwil: $('#search-kanwil').val().trim(),
                     search_jenis_layanan: $('#search-jenis_layanan').val().trim(),
                     search_keterangan: $('#search-keterangan').val().trim(),
                     search_status: $('#search-status').val().trim(),
@@ -1175,6 +1180,7 @@
 
                 // Remove existing filter parameters
                 url.searchParams.delete('search_nama_upt');
+                url.searchParams.delete('search_kanwil');
                 url.searchParams.delete('search_jenis_layanan');
                 url.searchParams.delete('search_keterangan');
                 url.searchParams.delete('search_status');
@@ -1214,6 +1220,7 @@
 
                 // Remove all search parameters
                 url.searchParams.delete('search_nama_upt');
+                url.searchParams.delete('search_kanwil');
                 url.searchParams.delete('search_jenis_layanan');
                 url.searchParams.delete('search_keterangan');
                 url.searchParams.delete('search_status');
@@ -1292,6 +1299,9 @@
             if (urlParams.get('search_nama_upt')) {
                 $('#search-nama_upt').val(urlParams.get('search_nama_upt'));
             }
+            if (urlParams.get('search_kanwil')) {
+                $('#search-kanwil').val(urlParams.get('search_kanwil'));
+            }
             if (urlParams.get('search_jenis_layanan')) {
                 $('#search-jenis_layanan').val(urlParams.get('search_jenis_layanan'));
             }
@@ -1341,7 +1351,7 @@
             });
         });
 
-            function toggleDetail(id) {
+        function toggleDetail(id) {
             const shortText = document.getElementById('short-text-' + id);
             const fullText = document.getElementById('full-text-' + id);
 

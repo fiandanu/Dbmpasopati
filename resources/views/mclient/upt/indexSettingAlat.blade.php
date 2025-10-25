@@ -186,6 +186,18 @@
                                                     </div>
                                                 </div>
                                             </th>
+                                            <th class="align-top">
+                                                <div class="d-flex flex-column gap-12">
+                                                    <span>Kanwil</span>
+                                                    <div class="btn-searchbar column-search">
+                                                        <span>
+                                                            <i class="fas fa-search"></i>
+                                                        </span>
+                                                        <input type="text" id="search-kanwil" name="search_kanwil"
+                                                            placeholder="Search">
+                                                    </div>
+                                                </div>
+                                            </th>
                                             <th class="text-center align-top">
                                                 <div
                                                     class="d-flex justify-content-center align-items-center flex-column gap-12">
@@ -271,7 +283,8 @@
                                         @forelse ($data as $d)
                                             <tr>
                                                 <td class="text-center">{{ $no++ }}</td>
-                                                <td>{{ $d->nama_upt ?? '-' }}</td>
+                                                <td>{{ $d->upt->namaupt ?? '-' }}</td>
+                                                <td>{{ $d->upt->kanwil->kanwil ?? '-' }}</td>
                                                 <td class="text-center">
                                                     @php
                                                         $layananClass = match (strtolower($d->jenis_layanan ?? '')) {
@@ -579,10 +592,10 @@
                                                     <div class="mb-3">
                                                         <label for="jenis_layanan_edit_{{ $d->id }}">Jenis Layanan
                                                             <span class="text-danger">*</span></label>
-                                                        <select class="form-control"
+                                                        <select class="form-control text-muted"
                                                             id="jenis_layanan_edit_{{ $d->id }}"
-                                                            name="jenis_layanan" required
-                                                            onchange="updateUptOptionsEdit({{ $d->id }})">
+                                                            name="jenis_layanan_display"
+                                                            onchange="updateUptOptionsEdit({{ $d->id }})" disabled>
                                                             <option value="">-- Pilih Jenis Layanan --</option>
                                                             @foreach ($jenisLayananOptions as $key => $value)
                                                                 <option value="{{ $key }}"
@@ -591,17 +604,24 @@
                                                                 </option>
                                                             @endforeach
                                                         </select>
+                                                        <!-- Hidden input untuk mengirim nilai jenis_layanan -->
+                                                        <input type="hidden" name="jenis_layanan"
+                                                            value="{{ $d->jenis_layanan }}">
                                                     </div>
 
                                                     <div class="mb-3">
                                                         <label for="nama_upt_edit_{{ $d->id }}">Nama UPT <span
                                                                 class="text-danger">*</span></label>
-                                                        <select class="form-control"
-                                                            id="nama_upt_edit_{{ $d->id }}" name="nama_upt"
-                                                            required>
+                                                        <select class="form-control text-muted"
+                                                            id="nama_upt_edit_{{ $d->id }}"
+                                                            name="nama_upt_display" disabled>
                                                             <option value="">-- Pilih UPT --</option>
                                                         </select>
+                                                        <!-- Hidden input untuk mengirim nilai nama_upt -->
+                                                        <input type="hidden" name="nama_upt"
+                                                            value="{{ $d->upt->namaupt ?? '' }}">
                                                     </div>
+                                                    
                                                 </div>
 
                                                 <!-- Detail Setting Alat -->
@@ -740,6 +760,10 @@
                                 @if (request('search_nama_upt'))
                                     <input type="hidden" name="search_nama_upt"
                                         value="{{ request('search_nama_upt') }}">
+                                @endif
+                                @if (request('search_kanwil'))
+                                    <input type="hidden" name="search_kanwil"
+                                        value="{{ request('search_kanwil') }}">
                                 @endif
                                 @if (request('search_jenis_layanan'))
                                     <input type="hidden" name="search_jenis_layanan"
@@ -927,7 +951,7 @@
         const uptListReguler = @json($uptListReguler);
         const uptListAll = @json($uptListAll);
 
-        // Update UPT options based on selected service type for Add Modal
+        // JS UNTUK ADD MODAL
         function updateUptOptions() {
             const jenisLayanan = document.getElementById('jenis_layanan').value;
             const uptSearch = document.getElementById('upt_search');
@@ -981,7 +1005,8 @@
             });
         }
 
-        // Update UPT options for Edit Modal
+
+        // JS UNTUK EDIT MODAL
         function updateUptOptionsEdit(id) {
             const jenisLayanan = document.getElementById(`jenis_layanan_edit_${id}`).value;
             const namaUptSelect = document.getElementById(`nama_upt_edit_${id}`);
@@ -1017,6 +1042,7 @@
             });
         }
 
+
         // Select UPT option
         function selectUpt(namaUpt, kanwil) {
             document.getElementById('upt_search').value = namaUpt;
@@ -1044,7 +1070,7 @@
             @foreach ($data as $d)
                 updateUptOptionsEdit({{ $d->id }});
                 // Set current value
-                const currentUpt{{ $d->id }} = '{{ $d->nama_upt }}';
+                const currentUpt{{ $d->id }} = '{{ $d->upt->namaupt ?? '' }}';
                 const selectElement{{ $d->id }} = document.getElementById(
                     'nama_upt_edit_{{ $d->id }}');
                 if (selectElement{{ $d->id }} && currentUpt{{ $d->id }}) {
@@ -1129,6 +1155,7 @@
         });
     </script>
 
+
     {{-- Search and Filter JavaScript --}}
     <script>
         $(document).ready(function() {
@@ -1136,6 +1163,7 @@
             function getFilters() {
                 return {
                     search_nama_upt: $('#search-nama_upt').val().trim(),
+                    search_kanwil: $('#search-kanwil').val().trim(),
                     search_jenis_layanan: $('#search-jenis_layanan').val().trim(),
                     search_keterangan: $('#search-keterangan').val().trim(),
                     search_status: $('#search-status').val().trim(),
@@ -1156,6 +1184,7 @@
 
                 // Remove existing filter parameters
                 url.searchParams.delete('search_nama_upt');
+                url.searchParams.delete('search_kanwil');
                 url.searchParams.delete('search_jenis_layanan');
                 url.searchParams.delete('search_keterangan');
                 url.searchParams.delete('search_status');
@@ -1181,6 +1210,7 @@
             window.clearAllFilters = function() {
                 // Clear semua input field dulu
                 $('#search-nama_upt').val('');
+                $('#search-kanwil').val('');
                 $('#search-jenis_layanan').val('');
                 $('#search-keterangan').val('');
                 $('#search-status').val('');
@@ -1195,6 +1225,7 @@
 
                 // Remove all search parameters
                 url.searchParams.delete('search_nama_upt');
+                url.searchParams.delete('search_kanwil');
                 url.searchParams.delete('search_jenis_layanan');
                 url.searchParams.delete('search_keterangan');
                 url.searchParams.delete('search_status');
@@ -1273,6 +1304,9 @@
             if (urlParams.get('search_nama_upt')) {
                 $('#search-nama_upt').val(urlParams.get('search_nama_upt'));
             }
+            if (urlParams.get('search_kanwil')) {
+                $('#search-kanwil').val(urlParams.get('search_kanwil'));
+            }
             if (urlParams.get('search_jenis_layanan')) {
                 $('#search-jenis_layanan').val(urlParams.get('search_jenis_layanan'));
             }
@@ -1321,7 +1355,8 @@
                 console.log('Modal is closing');
             });
         });
-            function toggleDetail(id) {
+
+        function toggleDetail(id) {
             const shortText = document.getElementById('short-text-' + id);
             const fullText = document.getElementById('full-text-' + id);
 

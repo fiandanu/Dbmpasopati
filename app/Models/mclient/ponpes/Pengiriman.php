@@ -2,6 +2,7 @@
 
 namespace App\Models\mclient\ponpes;
 
+use App\Models\user\ponpes\Ponpes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,7 +13,7 @@ class Pengiriman extends Model
     protected $table = 'mclient_ponpes_pengiriman';
 
     protected $fillable = [
-        'nama_ponpes',
+        'data_ponpes_id',
         'jenis_layanan',
         'keterangan',
         'tanggal_pengiriman',
@@ -29,6 +30,11 @@ class Pengiriman extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
+
+
+    public function ponpes() {
+        return $this->belongsTo(Ponpes::class, 'data_ponpes_id');
+    }
 
     // Accessor untuk format jenis layanan
     public function getFormattedJenisLayananAttribute()

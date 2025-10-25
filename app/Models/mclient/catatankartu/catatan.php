@@ -13,7 +13,7 @@ class Catatan extends Model
     protected $table = 'mclient_catatan';
 
     protected $fillable = [
-        'nama_upt',
+        'data_upt_id',
         'spam_vpas_kartu_baru',
         'spam_vpas_kartu_bekas',
         'spam_vpas_kartu_goip',
@@ -40,7 +40,7 @@ class Catatan extends Model
 
     public function upt()
     {
-        return $this->belongsTo(Upt::class, 'nama_upt', 'namaupt');
+        return $this->belongsTo(Upt::class, 'data_upt_id');
     }
 
     public function getFormattedTanggalAttribute()

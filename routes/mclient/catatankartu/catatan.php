@@ -8,6 +8,7 @@ Route::prefix('mclient-catatan-vpas')->name('mccatatanvpas.')->group(function ()
     Route::post('/store', [CatatanController::class, 'MclientCatatanStoreVpas'])->name('MclientCatatanStoreVpas');
     Route::put('/update/{id}', [CatatanController::class, 'MclientCatatanUpdateVpas'])->name('MclientCatatanUpdateVpas');
     Route::delete('/destroy/{id}', [CatatanController::class, 'MclientCatatanDestroyVpas'])->name('MclientCatatanDestroyVpas');
+    
     Route::get('/export/csv', [CatatanController::class, 'exportCsv'])->name('MclientCatatan.export.csv');
     Route::get('/dashboard-stats', [CatatanController::class, 'getDashboardStats'])->name('MclientCatatan.dashboard.stats');
     Route::get('/get-upt-data', [CatatanController::class, 'getUptData'])->name('MclientCatatan.getUptData');

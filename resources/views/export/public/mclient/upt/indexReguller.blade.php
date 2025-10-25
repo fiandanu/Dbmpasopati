@@ -82,6 +82,7 @@
                     <th style="width: 15%;">Nama UPT</th>
                     <th style="width: 12%;">Kanwil</th>
                     <th style="width: 15%;">Jenis Kendala</th>
+                    <th style="width: 15%;">detail Kendala</th>
                     <th style="width: 10%;">Tanggal Terlapor</th>
                     <th style="width: 10%;">Tanggal Selesai</th>
                     <th style="width: 8%;">Durasi</th>
@@ -112,8 +113,8 @@
                     @endphp
                     <tr>
                         <td class="text-center">{{ $no++ }}</td>
-                        <td>{{ $d->nama_upt ?? '-' }}</td>
-                        <td>{{ $d->kanwil ?? '-' }}</td>
+                        <td>{{ $d->upt->namaupt ?? '-' }}</td>
+                        <td>{{ $d->upt->kanwil->kanwil ?? '-' }}</td>
                         <td>{{ Str::limit($d->jenis_kendala ?? 'Belum ditentukan', 25) }}</td>
                         <td>{{ Str::limit($d->detail_kendala ?? '-') }}</td>
                         <td class="text-center">{{ $d->tanggal_terlapor ? \Carbon\Carbon::parse($d->tanggal_terlapor)->format('d M Y') : '-' }}</td>

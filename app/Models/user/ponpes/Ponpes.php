@@ -13,7 +13,7 @@ class Ponpes extends Model
 {
     use HasFactory;
 
-    protected $table = 'data_ponpes';
+    protected $table = 'data_ponpes'; 
 
     protected $fillable = [
         'nama_ponpes',

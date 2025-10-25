@@ -14,7 +14,7 @@ class Pengiriman extends Model
     protected $table = 'pengiriman_upt';
 
     protected $fillable = [
-        'nama_upt',
+        'data_upt_id',
         'jenis_layanan',
         'keterangan',
         'tanggal_pengiriman',
@@ -42,7 +42,7 @@ class Pengiriman extends Model
 
     public function upt()
     {
-        return $this->belongsTo(Upt::class, 'nama_upt', 'namaupt');
+        return $this->belongsTo(Upt::class, 'data_upt_id');
     }
 
     public function getFormattedtanggal_pengirimanAttribute()
@@ -133,7 +133,9 @@ class Pengiriman extends Model
     public function scopeSearch($query, $term)
     {
         return $query->where(function ($q) use ($term) {
-            $q->where('nama_upt', 'LIKE', "%{$term}%")
+            $q->whereHas('upt', function ($query) use ($term) {
+                $query->where('namaupt', 'LIKE', "%{$term}%");
+            })
                 ->orWhere('jenis_layanan', 'LIKE', "%{$term}%")
                 ->orWhere('keterangan', 'LIKE', "%{$term}%")
                 ->orWhere('status', 'LIKE', "%{$term}%")

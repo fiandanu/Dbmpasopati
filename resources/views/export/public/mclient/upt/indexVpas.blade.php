@@ -113,8 +113,8 @@
                     @endphp
                     <tr>
                         <td class="text-center">{{ $no++ }}</td>
-                        <td>{{ $d->nama_upt ?? '-' }}</td>
-                        <td>{{ $d->kanwil ?? '-' }}</td>
+                        <td>{{ $d->upt->namaupt ?? '-' }}</td>
+                        <td>{{ $d->upt->kanwil->kanwil ?? '-' }}</td>
                         <td>{{ Str::limit($d->jenis_kendala ?? 'Belum ditentukan', 25) }}</td>
                         <td>{{ Str::limit($d->detail_kendala ?? '-') }}</td>
                         <td class="text-center">{{ $d->tanggal_terlapor ? \Carbon\Carbon::parse($d->tanggal_terlapor)->format('d M Y') : '-' }}</td>

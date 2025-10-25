@@ -6,8 +6,9 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
-            font-size: 12px;
+            font-size: 10px;
+            margin: 0;
+            padding: 20px;
         }
 
         .header {
@@ -19,13 +20,19 @@
 
         .header h1 {
             margin: 0;
-            font-size: 16px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .header p {
+            margin: 5px 0 0 0;
+            font-size: 10px;
+            color: #666;
         }
 
         .info {
             margin-bottom: 15px;
-            font-size: 10px;
-            color: #666;
+            font-size: 9px;
         }
 
         table {
@@ -34,49 +41,83 @@
             margin-top: 10px;
         }
 
-        th,
-        td {
-            border: 1px solid #333;
+        table thead {
+            background-color: #6f42c1;
+            color: white;
+        }
+
+        table thead th {
+            padding: 8px;
+            text-align: center;
+            font-size: 8px;
+            border: 1px solid #ddd;
+            font-weight: bold;
+        }
+
+        table tbody td {
             padding: 6px;
+            border: 1px solid #ddd;
+            font-size: 8px;
+            text-align: center;
+        }
+
+        table tbody td:nth-child(2),
+        table tbody td:nth-child(3) {
             text-align: left;
-            font-size: 10px;
         }
 
-        th {
-            background-color: #f2f2f2;
+        table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        table tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .badge {
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 8px;
             font-weight: bold;
+            display: inline-block;
+        }
+
+        .badge-success {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .badge-warning {
+            background-color: #ffc107;
+            color: #333;
+        }
+
+        .badge-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .badge-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .tag {
+            background-color: #6f42c1;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 8px;
+            display: inline-block;
+        }
+
+        .footer {
+            margin-top: 20px;
             text-align: center;
-        }
-
-        .text-center {
-            text-align: center;
-        }
-
-        .status-pending {
-            color: #dc3545;
-            font-weight: bold;
-        }
-
-        .status-proses {
-            color: #ffc107;
-            font-weight: bold;
-        }
-
-        .status-selesai {
-            color: #28a745;
-            font-weight: bold;
-        }
-
-        .status-terjadwal {
-            color: #007bff;
-            font-weight: bold;
-        }
-
-        .no-data {
-            text-align: center;
-            padding: 40px;
+            font-size: 8px;
             color: #666;
-            font-style: italic;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
         }
     </style>
 </head>
@@ -95,6 +136,7 @@
                 <tr>
                     <th style="width: 5%;">No</th>
                     <th style="width: 15%;">Nama UPT</th>
+                    <th style="width: 10%;">Kanwil</th>
                     <th style="width: 12%;">Jenis Layanan</th>
                     <th style="width: 15%;">Keterangan</th>
                     <th style="width: 15%;">Jadwal</th>
@@ -109,35 +151,48 @@
                 @php $no = 1; @endphp
                 @foreach ($data as $d)
                     @php
-                        // Determine CSS class based on status
-                        $statusClass = 'status-pending';
-                        switch (strtolower($d->status ?? '')) {
-                            case 'selesai':
-                                $statusClass = 'status-selesai';
-                                break;
-                            case 'proses':
-                                $statusClass = 'status-proses';
-                                break;
-                            case 'terjadwal':
-                                $statusClass = 'status-terjadwal';
-                                break;
-                            default:
-                                $statusClass = 'status-pending';
-                        }
+                        // Determine badge class based on status
+                        $statusClass = match (strtolower($d->status ?? '')) {
+                            'selesai' => 'badge-success',
+                            'proses' => 'badge-warning',
+                            'pending' => 'badge-danger',
+                            'terjadwal' => 'badge-warning',
+                            default => 'badge-secondary',
+                        };
+
+                        // Determine layanan type styling
+                        $layananText = match (strtolower($d->jenis_layanan ?? '')) {
+                            'vpas' => 'VPAS',
+                            'reguler' => 'Reguler',
+                            'vpasreg' => 'VPAS + Reguler',
+                            default => $d->jenis_layanan ?? '-',
+                        };
                     @endphp
                     <tr>
-                        <td class="text-center">{{ $no++ }}</td>
-                        <td>{{ $d->nama_upt ?? '-' }}</td>
-                        <td class="text-center">{{ $d->jenis_layanan ?? '-' }}</td>
-                        <td class="text-center">{{ Str::limit($d->keterangan ?? '-') }}</td>
-                        <td class="text-center">
-                            {{ $d->jadwal ? \Carbon\Carbon::parse($d->jadwal)->format('d M Y') : '-' }}
+                        <td>{{ $no++ }}</td>
+                        <td>{{ $d->upt->namaupt ?? '-' }}</td>
+                        <td>{{ $d->upt->kanwil->kanwil ?? '-' }}</td>
+                        <td>
+                            <span class="tag">{{ $layananText }}</span>
                         </td>
-                        <td class="text-center">
-                            {{ $d->tanggal_selesai ? \Carbon\Carbon::parse($d->tanggal_selesai)->format('d M Y') : '-' }}
+                        <td>{{ Str::limit($d->keterangan ?? '-', 50) }}</td>
+                        <td>
+                            {{ $d->jadwal ? \Carbon\Carbon::parse($d->jadwal)->translatedFormat('d M Y') : '-' }}
                         </td>
-                        <td class="text-center">{{ $d->durasi_hari ? $d->durasi_hari . ' hari' : '-' }}</td>
-                        <td class="text-center {{ $statusClass }}">{{ ucfirst($d->status ?? 'Belum ditentukan') }}
+                        <td>
+                            {{ $d->tanggal_selesai ? \Carbon\Carbon::parse($d->tanggal_selesai)->translatedFormat('d M Y') : '-' }}
+                        </td>
+                        <td>
+                            @if ($d->durasi_hari)
+                                {{ $d->durasi_hari }} hari
+                            @else
+                                -
+                            @endif
+                        </td>
+                        <td>
+                            <span class="badge {{ $statusClass }}">
+                                {{ ucfirst($d->status ?? 'Belum ditentukan') }}
+                            </span>
                         </td>
                         <td>{{ $d->pic_1 ?? '-' }}</td>
                         <td>{{ $d->pic_2 ?? '-' }}</td>

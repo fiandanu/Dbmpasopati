@@ -43,7 +43,7 @@ Auto Functions:
 🔄 [Search By Nama Kolom] - [ Data Bisa Didownload bertipe PDF dan CSV, Diterapkan di semua halaman kecuali di halaman add data Provider/Vpn dan Kendala/Pic]
 
 =============================================================
-🐛 BUGS FOUND
+🐛 ERROR FOUND
 =============================================================
 
 ❌ [Tanggal] - [Deskripsi bug] - [Lokasi: Controller/View/Route]
@@ -75,28 +75,29 @@ Kode yang perlu dirapihin lagi di bagian
  - history login 
  - tanggal pembuatan
 
+
  dibuat kolom untuk di halaman home usernya itu 
  terakhir login dan tanggal pembuatan user
-
- 
 
 
 
 - di halaman pengiriman alat di kolom penerima diketik sendiri DI HALAMAN PONPES DAN UPT MCLIENT
-- di halaman DB UPT PONPES dibuat untuk halaman Export PDF dan CSV
--
 
 
 
-🔄 Di setiap jenis kendala ditambahkan keterangan dan pdf/csv (limit 10 karakter) Tinggal Di UPT
--- On Prosses
+
 🔄 menampilkan keseluruhan total data di bawah perncarian kartu gsm vpas vtren
 (Pembenaran Layout)
 
 
--- On Discuss
-- Jumlah SST Reguller Diambil dari jumlah extension
-- Jumlah SST Vpas Diambil dari jumlah extension
+
+- di mclient dashboard di munculkan data yang paling awal itu yang paling lama belum selesai dan yang baru dipaling bawah
+  yang sudah selesai urutannya dipaling bawah 
+  -
+
+  - menu dibuat dropdown di mclient upt dan vpas
+  - yang dibuat dropdown itu menu,status, tipe 
+
 
 
 
@@ -133,6 +134,13 @@ Kode yang perlu dirapihin lagi di bagian
 - (Nama Db Belum Diubah)
 ✅ tanggal selesai di ganti menjadi tnaggal diterima di bagian pengiriman alat ponpes
 ✅ Tanggal Kontrak dan Jatuh Tempo
+
+✅
+- Jumlah SST Reguller Diambil dari jumlah extension
+- Jumlah SST Vpas Diambil dari jumlah extension
+
+✅
+- di halaman DB UPT PONPES dibuat untuk halaman Export PDF dan CSV
 
 
 

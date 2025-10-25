@@ -83,7 +83,7 @@
                         <div class="alert-heading h5 mb-2">Periksa kembali Data yang dimasukkan</div>
                         <div class="small">
                             @foreach ($errors->all() as $error)
-                                <div class="mb-1">• {{ $error }}</div>
+                                <div class="mb-1">â€¢ {{ $error }}</div>
                             @endforeach
                         </div>
                     </div>
@@ -225,6 +225,18 @@
                                                             <i class="fas fa-search"></i>
                                                         </span>
                                                         <input type="text" id="search-nama-upt" name="search_nama_upt"
+                                                            placeholder="Search">
+                                                    </div>
+                                                </div>
+                                            </th>
+                                            <th class="align-top">
+                                                <div class="d-flex flex-column gap-12">
+                                                    <span>Kanwil</span>
+                                                    <div class="btn-searchbar column-search">
+                                                        <span>
+                                                            <i class="fas fa-search"></i>
+                                                        </span>
+                                                        <input type="text" id="search-kanwil" name="search_kanwil"
                                                             placeholder="Search">
                                                     </div>
                                                 </div>
@@ -454,12 +466,13 @@
                                                 </div>
                                                 <div class="column">
                                                     <div class="mb-3">
-                                                        <label for="nama_upt" class="form-label">Nama UPT</label>
+                                                        <label class="form-label">Nama UPT <span
+                                                                class="text-danger">*</span></label>
                                                         <div class="dropdown">
                                                             <div class="input-group">
                                                                 <input type="text" class="form-control"
-                                                                    id="upt_search" placeholder="Cari nama Upt"
-                                                                    autocomplete="off">
+                                                                    id="upt_search" placeholder="Cari UPT..."
+                                                                    autocomplete="off" required>
                                                                 <div class="input-group-append">
                                                                     <button type="button"
                                                                         class="btn btn-outline-secondary"
@@ -468,20 +481,31 @@
                                                                     </button>
                                                                 </div>
                                                             </div>
-
                                                             <div class="dropdown-menu w-100" id="uptDropdownMenu"
                                                                 style="max-height: 200px; overflow-y: auto; display: none;">
                                                                 @foreach ($uptList as $upt)
-                                                                    <a href="#" class="dropdown-item upt-option"
-                                                                        data-value="{{ $upt->namaupt }}"
-                                                                        onclick="selectUpt('{{ $upt->namaupt }}')">
-                                                                        {{ $upt->namaupt }}
+                                                                    <a class="dropdown-item upt-option"
+                                                                        href="javascript:void(0)"
+                                                                        data-id="{{ $upt->id }}"
+                                                                        data-nama="{{ $upt->namaupt }}"
+                                                                        data-kanwil="{{ $upt->kanwil->kanwil ?? '' }}"
+                                                                        onclick="selectUpt(this)">
+                                                                        {{ $upt->namaupt }} -
+                                                                        {{ $upt->kanwil->kanwil ?? '-' }}
                                                                     </a>
                                                                 @endforeach
                                                             </div>
                                                         </div>
-                                                        <input type="hidden" id="nama_upt" name="nama_upt" required>
-                                                        <small class="form-text text-muted">Ketik untuk mencari UPT</small>
+                                                        <!-- INI YANG PENTING: Kirim ID bukan nama -->
+                                                        <input type="hidden" id="data_upt_id" name="data_upt_id"
+                                                            required>
+                                                        <small class="form-text text-muted">Ketik untuk mencari UPT atau
+                                                            klik tombol dropdown</small>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="kanwil" class="form-label">Kanwil</label>
+                                                        <input type="text" class="form-control" id="kanwil_display"
+                                                            readonly>
                                                     </div>
                                                 </div>
                                             </div>
@@ -642,40 +666,31 @@
                                                     </div>
                                                     <div class="column">
                                                         <div class="mb-3">
-                                                            <label for="nama_upt_edit_{{ $d->id }}"
+                                                            <label for="data_upt_id_edit_{{ $d->id }}"
                                                                 class="form-label">Nama UPT <span
                                                                     class="text-danger">*</span></label>
-                                                            <div class="dropdown">
-                                                                <div class="input-group">
-                                                                    <input type="text" class="form-control"
-                                                                        id="upt_search_edit_{{ $d->id }}"
-                                                                        placeholder="Cari UPT..." autocomplete="off"
-                                                                        value="{{ $d->nama_upt ?? '' }}">
-                                                                    <div class="input-group-append">
-                                                                        <button type="button"
-                                                                            class="btn btn-outline-secondary"
-                                                                            onclick="toggleUptDropdownEdit({{ $d->id }})">
-                                                                            <i class="fas fa-chevron-down"></i>
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="dropdown-menu w-100"
-                                                                    id="uptDropdownMenuEdit{{ $d->id }}"
-                                                                    style="max-height: 200px; overflow-y: auto; display: none;">
-                                                                    @foreach ($uptList as $upt)
-                                                                        <a class="dropdown-item upt-option" href="#"
-                                                                            data-value="{{ $upt->namaupt }}"
-                                                                            onclick="selectUptEdit('{{ $upt->namaupt }}', {{ $d->id }})">
-                                                                            {{ $upt->namaupt }}
-                                                                        </a>
-                                                                    @endforeach
-                                                                </div>
-                                                            </div>
-                                                            <input type="hidden" id="nama_upt_edit_{{ $d->id }}"
-                                                                name="nama_upt" value="{{ $d->nama_upt ?? '' }}"
+                                                            <select class="form-control"
+                                                                id="data_upt_id_edit_{{ $d->id }}"
+                                                                name="data_upt_id"
+                                                                onchange="updateKanwilEdit(this.value, {{ $d->id }})"
                                                                 required>
-                                                            <small class="form-text text-muted">Ketik untuk mencari
-                                                                UPT</small>
+                                                                <option value="">-- Pilih UPT --</option>
+                                                                @foreach ($uptList as $upt)
+                                                                    <option value="{{ $upt->id }}"
+                                                                        data-kanwil="{{ $upt->kanwil->kanwil ?? '' }}"
+                                                                        {{ $d->data_upt_id == $upt->id ? 'selected' : '' }}>
+                                                                        {{ $upt->namaupt }} -
+                                                                        {{ $upt->kanwil->kanwil ?? '-' }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="kanwil_edit_{{ $d->id }}"
+                                                                class="form-label">Kanwil</label>
+                                                            <input type="text" class="form-control"
+                                                                id="kanwil_edit_{{ $d->id }}"
+                                                                value="{{ $d->upt->kanwil->kanwil ?? '' }}" readonly>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -964,19 +979,28 @@
         integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-    {{-- Search UPT DROPDOWN UNTUK ADD MODAL --}}
+    {{-- JS Modal --}}
     <script>
-        // Start Add Modal JS
+        // =================== FUNGSI UNTUK ADD MODAL ===================
         document.addEventListener('DOMContentLoaded', function() {
             const uptSearch = document.getElementById('upt_search');
             const uptDropdown = document.getElementById('uptDropdownMenu');
             const uptOptions = document.querySelectorAll('.upt-option');
+            const dataUptIdHidden = document.getElementById('data_upt_id');
+            const kanwilDisplay = document.getElementById('kanwil_display');
 
-            // Filter UPT options based on search input
+            // FILTERING DATA UPT BERDASARKAN INPUT PENCARIAN
             uptSearch.addEventListener('input', function() {
                 const searchTerm = this.value.toLowerCase();
                 let hasVisibleOption = false;
 
+                // RESET DATA UPT DAN KANWIL JIKA INPUT PENCARIAN KOSONG
+                if (searchTerm === '') {
+                    dataUptIdHidden.value = '';
+                    kanwilDisplay.value = '';
+                }
+
+                // MENAMPILKAN DATA UPT BERDASARKAN TEKS YANG DIKETIK USER
                 uptOptions.forEach(option => {
                     const text = option.textContent.toLowerCase();
                     if (text.includes(searchTerm)) {
@@ -987,7 +1011,7 @@
                     }
                 });
 
-                // Show dropdown if there are visible options and search term is not empty
+                // MENAMPILKAN DROPDOWN SAAT USER MENGETIK DAN ADA DATA YANG COCOK, SEMBUNYIKAN JIKA INPUT KOSONG
                 if (searchTerm.length > 0 && hasVisibleOption) {
                     uptDropdown.style.display = 'block';
                 } else if (searchTerm.length === 0) {
@@ -995,7 +1019,7 @@
                 }
             });
 
-            // Show all options when clicking on search input
+            // MENAMPILKAN DROPDOWN SAAT FOCUS
             uptSearch.addEventListener('focus', function() {
                 if (this.value.length > 0) {
                     const searchTerm = this.value.toLowerCase();
@@ -1017,159 +1041,142 @@
                 }
             });
 
-            // Hide dropdown when clicking outside
+            // UNTUK MENYEMBUNYIKAN DROPDOWN SAAT CLICK DILUAR CONTENT
             document.addEventListener('click', function(event) {
                 if (!event.target.closest('.dropdown')) {
                     uptDropdown.style.display = 'none';
                 }
             });
-        });
 
-        // Toggle dropdown visibility for Add Modal
+            // VALIDASI FORM SEBELUM SUBMIT
+            // const addForm = document.getElementById('addForm');
+            // if (addForm) {
+            //     addForm.addEventListener('submit', function(e) {
+            //         const uptId = dataUptIdHidden.value;
+            //         if (!uptId || uptId.trim() === '') {
+            //             e.preventDefault();
+            //             alert('Silakan pilih Nama UPT terlebih dahulu');
+            //             uptSearch.focus();
+            //             return false;
+            //         }
+            //     });
+            // }
+        });
+        // ======================================
+
+
+
+        // FUNGSI UNTUK MENAMPILKAN DAN MENYEMBUNYIKAN DROPDOWN
         function toggleUptDropdown() {
             const uptDropdown = document.getElementById('uptDropdownMenu');
             const uptOptions = document.querySelectorAll('.upt-option');
+            const uptSearch = document.getElementById('upt_search');
 
             if (uptDropdown.style.display === 'none' || uptDropdown.style.display === '') {
+                // Show all options
                 uptOptions.forEach(option => {
                     option.style.display = 'block';
                 });
                 uptDropdown.style.display = 'block';
+                uptSearch.focus();
             } else {
                 uptDropdown.style.display = 'none';
             }
         }
 
-        // Select UPT option for Add Modal
-        function selectUpt(namaUpt) {
+
+        // PADA SAAT MEMILIH DATA UPT, DROPDOWN OTOMATIS DISEMBUNYIKAN
+        function selectUpt(element) {
+            const uptId = element.getAttribute('data-id');
+            const namaUpt = element.getAttribute('data-nama');
+            const kanwil = element.getAttribute('data-kanwil');
+
+            console.log('Selected UPT:', {
+                id: uptId,
+                nama: namaUpt,
+                kanwil: kanwil
+            }); // Debug
+
+            // Set visible input (untuk display)
             document.getElementById('upt_search').value = namaUpt;
-            document.getElementById('nama_upt').value = namaUpt;
+
+            // Set hidden input dengan ID
+            document.getElementById('data_upt_id').value = uptId;
+
+            // Set kanwil display
+            document.getElementById('kanwil_display').value = kanwil;
+
+            // Hide dropdown
             document.getElementById('uptDropdownMenu').style.display = 'none';
+
+            // Blur untuk memastikan perubahan tersimpan
+            document.getElementById('upt_search').blur();
         }
 
-        // Clear UPT selection when search is cleared for Add Modal
-        document.getElementById('upt_search').addEventListener('input', function() {
-            if (this.value === '') {
-                document.getElementById('nama_upt').value = '';
+
+        // ========== JAVASCRIPT UNTUK EDIT MODAL ==========
+        window.updateKanwilEdit = function(uptId, recordId) {
+
+            if (uptId === '' || uptId === null) {
+                document.getElementById(`kanwil_edit_${recordId}`).value = '';
+                return;
             }
-        });
 
-        // Reset form when modal is closed for Add Modal
-        $('#addModal').on('hidden.bs.modal', function() {
-            document.getElementById('upt_search').value = '';
-            document.getElementById('nama_upt').value = '';
-            document.getElementById('uptDropdownMenu').style.display = 'none';
-        });
+            const selectElement = document.getElementById(`data_upt_id_edit_${recordId}`);
+            const selectedOption = selectElement.querySelector(`option[value="${uptId}"]`);
 
-        // End Add Modal JS
+            if (selectedOption) {
+                const kanwil = selectedOption.getAttribute('data-kanwil');
+                document.getElementById(`kanwil_edit_${recordId}`).value = kanwil || '';
+            }
+        };
 
-        // Start Edit Modal JS
+        // Set initial kanwil values for all edit modals on page load
         document.addEventListener('DOMContentLoaded', function() {
             @foreach ($data as $d)
-                const uptSearchEdit{{ $d->id }} = document.getElementById(
-                    'upt_search_edit_{{ $d->id }}');
-                const uptDropdownEdit{{ $d->id }} = document.getElementById(
-                    'uptDropdownMenuEdit{{ $d->id }}');
-                const uptOptionsEdit{{ $d->id }} = document.querySelectorAll(
-                    `#uptDropdownMenuEdit{{ $d->id }} .upt-option`);
-
-                if (uptSearchEdit{{ $d->id }}) {
-                    // Filter Upt Berdasarkan Pencarian Input
-                    uptSearchEdit{{ $d->id }}.addEventListener('input', function() {
-                        const searchTerm = this.value.toLowerCase();
-                        let hasVisibleOption = false;
-
-                        uptOptionsEdit{{ $d->id }}.forEach(option => {
-                            const text = option.textContent.toLowerCase();
-                            if (text.includes(searchTerm)) {
-                                option.style.display = 'block';
-                                hasVisibleOption = true;
-                            } else {
-                                option.style.display = 'none';
-                            }
-                        });
-
-                        // Memunculkan Dropdown jika tidak kosong
-                        if (searchTerm.length > 0 && hasVisibleOption) {
-                            uptDropdownEdit{{ $d->id }}.style.display = 'block';
-                        } else if (searchTerm.length === 0) {
-                            uptDropdownEdit{{ $d->id }}.style.display = 'none';
+                const selectEdit{{ $d->id }} = document.getElementById(
+                    'data_upt_id_edit_{{ $d->id }}');
+                if (selectEdit{{ $d->id }}) {
+                    const selectedOptionEdit{{ $d->id }} = selectEdit{{ $d->id }}.querySelector(
+                        'option:checked');
+                    if (selectedOptionEdit{{ $d->id }}) {
+                        const kanwilEdit{{ $d->id }} = selectedOptionEdit{{ $d->id }}
+                            .getAttribute('data-kanwil');
+                        if (kanwilEdit{{ $d->id }}) {
+                            document.getElementById('kanwil_edit_{{ $d->id }}').value =
+                                kanwilEdit{{ $d->id }};
                         }
-                    });
+                    }
+                }
+            @endforeach
 
-                    // Menampilkan Semua UPT
-                    uptSearchEdit{{ $d->id }}.addEventListener('focus', function() {
-                        if (this.value.length > 0) {
-                            const searchTerm = this.value.toLowerCase();
-                            let hasVisibleOption = false;
-
-                            uptOptionsEdit{{ $d->id }}.forEach(option => {
-                                const text = option.textContent.toLowerCase();
-                                if (text.includes(searchTerm)) {
-                                    option.style.display = 'block';
-                                    hasVisibleOption = true;
-                                } else {
-                                    option.style.display = 'none';
-                                }
-                            });
-
-                            if (hasVisibleOption) {
-                                uptDropdownEdit{{ $d->id }}.style.display = 'block';
-                            }
-                        }
-                    });
-
-                    // Sembunyikan Ketika Klik diluar dropdown
-                    document.addEventListener('click', function(event) {
-                        if (!event.target.closest(`#editModal{{ $d->id }} .dropdown`)) {
-                            uptDropdownEdit{{ $d->id }}.style.display = 'none';
+            // Form validation before submit untuk semua edit form
+            @foreach ($data as $d)
+                const editForm{{ $d->id }} = document.getElementById('editForm{{ $d->id }}');
+                if (editForm{{ $d->id }}) {
+                    editForm{{ $d->id }}.addEventListener('submit', function(e) {
+                        const uptId = document.getElementById('data_upt_id_edit_{{ $d->id }}')
+                            .value;
+                        if (!uptId || uptId.trim() === '') {
+                            e.preventDefault();
+                            alert('Silakan pilih Nama UPT terlebih dahulu');
+                            return false;
                         }
                     });
                 }
             @endforeach
         });
 
-        // Toggle dropdown visibility for Edit Modal
-        function toggleUptDropdownEdit(id) {
-            const uptDropdown = document.getElementById(`uptDropdownMenuEdit${id}`);
-            const uptOptions = document.querySelectorAll(`#uptDropdownMenuEdit${id} .upt-option`);
-
-            if (uptDropdown.style.display === 'none' || uptDropdown.style.display === '') {
-                uptOptions.forEach(option => {
-                    option.style.display = 'block';
-                });
-                uptDropdown.style.display = 'block';
-            } else {
-                uptDropdown.style.display = 'none';
-            }
-        }
-
-        // Select UPT option for Edit Modal
-        function selectUptEdit(namaUpt, id) {
-            document.getElementById(`upt_search_edit_${id}`).value = namaUpt;
-            document.getElementById(`nama_upt_edit_${id}`).value = namaUpt;
-            document.getElementById(`uptDropdownMenuEdit${id}`).style.display = 'none';
-        }
-
-        // Clear UPT selection when search is cleared for Edit Modal
-        @foreach ($data as $d)
-            document.getElementById(`upt_search_edit_{{ $d->id }}`).addEventListener('input', function() {
-                if (this.value === '') {
-                    document.getElementById(`nama_upt_edit_{{ $d->id }}`).value = '';
-                }
-            });
-        @endforeach
-
-        // Reset Ketika Edit Modal Ditutup
-        @foreach ($data as $d)
-            $(`#editModal{{ $d->id }}`).on('hidden.bs.modal', function() {
-                document.getElementById(`upt_search_edit_{{ $d->id }}`).value =
-                    '{{ $d->nama_upt ?? '' }}';
-                document.getElementById(`uptDropdownMenuEdit{{ $d->id }}`).style.display = 'none';
-            });
-        @endforeach
-        // End Edit Modal JS
+        // Reset form when modal is closed
+        $('#addModal').on('hidden.bs.modal', function() {
+            document.getElementById('upt_search').value = '';
+            document.getElementById('data_upt_id').value = '';
+            document.getElementById('kanwil_display').value = '';
+            document.getElementById('uptDropdownMenu').style.display = 'none';
+            document.getElementById('addForm').reset();
+        });
     </script>
+
 
     {{-- Search and Filter JavaScript --}}
     <script>

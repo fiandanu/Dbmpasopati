@@ -14,7 +14,7 @@ class Kunjungan extends Model
     protected $table = 'mclient_ponpes_kunjungan';
 
     protected $fillable = [
-        'nama_ponpes',
+        'data_ponpes_id',
         'jenis_layanan',
         'keterangan',
         'jadwal',
@@ -42,7 +42,7 @@ class Kunjungan extends Model
 
     public function ponpes()
     {
-        return $this->belongsTo(Ponpes::class, 'nama_ponpes', 'nama_ponpes');
+        return $this->belongsTo(Ponpes::class, 'data_ponpes_id');
     }
 
     public function getFormattedJadwalAttribute()

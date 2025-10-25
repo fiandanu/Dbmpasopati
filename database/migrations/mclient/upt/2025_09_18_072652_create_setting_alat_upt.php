@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('setting_alat_upt', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_upt')->nullable();
+            // $table->string('nama_upt')->nullable();
             $table->string('jenis_layanan')->nullable();
             $table->text('keterangan')->nullable();
             $table->date('tanggal_terlapor')->nullable();
@@ -22,6 +22,9 @@ return new class extends Migration
             $table->string('pic_1')->nullable();
             $table->string('pic_2')->nullable();
             $table->string('status')->nullable();
+
+            $table->foreignId('data_upt_id')->nullable()->constrained('data_upt')->onDelete('cascade');
+
             $table->timestamps();
         });
     }

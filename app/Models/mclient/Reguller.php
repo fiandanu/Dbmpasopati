@@ -1,7 +1,8 @@
 <?php
- 
+
 namespace App\Models\mclient;
 
+use App\Models\user\kanwil\Kanwil;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\user\upt\Upt;
@@ -14,8 +15,7 @@ class Reguller extends Model
     protected $table = 'mclient_reguller';
 
     protected $fillable = [
-        'nama_upt',
-        'kanwil',
+        'data_upt_id',
         'jenis_kendala',
         'detail_kendala',
         'tanggal_terlapor',
@@ -43,18 +43,19 @@ class Reguller extends Model
 
     public function upt()
     {
-        return $this->belongsTo(Upt::class, 'nama_upt', 'namaupt');
+        return $this->belongsTo(Upt::class, 'data_upt_id');
     }
 
+    
     public function getFormattedTanggalTerlaporAttribute()
     {
         return $this->tanggal_terlapor ? $this->tanggal_terlapor->format('Y-m-d') : null;
     }
 
-public function getFormattedTanggalSelesaiAttribute()
-{
-    return $this->tanggal_selesai ? $this->tanggal_selesai->format('Y-m-d') : null;
-}
+    public function getFormattedTanggalSelesaiAttribute()
+    {
+        return $this->tanggal_selesai ? $this->tanggal_selesai->format('Y-m-d') : null;
+    }
 
 
     public function getStatusBadgeClassAttribute()
@@ -102,7 +103,7 @@ public function getFormattedTanggalSelesaiAttribute()
     public function scopeSearch($query, $term)
     {
         return $query->where(function ($q) use ($term) {
-            $q->where('nama_upt', 'LIKE', "%{$term}%")
+            $q->where('data_upt_id', 'LIKE', "%{$term}%")
                 ->orWhere('kanwil', 'LIKE', "%{$term}%")
                 ->orWhere('jenis_kendala', 'LIKE', "%{$term}%")
                 ->orWhere('status', 'LIKE', "%{$term}%")
@@ -167,9 +168,8 @@ public function getFormattedTanggalSelesaiAttribute()
 
         return $this->durasi_hari . ' hari';
     }
-        public function isScheduled()
+    public function isScheduled()
     {
         return strtolower($this->status ?? '') === 'terjadwal';
     }
-
 }

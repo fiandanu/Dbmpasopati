@@ -179,7 +179,7 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th class="text-center align-top">
+                                            <th class="align-top">
                                                 <div class="d-flex flex-column gap-12">
                                                     <span>Nama PONPES</span>
                                                     <div class="btn-searchbar column-search">
@@ -191,7 +191,7 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th class="text-center align-top">
+                                            <th class="align-top">
                                                 <div class="d-flex flex-column gap-12">
                                                     <span>Nama Wilayah</span>
                                                     <div class="btn-searchbar column-search">
@@ -283,8 +283,8 @@
                                         @forelse ($data as $d)
                                             <tr>
                                                 <td class="text-center">{{ $no++ }}</td>
-                                                <td>{{ $d->nama_ponpes ?? '-' }}</td>
-                                                <td>{{ $d->nama_wilayah ?? '-' }}</td>
+                                                <td>{{ $d->ponpes->nama_ponpes ?? '-' }}</td>
+                                                <td>{{ $d->ponpes->namaWilayah->nama_wilayah ?? '-' }}</td>
                                                 <td class="text-center">
                                                     <span class="Tipereguller">
                                                         {{ Str::limit($d->jenis_kendala ?? 'Belum ditentukan', 30) }}
@@ -440,8 +440,8 @@
                                                 </div>
                                                 <div class="column">
                                                     <div class="mb-3">
-                                                        <label for="nama_ponpes" class="form-label">Nama PONPES
-                                                        </label>
+                                                        <label for="ponpes_search" class="form-label">Nama PONPES <span
+                                                                class="text-danger">*</span></label>
                                                         <div class="dropdown">
                                                             <div class="input-group">
                                                                 <input type="text" class="form-control"
@@ -460,15 +460,17 @@
                                                                 @foreach ($ponpesList as $ponpes)
                                                                     <a class="dropdown-item ponpes-option" href="#"
                                                                         data-value="{{ $ponpes->nama_ponpes }}"
-                                                                        data-nama-wilayah="{{ $ponpes->nama_wilayah }}"
-                                                                        onclick="selectPonpes('{{ $ponpes->nama_ponpes }}', '{{ $ponpes->nama_wilayah }}')">
+                                                                        data-ponpes-id="{{ $ponpes->id }}"
+                                                                        data-nama-wilayah="{{ $ponpes->namaWilayah->nama_wilayah ?? '-' }}"
+                                                                        onclick="selectPonpes('{{ $ponpes->id }}', '{{ $ponpes->nama_ponpes }}', '{{ $ponpes->namaWilayah->nama_wilayah ?? '-' }}')">
                                                                         {{ $ponpes->nama_ponpes }} -
-                                                                        {{ $ponpes->nama_wilayah }}
+                                                                        {{ $ponpes->namaWilayah->nama_wilayah ?? '-' }}
                                                                     </a>
                                                                 @endforeach
                                                             </div>
                                                         </div>
-                                                        <input type="hidden" id="nama_ponpes" name="nama_ponpes"
+                                                        <!-- HANYA ADA SATU hidden input untuk data_ponpes_id -->
+                                                        <input type="hidden" id="data_ponpes_id" name="data_ponpes_id"
                                                             required>
                                                         <small class="form-text text-muted">Ketik untuk mencari
                                                             PONPES</small>
@@ -476,7 +478,7 @@
                                                     <div class="mb-3">
                                                         <label for="nama_wilayah" class="form-label">Nama Wilayah</label>
                                                         <input type="text" class="form-control" id="nama_wilayah"
-                                                            name="nama_wilayah" readonly>
+                                                            readonly>
                                                     </div>
                                                 </div>
                                             </div>
@@ -611,21 +613,32 @@
                                                     </div>
                                                     <div class="column">
                                                         <div class="mb-3">
-                                                            <label for="nama_ponpes_edit_{{ $d->id }}"
-                                                                class="form-label">Nama
-                                                                PONPES</label>
-                                                            <input type="text" class="form-control"
-                                                                id="nama_ponpes_edit_{{ $d->id }}"
-                                                                name="nama_ponpes" value="{{ $d->nama_ponpes }}"
-                                                                readonly>
+                                                            <label for="data_ponpes_id_edit_{{ $d->id }}"
+                                                                class="form-label">Nama PONPES <span
+                                                                    class="text-danger">*</span></label>
+                                                            <select class="form-control text-muted"
+                                                                id="data_ponpes_id_edit_{{ $d->id }}"
+                                                                onchange="updateWilayahEdit(this.value, {{ $d->id }})"
+                                                                disabled>
+                                                                <option value="">-- Pilih PONPES --</option>
+                                                                @foreach ($ponpesList as $ponpes)
+                                                                    <option value="{{ $ponpes->id }}"
+                                                                        data-wilayah="{{ $ponpes->namaWilayah->nama_wilayah ?? '' }}"
+                                                                        {{ $d->data_ponpes_id == $ponpes->id ? 'selected' : '' }}>
+                                                                        {{ $ponpes->nama_ponpes }} -
+                                                                        {{ $ponpes->namaWilayah->nama_wilayah ?? '-' }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
+                                                            <input type="hidden" name="data_ponpes_id"
+                                                                value="{{ $d->data_ponpes_id }}">
                                                         </div>
                                                         <div class="mb-3">
                                                             <label for="nama_wilayah_edit_{{ $d->id }}"
-                                                                class="form-label">Nama
-                                                                Wilayah</label>
-                                                            <input type="text" class="form-control"
+                                                                class="form-label">Nama Wilayah</label>
+                                                            <input type="text" class="form-control text-muted"
                                                                 id="nama_wilayah_edit_{{ $d->id }}"
-                                                                name="nama_wilayah" value="{{ $d->nama_wilayah }}"
+                                                                value="{{ $d->ponpes->namaWilayah->nama_wilayah ?? '-' }}"
                                                                 readonly>
                                                         </div>
                                                     </div>
@@ -808,6 +821,7 @@
                                 </form>
                             </div>
                         @endforeach
+
                     </div>
                 </div>
                 <!-- /.row -->
@@ -1008,95 +1022,27 @@
 
     {{-- JS Modal --}}
     <script>
-        // Function untuk update nama_wilayah pada Add Modal
-        function updateNamaWilayah(namaPonpes) {
-            if (namaPonpes === '') {
-                document.getElementById('nama_wilayah').value = '';
-                return;
-            }
-
-            const selectElement = document.getElementById('nama_ponpes');
-            const selectedOption = selectElement.querySelector(`option[value="${namaPonpes}"]`);
-
-            if (selectedOption) {
-                const namaWilayah = selectedOption.getAttribute('data-nama-wilayah');
-                document.getElementById('nama_wilayah').value = namaWilayah || '';
-            }
-        }
-
-        // Function untuk update nama_wilayah pada Edit Modal
-        function updateNamaWilayahEdit(namaPonpes, id) {
-            if (namaPonpes === '') {
-                document.getElementById(`nama_wilayah_edit_${id}`).value = '';
-                return;
-            }
-
-            const selectElement = document.getElementById(`nama_ponpes_edit_${id}`);
-            const selectedOption = selectElement.querySelector(`option[value="${namaPonpes}"]`);
-
-            if (selectedOption) {
-                const namaWilayah = selectedOption.getAttribute('data-nama-wilayah');
-                document.getElementById(`nama_wilayah_edit_${id}`).value = namaWilayah || '';
-            }
-        }
-
-        // Set nama_wilayah untuk edit modal saat modal dibuka
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set initial nama_wilayah values for all edit modals
-            @foreach ($data as $d)
-                const selectEdit{{ $d->id }} = document.getElementById(
-                    'nama_ponpes_edit_{{ $d->id }}');
-                if (selectEdit{{ $d->id }}) {
-                    const selectedOptionEdit{{ $d->id }} = selectEdit{{ $d->id }}.querySelector(
-                        'option:checked');
-                    if (selectedOptionEdit{{ $d->id }}) {
-                        const namaWilayahEdit{{ $d->id }} = selectedOptionEdit{{ $d->id }}
-                            .getAttribute(
-                                'data-nama-wilayah');
-                        if (namaWilayahEdit{{ $d->id }}) {
-                            document.getElementById('nama_wilayah_edit_{{ $d->id }}').value =
-                                namaWilayahEdit{{ $d->id }};
-                        }
-                    }
-                }
-            @endforeach
-        });
-
-        // Searchable Ponpes dropdown functionality
+        // =================== FUNGSI UNTUK PONPES DROPDOWN DI ADD MODAL ===================
         document.addEventListener('DOMContentLoaded', function() {
             const ponpesSearch = document.getElementById('ponpes_search');
             const ponpesDropdown = document.getElementById('ponpesDropdownMenu');
             const ponpesOptions = document.querySelectorAll('.ponpes-option');
+            const namaPonpesHidden = document.getElementById('nama_ponpes');
+            const namaWilayahDisplay = document.getElementById('nama_wilayah');
 
-            // Filter Ponpes options based on search input
-            ponpesSearch.addEventListener('input', function() {
-                const searchTerm = this.value.toLowerCase();
-                let hasVisibleOption = false;
-
-                ponpesOptions.forEach(option => {
-                    const text = option.textContent.toLowerCase();
-                    if (text.includes(searchTerm)) {
-                        option.style.display = 'block';
-                        hasVisibleOption = true;
-                    } else {
-                        option.style.display = 'none';
-                    }
-                });
-
-                // Show dropdown if there are visible options and search term is not empty
-                if (searchTerm.length > 0 && hasVisibleOption) {
-                    ponpesDropdown.style.display = 'block';
-                } else if (searchTerm.length === 0) {
-                    ponpesDropdown.style.display = 'none';
-                }
-            });
-
-            // Show all options when clicking on search input
-            ponpesSearch.addEventListener('focus', function() {
-                if (this.value.length > 0) {
+            // FILTERING DATA PONPES BERDASARKAN INPUT PENCARIAN
+            if (ponpesSearch) {
+                ponpesSearch.addEventListener('input', function() {
                     const searchTerm = this.value.toLowerCase();
                     let hasVisibleOption = false;
 
+                    // RESET DATA PONPES DAN WILAYAH JIKA INPUT PENCARIAN KOSONG
+                    if (searchTerm === '') {
+                        namaPonpesHidden.value = '';
+                        namaWilayahDisplay.value = '';
+                    }
+
+                    // MENAMPILKAN DATA PONPES BERDASARKAN TEKS YANG DIKETIK USER
                     ponpesOptions.forEach(option => {
                         const text = option.textContent.toLowerCase();
                         if (text.includes(searchTerm)) {
@@ -1107,24 +1053,67 @@
                         }
                     });
 
-                    if (hasVisibleOption) {
+                    // MENAMPILKAN DROPDOWN SAAT USER MENGETIK DAN ADA DATA YANG COCOK
+                    if (searchTerm.length > 0 && hasVisibleOption) {
                         ponpesDropdown.style.display = 'block';
+                    } else if (searchTerm.length === 0) {
+                        ponpesDropdown.style.display = 'none';
                     }
+                });
+
+                // MENAMPILKAN DROPDOWN SAAT FOCUS
+                ponpesSearch.addEventListener('focus', function() {
+                    if (this.value.length > 0) {
+                        const searchTerm = this.value.toLowerCase();
+                        let hasVisibleOption = false;
+
+                        ponpesOptions.forEach(option => {
+                            const text = option.textContent.toLowerCase();
+                            if (text.includes(searchTerm)) {
+                                option.style.display = 'block';
+                                hasVisibleOption = true;
+                            } else {
+                                option.style.display = 'none';
+                            }
+                        });
+
+                        if (hasVisibleOption) {
+                            ponpesDropdown.style.display = 'block';
+                        }
+                    }
+                });
+            }
+
+            // UNTUK MENYEMBUNYIKAN DROPDOWN SAAT CLICK DILUAR CONTENT
+            document.addEventListener('click', function(event) {
+                if (ponpesDropdown && !event.target.closest('.dropdown')) {
+                    ponpesDropdown.style.display = 'none';
                 }
             });
 
-            // Hide dropdown when clicking outside
-            document.addEventListener('click', function(event) {
-                if (!event.target.closest('.dropdown')) {
-                    ponpesDropdown.style.display = 'none';
+            // VALIDASI FORM SEBELUM SUBMIT
+            document.addEventListener('DOMContentLoaded', function() {
+                const addForm = document.getElementById('addForm');
+                if (addForm) {
+                    addForm.addEventListener('submit', function(e) {
+                        const dataPonpesId = document.getElementById('data_ponpes_id').value;
+
+                        if (!dataPonpesId || dataPonpesId.trim() === '') {
+                            e.preventDefault();
+                            alert('Silakan pilih Nama PONPES terlebih dahulu');
+                            document.getElementById('ponpes_search').focus();
+                            return false;
+                        }
+                    });
                 }
             });
         });
 
-        // Toggle dropdown visibility
+        // FUNGSI UNTUK MENAMPILKAN DAN MENYEMBUNYIKAN DROPDOWN PONPES
         function togglePonpesDropdown() {
             const ponpesDropdown = document.getElementById('ponpesDropdownMenu');
             const ponpesOptions = document.querySelectorAll('.ponpes-option');
+            const ponpesSearch = document.getElementById('ponpes_search');
 
             if (ponpesDropdown.style.display === 'none' || ponpesDropdown.style.display === '') {
                 // Show all options
@@ -1132,35 +1121,67 @@
                     option.style.display = 'block';
                 });
                 ponpesDropdown.style.display = 'block';
+                ponpesSearch.focus();
             } else {
                 ponpesDropdown.style.display = 'none';
             }
         }
 
-        // Select Ponpes option
-        function selectPonpes(namaPonpes, namaWilayah) {
+        // PADA SAAT MEMILIH DATA PONPES, DROPDOWN OTOMATIS DISEMBUNYIKAN
+        function selectPonpes(ponpesId, namaPonpes, namaWilayah) {
+            // Set visible input (untuk display)
             document.getElementById('ponpes_search').value = namaPonpes;
-            document.getElementById('nama_ponpes').value = namaPonpes;
+
+            // PERBAIKAN: Set hidden input dengan ID ponpes (yang benar-benar dibutuhkan controller)
+            document.getElementById('data_ponpes_id').value = ponpesId;
+
+            // Set nama wilayah display
             document.getElementById('nama_wilayah').value = namaWilayah;
+
+            // Hide dropdown
             document.getElementById('ponpesDropdownMenu').style.display = 'none';
         }
 
-        // Clear Ponpes selection when search is cleared
-        document.getElementById('ponpes_search').addEventListener('input', function() {
-            if (this.value === '') {
-                document.getElementById('nama_ponpes').value = '';
-                document.getElementById('nama_wilayah').value = '';
-            }
+        // Fungsi untuk update wilayah di edit modal (sudah ada, pastikan tidak ada typo)
+        function updateWilayahEdit(ponpesId, modalId) {
+            const selectElement = document.getElementById('data_ponpes_id_edit_' + modalId);
+            const selectedOption = selectElement.options[selectElement.selectedIndex];
+            const wilayah = selectedOption.getAttribute('data-wilayah') || '-';
+
+            document.getElementById('nama_wilayah_edit_' + modalId).value = wilayah;
+        }
+
+
+        // TAMBAHKAN: Validasi untuk setiap Edit Form sebelum submit
+        document.addEventListener('DOMContentLoaded', function() {
+            // Validasi untuk semua edit form
+            document.querySelectorAll('form[id^="editForm"]').forEach(function(form) {
+                form.addEventListener('submit', function(e) {
+                    const modalId = form.id.replace('editForm', '');
+                    const ponpesSelect = document.getElementById('data_ponpes_id_edit_' + modalId);
+
+                    if (!ponpesSelect || !ponpesSelect.value || ponpesSelect.value.trim() === '') {
+                        e.preventDefault();
+                        alert('Silakan pilih Nama PONPES terlebih dahulu');
+                        ponpesSelect.focus();
+                        return false;
+                    }
+                });
+            });
         });
 
-        // Reset form when modal is closed
+        //  Reset form saat modal ditutup
         $('#addModal').on('hidden.bs.modal', function() {
             document.getElementById('ponpes_search').value = '';
-            document.getElementById('nama_ponpes').value = '';
+            document.getElementById('data_ponpes_id').value = '';
             document.getElementById('nama_wilayah').value = '';
             document.getElementById('ponpesDropdownMenu').style.display = 'none';
+            document.getElementById('addForm').reset();
         });
     </script>
+
+
+
 
     {{-- Search and Filter JavaScript --}}
     <script>

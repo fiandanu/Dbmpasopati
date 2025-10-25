@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('mclient_catatan', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_upt')->nullable();
+
             $table->string('spam_vpas_kartu_baru')->nullable();
             $table->string('spam_vpas_kartu_bekas')->nullable();
             $table->string('spam_vpas_kartu_goip')->nullable();
@@ -21,6 +21,9 @@ return new class extends Migration
             $table->string('jumlah_kartu_terpakai_perhari')->nullable();
             $table->date('tanggal')->nullable();
             $table->string('status')->nullable();
+
+            $table->foreignId('data_upt_id')->nullable()->constrained('data_upt')->onDelete('cascade');
+
             $table->timestamps();
         });
     }

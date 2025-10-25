@@ -16,7 +16,7 @@ class CatatanController extends Controller
 {
     public function ListDataMclientCatatanVpas(Request $request)
     {
-        $query = Catatan::query();
+        $query = Catatan::with(['upt.kanwil']);
 
         // Apply filter
         $query = $this->applyFilters($query, $request);
@@ -82,7 +82,14 @@ class CatatanController extends Controller
     {
         // Column-specific searches
         if ($request->has('search_nama_upt') && !empty($request->search_nama_upt)) {
-            $query->where('nama_upt', 'LIKE', '%' . $request->search_nama_upt . '%');
+            $query->whereHas('upt', function ($q) use ($request) {
+                $q->where('namaupt', 'LIKE', '%' . $request->search_nama_upt . '%');
+            });
+        }
+        if ($request->has('search_kanwil') && !empty($request->search_kanwil)) {
+            $query->whereHas('upt.kanwil', function ($q) use ($request) {
+                $q->where('kanwil', 'LIKE', '%' . $request->search_kanwil . '%');
+            });
         }
         if ($request->has('search_kartu_baru') && !empty($request->search_kartu_baru)) {
             $query->where('spam_vpas_kartu_baru', 'LIKE', '%' . $request->search_kartu_baru . '%');
@@ -122,10 +129,12 @@ class CatatanController extends Controller
 
     public function MclientCatatanStoreVpas(Request $request)
     {
+        // dd($request->all());
+
         $validator = Validator::make(
             $request->all(),
             [
-                'nama_upt' => 'required|string|max:255',
+                'data_upt_id' => 'required|string',
                 'spam_vpas_kartu_baru' => 'nullable|string',
                 'spam_vpas_kartu_bekas' => 'nullable|string',
                 'spam_vpas_kartu_goip' => 'nullable|string',
@@ -138,9 +147,8 @@ class CatatanController extends Controller
                 'status' => 'nullable|string|in:aktif,nonaktif,proses,pending',
             ],
             [
-                'nama_upt.required' => 'Nama UPT harus diisi.',
-                'nama_upt.string' => 'Nama UPT harus berupa teks.',
-                'nama_upt.max' => 'Nama UPT tidak boleh lebih dari 255 karakter.',
+                'data_upt_id.required' => 'Nama UPT harus diisi.',
+                'data_upt_id.exists' => 'Nama UPT yang dipilih tidak valid.',
                 'spam_vpas_kartu_baru.string' => 'Spam VPAS kartu baru harus berupa teks.',
                 'spam_vpas_kartu_bekas.string' => 'Spam VPAS kartu bekas harus berupa teks.',
                 'spam_vpas_kartu_goip.string' => 'Spam VPAS kartu GOIP harus berupa teks.',
@@ -197,7 +205,7 @@ class CatatanController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'nama_upt' => 'required|string|max:255',
+                'data_upt_id' => 'required|exists:data_upt,id',
                 'spam_vpas_kartu_baru' => 'nullable|string',
                 'spam_vpas_kartu_bekas' => 'nullable|string',
                 'spam_vpas_kartu_goip' => 'nullable|string',
@@ -210,9 +218,8 @@ class CatatanController extends Controller
                 'status' => 'nullable|string|in:aktif,nonaktif,proses,pending',
             ],
             [
-                'nama_upt.required' => 'Nama UPT harus diisi.',
-                'nama_upt.string' => 'Nama UPT harus berupa teks.',
-                'nama_upt.max' => 'Nama UPT tidak boleh lebih dari 255 karakter.',
+                'data_upt_id.required' => 'Nama UPT harus diisi.',
+                'data_upt_id.exists' => 'Nama UPT dipilih tidak valid.',
                 'spam_vpas_kartu_baru.string' => 'Spam VPAS kartu baru harus berupa teks.',
                 'spam_vpas_kartu_bekas.string' => 'Spam VPAS kartu bekas harus berupa teks.',
                 'spam_vpas_kartu_goip.string' => 'Spam VPAS kartu GOIP harus berupa teks.',
@@ -240,7 +247,7 @@ class CatatanController extends Controller
 
             // Only take allowed fields (whitelist approach)
             $updateData = $request->only([
-                'nama_upt',
+                'data_upt_id',
                 'spam_vpas_kartu_baru',
                 'spam_vpas_kartu_bekas',
                 'spam_vpas_kartu_goip',
