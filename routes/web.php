@@ -5,10 +5,6 @@ use App\Http\Controllers\login\LoginController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\DataBaseController;
 use App\Http\Controllers\MonitoringServerController;
-use App\Http\Controllers\user\PageUser;
-use App\Http\Controllers\user\upt\DashboardUptController;
-use App\Http\Controllers\user\upt\reguler\RegullerController;
-use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 Route::get('/', [LoginController::class, 'login'])->name('login');
 Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');

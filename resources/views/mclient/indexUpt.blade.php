@@ -25,7 +25,7 @@
                     <!-- Kategori VPAS -->
                     <div class="col-md-3 mb-3">
                         <div class="card-kategori">
-                            <h3>VPAS</h3>
+                            <h3>Komplain VPAS</h3>
                             <p class="text-kategori mb-2">Layanan VPAS</p>
                             {{-- <div class="data-badge mb-3">
                                 <span class="checkmark">✓</span>
@@ -38,7 +38,7 @@
                     <!-- Kategori Reguller -->
                     <div class="col-md-3 mb-3">
                         <div class="card-kategori">
-                            <h3>Reguller</h3>
+                            <h3>Komplain Reguller</h3>
                             <p class="text-kategori mb-2">Layanan Reguller</p>
                             {{-- <div class="data-badge mb-3">
                                 <span class="checkmark">✓</span>
@@ -87,7 +87,7 @@
                                 UPT</a>
                         </div>
                     </div>
-                    
+
                 </div>
             </div>
         </div>

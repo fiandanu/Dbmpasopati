@@ -38,6 +38,7 @@ class RouteServiceProvider extends ServiceProvider
                 require base_path('routes/db_ponpes/reguller.php');
                 require base_path('routes/db_ponpes/spp.php');
                 require base_path('routes/db_ponpes/vtren.php');
+                require base_path('routes/db_ponpes/ponpesDashboard.php');
 
                 // Route Tutorial
                 require base_path('routes/tutorial/upt/reguller.php');

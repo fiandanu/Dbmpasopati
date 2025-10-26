@@ -13,9 +13,7 @@ return new class extends Migration
             $table->string('namaupt');
             $table->string('tipe')->nullable();
             $table->date('tanggal')->nullable();
-
-            $table->foreignId('kanwil_id')->constrained('kanwil')->onDelete('cascade'); 
-
+            $table->foreignId('kanwil_id')->constrained('kanwil')->onDelete('cascade');
             $table->timestamps();
         });
     }
