@@ -1078,25 +1078,6 @@
         // ======================================
 
 
-    
-        // FUNGSI UNTUK MENAMPILKAN DAN MENYEMBUNYIKAN DROPDOWN
-        function toggleUptDropdown() {
-            const uptDropdown = document.getElementById('uptDropdownMenu');
-            const uptOptions = document.querySelectorAll('.upt-option');
-            const uptSearch = document.getElementById('upt_search');
-
-            if (uptDropdown.style.display === 'none' || uptDropdown.style.display === '') {
-                // Show all options
-                uptOptions.forEach(option => {
-                    option.style.display = 'block';
-                });
-                uptDropdown.style.display = 'block';
-                uptSearch.focus();
-            } else {
-                uptDropdown.style.display = 'none';
-            }
-        }
-
 
         // PADA SAAT MEMILIH DATA UPT, DROPDOWN OTOMATIS DISEMBUNYIKAN
         function selectUpt(uptId, namaUpt, kanwil) {
@@ -1117,6 +1098,26 @@
 
             // Hide dropdown
             document.getElementById('uptDropdownMenu').style.display = 'none';
+        }
+
+
+
+        // FUNGSI UNTUK MENAMPILKAN DAN MENYEMBUNYIKAN DROPDOWN
+        function toggleUptDropdown() {
+            const uptDropdown = document.getElementById('uptDropdownMenu');
+            const uptOptions = document.querySelectorAll('.upt-option');
+            const uptSearch = document.getElementById('upt_search');
+
+            if (uptDropdown.style.display === 'none' || uptDropdown.style.display === '') {
+                // Show all options
+                uptOptions.forEach(option => {
+                    option.style.display = 'block';
+                });
+                uptDropdown.style.display = 'block';
+                uptSearch.focus();
+            } else {
+                uptDropdown.style.display = 'none';
+            }
         }
 
 

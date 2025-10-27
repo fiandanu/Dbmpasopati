@@ -70,7 +70,8 @@ class CatatanController extends Controller
 
         $picList = Pic::orderBy('nama_pic')->get();
         $cardSupportingList = Pic::orderBy('nama_pic')->pluck('nama_pic');
-        $uptList = Upt::select('namaupt', 'kanwil_id')
+        $uptList = Upt::select('id','namaupt', 'kanwil_id')
+            ->with('kanwil')
             ->where('tipe', 'vpas')
             ->orderBy('namaupt')
             ->get();
@@ -129,12 +130,12 @@ class CatatanController extends Controller
 
     public function MclientCatatanStoreVpas(Request $request)
     {
-        // dd($request->all());
+        dd($request->all());
 
         $validator = Validator::make(
             $request->all(),
             [
-                'data_upt_id' => 'required|string',
+                'data_upt_id' => 'required|exists:data_upt,id',
                 'spam_vpas_kartu_baru' => 'nullable|string',
                 'spam_vpas_kartu_bekas' => 'nullable|string',
                 'spam_vpas_kartu_goip' => 'nullable|string',

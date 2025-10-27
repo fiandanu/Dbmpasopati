@@ -355,7 +355,7 @@
                                         @forelse ($data as $d)
                                             <tr>
                                                 <td class="text-center">{{ $no++ }}</td>
-                                                <td>{{ $d->nama_upt ?? '-' }}</td>
+                                                <td>{{ $d->upt->nama_upt ?? '-' }}</td>
                                                 <td class="text-center">
                                                     {{ $d->spam_vpas_kartu_baru ?? '-' }}
                                                 </td>
@@ -409,7 +409,8 @@
                                                             <ion-icon name="alert-circle-outline"
                                                                 class="text-9xl text-[var(--yellow-04)]"></ion-icon>
                                                             <p class="headline-large-32">Anda Yakin?</p>
-                                                            <label>Apakah Data Catatan <b> {{ $d->nama_upt }} </b> ingin
+                                                            <label>Apakah Data Catatan <b> {{ $d->upt->nama_upt ?? '-' }}
+                                                                </b> ingin
                                                                 dihapus?</label>
                                                         </div>
                                                         <div class="modal-footer flex-row-reverse justify-content-between">
@@ -1047,42 +1048,8 @@
                     uptDropdown.style.display = 'none';
                 }
             });
-
-            // VALIDASI FORM SEBELUM SUBMIT
-            // const addForm = document.getElementById('addForm');
-            // if (addForm) {
-            //     addForm.addEventListener('submit', function(e) {
-            //         const uptId = dataUptIdHidden.value;
-            //         if (!uptId || uptId.trim() === '') {
-            //             e.preventDefault();
-            //             alert('Silakan pilih Nama UPT terlebih dahulu');
-            //             uptSearch.focus();
-            //             return false;
-            //         }
-            //     });
-            // }
         });
         // ======================================
-
-
-
-        // FUNGSI UNTUK MENAMPILKAN DAN MENYEMBUNYIKAN DROPDOWN
-        function toggleUptDropdown() {
-            const uptDropdown = document.getElementById('uptDropdownMenu');
-            const uptOptions = document.querySelectorAll('.upt-option');
-            const uptSearch = document.getElementById('upt_search');
-
-            if (uptDropdown.style.display === 'none' || uptDropdown.style.display === '') {
-                // Show all options
-                uptOptions.forEach(option => {
-                    option.style.display = 'block';
-                });
-                uptDropdown.style.display = 'block';
-                uptSearch.focus();
-            } else {
-                uptDropdown.style.display = 'none';
-            }
-        }
 
 
         // PADA SAAT MEMILIH DATA UPT, DROPDOWN OTOMATIS DISEMBUNYIKAN
@@ -1112,6 +1079,26 @@
             // Blur untuk memastikan perubahan tersimpan
             document.getElementById('upt_search').blur();
         }
+
+
+        // FUNGSI UNTUK MENAMPILKAN DAN MENYEMBUNYIKAN DROPDOWN
+        function toggleUptDropdown() {
+            const uptDropdown = document.getElementById('uptDropdownMenu');
+            const uptOptions = document.querySelectorAll('.upt-option');
+            const uptSearch = document.getElementById('upt_search');
+
+            if (uptDropdown.style.display === 'none' || uptDropdown.style.display === '') {
+                // Show all options
+                uptOptions.forEach(option => {
+                    option.style.display = 'block';
+                });
+                uptDropdown.style.display = 'block';
+                uptSearch.focus();
+            } else {
+                uptDropdown.style.display = 'none';
+            }
+        }
+
 
 
         // ========== JAVASCRIPT UNTUK EDIT MODAL ==========
@@ -1176,7 +1163,7 @@
             document.getElementById('addForm').reset();
         });
     </script>
-
+    
 
     {{-- Search and Filter JavaScript --}}
     <script>

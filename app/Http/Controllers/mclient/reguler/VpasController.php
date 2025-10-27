@@ -147,8 +147,6 @@ class VpasController extends Controller
             ],
             [
                 'data_upt_id.required' => 'Nama UPT harus diisi.',
-                'data_upt_id.string' => 'Nama UPT harus berupa teks.',
-                'data_upt_id.max' => 'Nama UPT tidak boleh lebih dari 255 karakter.',
                 'kanwil.string' => 'Kanwil harus berupa teks.',
                 'kanwil.max' => 'Kanwil tidak boleh lebih dari 255 karakter.',
                 'jenis_kendala.string' => 'Kendala VPAS harus berupa teks.',
