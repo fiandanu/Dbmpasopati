@@ -188,9 +188,13 @@
                                             <div
                                                 class="d-flex justify-content-center align-items-center flex-column gap-12">
                                                 <span>Tipe</span>
-                                                <div class="btn-searchbar column-search">
-                                                    <span><i class="fas fa-search"></i></span>
-                                                    <input type="text" id="search-tipe" name="search_tipe">
+                                                <div class="btn-searchbar column-search" style="padding: 0;">
+                                                    <select id="search-tipe" name="search_tipe"
+                                                        style="border: none; background: transparent; width: 100%; padding: 8px; font-size: 14px;">
+                                                        <option value="">Semua</option>
+                                                        <option value="vpas">VPAS</option>
+                                                        <option value="reguler">Reguler</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                         </th>
@@ -251,9 +255,10 @@
                                             <td>{{ $d->namaupt }}</td>
                                             <td><span class="tag tag-success">{{ $d->kanwil->kanwil }}</span></td>
                                             <td class="text-center">
-                                                <span class="
-                                                        @if ($d->tipe == 'reguler') Tipereguller
-                                                        @elseif($d->tipe == 'vpas') Tipevpas @endif">
+                                                <span
+                                                    class="
+                                                                                                                @if ($d->tipe == 'reguler') Tipereguller
+                                                                                                                @elseif($d->tipe == 'vpas') Tipevpas @endif">
                                                     {{ ucfirst($d->tipe) }}
                                                 </span>
                                             </td>
@@ -503,7 +508,9 @@
             window.clearAllFilters = function () {
                 $('#search-namaupt').val('');
                 $('#search-kanwil').val('');
-                $('#search-tipe').val('');
+                $('#search-tipe').on('change', function () {
+                    applyFilters();
+                });
                 $('#search-status-pks').val('');
                 $('#search-status-spp').val('');
                 $('#search-extension').val('');
@@ -534,9 +541,11 @@
                 }
             });
 
-            // ============ EXPORT FUNCTIONALITY ============
+            // Dropdown change to search
+            $('#search-tipe').on('change', function () {
+                applyFilters();
+            });
 
-            // Download CSV function
             window.downloadCsv = function () {
                 let filters = getFilters();
                 let form = document.createElement('form');

@@ -4,19 +4,17 @@ namespace App\Http\Controllers\mclient\reguler;
 
 use App\Http\Controllers\Controller;
 use App\Models\mclient\Vpas;
-use App\Models\user\upt\Upt;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Carbon\Carbon;
 use App\Models\user\kendala\Kendala;
 use App\Models\user\pic\Pic;
-use Symfony\Component\HttpFoundation\StreamedResponse;
+use App\Models\user\upt\Upt;
 use Barryvdh\DomPDF\Facade\Pdf;
-
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class VpasController extends Controller
 {
-
     public function ListDataMclientVpas(Request $request)
     {
         $query = Vpas::with(['upt.kanwil']);
@@ -28,7 +26,7 @@ class VpasController extends Controller
         $perPage = $request->get('per_page', 10);
 
         // Validate per_page
-        if (!in_array($perPage, [10, 15, 20, 'all'])) {
+        if (! in_array($perPage, [10, 15, 20, 'all'])) {
             $perPage = 20;
         }
 
@@ -62,25 +60,25 @@ class VpasController extends Controller
     private function applyFilters($query, Request $request)
     {
         // Column-specific searches
-        if ($request->has('search_nama_upt') && !empty($request->search_nama_upt)) {
+        if ($request->has('search_nama_upt') && ! empty($request->search_nama_upt)) {
             $query->whereHas('upt', function ($q) use ($request) {
-                $q->where('namaupt', 'LIKE', '%' . $request->search_nama_upt . '%');
+                $q->where('namaupt', 'LIKE', '%'.$request->search_nama_upt.'%');
             });
         }
-        if ($request->has('search_kanwil') && !empty($request->search_kanwil)) {
+        if ($request->has('search_kanwil') && ! empty($request->search_kanwil)) {
             $query->whereHas('upt.kanwil', function ($q) use ($request) {
-                $q->where('kanwil', 'LIKE', '%' . $request->search_kanwil . '%');
+                $q->where('kanwil', 'LIKE', '%'.$request->search_kanwil.'%');
             });
         }
 
-        if ($request->has('search_detail_kendala') && !empty($request->search_detail_kendala)) {
-            $query->where('detail_kendala', 'LIKE', '%' . $request->search_detail_kendala . '%');
+        if ($request->has('search_detail_kendala') && ! empty($request->search_detail_kendala)) {
+            $query->where('detail_kendala', 'LIKE', '%'.$request->search_detail_kendala.'%');
         }
 
-        if ($request->has('search_jenis_kendala') && !empty($request->search_jenis_kendala)) {
+        if ($request->has('search_jenis_kendala') && ! empty($request->search_jenis_kendala)) {
             $searchJenisKendala = strtolower($request->search_jenis_kendala);
             $query->where(function ($q) use ($searchJenisKendala) {
-                $q->where('jenis_kendala', 'LIKE', '%' . $searchJenisKendala . '%');
+                $q->where('jenis_kendala', 'LIKE', '%'.$searchJenisKendala.'%');
                 // Jika mencari "belum" atau "ditentukan", include yang NULL/empty
                 if (str_contains($searchJenisKendala, 'belum') || str_contains($searchJenisKendala, 'ditentukan')) {
                     $q->orWhereNull('jenis_kendala')
@@ -89,11 +87,11 @@ class VpasController extends Controller
             });
         }
 
-        if ($request->has('search_status') && !empty($request->search_status)) {
+        if ($request->has('search_status') && ! empty($request->search_status)) {
             $searchStatus = strtolower($request->search_status);
 
             $query->where(function ($q) use ($searchStatus) {
-                $q->where('status', 'LIKE', '%' . $searchStatus . '%');
+                $q->where('status', 'LIKE', '%'.$searchStatus.'%');
 
                 // Jika mencari "belum" atau "ditentukan", include yang NULL/empty
                 if (str_contains($searchStatus, 'belum') || str_contains($searchStatus, 'ditentukan')) {
@@ -103,24 +101,24 @@ class VpasController extends Controller
             });
         }
 
-        if ($request->has('search_pic_1') && !empty($request->search_pic_1)) {
-            $query->where('pic_1', 'LIKE', '%' . $request->search_pic_1 . '%');
+        if ($request->has('search_pic_1') && ! empty($request->search_pic_1)) {
+            $query->where('pic_1', 'LIKE', '%'.$request->search_pic_1.'%');
         }
-        if ($request->has('search_pic_2') && !empty($request->search_pic_2)) {
-            $query->where('pic_2', 'LIKE', '%' . $request->search_pic_2 . '%');
+        if ($request->has('search_pic_2') && ! empty($request->search_pic_2)) {
+            $query->where('pic_2', 'LIKE', '%'.$request->search_pic_2.'%');
         }
 
         // Date range filtering
-        if ($request->has('search_tanggal_terlapor_dari') && !empty($request->search_tanggal_terlapor_dari)) {
+        if ($request->has('search_tanggal_terlapor_dari') && ! empty($request->search_tanggal_terlapor_dari)) {
             $query->whereDate('tanggal_terlapor', '>=', $request->search_tanggal_terlapor_dari);
         }
-        if ($request->has('search_tanggal_terlapor_sampai') && !empty($request->search_tanggal_terlapor_sampai)) {
+        if ($request->has('search_tanggal_terlapor_sampai') && ! empty($request->search_tanggal_terlapor_sampai)) {
             $query->whereDate('tanggal_terlapor', '<=', $request->search_tanggal_terlapor_sampai);
         }
-        if ($request->has('search_tanggal_selesai_dari') && !empty($request->search_tanggal_selesai_dari)) {
+        if ($request->has('search_tanggal_selesai_dari') && ! empty($request->search_tanggal_selesai_dari)) {
             $query->whereDate('tanggal_selesai', '>=', $request->search_tanggal_selesai_dari);
         }
-        if ($request->has('search_tanggal_selesai_sampai') && !empty($request->search_tanggal_selesai_sampai)) {
+        if ($request->has('search_tanggal_selesai_sampai') && ! empty($request->search_tanggal_selesai_sampai)) {
             $query->whereDate('tanggal_selesai', '<=', $request->search_tanggal_selesai_sampai);
         }
 
@@ -130,7 +128,7 @@ class VpasController extends Controller
     public function MclientVpasStore(Request $request)
     {
 
-        dd($request->all());
+        // dd($request->all());
         $validator = Validator::make(
             $request->all(),
             [
@@ -194,7 +192,7 @@ class VpasController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Gagal menambahkan data: ' . $e->getMessage());
+                ->with('error', 'Gagal menambahkan data: '.$e->getMessage());
         }
     }
 
@@ -264,7 +262,7 @@ class VpasController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Gagal update data: ' . $e->getMessage());
+                ->with('error', 'Gagal update data: '.$e->getMessage());
         }
     }
 
@@ -279,7 +277,7 @@ class VpasController extends Controller
                 ->with('success', "Data monitoring client VPAS di UPT '{$namaUpt}' berhasil dihapus!");
         } catch (\Exception $e) {
             return redirect()->back()
-                ->with('error', 'Gagal menghapus data: ' . $e->getMessage());
+                ->with('error', 'Gagal menghapus data: '.$e->getMessage());
         }
     }
 
@@ -302,11 +300,11 @@ class VpasController extends Controller
         $pdfData = [
             'title' => 'List Data Monitoring Client VPAS',
             'data' => $data,
-            'generated_at' => Carbon::now()->format('d M Y H:i:s')
+            'generated_at' => Carbon::now()->format('d M Y H:i:s'),
         ];
 
         $pdf = Pdf::loadView('export.public.mclient.upt.indexVpas', $pdfData);
-        $filename = 'list_monitoring_client_vpas_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
+        $filename = 'list_monitoring_client_vpas_'.Carbon::now()->translatedFormat('d_M_Y').'.pdf';
 
         return $pdf->download($filename);
     }
@@ -326,14 +324,14 @@ class VpasController extends Controller
 
         $data = $query->orderBy('created_at', 'desc')->get();
 
-        $filename = 'list_monitoring_client_vpas_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
+        $filename = 'list_monitoring_client_vpas_'.Carbon::now()->format('Y-m-d_H-i-s').'.csv';
 
         $headers = [
-            "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=$filename",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
         ];
 
         $rows = [['No', 'Nama UPT', 'Kanwil', 'Jenis Kendala', 'Detail Kendala', 'Tanggal Terlapor', 'Tanggal Selesai', 'Durasi (Hari)', 'Status', 'PIC 1', 'PIC 2', 'Dibuat Pada']];
@@ -351,7 +349,7 @@ class VpasController extends Controller
                 $row->status,
                 $row->pic_1,
                 $row->pic_2,
-                $row->created_at ? $row->created_at->format('Y-m-d H:i:s') : ''
+                $row->created_at ? $row->created_at->format('Y-m-d H:i:s') : '',
             ];
         }
 

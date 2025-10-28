@@ -162,15 +162,20 @@
                                         </div>
                                     </div>
                                 </th>
-                                <th class="text-center align-top">
-                                    <div class="d-flex justify-content-center align-items-center flex-column gap-12">
-                                        <span>Tipe</span>
-                                        <div class="btn-searchbar column-search">
-                                            <span><i class="fas fa-search"></i></span>
-                                            <input type="text" id="search-tipe" name="search_tipe">
+                                    <th class="text-center align-top">
+                                        <div
+                                            class="d-flex justify-content-center align-items-center flex-column gap-12">
+                                            <span>Tipe</span>
+                                            <div class="btn-searchbar column-search" style="padding: 0;">
+                                                <select id="search-tipe" name="search_tipe"
+                                                    style="border: none; background: transparent; width: 100%; padding: 8px; font-size: 14px;">
+                                                    <option value="">Semua</option>
+                                                    <option value="Vtren">VTREN</option>
+                                                    <option value="reguler">Reguler</option>
+                                                </select>
+                                            </div>
                                         </div>
-                                    </div>
-                                </th>
+                                    </th>
                                 <th class="text-center align-top">
                                     <div class="d-flex justify-content-center align-items-center flex-column gap-12">
                                         <span>Status PKS</span>
@@ -457,7 +462,9 @@
             window.clearAllFilters = function () {
                 $('#search-namaponpes').val('');
                 $('#search-wilayah').val('');
-                $('#search-tipe').val('');
+                $('#search-tipe').on('change', function () {
+                    applyFilters();
+                });
                 $('#search-status-pks').val('');
                 $('#search-status-spp').val('');
                 $('#search-extension').val('');
@@ -487,8 +494,10 @@
                     applyFilters();
                 }
             });
-
-            // ============ EXPORT FUNCTIONALITY ============
+            
+            $('#search-tipe').on('change', function () {
+                applyFilters();
+            });
 
             // Download CSV function
             window.downloadCsv = function () {
