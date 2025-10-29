@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\user\upt\Upt;
 use Carbon\Carbon;
+use Database\Factories\Mclient\Ponpes\SettingFactory;
 
 class SettingAlat extends Model
 {
@@ -217,5 +218,11 @@ class SettingAlat extends Model
     public function isVpasReguler()
     {
         return strtolower($this->jenis_layanan ?? '') === 'vpasreg';
+    }
+
+
+    protected static function newFactory()
+    {
+        return SettingFactory::new();
     }
 }

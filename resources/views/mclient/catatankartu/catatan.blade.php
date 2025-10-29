@@ -355,7 +355,8 @@
                                         @forelse ($data as $d)
                                             <tr>
                                                 <td class="text-center">{{ $no++ }}</td>
-                                                <td>{{ $d->upt->nama_upt ?? '-' }}</td>
+                                                <td>{{ $d->upt->namaupt ?? '-' }}</td>
+                                                <td>{{ $d->upt->kanwil->kanwil ?? '-' }}</td>
                                                 <td class="text-center">
                                                     {{ $d->spam_vpas_kartu_baru ?? '-' }}
                                                 </td>
@@ -874,6 +875,10 @@
                                     <input type="hidden" name="search_nama_upt"
                                         value="{{ request('search_nama_upt') }}">
                                 @endif
+                                @if (request('search_kanwil'))
+                                    <input type="hidden" name="search_kanwil"
+                                        value="{{ request('search_kanwil') }}">
+                                @endif
                                 @if (request('search_kartu_baru'))
                                     <input type="hidden" name="search_kartu_baru"
                                         value="{{ request('search_kartu_baru') }}">
@@ -1163,7 +1168,7 @@
             document.getElementById('addForm').reset();
         });
     </script>
-    
+
 
     {{-- Search and Filter JavaScript --}}
     <script>
@@ -1172,6 +1177,7 @@
             function getFilters() {
                 return {
                     search_nama_upt: $('#search-nama-upt').val().trim(),
+                    search_kanwil: $('#search-kanwil').val().trim(),
                     search_kartu_baru: $('#search-kartu-baru').val().trim(),
                     search_kartu_bekas: $('#search-kartu-bekas').val().trim(),
                     search_kartu_goip: $('#search-kartu-goip').val().trim(),
@@ -1193,6 +1199,7 @@
 
                 // Remove existing filter parameters
                 url.searchParams.delete('search_nama_upt');
+                url.searchParams.delete('search_kanwil');
                 url.searchParams.delete('search_kartu_baru');
                 url.searchParams.delete('search_kartu_bekas');
                 url.searchParams.delete('search_kartu_goip');
@@ -1219,6 +1226,7 @@
             window.clearAllFilters = function() {
                 // Clear semua input field dulu
                 $('#search-nama-upt').val('');
+                $('#search-kanwil').val('');
                 $('#search-kartu-baru').val('');
                 $('#search-kartu-bekas').val('');
                 $('#search-kartu-goip').val('');
@@ -1234,6 +1242,7 @@
 
                 // Remove all search parameters
                 url.searchParams.delete('search_nama_upt');
+                url.searchParams.delete('search_kanwil');
                 url.searchParams.delete('search_kartu_baru');
                 url.searchParams.delete('search_kartu_bekas');
                 url.searchParams.delete('search_kartu_goip');
@@ -1312,6 +1321,9 @@
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('search_nama_upt')) {
                 $('#search-nama-upt').val(urlParams.get('search_nama_upt'));
+            }
+            if (urlParams.get('search_kanwil')) {
+                $('#search-kanwil').val(urlParams.get('search_kanwil'));
             }
             if (urlParams.get('search_kartu_baru')) {
                 $('#search-kartu-baru').val(urlParams.get('search_kartu_baru'));

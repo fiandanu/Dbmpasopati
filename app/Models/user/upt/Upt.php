@@ -5,8 +5,8 @@ namespace App\Models\user\upt;
 use App\Models\db\upt\DataOpsionalUpt;
 use App\Models\db\upt\UploadFolderUptPks;
 use App\Models\db\upt\UploadFolderUptSpp;
-use App\Models\mclient\catatankartu\Catatan;
 use App\Models\user\kanwil\Kanwil;
+use Database\Factories\user\UptFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -51,10 +51,6 @@ class Upt extends Model
     {
         return $this->hasOne(UploadFolderUptSpp::class, 'data_upt_id');
     }
-
-    // public function CatatanVpas() {
-    //     return $this->hasMany(Catatan::class, 'data_upt_id');
-    // }
 
     public function getUploadedPdfAttribute()
     {
@@ -106,4 +102,12 @@ class Upt extends Model
 
         return $count;
     }
+
+
+    // Factory
+    protected static function newFactory()
+    {
+        return UptFactory::new();
+    }
+
 };

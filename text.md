@@ -80,6 +80,10 @@ Kode yang perlu dirapihin lagi di bagian
  terakhir login dan tanggal pembuatan user
 
 
+- Di semua keterangan dibuat limit 100 kata 
+
+
+
 
 - di halaman pengiriman alat di kolom penerima diketik sendiri DI HALAMAN PONPES DAN UPT MCLIENT
 

@@ -3,8 +3,8 @@
 namespace Database\Factories\Mclient\Upt;
 
 use App\Models\mclient\SettingAlat;
+use App\Models\user\upt\Upt;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Carbon\Carbon;
 
 class SettingFactory extends Factory
 {
@@ -12,97 +12,104 @@ class SettingFactory extends Factory
 
     public function definition(): array
     {
-        $tanggalTerlapor = $this->faker->dateTimeBetween('-3 months', 'now');
-        $durasiHari = $this->faker->numberBetween(1, 30);
-        $tanggalSelesai = (clone $tanggalTerlapor)->modify("+{$durasiHari} days");
-        
-        $jenisLayanan = $this->faker->randomElement(['vpas', 'reguler', 'vpasreg']);
-        $status = $this->faker->randomElement(['pending', 'terjadwal', 'proses', 'selesai']);
+        $tanggalTerlapor = $this->faker->dateTimeBetween('-6 months', 'now');
+        $tanggalSelesai = $this->faker->optional(0.7)->dateTimeBetween($tanggalTerlapor, '+30 days');
+
+        // Hitung durasi jika tanggal selesai ada
+        $durasiHari = null;
+        if ($tanggalSelesai) {
+            $durasiHari = (new \DateTime($tanggalSelesai->format('Y-m-d')))
+                ->diff(new \DateTime($tanggalTerlapor->format('Y-m-d')))
+                ->days;
+        }
 
         return [
-            'nama_upt' => $this->faker->randomElement([
-                'UPT Balai Metrologi Surabaya',
-                'UPT Balai Metrologi Semarang',
-                'UPT Balai Metrologi Bandung',
-                'UPT Balai Metrologi Yogyakarta',
-                'UPT Balai Metrologi Malang',
-                'UPT Balai Metrologi Solo',
-                'UPT Balai Metrologi Madiun',
-                'UPT Balai Metrologi Purwokerto',
-            ]),
-            'jenis_layanan' => $jenisLayanan,
-            'keterangan' => $this->faker->optional(0.8)->paragraph(2),
+            'data_upt_id' => Upt::factory(),
+            'jenis_layanan' => $this->faker->randomElement(['vpas', 'reguler', 'vpasreg']),
+            'keterangan' => $this->faker->optional(0.8)->paragraph(),
             'tanggal_terlapor' => $tanggalTerlapor,
-            'tanggal_selesai' => $this->faker->optional(0.7)->passthrough($tanggalSelesai),
-            'durasi_hari' => $this->faker->optional(0.7)->passthrough($durasiHari),
+            'tanggal_selesai' => $tanggalSelesai,
+            'durasi_hari' => $durasiHari,
             'pic_1' => $this->faker->name(),
             'pic_2' => $this->faker->optional(0.6)->name(),
-            'status' => $status,
-            'created_at' => now(),
-            'updated_at' => now(),
+            'status' => $this->faker->randomElement(['selesai', 'proses', 'pending', 'tertanggal_terlapor']),
         ];
     }
 
+    /**
+     * State untuk status selesai
+     */
+    public function selesai(): static
+    {
+        return $this->state(fn(array $attributes) => [
+            'status' => 'selesai',
+            'tanggal_selesai' => $this->faker->dateTimeBetween($attributes['tanggal_terlapor'], 'now'),
+        ]);
+    }
+
+    /**
+     * State untuk status proses
+     */
+    public function proses(): static
+    {
+        return $this->state(fn(array $attributes) => [
+            'status' => 'proses',
+            'tanggal_selesai' => null,
+            'durasi_hari' => null,
+        ]);
+    }
+
+    /**
+     * State untuk status pending
+     */
     public function pending(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'status' => 'pending',
             'tanggal_selesai' => null,
             'durasi_hari' => null,
         ]);
     }
 
-    public function terjadwal(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'status' => 'terjadwal',
-        ]);
-    }
-
-    public function proses(): static
-    {
-        $tanggalTerlapor = $this->faker->dateTimeBetween('-2 weeks', 'now');
-        
-        return $this->state(fn (array $attributes) => [
-            'status' => 'proses',
-            'tanggal_terlapor' => $tanggalTerlapor,
-            'tanggal_selesai' => null,
-            'durasi_hari' => null,
-        ]);
-    }
-
-    public function selesai(): static
-    {
-        $tanggalTerlapor = $this->faker->dateTimeBetween('-2 months', '-1 week');
-        $durasiHari = $this->faker->numberBetween(1, 30);
-        $tanggalSelesai = (clone $tanggalTerlapor)->modify("+{$durasiHari} days");
-        
-        return $this->state(fn (array $attributes) => [
-            'status' => 'selesai',
-            'tanggal_terlapor' => $tanggalTerlapor,
-            'tanggal_selesai' => $tanggalSelesai,
-            'durasi_hari' => $durasiHari,
-        ]);
-    }
-
+    /**
+     * State untuk jenis layanan VPAS
+     */
     public function vpas(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'jenis_layanan' => 'vpas',
         ]);
     }
 
+    /**
+     * State untuk jenis layanan Reguler
+     */
     public function reguler(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'jenis_layanan' => 'reguler',
         ]);
     }
 
-    public function vpasReguler(): static
+    /**
+     * State untuk jenis layanan VPAS + Reguler
+     */
+    public function vpasReg(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'jenis_layanan' => 'vpasreg',
         ]);
     }
+
+    /**
+     * State untuk data dengan UPT yang sudah ada
+     */
+    public function forUpt(Upt $upt): static
+    {
+        return $this->state(fn(array $attributes) => [
+            'data_upt_id' => $upt->id,
+        ]);
+    }
+
+
 }

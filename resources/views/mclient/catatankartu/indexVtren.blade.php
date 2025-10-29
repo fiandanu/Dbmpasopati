@@ -228,8 +228,20 @@
                                                         <span>
                                                             <i class="fas fa-search"></i>
                                                         </span>
-                                                        <input type="text" id="search-nama-ponpes" name="search_nama_ponpes"
-                                                            placeholder="Search">
+                                                        <input type="text" id="search-nama-ponpes"
+                                                            name="search_nama_ponpes" placeholder="Search">
+                                                    </div>
+                                                </div>
+                                            </th>
+                                            <th class="align-top">
+                                                <div class="d-flex flex-column gap-12">
+                                                    <span>Nama Wilayah</span>
+                                                    <div class="btn-searchbar column-search">
+                                                        <span>
+                                                            <i class="fas fa-search"></i>
+                                                        </span>
+                                                        <input type="text" id="search-nama-ponpes"
+                                                            name="search_nama_ponpes" placeholder="Search">
                                                     </div>
                                                 </div>
                                             </th>
@@ -240,8 +252,8 @@
                                                         <span>
                                                             <i class="fas fa-search"></i>
                                                         </span>
-                                                        <input type="text" id="search-kartu-baru" name="search_kartu_baru"
-                                                            placeholder="Search">
+                                                        <input type="text" id="search-kartu-baru"
+                                                            name="search_kartu_baru" placeholder="Search">
                                                     </div>
                                                 </div>
                                             </th>
@@ -252,8 +264,8 @@
                                                         <span>
                                                             <i class="fas fa-search"></i>
                                                         </span>
-                                                        <input type="text" id="search-kartu-bekas" name="search_kartu_bekas"
-                                                            placeholder="Search">
+                                                        <input type="text" id="search-kartu-bekas"
+                                                            name="search_kartu_bekas" placeholder="Search">
                                                     </div>
                                                 </div>
                                             </th>
@@ -264,8 +276,8 @@
                                                         <span>
                                                             <i class="fas fa-search"></i>
                                                         </span>
-                                                        <input type="text" id="search-kartu-goip" name="search_kartu_goip"
-                                                            placeholder="Search">
+                                                        <input type="text" id="search-kartu-goip"
+                                                            name="search_kartu_goip" placeholder="Search">
                                                     </div>
                                                 </div>
                                             </th>
@@ -347,7 +359,8 @@
                                         @forelse ($data as $d)
                                             <tr>
                                                 <td class="text-center">{{ $no++ }}</td>
-                                                <td>{{ $d->nama_ponpes ?? '-' }}</td>
+                                                <td>{{ $d->ponpes->nama_ponpes ?? '-' }}</td>
+                                                <td>{{ $d->ponpes->namaWilayah->nama_wilayah ?? '-' }}</td>
                                                 <td class="text-center">
                                                     {{ $d->spam_vtren_kartu_baru ?? '-' }}
                                                 </td>
@@ -383,7 +396,8 @@
                                                     </a>
 
                                                     {{-- Delete Button --}}
-                                                    <a data-bs-toggle="modal" data-bs-target="#modal-default{{ $d->id }}"
+                                                    <a data-bs-toggle="modal"
+                                                        data-bs-target="#modal-default{{ $d->id }}"
                                                         class="">
                                                         <button>
                                                             <ion-icon name="trash-outline"></ion-icon>
@@ -453,37 +467,50 @@
                                             <!-- Informasi Ponpes Section -->
                                             <div class="mb-4">
                                                 <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                    <label>Informasi Ponpes</label>
+                                                    <label>Informasi UPT</label>
                                                 </div>
                                                 <div class="column">
                                                     <div class="mb-3">
-                                                        <label for="nama_ponpes" class="form-label">Nama Ponpes</label>
+                                                        <label class="form-label">Nama UPT <span
+                                                                class="text-danger">*</span></label>
                                                         <div class="dropdown">
                                                             <div class="input-group">
-                                                                <input type="text" class="form-control" id="upt_search"
-                                                                    placeholder="Cari nama Ponpes" autocomplete="off">
+                                                                <input type="text" class="form-control"
+                                                                    id="upt_search" placeholder="Cari UPT..."
+                                                                    autocomplete="off" required>
                                                                 <div class="input-group-append">
-                                                                    <button type="button" class="btn btn-outline-secondary"
+                                                                    <button type="button"
+                                                                        class="btn btn-outline-secondary"
                                                                         onclick="toggleUptDropdown()">
                                                                         <i class="fas fa-chevron-down"></i>
                                                                     </button>
                                                                 </div>
                                                             </div>
-
                                                             <div class="dropdown-menu w-100" id="uptDropdownMenu"
                                                                 style="max-height: 200px; overflow-y: auto; display: none;">
-                                                                @foreach ($uptList as $upt)
-                                                                    <a href="#" class="dropdown-item upt-option"
-                                                                        data-value="{{ $upt->nama_ponpes }}"
-                                                                        onclick="selectUpt('{{ $upt->nama_ponpes }}')">
-                                                                        {{ $upt->nama_ponpes }}
+                                                                @foreach ($ponpesList as $upt)
+                                                                    <a class="dropdown-item upt-option"
+                                                                        href="javascript:void(0)"
+                                                                        data-id="{{ $upt->id }}"
+                                                                        data-nama="{{ $upt->nama_ponpes }}"
+                                                                        data-ponpes="{{ $upt->namaWilayah->nama_wilayah ?? '' }}"
+                                                                        onclick="selectUpt(this)">
+                                                                        {{ $upt->nama_ponpes }} -
+                                                                        {{ $upt->namaWilayah->nama_wilayah ?? '-' }}
                                                                     </a>
                                                                 @endforeach
                                                             </div>
                                                         </div>
-                                                        <input type="hidden" id="nama_ponpes" name="nama_ponpes" required>
-                                                        <small class="form-text text-muted">Ketik untuk mencari
-                                                            Ponpes</small>
+                                                        <!-- INI YANG PENTING: Kirim ID bukan nama -->
+                                                        <input type="hidden" id="data_ponpes_id" name="data_ponpes_id"
+                                                            required>
+                                                        <small class="form-text text-muted">Ketik untuk mencari UPT atau
+                                                            klik tombol dropdown</small>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="kanwil" class="form-label">Kanwil</label>
+                                                        <input type="text" class="form-control" id="kanwil_display"
+                                                            readonly>
                                                     </div>
                                                 </div>
                                             </div>
@@ -536,16 +563,19 @@
                                                                 Belum Teregister</label>
                                                             <input type="text" class="form-control"
                                                                 id="kartu_belum_teregister" name="kartu_belum_teregister"
-                                                                value="" placeholder="Jumlah kartu belum teregister">
+                                                                value=""
+                                                                placeholder="Jumlah kartu belum teregister">
                                                         </div>
                                                     </div>
                                                     <div class="column">
                                                         <div class="mb-3">
-                                                            <label for="whatsapp_telah_terpakai" class="form-label">WhatsApp
+                                                            <label for="whatsapp_telah_terpakai"
+                                                                class="form-label">WhatsApp
                                                                 Telah Terpakai</label>
                                                             <input type="text" class="form-control"
-                                                                id="whatsapp_telah_terpakai" name="whatsapp_telah_terpakai"
-                                                                value="" placeholder="Jumlah WhatsApp terpakai">
+                                                                id="whatsapp_telah_terpakai"
+                                                                name="whatsapp_telah_terpakai" value=""
+                                                                placeholder="Jumlah WhatsApp terpakai">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -566,7 +596,8 @@
                                                 </div>
                                                 <div class="column">
                                                     <div class="mb-3">
-                                                        <label for="jumlah_kartu_terpakai_perhari" class="form-label">Jumlah
+                                                        <label for="jumlah_kartu_terpakai_perhari"
+                                                            class="form-label">Jumlah
                                                             Kartu Terpakai Per Hari</label>
                                                         <input type="text" class="form-control"
                                                             id="jumlah_kartu_terpakai_perhari"
@@ -597,7 +628,8 @@
                                                 <div class="column">
                                                     <div class="mb-3">
                                                         <label for="tanggal" class="form-label">Tanggal</label>
-                                                        <input type="date" class="form-control" id="tanggal" name="tanggal">
+                                                        <input type="date" class="form-control" id="tanggal"
+                                                            name="tanggal">
                                                     </div>
                                                 </div>
                                             </div>
@@ -639,41 +671,35 @@
                                                 <!-- Informasi Ponpes Section -->
                                                 <div class="mb-4">
                                                     <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                        <label>Informasi Ponpes</label>
+                                                        <label>Informasi UPT</label>
                                                     </div>
                                                     <div class="column">
                                                         <div class="mb-3">
-                                                            <label for="nama_ponpes_edit_{{ $d->id }}" class="form-label">Nama
-                                                                Ponpes <span class="text-danger">*</span></label>
-                                                            <div class="dropdown">
-                                                                <div class="input-group">
-                                                                    <input type="text" class="form-control"
-                                                                        id="upt_search_edit_{{ $d->id }}"
-                                                                        placeholder="Cari Ponpes..." autocomplete="off"
-                                                                        value="{{ $d->nama_ponpes ?? '' }}">
-                                                                    <div class="input-group-append">
-                                                                        <button type="button" class="btn btn-outline-secondary"
-                                                                            onclick="toggleUptDropdownEdit({{ $d->id }})">
-                                                                            <i class="fas fa-chevron-down"></i>
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="dropdown-menu w-100"
-                                                                    id="uptDropdownMenuEdit{{ $d->id }}"
-                                                                    style="max-height: 200px; overflow-y: auto; display: none;">
-                                                                    @foreach ($uptList as $upt)
-                                                                        <a class="dropdown-item upt-option" href="#"
-                                                                            data-value="{{ $upt->nama_ponpes }}"
-                                                                            onclick="selectUptEdit('{{ $upt->nama_ponpes }}', {{ $d->id }})">
-                                                                            {{ $upt->nama_ponpes }}
-                                                                        </a>
-                                                                    @endforeach
-                                                                </div>
-                                                            </div>
-                                                            <input type="hidden" id="nama_ponpes_edit_{{ $d->id }}"
-                                                                name="nama_ponpes" value="{{ $d->nama_ponpes ?? '' }}" required>
-                                                            <small class="form-text text-muted">Ketik untuk mencari
-                                                                Ponpes</small>
+                                                            <label for="data_upt_id_edit_{{ $d->id }}"
+                                                                class="form-label">Nama UPT <span
+                                                                    class="text-danger">*</span></label>
+                                                            <select class="form-control text-muted"
+                                                                id="data_upt_id_edit_{{ $d->id }}"
+                                                                name="data_ponpes_id"
+                                                                onchange="updateKanwilEdit(this.value, {{ $d->id }})"
+                                                                required>
+                                                                <option value="">-- Pilih UPT --</option>
+                                                                @foreach ($ponpesList as $upt)
+                                                                    <option value="{{ $upt->id }}"
+                                                                        data-ponpes="{{ $upt->namaWilayah->nama_wilayah ?? '' }}"
+                                                                        {{ $d->data_ponpes_id == $upt->id ? 'selected' : '' }}>
+                                                                        {{ $upt->nama_ponpes }} -
+                                                                        {{ $upt->namaWilayah->nama_wilayah ?? '-' }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="kanwil_edit_{{ $d->id }}"
+                                                                class="form-label">Kanwil</label>
+                                                            <input type="text" class="form-control"
+                                                                id="kanwil_edit_{{ $d->id }}"
+                                                                value="{{ $d->upt->kanwil->kanwil ?? '' }}" readonly>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -749,14 +775,17 @@
 
                                                     <div class="column">
                                                         <div class="mb-3">
-                                                            <label for="card_supporting{{ $d->id }}" class="form-label">Card
+                                                            <label for="card_supporting{{ $d->id }}"
+                                                                class="form-label">Card
                                                                 Supporting</label>
-                                                            <select class="form-control" id="card_supporting{{ $d->id }}"
+                                                            <select class="form-control"
+                                                                id="card_supporting{{ $d->id }}"
                                                                 name="card_supporting">
                                                                 <option value="">-- Pilih Card Supporting --
                                                                 </option>
                                                                 @foreach ($cardSupportingList as $cardSupporting)
-                                                                    <option value="{{ $cardSupporting }}" {{ $d->card_supporting == $cardSupporting ? 'selected' : '' }}>
+                                                                    <option value="{{ $cardSupporting }}"
+                                                                        {{ $d->card_supporting == $cardSupporting ? 'selected' : '' }}>
                                                                         {{ $cardSupporting }}
                                                                     </option>
                                                                 @endforeach
@@ -793,11 +822,14 @@
 
                                                     <div class="column">
                                                         <div class="mb-3">
-                                                            <label for="pic{{ $d->id }}" class="form-label">PIC</label>
-                                                            <select class="form-control" id="pic{{ $d->id }}" name="pic">
+                                                            <label for="pic{{ $d->id }}"
+                                                                class="form-label">PIC</label>
+                                                            <select class="form-control" id="pic{{ $d->id }}"
+                                                                name="pic">
                                                                 <option value="">-- Pilih PIC --</option>
                                                                 @foreach ($picList as $pic)
-                                                                    <option value="{{ $pic->nama_pic }}" {{ $d->pic == $pic->nama_pic ? 'selected' : '' }}>
+                                                                    <option value="{{ $pic->nama_pic }}"
+                                                                        {{ $d->pic == $pic->nama_pic ? 'selected' : '' }}>
                                                                         {{ $pic->nama_pic }}
                                                                     </option>
                                                                 @endforeach
@@ -816,9 +848,10 @@
                                                     </div>
                                                     <div class="column">
                                                         <div class="mb-3">
-                                                            <label for="tanggal{{ $d->id }}" class="form-label">Tanggal</label>
-                                                            <input type="date" class="form-control" id="tanggal{{ $d->id }}"
-                                                                name="tanggal"
+                                                            <label for="tanggal{{ $d->id }}"
+                                                                class="form-label">Tanggal</label>
+                                                            <input type="date" class="form-control"
+                                                                id="tanggal{{ $d->id }}" name="tanggal"
                                                                 value="{{ $d->tanggal ? $d->tanggal->format('Y-m-d') : '' }}">
                                                         </div>
                                                     </div>
@@ -847,16 +880,20 @@
                         <div class="btn-datakolom">
                             <form method="GET" class="d-flex align-items-center">
                                 @if (request('search_nama_ponpes'))
-                                    <input type="hidden" name="search_nama_ponpes" value="{{ request('search_nama_ponpes') }}">
+                                    <input type="hidden" name="search_nama_ponpes"
+                                        value="{{ request('search_nama_ponpes') }}">
                                 @endif
                                 @if (request('search_kartu_baru'))
-                                    <input type="hidden" name="search_kartu_baru" value="{{ request('search_kartu_baru') }}">
+                                    <input type="hidden" name="search_kartu_baru"
+                                        value="{{ request('search_kartu_baru') }}">
                                 @endif
                                 @if (request('search_kartu_bekas'))
-                                    <input type="hidden" name="search_kartu_bekas" value="{{ request('search_kartu_bekas') }}">
+                                    <input type="hidden" name="search_kartu_bekas"
+                                        value="{{ request('search_kartu_bekas') }}">
                                 @endif
                                 @if (request('search_kartu_goip'))
-                                    <input type="hidden" name="search_kartu_goip" value="{{ request('search_kartu_goip') }}">
+                                    <input type="hidden" name="search_kartu_goip"
+                                        value="{{ request('search_kartu_goip') }}">
                                 @endif
                                 @if (request('search_kartu_belum_register'))
                                     <input type="hidden" name="search_kartu_belum_register"
@@ -887,8 +924,8 @@
                                 @endif
 
                                 <div class="d-flex align-items-center">
-                                    <select name="per_page" class="form-control form-control-sm pr-2" style="width: auto;"
-                                        onchange="this.form.submit()">
+                                    <select name="per_page" class="form-control form-control-sm pr-2"
+                                        style="width: auto;" onchange="this.form.submit()">
                                         <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>
                                             10
                                         </option>
@@ -952,19 +989,29 @@
         integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-    {{-- Search UPT DROPDOWN UNTUK ADD MODAL --}}
+
+    {{-- JS Modal --}}
     <script>
-        // Start Add Modal JS
-        document.addEventListener('DOMContentLoaded', function () {
+        // =================== FUNGSI UNTUK ADD MODAL ===================
+        document.addEventListener('DOMContentLoaded', function() {
             const uptSearch = document.getElementById('upt_search');
             const uptDropdown = document.getElementById('uptDropdownMenu');
             const uptOptions = document.querySelectorAll('.upt-option');
+            const dataUptIdHidden = document.getElementById('data_ponpes_id');
+            const kanwilDisplay = document.getElementById('kanwil_display');
 
-            // Filter UPT options based on search input
-            uptSearch.addEventListener('input', function () {
+            // FILTERING DATA UPT BERDASARKAN INPUT PENCARIAN
+            uptSearch.addEventListener('input', function() {
                 const searchTerm = this.value.toLowerCase();
                 let hasVisibleOption = false;
 
+                // RESET DATA UPT DAN KANWIL JIKA INPUT PENCARIAN KOSONG
+                if (searchTerm === '') {
+                    dataUptIdHidden.value = '';
+                    kanwilDisplay.value = '';
+                }
+
+                // MENAMPILKAN DATA UPT BERDASARKAN TEKS YANG DIKETIK USER
                 uptOptions.forEach(option => {
                     const text = option.textContent.toLowerCase();
                     if (text.includes(searchTerm)) {
@@ -975,7 +1022,7 @@
                     }
                 });
 
-                // Show dropdown if there are visible options and search term is not empty
+                // MENAMPILKAN DROPDOWN SAAT USER MENGETIK DAN ADA DATA YANG COCOK, SEMBUNYIKAN JIKA INPUT KOSONG
                 if (searchTerm.length > 0 && hasVisibleOption) {
                     uptDropdown.style.display = 'block';
                 } else if (searchTerm.length === 0) {
@@ -983,8 +1030,8 @@
                 }
             });
 
-            // Show all options when clicking on search input
-            uptSearch.addEventListener('focus', function () {
+            // MENAMPILKAN DROPDOWN SAAT FOCUS
+            uptSearch.addEventListener('focus', function() {
                 if (this.value.length > 0) {
                     const searchTerm = this.value.toLowerCase();
                     let hasVisibleOption = false;
@@ -1005,163 +1052,131 @@
                 }
             });
 
-            // Hide dropdown when clicking outside
-            document.addEventListener('click', function (event) {
+            // UNTUK MENYEMBUNYIKAN DROPDOWN SAAT CLICK DILUAR CONTENT
+            document.addEventListener('click', function(event) {
                 if (!event.target.closest('.dropdown')) {
                     uptDropdown.style.display = 'none';
                 }
             });
         });
+        // ======================================
 
-        // Toggle dropdown visibility for Add Modal
+
+        // PADA SAAT MEMILIH DATA UPT, DROPDOWN OTOMATIS DISEMBUNYIKAN
+        function selectUpt(element) {
+            const uptId = element.getAttribute('data-id');
+            const namaUpt = element.getAttribute('data-nama');
+            const kanwil = element.getAttribute('data-ponpes');
+
+            console.log('Selected UPT:', {
+                id: uptId,
+                nama: namaUpt,
+                kanwil: kanwil
+            }); // Debug
+
+            // Set visible input (untuk display)
+            document.getElementById('upt_search').value = namaUpt;
+
+            // Set hidden input dengan ID
+            document.getElementById('data_ponpes_id').value = uptId;
+
+            // Set kanwil display
+            document.getElementById('kanwil_display').value = kanwil;
+
+            // Hide dropdown
+            document.getElementById('uptDropdownMenu').style.display = 'none';
+
+            // Blur untuk memastikan perubahan tersimpan
+            document.getElementById('upt_search').blur();
+        }
+
+
+        // FUNGSI UNTUK MENAMPILKAN DAN MENYEMBUNYIKAN DROPDOWN
         function toggleUptDropdown() {
             const uptDropdown = document.getElementById('uptDropdownMenu');
             const uptOptions = document.querySelectorAll('.upt-option');
+            const uptSearch = document.getElementById('upt_search');
 
             if (uptDropdown.style.display === 'none' || uptDropdown.style.display === '') {
+                // Show all options
                 uptOptions.forEach(option => {
                     option.style.display = 'block';
                 });
                 uptDropdown.style.display = 'block';
+                uptSearch.focus();
             } else {
                 uptDropdown.style.display = 'none';
             }
         }
 
-        // Select UPT option for Add Modal
-        function selectUpt(namaPonpes) {
-            document.getElementById('upt_search').value = namaPonpes;
-            document.getElementById('nama_ponpes').value = namaPonpes;
-            document.getElementById('uptDropdownMenu').style.display = 'none';
-        }
 
-        // Clear UPT selection when search is cleared for Add Modal
-        document.getElementById('upt_search').addEventListener('input', function () {
-            if (this.value === '') {
-                document.getElementById('nama_ponpes').value = '';
+
+        // ========== JAVASCRIPT UNTUK EDIT MODAL ==========
+        window.updateKanwilEdit = function(uptId, recordId) {
+
+            if (uptId === '' || uptId === null) {
+                document.getElementById(`kanwil_edit_${recordId}`).value = '';
+                return;
             }
-        });
 
-        // Reset form when modal is closed for Add Modal
-        $('#addModal').on('hidden.bs.modal', function () {
-            document.getElementById('upt_search').value = '';
-            document.getElementById('nama_ponpes').value = '';
-            document.getElementById('uptDropdownMenu').style.display = 'none';
-        });
+            const selectElement = document.getElementById(`data_upt_id_edit_${recordId}`);
+            const selectedOption = selectElement.querySelector(`option[value="${uptId}"]`);
 
-        // End Add Modal JS
+            if (selectedOption) {
+                const kanwil = selectedOption.getAttribute('data-ponpes');
+                document.getElementById(`kanwil_edit_${recordId}`).value = kanwil || '';
+            }
+        };
 
-        // Start Edit Modal JS
-        document.addEventListener('DOMContentLoaded', function () {
+        // Set initial kanwil values for all edit modals on page load
+        document.addEventListener('DOMContentLoaded', function() {
             @foreach ($data as $d)
-                const uptSearchEdit{{ $d->id }} = document.getElementById(
-                    'upt_search_edit_{{ $d->id }}');
-                const uptDropdownEdit{{ $d->id }} = document.getElementById(
-                    'uptDropdownMenuEdit{{ $d->id }}');
-                const uptOptionsEdit{{ $d->id }} = document.querySelectorAll(
-                    `#uptDropdownMenuEdit{{ $d->id }} .upt-option`);
-
-                if (uptSearchEdit{{ $d->id }}) {
-                    // Filter Upt Berdasarkan Pencarian Input
-                    uptSearchEdit{{ $d->id }}.addEventListener('input', function () {
-                        const searchTerm = this.value.toLowerCase();
-                        let hasVisibleOption = false;
-
-                        uptOptionsEdit{{ $d->id }}.forEach(option => {
-                            const text = option.textContent.toLowerCase();
-                            if (text.includes(searchTerm)) {
-                                option.style.display = 'block';
-                                hasVisibleOption = true;
-                            } else {
-                                option.style.display = 'none';
-                            }
-                        });
-
-                        // Memunculkan Dropdown jika tidak kosong
-                        if (searchTerm.length > 0 && hasVisibleOption) {
-                            uptDropdownEdit{{ $d->id }}.style.display = 'block';
-                        } else if (searchTerm.length === 0) {
-                            uptDropdownEdit{{ $d->id }}.style.display = 'none';
+                const selectEdit{{ $d->id }} = document.getElementById(
+                    'data_upt_id_edit_{{ $d->id }}');
+                if (selectEdit{{ $d->id }}) {
+                    const selectedOptionEdit{{ $d->id }} = selectEdit{{ $d->id }}.querySelector(
+                        'option:checked');
+                    if (selectedOptionEdit{{ $d->id }}) {
+                        const kanwilEdit{{ $d->id }} = selectedOptionEdit{{ $d->id }}
+                            .getAttribute('data-ponpes');
+                        if (kanwilEdit{{ $d->id }}) {
+                            document.getElementById('kanwil_edit_{{ $d->id }}').value =
+                                kanwilEdit{{ $d->id }};
                         }
-                    });
+                    }
+                }
+            @endforeach
 
-                    // Menampilkan Semua UPT
-                    uptSearchEdit{{ $d->id }}.addEventListener('focus', function () {
-                        if (this.value.length > 0) {
-                            const searchTerm = this.value.toLowerCase();
-                            let hasVisibleOption = false;
-
-                            uptOptionsEdit{{ $d->id }}.forEach(option => {
-                                const text = option.textContent.toLowerCase();
-                                if (text.includes(searchTerm)) {
-                                    option.style.display = 'block';
-                                    hasVisibleOption = true;
-                                } else {
-                                    option.style.display = 'none';
-                                }
-                            });
-
-                            if (hasVisibleOption) {
-                                uptDropdownEdit{{ $d->id }}.style.display = 'block';
-                            }
-                        }
-                    });
-
-                    // Sembunyikan Ketika Klik diluar dropdown
-                    document.addEventListener('click', function (event) {
-                        if (!event.target.closest(`#editModal{{ $d->id }} .dropdown`)) {
-                            uptDropdownEdit{{ $d->id }}.style.display = 'none';
+            // Form validation before submit untuk semua edit form
+            @foreach ($data as $d)
+                const editForm{{ $d->id }} = document.getElementById('editForm{{ $d->id }}');
+                if (editForm{{ $d->id }}) {
+                    editForm{{ $d->id }}.addEventListener('submit', function(e) {
+                        const uptId = document.getElementById('data_upt_id_edit_{{ $d->id }}')
+                            .value;
+                        if (!uptId || uptId.trim() === '') {
+                            e.preventDefault();
+                            alert('Silakan pilih Nama UPT terlebih dahulu');
+                            return false;
                         }
                     });
                 }
             @endforeach
-                });
+        });
 
-        // Toggle dropdown visibility for Edit Modal
-        function toggleUptDropdownEdit(id) {
-            const uptDropdown = document.getElementById(`uptDropdownMenuEdit${id}`);
-            const uptOptions = document.querySelectorAll(`#uptDropdownMenuEdit${id} .upt-option`);
-
-            if (uptDropdown.style.display === 'none' || uptDropdown.style.display === '') {
-                uptOptions.forEach(option => {
-                    option.style.display = 'block';
-                });
-                uptDropdown.style.display = 'block';
-            } else {
-                uptDropdown.style.display = 'none';
-            }
-        }
-
-        // Select UPT option for Edit Modal
-        function selectUptEdit(namaPonpes, id) {
-            document.getElementById(`upt_search_edit_${id}`).value = namaPonpes;
-            document.getElementById(`nama_ponpes_edit_${id}`).value = namaPonpes;
-            document.getElementById(`uptDropdownMenuEdit${id}`).style.display = 'none';
-        }
-
-        // Clear UPT selection when search is cleared for Edit Modal
-        @foreach ($data as $d)
-            document.getElementById(`upt_search_edit_{{ $d->id }}`).addEventListener('input', function () {
-                if (this.value === '') {
-                    document.getElementById(`nama_ponpes_edit_{{ $d->id }}`).value = '';
-                }
-            });
-        @endforeach
-
-        // Reset Ketika Edit Modal Ditutup
-        @foreach ($data as $d)
-            $(`#editModal{{ $d->id }}`).on('hidden.bs.modal', function () {
-                document.getElementById(`upt_search_edit_{{ $d->id }}`).value =
-                    '{{ $d->nama_ponpes ?? '' }}';
-                document.getElementById(`uptDropdownMenuEdit{{ $d->id }}`).style.display = 'none';
-            });
-        @endforeach
-        // End Edit Modal JS
+        // Reset form when modal is closed
+        $('#addModal').on('hidden.bs.modal', function() {
+            document.getElementById('upt_search').value = '';
+            document.getElementById('data_ponpes_id').value = '';
+            document.getElementById('kanwil_display').value = '';
+            document.getElementById('uptDropdownMenu').style.display = 'none';
+            document.getElementById('addForm').reset();
+        });
     </script>
 
     {{-- Search and Filter JavaScript --}}
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
             // Function to get current filter values
             function getFilters() {
                 return {
@@ -1181,7 +1196,7 @@
             }
 
             // Function to apply filters and redirect (GLOBAL - bisa dipanggil dari tombol)
-            window.applyFilters = function () {
+            window.applyFilters = function() {
                 let filters = getFilters();
                 let url = new URL(window.location.href);
 
@@ -1210,7 +1225,7 @@
             };
 
             // Function to clear all search filters (GLOBAL - bisa dipanggil dari tombol Reset)
-            window.clearAllFilters = function () {
+            window.clearAllFilters = function() {
                 // Clear semua input field dulu
                 $('#search-nama-ponpes').val('');
                 $('#search-kartu-baru').val('');
@@ -1244,21 +1259,21 @@
             };
 
             // Bind keypress event to all search input fields (Enter masih berfungsi)
-            $('.column-search input').on('keypress', function (e) {
+            $('.column-search input').on('keypress', function(e) {
                 if (e.which === 13) { // Enter key
                     applyFilters();
                 }
             });
 
             // Clear individual column search when input is emptied
-            $('.column-search input').on('keyup', function (e) {
+            $('.column-search input').on('keyup', function(e) {
                 if (e.which === 13 && $(this).val().trim() === '') {
                     applyFilters(); // Apply filters to update URL (removing empty filter)
                 }
             });
 
             // Download functions with current filters
-            window.downloadCsv = function () {
+            window.downloadCsv = function() {
                 let filters = getFilters();
                 let form = document.createElement('form');
                 form.method = 'GET';
@@ -1280,7 +1295,7 @@
                 document.body.removeChild(form);
             };
 
-            window.downloadPdf = function () {
+            window.downloadPdf = function() {
                 let filters = getFilters();
                 let form = document.createElement('form');
                 form.method = 'GET';
@@ -1346,15 +1361,15 @@
             }
 
             // Handle modal events
-            $('.modal').on('show.bs.modal', function (e) {
+            $('.modal').on('show.bs.modal', function(e) {
                 console.log('Modal is opening');
             });
 
-            $('.modal').on('shown.bs.modal', function (e) {
+            $('.modal').on('shown.bs.modal', function(e) {
                 console.log('Modal is fully visible');
             });
 
-            $('.modal').on('hide.bs.modal', function (e) {
+            $('.modal').on('hide.bs.modal', function(e) {
                 console.log('Modal is closing');
             });
         });

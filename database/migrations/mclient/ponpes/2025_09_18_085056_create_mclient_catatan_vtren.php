@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('mclient_catatan_vtren', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_ponpes')->nullable();
+            // $table->string('nama_ponpes')->nullable();
             $table->string('spam_vtren_kartu_baru')->nullable()->default('0');
             $table->string('spam_vtren_kartu_bekas')->nullable()->default('0');
             $table->string('spam_vtren_kartu_goip')->nullable()->default('0');
@@ -24,6 +24,9 @@ return new class extends Migration
             $table->string('jumlah_kartu_terpakai_perhari')->nullable()->default('0');
             $table->date('tanggal')->nullable();
             $table->string('status')->nullable();
+
+            $table->foreignId('data_ponpes_id')->nullable()->constrained('data_ponpes')->onDelete('cascade');
+
             $table->timestamps();
         });
     }

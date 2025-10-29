@@ -67,6 +67,7 @@ class ListDataUptController extends Controller
             return "Sebagian ({$percentage}%)";
         }
     }
+
     private function applyFilters($query, Request $request)
     {
         // Global search
@@ -109,6 +110,7 @@ class ListDataUptController extends Controller
 
         return $query;
     }
+
     private function applyStatusFilter($data, Request $request)
     {
         if ($request->has('search_status') && !empty($request->search_status)) {
@@ -120,6 +122,7 @@ class ListDataUptController extends Controller
         }
         return $data;
     }
+
     // MISSING METHOD: Create mock paginator for "all" option
     private function createMockPaginator($data, Request $request)
     {
@@ -135,7 +138,9 @@ class ListDataUptController extends Controller
             ]
         );
     }
+
     // MISSING METHOD: Remove VpasReg suffix from UPT name
+
     private function removeVpasRegSuffix($namaUpt)
     {
         return preg_replace('/\s*\(VpasReg\)$/', '', $namaUpt);
@@ -221,8 +226,7 @@ class ListDataUptController extends Controller
         $providers = Provider::all();
         $vpns = Vpn::all();
 
-        // TAMBAHKAN 2 BARIS INI:
-        $datakanwil = Kanwil::all();
+        $datakanwil = Kanwil::orderBy('kanwil')->limit(100)->get();
 
         return view('user.indexUser', compact('data', 'providers', 'vpns', 'datakanwil'));
     }

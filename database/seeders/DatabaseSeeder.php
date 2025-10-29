@@ -2,13 +2,33 @@
 
 namespace Database\Seeders;
 
+use App\Models\mclient\ponpes\Kunjungan;
+use App\Models\mclient\ponpes\Pengiriman;
+use App\Models\mclient\ponpes\Reguller;
+use App\Models\mclient\SettingAlat;
+use App\Models\mclient\Vpas;
 use Illuminate\Database\Seeder;
 use App\Models\user\kanwil\Kanwil;
 use App\Models\user\kendala\Kendala;
 use App\Models\user\namaWilayah\NamaWilayah;
 use App\Models\user\pic\Pic;
 use App\Models\user\provider\Provider;
+
 use App\Models\user\vpn\Vpn;
+use Database\Factories\DataOpsionalPonpesFactory;
+use Database\Factories\DataOpsionalUptFactory;
+
+
+// UNTUK BAGIAN MCLIENT UPT
+use Database\Factories\Mclient\Upt\VpasFactory;
+use Database\Factories\Mclient\Upt\KunjunganFactory;
+use Database\Factories\Mclient\Upt\PengirimanFactory;
+use Database\Factories\Mclient\Upt\SettingFactory;
+use Database\Factories\Mclient\Upt\RegullerFactory;
+// 
+use Database\Factories\user\PonpesFactory;
+use Database\Factories\user\UptFactory;
+use Dflydev\DotAccessData\Data;
 
 class DatabaseSeeder extends Seeder
 {
@@ -91,7 +111,7 @@ class DatabaseSeeder extends Seeder
             ['nama_provider' => 'XL Home'],
         ];
 
-        foreach ($providerData as $provider) {  
+        foreach ($providerData as $provider) {
             Provider::create($provider);
         }
 
@@ -112,5 +132,19 @@ class DatabaseSeeder extends Seeder
             Vpn::create($vpn);
         }
 
+        // URUTAN PERTAMA HARUS MEMBUAT UPT FACTORY DULU
+        UptFactory::new()->count(500)->create();
+        PonpesFactory::new()->count(500)->create();
+
+        // URUTAN KEDUA MEMBUAT DATA OPSIONAL UPT FACTORY
+        DataOpsionalUptFactory::new()->count(500)->create();
+        DataOpsionalPonpesFactory::new()->count(500)->create();
+
+        // 
+        VpasFactory::new()->count(200)->create(); 
+        RegullerFactory::new()->count(200)->create(); 
+        KunjunganFactory::new()->count(200)->create(); 
+        SettingFactory::new()->count(200)->create(); 
+        PengirimanFactory::new()->count(200)->create(); 
     }
 }

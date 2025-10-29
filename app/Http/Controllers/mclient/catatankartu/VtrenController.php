@@ -16,7 +16,7 @@ class VtrenController extends Controller
 {
     public function ListDataMclientCatatanVtren(Request $request)
     {
-        $query = Vtren::query();
+        $query = Vtren::with(['ponpes.namaWilayah']);
 
         // Apply filter
         $query = $this->applyFilters($query, $request);
@@ -74,12 +74,12 @@ class VtrenController extends Controller
 
         $picList = Pic::orderBy('nama_pic')->get();
         $cardSupportingList = Pic::orderBy('nama_pic')->pluck('nama_pic');
-        $uptList = Ponpes::select('nama_ponpes', 'nama_wilayah_id')
+        $ponpesList = Ponpes::with('namaWilayah')
             ->where('tipe', 'vtren')
             ->orderBy('nama_ponpes')
             ->get();
 
-        return view('mclient.catatankartu.indexVtren', compact('data', 'picList', 'cardSupportingList', 'uptList', 'totals'));
+        return view('mclient.catatankartu.indexVtren', compact('data', 'picList', 'cardSupportingList', 'ponpesList', 'totals'));
     }
 
     private function applyFilters($query, Request $request)
@@ -129,7 +129,7 @@ class VtrenController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'nama_ponpes' => 'required|string|max:255',
+                'data_ponpes_id' => 'required|exists:data_ponpes,id',
                 'spam_vtren_kartu_baru' => 'nullable|string',
                 'spam_vtren_kartu_bekas' => 'nullable|string',
                 'spam_vtren_kartu_goip' => 'nullable|string',
@@ -142,9 +142,7 @@ class VtrenController extends Controller
                 'status' => 'nullable|string|in:aktif,nonaktif,proses,pending',
             ],
             [
-                'nama_ponpes.required' => 'Nama Ponpes harus diisi.',
-                'nama_ponpes.string' => 'Nama Ponpes harus berupa teks.',
-                'nama_ponpes.max' => 'Nama Ponpes tidak boleh lebih dari 255 karakter.',
+                'data_ponpes_id.required' => 'Nama Ponpes harus diisi.',
                 'spam_vtren_kartu_baru.string' => 'Spam Vtren kartu baru harus berupa teks.',
                 'spam_vtren_kartu_bekas.string' => 'Spam Vtren kartu bekas harus berupa teks.',
                 'spam_vtren_kartu_goip.string' => 'Spam Vtren kartu GOIP harus berupa teks.',
@@ -198,10 +196,11 @@ class VtrenController extends Controller
 
     public function MclientCatatanUpdateVtren(Request $request, $id)
     {
+        // dd($request->all());
         $validator = Validator::make(
             $request->all(),
             [
-                'nama_ponpes' => 'required|string|max:255',
+                'data_ponpes_id' => 'required|exists:data_ponpes,id',
                 'spam_vtren_kartu_baru' => 'nullable|string',
                 'spam_vtren_kartu_bekas' => 'nullable|string',
                 'spam_vtren_kartu_goip' => 'nullable|string',
@@ -214,9 +213,7 @@ class VtrenController extends Controller
                 'status' => 'nullable|string|in:aktif,nonaktif,proses,pending',
             ],
             [
-                'nama_ponpes.required' => 'Nama Ponpes harus diisi.',
-                'nama_ponpes.string' => 'Nama Ponpes harus berupa teks.',
-                'nama_ponpes.max' => 'Nama Ponpes tidak boleh lebih dari 255 karakter.',
+                'data_ponpes_id.required' => 'Nama Ponpes harus diisi.',
                 'spam_vtren_kartu_baru.string' => 'Spam Vtren kartu baru harus berupa teks.',
                 'spam_vtren_kartu_bekas.string' => 'Spam Vtren kartu bekas harus berupa teks.',
                 'spam_vtren_kartu_goip.string' => 'Spam Vtren kartu GOIP harus berupa teks.',
@@ -242,9 +239,11 @@ class VtrenController extends Controller
         try {
             $data = Vtren::findOrFail($id);
 
+            $ponpes = Ponpes::findOrFail($request->data_ponpes_id);
+
             // Only take allowed fields (whitelist approach)
             $updateData = $request->only([
-                'nama_ponpes',
+                'data_ponpes_id',
                 'spam_vtren_kartu_baru',
                 'spam_vtren_kartu_bekas',
                 'spam_vtren_kartu_goip',
@@ -256,6 +255,8 @@ class VtrenController extends Controller
                 'tanggal',
                 'status'
             ]);
+
+            $updateData['nama_ponpes'] = $ponpes->nama_ponpes;
 
             // Remove empty string fields to allow null values
             $stringFields = [

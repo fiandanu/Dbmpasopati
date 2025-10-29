@@ -30,7 +30,7 @@
                                 <span class="checkmark">✓</span>
                                 {{ number_format($totalVpas) }} Data
                             </div>
-                            <a href="{{ route('mcvpas.ListDataMclientVpas') }}" class="list-button">List Data VPAS</a>
+                            <a href="{{ route('mcvpas.ListDataMclientVpas') }}" class="list-button">Selengkapnya</a>
                         </div>
                     </div>
 
@@ -43,8 +43,7 @@
                                 <span class="checkmark">✓</span>
                                 {{ number_format($totalReguler) }} Data
                             </div>
-                            <a href="{{ route('mcreguler.ListDataMclientReguller') }}" class="list-button">List Data
-                                Reguller</a>
+                            <a href="{{ route('mcreguler.ListDataMclientReguller') }}" class="list-button">Selengkapnya</a>
                         </div>
                     </div>
 
@@ -57,8 +56,8 @@
                                 <span class="checkmark">✓</span>
                                 {{ number_format($totalKunjungan) }} Data
                             </div>
-                            <a href="{{ route('mclientkunjunganupt.ListDataMclientKunjungan') }}" class="list-button">List
-                                Data Kunjungan UPT</a>
+                            <a href="{{ route('mclientkunjunganupt.ListDataMclientKunjungan') }}"
+                                class="list-button">Selengkapnya</a>
                         </div>
                     </div>
 
@@ -72,7 +71,7 @@
                                 {{ number_format($totalPengiriman) }} Data
                             </div>
                             <a href="{{ route('mclientpengirimanupt.ListDataMclientPengirimanUpt') }}"
-                                class="list-button">List Pengiriman Alat UPT</a>
+                                class="list-button">Selengkapnya</a>
                         </div>
                     </div>
 
@@ -86,7 +85,7 @@
                                 {{ number_format($totalSettingAlat) }} Data
                             </div>
                             <a href="{{ route('mclientsettingalatupt.ListDataMclientSettingAlat') }}"
-                                class="list-button">List Data Setting Alat UPT</a>
+                                class="list-button">Selengkapnya</a>
                         </div>
                     </div>
 
@@ -100,18 +99,6 @@
                 <div class="row mb-3 align-items-center">
                     <div class="col d-flex justify-content-between align-items-center">
                         <h3 class="headline-medium-24">Data Monitoring Client Keseluruhan</h3>
-                        <div class="d-flex align-items-center gap-2 flex-wrap">
-                            <div class="d-flex gap-2" id="export-buttons">
-                                <button onclick="downloadCsv()"
-                                    class="btn-page d-flex justify-content-center align-items-center" title="Download CSV">
-                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export CSV
-                                </button>
-                                <button onclick="downloadPdf()"
-                                    class="btn-page d-flex justify-content-center align-items-center" title="Download PDF">
-                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PDF
-                                </button>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
@@ -126,6 +113,15 @@
                                 <input type="date" id="search-tanggal-sampai" name="search_tanggal_sampai"
                                     title="Tanggal Sampai">
                             </div>
+
+                            <button onclick="downloadCsv()"
+                                class="btn-page d-flex justify-content-center align-items-center" title="Download CSV">
+                                <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export CSV
+                            </button>
+                            <button onclick="downloadPdf()"
+                                class="btn-page d-flex justify-content-center align-items-center" title="Download PDF">
+                                <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PDF
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -166,30 +162,7 @@
                                     </th>
                                     <th class="text-center align-top">
                                         <div class="d-flex justify-content-center align-items-center flex-column gap-12">
-                                            <span>Tipe</span>
-                                            <div class="btn-searchbar column-search" style="padding: 0;">
-                                                <select id="search-tipe" name="search_tipe"
-                                                    style="border: none; background: transparent; width: 100%; padding: 8px; font-size: 14px;">
-                                                    <option value="">Semua</option>
-                                                    <option value="vpas">VPAS</option>
-                                                    <option value="reguler">Reguler</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <th class="text-center align-top">
-                                        <div class="d-flex justify-content-center align-items-center flex-column gap-12">
-                                            <span>Jenis Layanan</span>
-                                            <div class="btn-searchbar column-search">
-                                                <span><i class="fas fa-search"></i></span>
-                                                <input type="text" id="search-jenis-layanan"
-                                                    name="search_jenis_layanan">
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <th class="text-center align-top">
-                                        <div class="d-flex justify-content-center align-items-center flex-column gap-12">
-                                            <span>Jenis Kendala</span>
+                                            <span>Jenis Kendala / Keterangan</span>
                                             <div class="btn-searchbar column-search">
                                                 <span><i class="fas fa-search"></i></span>
                                                 <input type="text" id="search-jenis-kendala"
@@ -199,10 +172,43 @@
                                     </th>
                                     <th class="text-center align-top">
                                         <div class="d-flex justify-content-center align-items-center flex-column gap-12">
+                                            <span>Menu</span>
+                                            <div class="btn-searchbar column-search">
+                                                <select id="search-jenis-layanan" name="search_jenis_layanan">
+                                                    <option value="">Semua</option>
+                                                    <option value="Komplain Vpas">Komplain Vpas</option>
+                                                    <option value="Komplain Reguler">Komplain Reguler</option>
+                                                    <option value="Kunjungan">Kunjungan Upt</option>
+                                                    <option value="Pengiriman Alat">Pengiriman Alat</option>
+                                                    <option value="Setting Alat">Setting Alat</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th class="text-center align-top">
+                                        <div class="d-flex justify-content-center align-items-center flex-column gap-12">
+                                            <span>Tipe</span>
+                                            <div class="btn-searchbar column-search">
+                                                <select id="search-tipe" name="search_tipe">
+                                                    <option value="">Semua</option>
+                                                    <option value="vpas">Vpas</option>
+                                                    <option value="reguler">Reguler</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th class="text-center align-top">
+                                        <div class="d-flex justify-content-center align-items-center flex-column gap-12">
                                             <span>Status</span>
                                             <div class="btn-searchbar column-search">
-                                                <span><i class="fas fa-search"></i></span>
-                                                <input type="text" id="search-status" name="search_status">
+                                                <select id="search-status" name="search_status">
+                                                    <option value="">Semua</option>
+                                                    <option value="belum ditentukan">Belum ditentukan</option>
+                                                    <option value="pending">Pending</option>
+                                                    <option value="proses">Proses</option>
+                                                    <option value="terjadwal">Terjadwal</option>
+                                                    <option value="selesai">Selesai</option>
+                                                </select>
                                             </div>
                                         </div>
                                     </th>
@@ -222,20 +228,14 @@
                                         <td>{{ $d['nama_upt'] }}</td>
                                         <td><span class="tag tag-success">{{ $d['kanwil'] }}</span></td>
                                         <td class="text-center">
-                                            <span
-                                                class="@if ($d['tipe'] == 'reguler') Tipereguller @elseif($d['tipe'] == 'vpas') Tipevpas @endif">
-                                                {{ ucfirst($d['tipe']) }}
+                                            <span class="Tipereguller">
+                                                {{ Str::limit($d['jenis_kendala'], 30) }}
                                             </span>
                                         </td>
                                         <td class="text-center">
                                             @php
                                                 $layananClass = match (strtolower($d['jenis_layanan'] ?? '')) {
-                                                    'vpas' => 'Tipevpas',
-                                                    'reguler' => 'Tipereguller',
-                                                    'kunjungan' => 'badge-prosses',
-                                                    'pengiriman alat' => 'badge-prosses',
-                                                    'setting alat' => 'badge-prosses',
-                                                    default => 'badge-secondary',
+                                                    default => 'Tipereguller',
                                                 };
                                             @endphp
                                             <span class="{{ $layananClass }}">
@@ -243,8 +243,9 @@
                                             </span>
                                         </td>
                                         <td class="text-center">
-                                            <span class="Tipereguller">
-                                                {{ Str::limit($d['jenis_kendala'], 30) }}
+                                            <span
+                                                class="@if ($d['tipe'] == 'reguler') Tipereguller @elseif($d['tipe'] == 'vpas') Tipevpas @endif">
+                                                {{ ucfirst($d['tipe']) }}
                                             </span>
                                         </td>
                                         <td class="text-center">
@@ -373,6 +374,7 @@
         integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+    {{-- SEARCH BY KOLOM FILTER --}}
     <script>
         $(document).ready(function() {
             // Function to get current filter values
@@ -464,7 +466,7 @@
             });
 
             // Dropdown change to search
-            $('#search-tipe').on('change', function() {
+            $('#search-tipe, #search-jenis-layanan, #search-status').on('change', function() {
                 applyFilters();
             });
 

@@ -66,6 +66,7 @@ class VtrenController extends Controller
                 $q->where('nama_ponpes', 'LIKE', '%' . $request->search_nama_ponpes . '%');
             });
         }
+        
         if ($request->has('search_nama_wilayah') && !empty($request->search_nama_wilayah)) {
             $query->whereHas('ponpes.namaWilayah', function ($q) use ($request) {
                 $q->where('nama_wilayah', 'LIKE', '%' . $request->search_nama_wilayah . '%');
@@ -76,7 +77,6 @@ class VtrenController extends Controller
             $searchJenisKendala = strtolower($request->search_jenis_kendala);
             $query->where(function ($q) use ($searchJenisKendala) {
                 $q->where('jenis_kendala', 'LIKE', '%' . $searchJenisKendala . '%');
-                // Jika mencari "belum" atau "ditentukan", include yang NULL/empty
                 if (str_contains($searchJenisKendala, 'belum') || str_contains($searchJenisKendala, 'ditentukan')) {
                     $q->orWhereNull('jenis_kendala')
                         ->orWhere('jenis_kendala', '');
@@ -129,6 +129,8 @@ class VtrenController extends Controller
 
     public function MclientVtrenStore(Request $request)
     {
+        dd($request->all());
+
         $validator = Validator::make(
             $request->all(),
             [

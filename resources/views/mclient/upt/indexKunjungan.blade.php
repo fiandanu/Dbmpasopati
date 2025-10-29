@@ -249,7 +249,7 @@
                                             </th>
                                             <th class="text-center align-top">
                                                 <div class="d-flex flex-column gap-12">
-                                                    <span>PIC 1</span>
+                                                    <span>PIC</span>
                                                     <div class="btn-searchbar column-search">
                                                         <span>
                                                             <i class="fas fa-search"></i>
@@ -261,7 +261,7 @@
                                             </th>
                                             <th class="text-center align-top">
                                                 <div class="d-flex flex-column gap-12">
-                                                    <span>PIC 2</span>
+                                                    <span>PIC</span>
                                                     <div class="btn-searchbar column-search">
                                                         <span>
                                                             <i class="fas fa-search"></i>
@@ -410,11 +410,11 @@
                                 </table>
                             </div>
 
-                            @if ($data->hasPages())
+                            {{-- @if ($data->hasPages())
                                 <div class="card-footer">
                                     {{ $data->appends(request()->query())->links() }}
                                 </div>
-                            @endif
+                            @endif --}}
                         </div>
 
                         {{-- Add Modal --}}
@@ -535,9 +535,9 @@
 
                                                 <div class="column">
                                                     <div class="mb-3">
-                                                        <label for="pic_1">PIC 1</label>
+                                                        <label for="pic_1">PIC</label>
                                                         <select class="form-control" id="pic_1" name="pic_1">
-                                                            <option value="">-- Pilih PIC 1 --</option>
+                                                            <option value="">-- Pilih PIC --</option>
                                                             @foreach ($picList as $pic)
                                                                 <option value="{{ $pic->nama_pic }}">
                                                                     {{ $pic->nama_pic }}</option>
@@ -547,9 +547,9 @@
                                                 </div>
                                                 <div class="column">
                                                     <div class="mb-3">
-                                                        <label for="pic_2">PIC 2</label>
+                                                        <label for="pic_2">PIC</label>
                                                         <select class="form-control" id="pic_2" name="pic_2">
-                                                            <option value="">-- Pilih PIC 2 --</option>
+                                                            <option value="">-- Pilih PIC --</option>
                                                             @foreach ($picList as $pic)
                                                                 <option value="{{ $pic->nama_pic }}">
                                                                     {{ $pic->nama_pic }}</option>
@@ -701,10 +701,10 @@
 
                                                     <div class="column">
                                                         <div class="mb-3">
-                                                            <label for="pic_1{{ $d->id }}">PIC 1</label>
+                                                            <label for="pic_1{{ $d->id }}">PIC</label>
                                                             <select class="form-control" id="pic_1{{ $d->id }}"
                                                                 name="pic_1">
-                                                                <option value="">-- Pilih PIC 1 --</option>
+                                                                <option value="">-- Pilih PIC --</option>
                                                                 @foreach ($picList as $pic)
                                                                     <option value="{{ $pic->nama_pic }}"
                                                                         {{ $d->pic_1 == $pic->nama_pic ? 'selected' : '' }}>
@@ -725,10 +725,10 @@
                                                     </div>
                                                     <div class="column">
                                                         <div class="mb-3">
-                                                            <label for="pic_2{{ $d->id }}">PIC 2</label>
+                                                            <label for="pic_2{{ $d->id }}">PIC</label>
                                                             <select class="form-control" id="pic_2{{ $d->id }}"
                                                                 name="pic_2">
-                                                                <option value="">-- Pilih PIC 2 --</option>
+                                                                <option value="">-- Pilih PIC --</option>
                                                                 @foreach ($picList as $pic)
                                                                     <option value="{{ $pic->nama_pic }}"
                                                                         {{ $d->pic_2 == $pic->nama_pic ? 'selected' : '' }}>

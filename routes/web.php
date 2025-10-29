@@ -21,6 +21,7 @@ Route::get('/GrafikServer', [MonitoringServerController::class, 'GrafikServer'])
 Route::get('/MonitoringUpt', [MonitoringServerController::class, 'MonitoringUpt'])->name('MonitoringUpt');
 Route::get('/MonitoringPonpes', [MonitoringServerController::class, 'MonitoringPonpes'])->name('MonitoringPonpes');
 
+
 // Monitoring Client
 Route::get('/GrafikClient', [HomeController::class, 'GrafikClient'])->name('GrafikClient');
 Route::get('/KomplainUpt', [RegullerController::class, 'monitoringClientUptOverview'])->name('KomplainUpt');

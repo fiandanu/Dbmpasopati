@@ -29,7 +29,7 @@ class RegullerController extends Controller
                 'nama_upt' => $item->upt->namaupt ?? '-',
                 'kanwil' => $item->upt->kanwil->kanwil ?? '-',
                 'tipe' => $item->upt->tipe ?? '-',
-                'jenis_layanan' => 'Reguler',
+                'jenis_layanan' => 'Komplain Reguler',
                 'jenis_kendala' => $item->jenis_kendala ?? 'Belum ditentukan',
                 'status' => $item->status ?? 'Belum ditentukan',
                 'tanggal_terlapor' => $item->tanggal_terlapor,
@@ -44,7 +44,7 @@ class RegullerController extends Controller
                 'nama_upt' => $item->upt->namaupt ?? '-',
                 'kanwil' => $item->upt->kanwil->kanwil ?? '-',
                 'tipe' => $item->upt->tipe ?? '-',
-                'jenis_layanan' => 'VPAS',
+                'jenis_layanan' => 'Komplain Vpas',
                 'jenis_kendala' => $item->jenis_kendala ?? 'Belum ditentukan',
                 'status' => $item->status ?? 'Belum ditentukan',
                 'tanggal_terlapor' => $item->tanggal_terlapor,
@@ -59,7 +59,7 @@ class RegullerController extends Controller
                 'nama_upt' => $item->upt->namaupt ?? '-',
                 'kanwil' => $item->upt->kanwil->kanwil ?? '-',
                 'tipe' => $item->upt->tipe ?? '-',
-                'jenis_layanan' => 'Kunjungan',
+                'jenis_layanan' => 'Kunjungan upt',
                 'jenis_kendala' => $item->keterangan ?? 'Monitoring rutin',
                 'status' => $item->status ?? 'Belum ditentukan',
                 'tanggal_terlapor' => $item->jadwal,
@@ -183,7 +183,7 @@ class RegullerController extends Controller
         }
 
         // Filter by jenis_layanan
-        if ($request->has('search_jenis_layanan') && ! empty($request->search_jenis_layanan)) {
+        if ($request->has('search_jenis_layanan') && !empty($request->search_jenis_layanan)) {
             $collection = $collection->filter(function ($item) use ($request) {
                 return stripos($item['jenis_layanan'], $request->search_jenis_layanan) !== false;
             });
@@ -234,189 +234,6 @@ class RegullerController extends Controller
         return $collection;
     }
 
-    public function exportMonitoringClientCsv(Request $request): StreamedResponse
-    {
-        // Get all data
-        $regulerData = Reguller::with(['upt.kanwil'])->get()->map(function ($item) {
-            return [
-                'nama_upt' => $item->upt->namaupt ?? '-',
-                'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
-                'jenis_layanan' => 'Reguler',
-                'jenis_kendala' => $item->jenis_kendala ?? 'Belum ditentukan',
-                'status' => $item->status ?? 'Belum ditentukan',
-            ];
-        });
-
-        $vpasData = Vpas::with(['upt.kanwil'])->get()->map(function ($item) {
-            return [
-                'nama_upt' => $item->upt->namaupt ?? '-',
-                'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
-                'jenis_layanan' => 'VPAS',
-                'jenis_kendala' => $item->jenis_kendala ?? 'Belum ditentukan',
-                'status' => $item->status ?? 'Belum ditentukan',
-            ];
-        });
-
-        $kunjunganData = Kunjungan::with(['upt.kanwil'])->get()->map(function ($item) {
-            return [
-                'nama_upt' => $item->upt->namaupt ?? '-',
-                'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
-                'jenis_layanan' => 'Kunjungan',
-                'jenis_kendala' => $item->keterangan ?? 'Monitoring rutin',
-                'status' => $item->status ?? 'Belum ditentukan',
-            ];
-        });
-
-        $pengirimanData = Pengiriman::with(['upt.kanwil'])->get()->map(function ($item) {
-            return [
-                'nama_upt' => $item->upt->namaupt ?? '-',
-                'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
-                'jenis_layanan' => 'Pengiriman Alat',
-                'jenis_kendala' => $item->keterangan ?? 'Pengiriman alat',
-                'status' => $item->status ?? 'Belum ditentukan',
-            ];
-        });
-
-        $settingAlatData = SettingAlat::with(['upt.kanwil'])->get()->map(function ($item) {
-            return [
-                'nama_upt' => $item->upt->namaupt ?? '-',
-                'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
-                'jenis_layanan' => 'Setting Alat',
-                'jenis_kendala' => $item->keterangan ?? 'Setting alat',
-                'status' => $item->status ?? 'Belum ditentukan',
-            ];
-        });
-
-        $allData = collect()
-            ->merge($regulerData)
-            ->merge($vpasData)
-            ->merge($kunjunganData)
-            ->merge($pengirimanData)
-            ->merge($settingAlatData);
-
-        // Apply filters
-        $allData = $this->applyMonitoringFilters($allData, $request);
-
-        $filename = 'monitoring_client_upt_'.Carbon::now()->format('Y-m-d_H-i-s').'.csv';
-
-        $headers = [
-            'Content-type' => 'text/csv',
-            'Content-Disposition' => "attachment; filename=$filename",
-            'Pragma' => 'no-cache',
-            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
-            'Expires' => '0',
-        ];
-
-        $rows = [['No', 'Nama UPT', 'Kanwil', 'Tipe', 'Jenis Layanan', 'Jenis Kendala', 'Status']];
-        $no = 1;
-
-        foreach ($allData as $row) {
-            $rows[] = [
-                $no++,
-                $row['nama_upt'],
-                $row['kanwil'],
-                ucfirst($row['tipe']),
-                $row['jenis_layanan'],
-                $row['jenis_kendala'],
-                ucfirst($row['status']),
-            ];
-        }
-
-        $callback = function () use ($rows) {
-            $file = fopen('php://output', 'w');
-            foreach ($rows as $row) {
-                fputcsv($file, $row);
-            }
-            fclose($file);
-        };
-
-        return response()->stream($callback, 200, $headers);
-    }
-
-    public function exportMonitoringClientPdf(Request $request)
-    {
-        // Similar to CSV but return PDF
-        $regulerData = Reguller::with(['upt.kanwil'])->get()->map(function ($item) {
-            return [
-                'nama_upt' => $item->upt->namaupt ?? '-',
-                'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
-                'jenis_layanan' => 'Reguler',
-                'jenis_kendala' => $item->jenis_kendala ?? 'Belum ditentukan',
-                'status' => $item->status ?? 'Belum ditentukan',
-            ];
-        });
-
-        $vpasData = Vpas::with(['upt.kanwil'])->get()->map(function ($item) {
-            return [
-                'nama_upt' => $item->upt->namaupt ?? '-',
-                'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
-                'jenis_layanan' => 'VPAS',
-                'jenis_kendala' => $item->jenis_kendala ?? 'Belum ditentukan',
-                'status' => $item->status ?? 'Belum ditentukan',
-            ];
-        });
-
-        $kunjunganData = Kunjungan::with(['upt.kanwil'])->get()->map(function ($item) {
-            return [
-                'nama_upt' => $item->upt->namaupt ?? '-',
-                'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
-                'jenis_layanan' => 'Kunjungan',
-                'jenis_kendala' => $item->keterangan ?? 'Monitoring rutin',
-                'status' => $item->status ?? 'Belum ditentukan',
-            ];
-        });
-
-        $pengirimanData = Pengiriman::with(['upt.kanwil'])->get()->map(function ($item) {
-            return [
-                'nama_upt' => $item->upt->namaupt ?? '-',
-                'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
-                'jenis_layanan' => 'Pengiriman Alat',
-                'jenis_kendala' => $item->keterangan ?? 'Pengiriman alat',
-                'status' => $item->status ?? 'Belum ditentukan',
-            ];
-        });
-
-        $settingAlatData = SettingAlat::with(['upt.kanwil'])->get()->map(function ($item) {
-            return [
-                'nama_upt' => $item->upt->namaupt ?? '-',
-                'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
-                'jenis_layanan' => 'Setting Alat',
-                'jenis_kendala' => $item->keterangan ?? 'Setting alat',
-                'status' => $item->status ?? 'Belum ditentukan',
-            ];
-        });
-
-        $allData = collect()
-            ->merge($regulerData)
-            ->merge($vpasData)
-            ->merge($kunjunganData)
-            ->merge($pengirimanData)
-            ->merge($settingAlatData);
-
-        $allData = $this->applyMonitoringFilters($allData, $request);
-
-        $pdfData = [
-            'title' => 'Monitoring Client UPT',
-            'data' => $allData,
-            'generated_at' => Carbon::now()->format('d M Y H:i:s'),
-        ];
-
-        $pdf = Pdf::loadView('export.public.mclient.MclientUpt', $pdfData);
-        $filename = 'monitoring_client_upt_'.Carbon::now()->translatedFormat('d_M_Y').'.pdf';
-
-        return $pdf->download($filename);
-    }
-
     public function ListDataMclientReguller(Request $request)
     {
         $query = Reguller::with(['upt.kanwil']);
@@ -464,24 +281,24 @@ class RegullerController extends Controller
         // Column-specific searches
         if ($request->has('search_nama_upt') && ! empty($request->search_nama_upt)) {
             $query->whereHas('upt', function ($q) use ($request) {
-                $q->where('namaupt', 'LIKE', '%'.$request->search_nama_upt.'%');
+                $q->where('namaupt', 'LIKE', '%' . $request->search_nama_upt . '%');
             });
         }
 
         if ($request->has('search_kanwil') && ! empty($request->search_kanwil)) {
             $query->whereHas('upt.kanwil', function ($q) use ($request) {
-                $q->where('kanwil', 'LIKE', '%'.$request->search_kanwil.'%');
+                $q->where('kanwil', 'LIKE', '%' . $request->search_kanwil . '%');
             });
         }
 
         if ($request->has('search_detail_kendala') && ! empty($request->search_detail_kendala)) {
-            $query->where('detail_kendala', 'LIKE', '%'.$request->search_detail_kendala.'%');
+            $query->where('detail_kendala', 'LIKE', '%' . $request->search_detail_kendala . '%');
         }
 
         if ($request->has('search_jenis_kendala') && ! empty($request->search_jenis_kendala)) {
             $searchJenisKendala = strtolower($request->search_jenis_kendala);
             $query->where(function ($q) use ($searchJenisKendala) {
-                $q->where('jenis_kendala', 'LIKE', '%'.$searchJenisKendala.'%');
+                $q->where('jenis_kendala', 'LIKE', '%' . $searchJenisKendala . '%');
                 // Jika mencari "belum" atau "ditentukan", include yang NULL/empty
                 if (str_contains($searchJenisKendala, 'belum') || str_contains($searchJenisKendala, 'ditentukan')) {
                     $q->orWhereNull('jenis_kendala')
@@ -494,7 +311,7 @@ class RegullerController extends Controller
             $searchStatus = strtolower($request->search_status);
 
             $query->where(function ($q) use ($searchStatus) {
-                $q->where('status', 'LIKE', '%'.$searchStatus.'%');
+                $q->where('status', 'LIKE', '%' . $searchStatus . '%');
 
                 // Jika mencari "belum" atau "ditentukan", include yang NULL/empty
                 if (str_contains($searchStatus, 'belum') || str_contains($searchStatus, 'ditentukan')) {
@@ -505,10 +322,10 @@ class RegullerController extends Controller
         }
 
         if ($request->has('search_pic_1') && ! empty($request->search_pic_1)) {
-            $query->where('pic_1', 'LIKE', '%'.$request->search_pic_1.'%');
+            $query->where('pic_1', 'LIKE', '%' . $request->search_pic_1 . '%');
         }
         if ($request->has('search_pic_2') && ! empty($request->search_pic_2)) {
-            $query->where('pic_2', 'LIKE', '%'.$request->search_pic_2.'%');
+            $query->where('pic_2', 'LIKE', '%' . $request->search_pic_2 . '%');
         }
 
         // Date range filtering
@@ -595,7 +412,7 @@ class RegullerController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Gagal menambahkan data: '.$e->getMessage());
+                ->with('error', 'Gagal menambahkan data: ' . $e->getMessage());
         }
     }
 
@@ -666,7 +483,7 @@ class RegullerController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Gagal update data: '.$e->getMessage());
+                ->with('error', 'Gagal update data: ' . $e->getMessage());
         }
     }
 
@@ -681,11 +498,197 @@ class RegullerController extends Controller
                 ->with('success', "Data monitoring client Reguller di UPT '{$namaUpt}' berhasil dihapus!");
         } catch (\Exception $e) {
             return redirect()->back()
-                ->with('error', 'Gagal menghapus data: '.$e->getMessage());
+                ->with('error', 'Gagal menghapus data: ' . $e->getMessage());
         }
     }
 
-    // Export Global PDF Dan CSV
+
+
+    // EXPORT DATA MONIORING CLIENT
+    public function exportMonitoringClientCsv(Request $request): StreamedResponse
+    {
+        // Get all data
+        $regulerData = Reguller::with(['upt.kanwil'])->get()->map(function ($item) {
+            return [
+                'nama_upt' => $item->upt->namaupt ?? '-',
+                'kanwil' => $item->upt->kanwil->kanwil ?? '-',
+                'tipe' => $item->upt->tipe ?? '-',
+                'jenis_layanan' => 'Reguler',
+                'jenis_kendala' => $item->jenis_kendala ?? 'Belum ditentukan',
+                'status' => $item->status ?? 'Belum ditentukan',
+            ];
+        });
+
+        $vpasData = Vpas::with(['upt.kanwil'])->get()->map(function ($item) {
+            return [
+                'nama_upt' => $item->upt->namaupt ?? '-',
+                'kanwil' => $item->upt->kanwil->kanwil ?? '-',
+                'tipe' => $item->upt->tipe ?? '-',
+                'jenis_layanan' => 'Vpas',
+                'jenis_kendala' => $item->jenis_kendala ?? 'Belum ditentukan',
+                'status' => $item->status ?? 'Belum ditentukan',
+            ];
+        });
+
+        $kunjunganData = Kunjungan::with(['upt.kanwil'])->get()->map(function ($item) {
+            return [
+                'nama_upt' => $item->upt->namaupt ?? '-',
+                'kanwil' => $item->upt->kanwil->kanwil ?? '-',
+                'tipe' => $item->upt->tipe ?? '-',
+                'jenis_layanan' => 'Kunjungan',
+                'jenis_kendala' => $item->keterangan ?? 'Monitoring rutin',
+                'status' => $item->status ?? 'Belum ditentukan',
+            ];
+        });
+
+        $pengirimanData = Pengiriman::with(['upt.kanwil'])->get()->map(function ($item) {
+            return [
+                'nama_upt' => $item->upt->namaupt ?? '-',
+                'kanwil' => $item->upt->kanwil->kanwil ?? '-',
+                'tipe' => $item->upt->tipe ?? '-',
+                'jenis_layanan' => 'Pengiriman Alat',
+                'jenis_kendala' => $item->keterangan ?? 'Pengiriman alat',
+                'status' => $item->status ?? 'Belum ditentukan',
+            ];
+        });
+
+        $settingAlatData = SettingAlat::with(['upt.kanwil'])->get()->map(function ($item) {
+            return [
+                'nama_upt' => $item->upt->namaupt ?? '-',
+                'kanwil' => $item->upt->kanwil->kanwil ?? '-',
+                'tipe' => $item->upt->tipe ?? '-',
+                'jenis_layanan' => 'Setting Alat',
+                'jenis_kendala' => $item->keterangan ?? 'Setting alat',
+                'status' => $item->status ?? 'Belum ditentukan',
+            ];
+        });
+
+        $allData = collect()
+            ->merge($regulerData)
+            ->merge($vpasData)
+            ->merge($kunjunganData)
+            ->merge($pengirimanData)
+            ->merge($settingAlatData);
+
+        // Apply filters
+        $allData = $this->applyMonitoringFilters($allData, $request);
+
+        $filename = 'monitoring_client_upt_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
+
+        $headers = [
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=$filename",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
+        ];
+
+        $rows = [['No', 'Nama UPT', 'Kanwil', 'Tipe', 'Jenis Layanan', 'Jenis Kendala', 'Status']];
+        $no = 1;
+
+        foreach ($allData as $row) {
+            $rows[] = [
+                $no++,
+                $row['nama_upt'],
+                $row['kanwil'],
+                ucfirst($row['tipe']),
+                $row['jenis_layanan'],
+                $row['jenis_kendala'],
+                ucfirst($row['status']),
+            ];
+        }
+
+        $callback = function () use ($rows) {
+            $file = fopen('php://output', 'w');
+            foreach ($rows as $row) {
+                fputcsv($file, $row);
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    public function exportMonitoringClientPdf(Request $request)
+    {
+        // Similar to CSV but return PDF
+        $regulerData = Reguller::with(['upt.kanwil'])->get()->map(function ($item) {
+            return [
+                'nama_upt' => $item->upt->namaupt ?? '-',
+                'kanwil' => $item->upt->kanwil->kanwil ?? '-',
+                'tipe' => $item->upt->tipe ?? '-',
+                'jenis_layanan' => 'Reguler',
+                'jenis_kendala' => $item->jenis_kendala ?? 'Belum ditentukan',
+                'status' => $item->status ?? 'Belum ditentukan',
+            ];
+        });
+
+        $vpasData = Vpas::with(['upt.kanwil'])->get()->map(function ($item) {
+            return [
+                'nama_upt' => $item->upt->namaupt ?? '-',
+                'kanwil' => $item->upt->kanwil->kanwil ?? '-',
+                'tipe' => $item->upt->tipe ?? '-',
+                'jenis_layanan' => 'Vpas',
+                'jenis_kendala' => $item->jenis_kendala ?? 'Belum ditentukan',
+                'status' => $item->status ?? 'Belum ditentukan',
+            ];
+        });
+
+        $kunjunganData = Kunjungan::with(['upt.kanwil'])->get()->map(function ($item) {
+            return [
+                'nama_upt' => $item->upt->namaupt ?? '-',
+                'kanwil' => $item->upt->kanwil->kanwil ?? '-',
+                'tipe' => $item->upt->tipe ?? '-',
+                'jenis_layanan' => 'Kunjungan',
+                'jenis_kendala' => $item->keterangan ?? 'Monitoring rutin',
+                'status' => $item->status ?? 'Belum ditentukan',
+            ];
+        });
+
+        $pengirimanData = Pengiriman::with(['upt.kanwil'])->get()->map(function ($item) {
+            return [
+                'nama_upt' => $item->upt->namaupt ?? '-',
+                'kanwil' => $item->upt->kanwil->kanwil ?? '-',
+                'tipe' => $item->upt->tipe ?? '-',
+                'jenis_layanan' => 'Pengiriman Alat',
+                'jenis_kendala' => $item->keterangan ?? 'Pengiriman alat',
+                'status' => $item->status ?? 'Belum ditentukan',
+            ];
+        });
+
+        $settingAlatData = SettingAlat::with(['upt.kanwil'])->get()->map(function ($item) {
+            return [
+                'nama_upt' => $item->upt->namaupt ?? '-',
+                'kanwil' => $item->upt->kanwil->kanwil ?? '-',
+                'tipe' => $item->upt->tipe ?? '-',
+                'jenis_layanan' => 'Setting Alat',
+                'jenis_kendala' => $item->keterangan ?? 'Setting alat',
+                'status' => $item->status ?? 'Belum ditentukan',
+            ];
+        });
+
+        $allData = collect()
+            ->merge($regulerData)
+            ->merge($vpasData)
+            ->merge($kunjunganData)
+            ->merge($pengirimanData)
+            ->merge($settingAlatData);
+
+        $allData = $this->applyMonitoringFilters($allData, $request);
+
+        $pdfData = [
+            'title' => 'Monitoring Client UPT',
+            'data' => $allData,
+            'generated_at' => Carbon::now()->format('d M Y H:i:s'),
+        ];
+
+        $pdf = Pdf::loadView('export.public.mclient.MclientUpt', $pdfData);
+        $filename = 'monitoring_client_upt_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
+
+        return $pdf->download($filename);
+    }
+
+    // EXPORT GLOBAL DATA PDF DAN CSV
     public function exportListPdf(Request $request)
     {
         $query = Reguller::query();
@@ -708,7 +711,7 @@ class RegullerController extends Controller
         ];
 
         $pdf = Pdf::loadView('export.public.mclient.upt.indexReguller', $pdfData);
-        $filename = 'list_monitoring_client_reguler_'.Carbon::now()->translatedFormat('d_M_Y').'.pdf';
+        $filename = 'list_monitoring_client_reguler_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
 
         return $pdf->download($filename);
     }
@@ -728,7 +731,7 @@ class RegullerController extends Controller
 
         $data = $query->orderBy('created_at', 'desc')->get();
 
-        $filename = 'list_monitoring_client_reguler_'.Carbon::now()->format('Y-m-d_H-i-s').'.csv';
+        $filename = 'list_monitoring_client_reguler_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
 
         $headers = [
             'Content-type' => 'text/csv',

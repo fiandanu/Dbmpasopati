@@ -14,7 +14,7 @@ class Vtren extends Model
     protected $table = 'mclient_catatan_vtren';
 
     protected $fillable = [
-        'nama_ponpes',
+        'data_ponpes_id',
         'spam_vtren_kartu_baru',
         'spam_vtren_kartu_bekas',
         'spam_vtren_kartu_goip',
@@ -39,9 +39,9 @@ class Vtren extends Model
         'updated_at',
     ];
 
-    public function upt()
+    public function ponpes()
     {
-        return $this->belongsTo(Ponpes::class, 'nama_ponpes', 'nama_ponpes');
+        return $this->belongsTo(Ponpes::class, 'data_ponpes_id');
     }
 
     public function getFormattedTanggalAttribute()
@@ -51,9 +51,9 @@ class Vtren extends Model
 
     public function getTotalSpamVtrenAttribute()
     {
-        return (intval($this->spam_vtren_kartu_baru ?? '0')) + 
-               (intval($this->spam_vtren_kartu_bekas ?? '0')) + 
-               (intval($this->spam_vtren_kartu_goip ?? '0'));
+        return (intval($this->spam_vtren_kartu_baru ?? '0')) +
+            (intval($this->spam_vtren_kartu_bekas ?? '0')) +
+            (intval($this->spam_vtren_kartu_goip ?? '0'));
     }
 
     public function getTotalKartuTertanganiAttribute()
@@ -89,11 +89,11 @@ class Vtren extends Model
     {
         $total = intval($this->card_supporting ?? '0');
         $used = intval($this->jumlah_kartu_terpakai_perhari ?? '0');
-        
+
         if ($total == 0) {
             return 0;
         }
-        
+
         return round(($used / $total) * 100, 1);
     }
 
