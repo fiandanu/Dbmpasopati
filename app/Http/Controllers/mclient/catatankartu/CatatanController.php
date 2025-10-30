@@ -4,13 +4,13 @@ namespace App\Http\Controllers\mclient\catatankartu;
 
 use App\Http\Controllers\Controller;
 use App\Models\mclient\catatankartu\Catatan;
-use Illuminate\Http\Request;
-use App\Models\user\upt\Upt;
 use App\Models\user\pic\Pic;
-use Illuminate\Support\Facades\Validator;
-use Carbon\Carbon;
-use Symfony\Component\HttpFoundation\StreamedResponse;
+use App\Models\user\upt\Upt;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class CatatanController extends Controller
 {
@@ -41,14 +41,14 @@ class CatatanController extends Controller
             }),
             'kartu_terpakai_perhari' => $allFilteredData->sum(function ($item) {
                 return intval($item->jumlah_kartu_terpakai_perhari ?? '0');
-            })
+            }),
         ];
 
         // Get per_page from request, default 10
         $perPage = $request->get('per_page', 10);
 
         // Validate per_page
-        if (!in_array($perPage, [10, 15, 20, 'all'])) {
+        if (! in_array($perPage, [10, 15, 20, 'all'])) {
             $perPage = 20;
         }
 
@@ -82,46 +82,46 @@ class CatatanController extends Controller
     private function applyFilters($query, Request $request)
     {
         // Column-specific searches
-        if ($request->has('search_nama_upt') && !empty($request->search_nama_upt)) {
+        if ($request->has('search_nama_upt') && ! empty($request->search_nama_upt)) {
             $query->whereHas('upt', function ($q) use ($request) {
-                $q->where('namaupt', 'LIKE', '%' . $request->search_nama_upt . '%');
+                $q->where('namaupt', 'LIKE', '%'.$request->search_nama_upt.'%');
             });
         }
-        if ($request->has('search_kanwil') && !empty($request->search_kanwil)) {
+        if ($request->has('search_kanwil') && ! empty($request->search_kanwil)) {
             $query->whereHas('upt.kanwil', function ($q) use ($request) {
-                $q->where('kanwil', 'LIKE', '%' . $request->search_kanwil . '%');
+                $q->where('kanwil', 'LIKE', '%'.$request->search_kanwil.'%');
             });
         }
-        if ($request->has('search_kartu_baru') && !empty($request->search_kartu_baru)) {
-            $query->where('spam_vpas_kartu_baru', 'LIKE', '%' . $request->search_kartu_baru . '%');
+        if ($request->has('search_kartu_baru') && ! empty($request->search_kartu_baru)) {
+            $query->where('spam_vpas_kartu_baru', 'LIKE', '%'.$request->search_kartu_baru.'%');
         }
-        if ($request->has('search_kartu_bekas') && !empty($request->search_kartu_bekas)) {
-            $query->where('spam_vpas_kartu_bekas', 'LIKE', '%' . $request->search_kartu_bekas . '%');
+        if ($request->has('search_kartu_bekas') && ! empty($request->search_kartu_bekas)) {
+            $query->where('spam_vpas_kartu_bekas', 'LIKE', '%'.$request->search_kartu_bekas.'%');
         }
-        if ($request->has('search_kartu_goip') && !empty($request->search_kartu_goip)) {
-            $query->where('spam_vpas_kartu_goip', 'LIKE', '%' . $request->search_kartu_goip . '%');
+        if ($request->has('search_kartu_goip') && ! empty($request->search_kartu_goip)) {
+            $query->where('spam_vpas_kartu_goip', 'LIKE', '%'.$request->search_kartu_goip.'%');
         }
-        if ($request->has('search_kartu_belum_register') && !empty($request->search_kartu_belum_register)) {
-            $query->where('kartu_belum_teregister', 'LIKE', '%' . $request->search_kartu_belum_register . '%');
+        if ($request->has('search_kartu_belum_register') && ! empty($request->search_kartu_belum_register)) {
+            $query->where('kartu_belum_teregister', 'LIKE', '%'.$request->search_kartu_belum_register.'%');
         }
-        if ($request->has('search_whatsapp_terpakai') && !empty($request->search_whatsapp_terpakai)) {
-            $query->where('whatsapp_telah_terpakai', 'LIKE', '%' . $request->search_whatsapp_terpakai . '%');
+        if ($request->has('search_whatsapp_terpakai') && ! empty($request->search_whatsapp_terpakai)) {
+            $query->where('whatsapp_telah_terpakai', 'LIKE', '%'.$request->search_whatsapp_terpakai.'%');
         }
-        if ($request->has('search_card_supporting') && !empty($request->search_card_supporting)) {
-            $query->where('card_supporting', 'LIKE', '%' . $request->search_card_supporting . '%');
+        if ($request->has('search_card_supporting') && ! empty($request->search_card_supporting)) {
+            $query->where('card_supporting', 'LIKE', '%'.$request->search_card_supporting.'%');
         }
-        if ($request->has('search_pic') && !empty($request->search_pic)) {
-            $query->where('pic', 'LIKE', '%' . $request->search_pic . '%');
+        if ($request->has('search_pic') && ! empty($request->search_pic)) {
+            $query->where('pic', 'LIKE', '%'.$request->search_pic.'%');
         }
-        if ($request->has('search_kartu_terpakai') && !empty($request->search_kartu_terpakai)) {
-            $query->where('jumlah_kartu_terpakai_perhari', 'LIKE', '%' . $request->search_kartu_terpakai . '%');
+        if ($request->has('search_kartu_terpakai') && ! empty($request->search_kartu_terpakai)) {
+            $query->where('jumlah_kartu_terpakai_perhari', 'LIKE', '%'.$request->search_kartu_terpakai.'%');
         }
 
         // Date range filtering
-        if ($request->has('search_tanggal_dari') && !empty($request->search_tanggal_dari)) {
+        if ($request->has('search_tanggal_dari') && ! empty($request->search_tanggal_dari)) {
             $query->whereDate('tanggal', '>=', $request->search_tanggal_dari);
         }
-        if ($request->has('search_tanggal_sampai') && !empty($request->search_tanggal_sampai)) {
+        if ($request->has('search_tanggal_sampai') && ! empty($request->search_tanggal_sampai)) {
             $query->whereDate('tanggal', '<=', $request->search_tanggal_sampai);
         }
 
@@ -182,7 +182,7 @@ class CatatanController extends Controller
                 'spam_vpas_kartu_goip',
                 'kartu_belum_teregister',
                 'whatsapp_telah_terpakai',
-                'jumlah_kartu_terpakai_perhari'
+                'jumlah_kartu_terpakai_perhari',
             ];
 
             foreach ($stringFields as $field) {
@@ -197,7 +197,7 @@ class CatatanController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Gagal menambahkan data: ' . $e->getMessage());
+                ->with('error', 'Gagal menambahkan data: '.$e->getMessage());
         }
     }
 
@@ -258,7 +258,7 @@ class CatatanController extends Controller
                 'pic',
                 'jumlah_kartu_terpakai_perhari',
                 'tanggal',
-                'status'
+                'status',
             ]);
 
             // Remove empty string fields to allow null values
@@ -268,7 +268,7 @@ class CatatanController extends Controller
                 'spam_vpas_kartu_goip',
                 'kartu_belum_teregister',
                 'whatsapp_telah_terpakai',
-                'jumlah_kartu_terpakai_perhari'
+                'jumlah_kartu_terpakai_perhari',
             ];
 
             foreach ($stringFields as $field) {
@@ -284,7 +284,7 @@ class CatatanController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Gagal update data: ' . $e->getMessage());
+                ->with('error', 'Gagal update data: '.$e->getMessage());
         }
     }
 
@@ -299,7 +299,7 @@ class CatatanController extends Controller
                 ->with('success', "Data catatan kartu di UPT '{$namaUpt}' berhasil dihapus!");
         } catch (\Exception $e) {
             return redirect()->back()
-                ->with('error', 'Gagal menghapus data: ' . $e->getMessage());
+                ->with('error', 'Gagal menghapus data: '.$e->getMessage());
         }
     }
 
@@ -334,7 +334,7 @@ class CatatanController extends Controller
             }),
             'kartu_terpakai_perhari' => $data->sum(function ($item) {
                 return intval($item->jumlah_kartu_terpakai_perhari ?? '0');
-            })
+            }),
         ];
 
         $pdfData = [
@@ -342,15 +342,16 @@ class CatatanController extends Controller
             'data' => $data,
             'totals' => $totals, // Add totals to PDF data
             'generated_at' => Carbon::now()->format('d M Y H:i:s'),
-            'total_records' => $data->count() // Optional: total count
+            'total_records' => $data->count(), // Optional: total count
         ];
 
-        $pdf = Pdf::loadView('export.public.catatanKartuVpas.indexVpas', $pdfData);
+        $pdf = Pdf::loadView('export.public.catatanKartuVpas.indexVpas', $pdfData)
+            ->setPaper('a4', 'landscape');
 
         // Optional: Set paper size and orientation
         $pdf->setPaper('A4', 'landscape'); // Landscape lebih baik untuk tabel lebar
 
-        $filename = 'list_catatan_kartu_vpas_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
+        $filename = 'list_catatan_kartu_vpas_'.Carbon::now()->translatedFormat('d_M_Y').'.pdf';
 
         return $pdf->download($filename);
     }
@@ -369,14 +370,14 @@ class CatatanController extends Controller
 
         $data = $query->orderBy('created_at', 'desc')->get();
 
-        $filename = 'list_catatan_kartu_vpas_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
+        $filename = 'list_catatan_kartu_vpas_'.Carbon::now()->format('Y-m-d_H-i-s').'.csv';
 
         $headers = [
-            "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=$filename",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
         ];
 
         $rows = [[
@@ -391,7 +392,7 @@ class CatatanController extends Controller
             'PIC',
             'Jumlah Kartu Terpakai Per Hari',
             'Tanggal',
-            'Dibuat Pada'
+            'Dibuat Pada',
         ]];
 
         $no = 1;
@@ -408,7 +409,7 @@ class CatatanController extends Controller
                 $row->pic ?? '',
                 $row->jumlah_kartu_terpakai_perhari ?? '',
                 $row->tanggal ? Carbon::parse($row->tanggal)->format('Y-m-d') : '',
-                $row->created_at ? Carbon::parse($row->created_at)->format('Y-m-d H:i:s') : ''
+                $row->created_at ? Carbon::parse($row->created_at)->format('Y-m-d H:i:s') : '',
             ];
         }
 
@@ -427,14 +428,14 @@ class CatatanController extends Controller
     {
         $data = Catatan::orderBy('created_at', 'desc')->get();
 
-        $filename = 'catatan_kartu_vpas_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
+        $filename = 'catatan_kartu_vpas_'.Carbon::now()->format('Y-m-d_H-i-s').'.csv';
 
         $headers = [
-            "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=$filename",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
         ];
 
         $callback = function () use ($data) {
@@ -453,7 +454,7 @@ class CatatanController extends Controller
                 'Tanggal',
                 'Status',
                 'Dibuat Pada',
-                'Diupdate Pada'
+                'Diupdate Pada',
             ]);
 
             $no = 1;
@@ -472,7 +473,7 @@ class CatatanController extends Controller
                     $row->tanggal ? Carbon::parse($row->tanggal)->format('Y-m-d') : '',
                     $row->status ?? '',
                     $row->created_at ? Carbon::parse($row->created_at)->format('Y-m-d H:i:s') : '',
-                    $row->updated_at ? Carbon::parse($row->updated_at)->format('Y-m-d H:i:s') : ''
+                    $row->updated_at ? Carbon::parse($row->updated_at)->format('Y-m-d H:i:s') : '',
                 ]);
             }
 
@@ -512,7 +513,7 @@ class CatatanController extends Controller
             'pending' => $statusPending,
             'bulan_ini' => $bulanIni,
             'total_spam_tertangani' => $totalSpamTertangani,
-            'total_kartu_terpakai' => $totalKartuTerpakai
+            'total_kartu_terpakai' => $totalKartuTerpakai,
         ];
     }
 
@@ -524,13 +525,13 @@ class CatatanController extends Controller
         if ($upt) {
             return response()->json([
                 'status' => 'success',
-                'kanwil' => $upt->kanwil
+                'kanwil' => $upt->kanwil,
             ]);
         }
 
         return response()->json([
             'status' => 'error',
-            'message' => 'UPT not found'
+            'message' => 'UPT not found',
         ]);
     }
 }

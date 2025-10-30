@@ -251,7 +251,8 @@ class DashboardUptController extends Controller
             'generated_at' => Carbon::now()->format('d M Y H:i:s'),
         ];
 
-        $pdf = Pdf::loadView('export.public.db.DatabaseUPT', $pdfData);
+        $pdf = Pdf::loadView('export.public.db.DatabaseUPT', $pdfData)
+            ->setPaper('a4', 'landscape');
         $filename = 'dashboard_upt_'.Carbon::now()->translatedFormat('d_M_Y').'.pdf';
 
         return $pdf->download($filename);

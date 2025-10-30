@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\user\provider;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\user\vpn\Vpn;
 use App\Models\user\provider\Provider;
+use App\Models\user\vpn\Vpn;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use Carbon\Carbon;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class VpnController extends Controller
 {
@@ -17,6 +17,7 @@ class VpnController extends Controller
     {
         $dataprovider = Provider::all();
         $datavpn = Vpn::all();
+
         return view('user.indexProvider', compact('dataprovider', 'datavpn'));
     }
 
@@ -41,6 +42,7 @@ class VpnController extends Controller
         ];
 
         Vpn::create($datavpn);
+
         return redirect()->back()->with('success', 'Data VPN berhasil ditambahkan!');
     }
 
@@ -48,6 +50,7 @@ class VpnController extends Controller
     {
         $datavpn = Vpn::findOrFail($id);
         $datavpn->delete();
+
         return redirect()->back()->with('success', 'Data VPN berhasil dihapus!');
     }
 
@@ -80,14 +83,14 @@ class VpnController extends Controller
         $query = Vpn::query();
         $data = $query->orderBy('jenis_vpn', 'asc')->get();
 
-        $filename = 'list_vpn_' . Carbon::now()->translatedFormat('d_M_Y') . '.csv';
+        $filename = 'list_vpn_'.Carbon::now()->translatedFormat('d_M_Y').'.csv';
 
         $headers = [
-            "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=$filename",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
         ];
 
         $columns = ['No', 'Jenis VPN'];
@@ -99,7 +102,7 @@ class VpnController extends Controller
             foreach ($data as $d) {
                 fputcsv($file, [
                     $no++,
-                    $d->jenis_vpn
+                    $d->jenis_vpn,
                 ]);
             }
             fclose($file);
@@ -116,11 +119,12 @@ class VpnController extends Controller
         $pdfData = [
             'title' => 'List VPN',
             'data' => $data,
-            'generated_at' => Carbon::now()->format('d M Y H:i:s')
+            'generated_at' => Carbon::now()->format('d M Y H:i:s'),
         ];
 
-        $pdf = Pdf::loadView('export.public.user.vpn', $pdfData);
-        $filename = 'list_vpn_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
+        $pdf = Pdf::loadView('export.public.user.vpn', $pdfData)
+            ->setPaper('a4', 'landscape');
+        $filename = 'list_vpn_'.Carbon::now()->translatedFormat('d_M_Y').'.pdf';
 
         return $pdf->download($filename);
     }

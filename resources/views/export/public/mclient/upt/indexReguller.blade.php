@@ -1,9 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title }}</title>
     <style>
+        @page {
+            size: A4 landscape;
+            margin: 15mm;
+        }
+
         body {
             font-family: Arial, sans-serif;
             font-size: 10px;
@@ -62,7 +69,9 @@
         }
 
         table tbody td:nth-child(2),
-        table tbody td:nth-child(3) {
+        table tbody td:nth-child(3),
+        table tbody td:nth-child(4),
+        table tbody td:nth-child(5) {
             text-align: left;
         }
 
@@ -74,48 +83,6 @@
             background-color: #f5f5f5;
         }
 
-        .text-center {
-            text-align: center;
-        }
-
-        /* Status Classes */
-        .status-selesai {
-            background-color: #28a745;
-            color: white;
-            padding: 3px 8px;
-            border-radius: 3px;
-            font-weight: bold;
-            display: inline-block;
-        }
-
-        .status-proses {
-            background-color: #ffc107;
-            color: #333;
-            padding: 3px 8px;
-            border-radius: 3px;
-            font-weight: bold;
-            display: inline-block;
-        }
-
-        .status-terjadwal {
-            background-color: #17a2b8;
-            color: white;
-            padding: 3px 8px;
-            border-radius: 3px;
-            font-weight: bold;
-            display: inline-block;
-        }
-
-        .status-pending {
-            background-color: #6c757d;
-            color: white;
-            padding: 3px 8px;
-            border-radius: 3px;
-            font-weight: bold;
-            display: inline-block;
-        }
-
-        /* Badge Classes (jika diperlukan di masa depan) */
         .badge {
             padding: 3px 8px;
             border-radius: 3px;
@@ -139,35 +106,16 @@
             color: white;
         }
 
-        .badge-danger {
-            background-color: #dc3545;
-            color: white;
-        }
-
-        .badge-vpas {
-            background-color: #6f42c1;
-            color: white;
-        }
-
-        .badge-reguler {
+        .badge-info {
             background-color: #17a2b8;
             color: white;
         }
 
-        .tag {
-            background-color: #6f42c1;
-            color: white;
-            padding: 3px 8px;
-            border-radius: 3px;
-            font-size: 8px;
-            display: inline-block;
-        }
-
         .no-data {
             text-align: center;
-            padding: 20px;
+            padding: 40px;
             color: #666;
-            font-size: 10px;
+            font-style: italic;
         }
 
         .footer {
@@ -184,24 +132,27 @@
 <body>
     <div class="header">
         <h1>{{ $title }}</h1>
+        <p>Laporan Data Monitoring Client Reguler</p>
     </div>
+
     <div class="info">
-        <p>Generated on: {{ $generated_at }}</p>
+        <strong>Tanggal Generate:</strong> {{ $generated_at }}<br>
+        <strong>Total Data:</strong> {{ count($data) }} record
     </div>
 
     @if (count($data) > 0)
         <table>
             <thead>
                 <tr>
-                    <th style="width: 5%;">No</th>
-                    <th style="width: 15%;">Nama UPT</th>
-                    <th style="width: 12%;">Kanwil</th>
-                    <th style="width: 15%;">Jenis Kendala</th>
+                    <th style="width: 4%;">No</th>
+                    <th style="width: 13%;">Nama UPT</th>
+                    <th style="width: 10%;">Kanwil</th>
+                    <th style="width: 13%;">Jenis Kendala</th>
                     <th style="width: 15%;">Detail Kendala</th>
                     <th style="width: 10%;">Tanggal Terlapor</th>
                     <th style="width: 10%;">Tanggal Selesai</th>
-                    <th style="width: 8%;">Durasi</th>
-                    <th style="width: 10%;">Status</th>
+                    <th style="width: 7%;">Durasi</th>
+                    <th style="width: 9%;">Status</th>
                     <th style="width: 5%;">PIC 1</th>
                     <th style="width: 5%;">PIC 2</th>
                 </tr>
@@ -210,37 +161,31 @@
                 @php $no = 1; @endphp
                 @foreach ($data as $d)
                     @php
-                        // Determine CSS class based on status
-                        $statusClass = 'status-pending';
-                        switch (strtolower($d->status ?? '')) {
-                            case 'selesai':
-                                $statusClass = 'status-selesai';
-                                break;
-                            case 'proses':
-                                $statusClass = 'status-proses';
-                                break;
-                            case 'terjadwal':
-                                $statusClass = 'status-terjadwal';
-                                break;
-                            default:
-                                $statusClass = 'status-pending';
-                        }
+                        // Determine badge class based on status
+                        $statusClass = match (strtolower($d->status ?? '')) {
+                            'selesai' => 'badge-success',
+                            'proses' => 'badge-warning',
+                            'terjadwal' => 'badge-info',
+                            default => 'badge-secondary',
+                        };
                     @endphp
                     <tr>
-                        <td class="text-center">{{ $no++ }}</td>
+                        <td>{{ $no++ }}</td>
                         <td>{{ $d->upt->namaupt ?? '-' }}</td>
                         <td>{{ $d->upt->kanwil->kanwil ?? '-' }}</td>
                         <td>{{ Str::limit($d->jenis_kendala ?? 'Belum ditentukan', 25) }}</td>
                         <td>{{ Str::limit($d->detail_kendala ?? '-', 50) }}</td>
-                        <td class="text-center">
+                        <td>
                             {{ $d->tanggal_terlapor ? \Carbon\Carbon::parse($d->tanggal_terlapor)->format('d M Y') : '-' }}
                         </td>
-                        <td class="text-center">
+                        <td>
                             {{ $d->tanggal_selesai ? \Carbon\Carbon::parse($d->tanggal_selesai)->format('d M Y') : '-' }}
                         </td>
-                        <td class="text-center">{{ $d->durasi_hari ? $d->durasi_hari . ' hari' : '-' }}</td>
-                        <td class="text-center">
-                            <span class="{{ $statusClass }}">{{ ucfirst($d->status ?? 'Belum ditentukan') }}</span>
+                        <td>{{ $d->durasi_hari ? $d->durasi_hari . ' hari' : '-' }}</td>
+                        <td>
+                            <span class="badge {{ $statusClass }}">
+                                {{ ucfirst($d->status ?? 'Belum ditentukan') }}
+                            </span>
                         </td>
                         <td>{{ $d->pic_1 ?? '-' }}</td>
                         <td>{{ $d->pic_2 ?? '-' }}</td>
@@ -253,6 +198,11 @@
             <p>Tidak ada data monitoring client Reguler yang tersedia</p>
         </div>
     @endif
+
+    <div class="footer">
+        <p>Dokumen ini digenerate secara otomatis oleh sistem Monitoring Client</p>
+        <p>&copy; {{ date('Y') }} Database UPT - All Rights Reserved</p>
+    </div>
 </body>
 
 </html>

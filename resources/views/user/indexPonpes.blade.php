@@ -193,7 +193,8 @@
                                                     terkait dengan Reguler & Vtren</small>
                                             @endif
                                         </td>
-                                        <td><span class="tag tag-success">{{ $d->nama_wilayah }}</span></td>
+                                        <td><span class="tag tag-success">{{ $d->namaWilayah->nama_wilayah ?? '-' }}</span>
+                                        </td>
                                         <td class="text-center">
                                             <span
                                                 class="@if ($d->tipe == 'reguler') Tipereguller @elseif($d->tipe == 'vtren') Tipevpas @endif">
@@ -208,7 +209,8 @@
                                                 data-bs-target="#editModal{{ $d->id }}" title="Edit">
                                                 <ion-icon name="pencil-outline"></ion-icon>
                                             </button>
-                                            <button data-toggle="modal" data-target="#modal-default{{ $d->id }}" title="Hapus">
+                                            <button data-toggle="modal" data-target="#modal-default{{ $d->id }}"
+                                                title="Hapus">
                                                 <ion-icon name="trash-outline"></ion-icon>
                                             </button>
                                         </td>
@@ -250,8 +252,10 @@
                                         @endif
                                     </div>
                                     <div class="modal-footer flex-row-reverse justify-content-between">
-                                        <button type="button" class="btn-cancel-modal" data-dismiss="modal">Tutup</button>
-                                        <form action="{{ route('UserPonpes.PonpesPageDestroy', $d->id) }}" method="POST">
+                                        <button type="button" class="btn-cancel-modal"
+                                            data-dismiss="modal">Tutup</button>
+                                        <form action="{{ route('UserPonpes.PonpesPageDestroy', $d->id) }}"
+                                            method="POST">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn-delete">Hapus</button>
@@ -263,7 +267,8 @@
                     @endforeach
 
                     {{-- User Create Modal --}}
-                    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+                    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel"
+                        aria-hidden="true">
                         <form id="addForm" action="{{ route('UserPonpes.UserPageStore') }}" method="POST">
                             @csrf
                             <div class="modal-dialog">
@@ -278,8 +283,8 @@
                                     <div class="modal-body">
                                         <div class="mb-3">
                                             <label for="nama_ponpes" class="form-label">Nama Ponpes</label>
-                                            <input type="text" class="form-control" id="nama_ponpes" name="nama_ponpes"
-                                                placeholder="Masukan Nama Ponpes" required>
+                                            <input type="text" class="form-control" id="nama_ponpes"
+                                                name="nama_ponpes" placeholder="Masukan Nama Ponpes" required>
                                         </div>
                                         @error('nama_ponpes')
                                             <small class="text-danger">{{ $message }}</small>
@@ -291,7 +296,8 @@
                                                 required>
                                                 <option value="" selected disabled>Pilih Nama Wilayah</option>
                                                 @foreach ($datanamawilayah as $wilayah)
-                                                    <option value="{{ $wilayah->id }}" {{ old('nama_wilayah_id') == $wilayah->id ? 'selected' : '' }}>
+                                                    <option value="{{ $wilayah->id }}"
+                                                        {{ old('nama_wilayah_id') == $wilayah->id ? 'selected' : '' }}>
                                                         {{ $wilayah->nama_wilayah }}
                                                     </option>
                                                 @endforeach
@@ -309,8 +315,8 @@
                                                 <h6 class="form-check-label" for="tipe_reguler">Reguler</h6>
                                             </div>
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" name="tipe[]" value="vtren"
-                                                    id="tipe_vtren">
+                                                <input class="form-check-input" type="checkbox" name="tipe[]"
+                                                    value="vtren" id="tipe_vtren">
                                                 <h6 class="form-check-label" for="tipe_vtren">Vtren</h6>
                                             </div>
                                             <div class="d-flex justify-start gap-2 mt-3">
@@ -337,8 +343,8 @@
 
                     {{-- User Edit Modal --}}
                     @foreach ($data as $d)
-                        <div class="modal fade" id="editModal{{ $d->id }}" tabindex="-1" aria-labelledby="editModalLabel"
-                            aria-hidden="true">
+                        <div class="modal fade" id="editModal{{ $d->id }}" tabindex="-1"
+                            aria-labelledby="editModalLabel" aria-hidden="true">
                             <form id="editForm" action="{{ route('UserPonpes.UserPageUpdate', ['id' => $d->id]) }}"
                                 method="POST">
                                 @csrf
@@ -356,8 +362,8 @@
                                             <input type="hidden" id="editId" name="id">
                                             <div class="mb-3">
                                                 <label for="nama_ponpes" class="form-label">Nama Ponpes</label>
-                                                <input type="text" class="form-control" id="nama_ponpes" name="nama_ponpes"
-                                                    value="{{ $d->nama_ponpes }}">
+                                                <input type="text" class="form-control" id="nama_ponpes"
+                                                    name="nama_ponpes" value="{{ $d->nama_ponpes }}">
                                                 @if (str_contains($d->nama_ponpes, '(VtrenReg)'))
                                                     <small class="text-muted">
                                                         <i class="fas fa-info-circle"></i>
@@ -368,7 +374,8 @@
                                             </div>
                                             <div class="mb-3">
                                                 <label for="nama_wilayah_id" class="form-label">Wilayah</label>
-                                                <select class="form-control" id="nama_wilayah_id" name="nama_wilayah_id" required>
+                                                <select class="form-control" id="nama_wilayah_id" name="nama_wilayah_id"
+                                                    required>
                                                     @foreach ($datanamawilayah as $wilayah)
                                                         <option value="{{ $wilayah->id }}"
                                                             {{ $d->nama_wilayah_id == $wilayah->id ? 'selected' : '' }}>
@@ -413,7 +420,8 @@
                         <div class="btn-datakolom">
                             <form method="GET" class="d-flex align-items-center">
                                 @if (request('search_namaponpes'))
-                                    <input type="hidden" name="search_namaponpes" value="{{ request('search_namaponpes') }}">
+                                    <input type="hidden" name="search_namaponpes"
+                                        value="{{ request('search_namaponpes') }}">
                                 @endif
                                 @if (request('search_wilayah'))
                                     <input type="hidden" name="search_wilayah" value="{{ request('search_wilayah') }}">
@@ -430,8 +438,8 @@
                                         value="{{ request('search_tanggal_sampai') }}">
                                 @endif
                                 <div class="d-flex align-items-center">
-                                    <select name="per_page" class="form-control form-control-sm pr-2" style="width: auto;"
-                                        onchange="this.form.submit()">
+                                    <select name="per_page" class="form-control form-control-sm pr-2"
+                                        style="width: auto;" onchange="this.form.submit()">
                                         <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10
                                         </option>
                                         <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>15
@@ -488,7 +496,7 @@
 
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const tipeCheckboxes = document.querySelectorAll('input[name="tipe[]"]');
             const namaPonpesInput = document.getElementById('nama_ponpes');
             let originalNamaPonpes = '';
@@ -497,12 +505,12 @@
                 return nama.replace(/ \(VtrenReg\)/g, '').trim();
             }
 
-            namaPonpesInput.addEventListener('input', function () {
+            namaPonpesInput.addEventListener('input', function() {
                 originalNamaPonpes = cleanNamaPonpes(this.value);
             });
 
-            tipeCheckboxes.forEach(function (checkbox) {
-                checkbox.addEventListener('change', function () {
+            tipeCheckboxes.forEach(function(checkbox) {
+                checkbox.addEventListener('change', function() {
                     updateNamaPonpesPreview();
                 });
             });
@@ -525,7 +533,7 @@
                 namaPonpesInput.setSelectionRange(newCursorPos, newCursorPos);
             }
 
-            document.getElementById('addModal').addEventListener('show.bs.modal', function () {
+            document.getElementById('addModal').addEventListener('show.bs.modal', function() {
                 originalNamaPonpes = '';
                 namaPonpesInput.value = '';
                 document.getElementById('tipe_reguler').checked = false;
@@ -535,19 +543,69 @@
     </script>
 
     <script>
-        $(document).ready(function () {
+        // Definisikan fungsi di scope global SEBELUM document ready
+        window.downloadCsv = function() {
+            let filters = getFiltersGlobal();
+            let form = document.createElement('form');
+            form.method = 'GET';
+            form.action = '{{ route('UserPonpes.export.list.csv') }}';
+            form.target = '_blank';
+
+            Object.keys(filters).forEach(key => {
+                if (filters[key] && key !== 'per_page') {
+                    let input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = key;
+                    input.value = filters[key];
+                    form.appendChild(input);
+                }
+            });
+
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
+        };
+
+        window.downloadPdf = function() {
+            let filters = getFiltersGlobal();
+            let form = document.createElement('form');
+            form.method = 'GET';
+            form.action = '{{ route('UserPonpes.export.list.pdf') }}';
+            form.target = '_blank';
+
+            Object.keys(filters).forEach(key => {
+                if (filters[key] && key !== 'per_page') {
+                    let input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = key;
+                    input.value = filters[key];
+                    form.appendChild(input);
+                }
+            });
+
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
+        };
+
+        // Fungsi helper global untuk mengambil filter
+        function getFiltersGlobal() {
+            return {
+                search_namaponpes: $('#search-namaponpes').val() ? $('#search-namaponpes').val().trim() : '',
+                search_wilayah: $('#search-wilayah').val() ? $('#search-wilayah').val().trim() : '',
+                search_tipe: $('#search-tipe').val() ? $('#search-tipe').val().trim() : '',
+                search_tanggal_dari: $('#search-tanggal-dari').val() ? $('#search-tanggal-dari').val().trim() : '',
+                search_tanggal_sampai: $('#search-tanggal-sampai').val() ? $('#search-tanggal-sampai').val().trim() : '',
+                per_page: $('select[name="per_page"]').val()
+            };
+        }
+
+        $(document).ready(function() {
             function getFilters() {
-                return {
-                    search_namaponpes: $('#search-namaponpes').val().trim(),
-                    search_wilayah: $('#search-wilayah').val().trim(),
-                    search_tipe: $('#search-tipe').val().trim(),
-                    search_tanggal_dari: $('#search-tanggal-dari').val().trim(),
-                    search_tanggal_sampai: $('#search-tanggal-sampai').val().trim(),
-                    per_page: $('select[name="per_page"]').val()
-                };
+                return getFiltersGlobal();
             }
 
-            window.applyFilters = function () {
+            window.applyFilters = function() {
                 let filters = getFilters();
                 let url = new URL(window.location.href);
 
@@ -567,7 +625,7 @@
                 window.location.href = url.toString();
             };
 
-            window.clearAllFilters = function () {
+            window.clearAllFilters = function() {
                 $('#search-namaponpes').val('');
                 $('#search-wilayah').val('');
                 $('#search-tipe').val('');
@@ -575,7 +633,6 @@
                 $('#search-tanggal-sampai').val('');
 
                 let url = new URL(window.location.href);
-
 
                 url.searchParams.delete('search_namaponpes');
                 url.searchParams.delete('search_wilayah');
@@ -587,61 +644,17 @@
                 window.location.href = url.toString();
             };
 
-            $('.column-search input').on('keypress', function (e) {
+            $('.column-search input').on('keypress', function(e) {
                 if (e.which === 13) {
                     applyFilters();
                 }
             });
 
-            $('.column-search input').on('keyup', function (e) {
+            $('.column-search input').on('keyup', function(e) {
                 if (e.which === 13 && $(this).val().trim() === '') {
                     applyFilters();
                 }
             });
-
-            window.downloadCsv = function () {
-                let filters = getFilters();
-                let form = document.createElement('form');
-                form.method = 'GET';
-                form.action = '{{ route('UserPonpes.export.list.csv') }}';
-                form.target = '_blank';
-
-                Object.keys(filters).forEach(key => {
-                    if (filters[key] && key !== 'per_page') {
-                        let input = document.createElement('input');
-                        input.type = 'hidden';
-                        input.name = key;
-                        input.value = filters[key];
-                        form.appendChild(input);
-                    }
-                });
-
-                document.body.appendChild(form);
-                form.submit();
-                document.body.removeChild(form);
-            };
-
-            window.downloadPdf = function () {
-                let filters = getFilters();
-                let form = document.createElement('form');
-                form.method = 'GET';
-                form.action = '{{ route('UserPonpes.export.list.pdf') }}';
-                form.target = '_blank';
-
-                Object.keys(filters).forEach(key => {
-                    if (filters[key] && key !== 'per_page') {
-                        let input = document.createElement('input');
-                        input.type = 'hidden';
-                        input.name = key;
-                        input.value = filters[key];
-                        form.appendChild(input);
-                    }
-                });
-
-                document.body.appendChild(form);
-                form.submit();
-                document.body.removeChild(form);
-            };
 
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('search_namaponpes')) {
@@ -660,11 +673,8 @@
                 $('#search-tanggal-sampai').val(urlParams.get('search_tanggal_sampai'));
             }
 
-            if ($("#Table tbody tr").length > 0 && !$("#Table tbody tr").find('td[colspan="6"]').length) {
-                $("#export-buttons").show();
-            } else {
-                $("#export-buttons").hide();
-            }
+            // Tampilkan tombol export - PERBAIKAN: hapus logika hide
+            $("#export-buttons").show();
         });
     </script>
 

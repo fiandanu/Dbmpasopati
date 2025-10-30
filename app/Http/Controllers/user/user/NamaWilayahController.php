@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\user\user;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\user\namaWilayah\NamaWilayah;
 use App\Models\user\kanwil\Kanwil;
+use App\Models\user\namaWilayah\NamaWilayah;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use Carbon\Carbon;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class NamaWilayahController extends Controller
 {
@@ -17,6 +17,7 @@ class NamaWilayahController extends Controller
     {
         $datakanwil = Kanwil::all();
         $datanamawilayah = NamaWilayah::all();
+
         return view('user.indexKanwilNamaWilayah', compact('datakanwil', 'datanamawilayah'));
     }
 
@@ -41,6 +42,7 @@ class NamaWilayahController extends Controller
         ];
 
         NamaWilayah::create($datanamawilayah);
+
         return redirect()->back()->with('success', 'Data Nama Wilayah berhasil ditambahkan!');
     }
 
@@ -48,6 +50,7 @@ class NamaWilayahController extends Controller
     {
         $datanamawilayah = NamaWilayah::findOrFail($id);
         $datanamawilayah->delete();
+
         return redirect()->back()->with('success', 'Data Nama Wilayah berhasil dihapus!');
     }
 
@@ -80,14 +83,14 @@ class NamaWilayahController extends Controller
         $query = NamaWilayah::query();
         $data = $query->orderBy('nama_wilayah', 'asc')->get();
 
-        $filename = 'list_namawilayah_' . Carbon::now()->translatedFormat('d_M_Y') . '.csv';
+        $filename = 'list_namawilayah_'.Carbon::now()->translatedFormat('d_M_Y').'.csv';
 
         $headers = [
-            "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=$filename",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
         ];
 
         $columns = ['No', 'Nama Wilayah'];
@@ -99,7 +102,7 @@ class NamaWilayahController extends Controller
             foreach ($data as $d) {
                 fputcsv($file, [
                     $no++,
-                    $d->nama_wilayah
+                    $d->nama_wilayah,
                 ]);
             }
             fclose($file);
@@ -116,11 +119,12 @@ class NamaWilayahController extends Controller
         $pdfData = [
             'title' => 'List Nama Wilayah',
             'data' => $data,
-            'generated_at' => Carbon::now()->format('d M Y H:i:s')
+            'generated_at' => Carbon::now()->format('d M Y H:i:s'),
         ];
 
-        $pdf = Pdf::loadView('export.public.user.namawilayah', $pdfData);
-        $filename = 'list_namawilayah_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
+        $pdf = Pdf::loadView('export.public.user.namawilayah', $pdfData)
+            ->setPaper('a4', 'landscape');
+        $filename = 'list_namawilayah_'.Carbon::now()->translatedFormat('d_M_Y').'.pdf';
 
         return $pdf->download($filename);
     }

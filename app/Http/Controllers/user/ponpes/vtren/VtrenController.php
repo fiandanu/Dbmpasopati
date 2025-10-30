@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\user\ponpes\vtren;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\user\provider\Provider;
 use App\Models\user\ponpes\Ponpes;
+use App\Models\user\provider\Provider;
 use App\Models\user\vpn\Vpn;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\DB;
 
 class VtrenController extends Controller
 {
@@ -37,17 +37,17 @@ class VtrenController extends Controller
         'pin_tes',
         'no_pemanggil',
         'email_airdroid',
-        'password'
+        'password',
     ];
 
     private function calculateStatus($dataOpsional)
     {
-        if (!$dataOpsional) {
+        if (! $dataOpsional) {
             return 'Belum di Update';
         }
         $filledFields = 0;
         foreach ($this->optionalFields as $field) {
-            if (!empty($dataOpsional->$field)) {
+            if (! empty($dataOpsional->$field)) {
                 $filledFields++;
             }
         }
@@ -67,23 +67,23 @@ class VtrenController extends Controller
     {
 
         // Column-specific searches
-        if ($request->has('search_namaponpes') && !empty($request->search_namaponpes)) {
-            $query->where('nama_ponpes', 'LIKE', '%' . $request->search_namaponpes . '%');
+        if ($request->has('search_namaponpes') && ! empty($request->search_namaponpes)) {
+            $query->where('nama_ponpes', 'LIKE', '%'.$request->search_namaponpes.'%');
         }
-        if ($request->has('search_wilayah') && !empty($request->search_wilayah)) {
+        if ($request->has('search_wilayah') && ! empty($request->search_wilayah)) {
             $query->whereHas('namaWilayah', function ($q) use ($request) {
-                $q->where('nama_wilayah', 'LIKE', '%' . $request->search_wilayah . '%');
+                $q->where('nama_wilayah', 'LIKE', '%'.$request->search_wilayah.'%');
             });
         }
-        if ($request->has('search_tipe') && !empty($request->search_tipe)) {
-            $query->where('tipe', 'LIKE', '%' . $request->search_tipe . '%');
+        if ($request->has('search_tipe') && ! empty($request->search_tipe)) {
+            $query->where('tipe', 'LIKE', '%'.$request->search_tipe.'%');
         }
 
         // Date range filtering
-        if ($request->has('search_tanggal_dari') && !empty($request->search_tanggal_dari)) {
+        if ($request->has('search_tanggal_dari') && ! empty($request->search_tanggal_dari)) {
             $query->whereDate('tanggal', '>=', $request->search_tanggal_dari);
         }
-        if ($request->has('search_tanggal_sampai') && !empty($request->search_tanggal_sampai)) {
+        if ($request->has('search_tanggal_sampai') && ! empty($request->search_tanggal_sampai)) {
             $query->whereDate('tanggal', '<=', $request->search_tanggal_sampai);
         }
 
@@ -92,13 +92,16 @@ class VtrenController extends Controller
 
     private function applyStatusFilter($data, Request $request)
     {
-        if ($request->has('search_status') && !empty($request->search_status)) {
+        if ($request->has('search_status') && ! empty($request->search_status)) {
             $statusSearch = strtolower($request->search_status);
+
             return $data->filter(function ($d) use ($statusSearch) {
                 $status = strtolower($this->calculateStatus($d->dataOpsional));
+
                 return strpos($status, $statusSearch) !== false;
             });
         }
+
         return $data;
     }
 
@@ -113,7 +116,7 @@ class VtrenController extends Controller
         $perPage = $request->get('per_page', 10);
 
         // Validate per_page
-        if (!in_array($perPage, [10, 15, 20, 'all'])) {
+        if (! in_array($perPage, [10, 15, 20, 'all'])) {
             $perPage = 20;
         }
 
@@ -150,7 +153,7 @@ class VtrenController extends Controller
                 [
                     'path' => $request->url(),
                     'query' => $request->query(),
-                    'pageName' => 'page'
+                    'pageName' => 'page',
                 ]
             );
         }
@@ -160,7 +163,6 @@ class VtrenController extends Controller
 
         return view('db.ponpes.vtren.indexVtren', compact('data', 'providers', 'vpns'));
     }
-
 
     public function ListDataPonpesUpdate(Request $request, $id)
     {
@@ -295,7 +297,8 @@ class VtrenController extends Controller
             return redirect()->back()->with('success', 'Data berhasil diupdate!');
         } catch (\Exception $e) {
             DB::rollback();
-            return redirect()->back()->with('error', 'Gagal update data: ' . $e->getMessage());
+
+            return redirect()->back()->with('error', 'Gagal update data: '.$e->getMessage());
         }
     }
 
@@ -317,7 +320,8 @@ class VtrenController extends Controller
             return redirect()->route('ListDataVtrend')->with('success', 'Data Ponpes berhasil dihapus!');
         } catch (\Exception $e) {
             DB::rollback();
-            return redirect()->back()->with('error', 'Gagal menghapus data: ' . $e->getMessage());
+
+            return redirect()->back()->with('error', 'Gagal menghapus data: '.$e->getMessage());
         }
     }
 
@@ -340,7 +344,6 @@ class VtrenController extends Controller
         return ucfirst($status);
     }
 
-
     // Export Data CSV GLOBAL
     public function exportListCsv(Request $request): StreamedResponse
     {
@@ -362,14 +365,14 @@ class VtrenController extends Controller
             $data = $data->sortBy('tanggal')->values();
         }
 
-        $filename = 'list_ponpes_vtren_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
+        $filename = 'list_ponpes_vtren_'.Carbon::now()->format('Y-m-d_H-i-s').'.csv';
 
         $headers = [
-            "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=$filename",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
         ];
 
         $rows = [['No', 'Nama Ponpes', 'Nama Wilayah', 'Tipe', 'Tanggal Dibuat', 'Status Update']];
@@ -382,7 +385,7 @@ class VtrenController extends Controller
                 $d->nama_wilayah,
                 ucfirst($d->tipe),
                 \Carbon\Carbon::parse($d->tanggal)->format('d M Y'),
-                $status
+                $status,
             ];
         }
 
@@ -415,6 +418,7 @@ class VtrenController extends Controller
 
         $data->transform(function ($ponpes) {
             $ponpes->calculated_status = $this->calculateStatus($ponpes->dataOpsional);
+
             return $ponpes;
         });
 
@@ -422,15 +426,15 @@ class VtrenController extends Controller
             'title' => 'List Data Ponpes Vtren',
             'data' => $data,
             'optionalFields' => $this->optionalFields,
-            'generated_at' => Carbon::now()->format('d M Y H:i:s')
+            'generated_at' => Carbon::now()->format('d M Y H:i:s'),
         ];
 
-        $pdf = Pdf::loadView('export.public.db.ponpes.indexVtren', $pdfData);
-        $filename = 'list_ponpes_vtren_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
+        $pdf = Pdf::loadView('export.public.db.ponpes.indexVtren', $pdfData)
+            ->setPaper('a4', 'landscape');
+        $filename = 'list_ponpes_vtren_'.Carbon::now()->translatedFormat('d_M_Y').'.pdf';
 
         return $pdf->download($filename);
     }
-
 
     // Export data CSV INDIVIDUAL
     public function exportPonpesCsv($id): StreamedResponse
@@ -438,14 +442,14 @@ class VtrenController extends Controller
         $ponpes = Ponpes::with('dataOpsional.vpn')->findOrFail($id);
         $dataOpsional = $ponpes->dataOpsional;
 
-        $filename = 'data_ponpes_vtren_' . str_replace(' ', '_', $ponpes->nama_ponpes) . '_' . date('Y-m-d') . '.csv';
+        $filename = 'data_ponpes_vtren_'.str_replace(' ', '_', $ponpes->nama_ponpes).'_'.date('Y-m-d').'.csv';
 
         $headers = [
-            "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=$filename",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
         ];
 
         $rows = [
@@ -480,7 +484,7 @@ class VtrenController extends Controller
 
         $callback = function () use ($rows) {
             $file = fopen('php://output', 'w');
-            fputcsv($file, ['Data Ponpes Vtren Export - ' . date('Y-m-d H:i:s')]);
+            fputcsv($file, ['Data Ponpes Vtren Export - '.date('Y-m-d H:i:s')]);
             fputcsv($file, []);
             foreach ($rows as $row) {
                 fputcsv($file, $row);
@@ -497,15 +501,14 @@ class VtrenController extends Controller
         $ponpes = Ponpes::with('dataOpsional')->findOrFail($id);
 
         $data = [
-            'title' => 'Data PONPES VTREN ' . $ponpes->nama_ponpes,
+            'title' => 'Data PONPES VTREN '.$ponpes->nama_ponpes,
             'ponpes' => $ponpes,
         ];
 
-        $pdf = Pdf::loadView('export.private.ponpes.indexVtren', $data);
+        $pdf = Pdf::loadView('export.private.ponpes.indexVtren', $data)
+            ->setPaper('a4', 'landscape');
 
-        $pdf->setPaper('A4', 'portrait');
-
-        $filename = 'data_ponpes_vtren_' . str_replace(' ', '_', $ponpes->nama_ponpes) . '_' . date('Y-m-d') . '.pdf';
+        $filename = 'data_ponpes_vtren_'.str_replace(' ', '_', $ponpes->nama_ponpes).'_'.date('Y-m-d').'.pdf';
 
         return $pdf->download($filename);
     }

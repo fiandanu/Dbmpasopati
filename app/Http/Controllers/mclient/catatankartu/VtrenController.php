@@ -6,11 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\mclient\catatankartu\Vtren;
 use App\Models\user\pic\Pic;
 use App\Models\user\ponpes\Ponpes;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Carbon\Carbon;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class VtrenController extends Controller
 {
@@ -41,14 +41,14 @@ class VtrenController extends Controller
             }),
             'kartu_terpakai_perhari' => $allFilteredData->sum(function ($item) {
                 return intval($item->jumlah_kartu_terpakai_perhari ?? 0);
-            })
+            }),
         ];
 
         // Get per_page from request, default 10
         $perPage = $request->get('per_page', 10);
 
         // Validate per_page
-        if (!in_array($perPage, [10, 15, 20, 'all'])) {
+        if (! in_array($perPage, [10, 15, 20, 'all'])) {
             $perPage = 10;
         }
 
@@ -85,39 +85,39 @@ class VtrenController extends Controller
     private function applyFilters($query, Request $request)
     {
         // Column-specific searches
-        if ($request->has('search_nama_ponpes') && !empty($request->search_nama_ponpes)) {
-            $query->where('nama_ponpes', 'LIKE', '%' . $request->search_nama_ponpes . '%');
+        if ($request->has('search_nama_ponpes') && ! empty($request->search_nama_ponpes)) {
+            $query->where('nama_ponpes', 'LIKE', '%'.$request->search_nama_ponpes.'%');
         }
-        if ($request->has('search_kartu_baru') && !empty($request->search_kartu_baru)) {
-            $query->where('spam_vtren_kartu_baru', 'LIKE', '%' . $request->search_kartu_baru . '%');
+        if ($request->has('search_kartu_baru') && ! empty($request->search_kartu_baru)) {
+            $query->where('spam_vtren_kartu_baru', 'LIKE', '%'.$request->search_kartu_baru.'%');
         }
-        if ($request->has('search_kartu_bekas') && !empty($request->search_kartu_bekas)) {
-            $query->where('spam_vtren_kartu_bekas', 'LIKE', '%' . $request->search_kartu_bekas . '%');
+        if ($request->has('search_kartu_bekas') && ! empty($request->search_kartu_bekas)) {
+            $query->where('spam_vtren_kartu_bekas', 'LIKE', '%'.$request->search_kartu_bekas.'%');
         }
-        if ($request->has('search_kartu_goip') && !empty($request->search_kartu_goip)) {
-            $query->where('spam_vtren_kartu_goip', 'LIKE', '%' . $request->search_kartu_goip . '%');
+        if ($request->has('search_kartu_goip') && ! empty($request->search_kartu_goip)) {
+            $query->where('spam_vtren_kartu_goip', 'LIKE', '%'.$request->search_kartu_goip.'%');
         }
-        if ($request->has('search_kartu_belum_register') && !empty($request->search_kartu_belum_register)) {
-            $query->where('kartu_belum_teregister', 'LIKE', '%' . $request->search_kartu_belum_register . '%');
+        if ($request->has('search_kartu_belum_register') && ! empty($request->search_kartu_belum_register)) {
+            $query->where('kartu_belum_teregister', 'LIKE', '%'.$request->search_kartu_belum_register.'%');
         }
-        if ($request->has('search_whatsapp_terpakai') && !empty($request->search_whatsapp_terpakai)) {
-            $query->where('whatsapp_telah_terpakai', 'LIKE', '%' . $request->search_whatsapp_terpakai . '%');
+        if ($request->has('search_whatsapp_terpakai') && ! empty($request->search_whatsapp_terpakai)) {
+            $query->where('whatsapp_telah_terpakai', 'LIKE', '%'.$request->search_whatsapp_terpakai.'%');
         }
-        if ($request->has('search_card_supporting') && !empty($request->search_card_supporting)) {
-            $query->where('card_supporting', 'LIKE', '%' . $request->search_card_supporting . '%');
+        if ($request->has('search_card_supporting') && ! empty($request->search_card_supporting)) {
+            $query->where('card_supporting', 'LIKE', '%'.$request->search_card_supporting.'%');
         }
-        if ($request->has('search_pic') && !empty($request->search_pic)) {
-            $query->where('pic', 'LIKE', '%' . $request->search_pic . '%');
+        if ($request->has('search_pic') && ! empty($request->search_pic)) {
+            $query->where('pic', 'LIKE', '%'.$request->search_pic.'%');
         }
-        if ($request->has('search_kartu_terpakai') && !empty($request->search_kartu_terpakai)) {
-            $query->where('jumlah_kartu_terpakai_perhari', 'LIKE', '%' . $request->search_kartu_terpakai . '%');
+        if ($request->has('search_kartu_terpakai') && ! empty($request->search_kartu_terpakai)) {
+            $query->where('jumlah_kartu_terpakai_perhari', 'LIKE', '%'.$request->search_kartu_terpakai.'%');
         }
 
         // Date range filtering
-        if ($request->has('search_tanggal_dari') && !empty($request->search_tanggal_dari)) {
+        if ($request->has('search_tanggal_dari') && ! empty($request->search_tanggal_dari)) {
             $query->whereDate('tanggal', '>=', $request->search_tanggal_dari);
         }
-        if ($request->has('search_tanggal_sampai') && !empty($request->search_tanggal_sampai)) {
+        if ($request->has('search_tanggal_sampai') && ! empty($request->search_tanggal_sampai)) {
             $query->whereDate('tanggal', '<=', $request->search_tanggal_sampai);
         }
 
@@ -175,7 +175,7 @@ class VtrenController extends Controller
                 'spam_vtren_kartu_goip',
                 'kartu_belum_teregister',
                 'whatsapp_telah_terpakai',
-                'jumlah_kartu_terpakai_perhari'
+                'jumlah_kartu_terpakai_perhari',
             ];
 
             foreach ($stringFields as $field) {
@@ -190,7 +190,7 @@ class VtrenController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Gagal menambahkan data: ' . $e->getMessage());
+                ->with('error', 'Gagal menambahkan data: '.$e->getMessage());
         }
     }
 
@@ -253,7 +253,7 @@ class VtrenController extends Controller
                 'pic',
                 'jumlah_kartu_terpakai_perhari',
                 'tanggal',
-                'status'
+                'status',
             ]);
 
             $updateData['nama_ponpes'] = $ponpes->nama_ponpes;
@@ -265,7 +265,7 @@ class VtrenController extends Controller
                 'spam_vtren_kartu_goip',
                 'kartu_belum_teregister',
                 'whatsapp_telah_terpakai',
-                'jumlah_kartu_terpakai_perhari'
+                'jumlah_kartu_terpakai_perhari',
             ];
 
             foreach ($stringFields as $field) {
@@ -281,7 +281,7 @@ class VtrenController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Gagal update data: ' . $e->getMessage());
+                ->with('error', 'Gagal update data: '.$e->getMessage());
         }
     }
 
@@ -296,7 +296,7 @@ class VtrenController extends Controller
                 ->with('success', "Data catatan kartu di Ponpes '{$nama_ponpes}' berhasil dihapus!");
         } catch (\Exception $e) {
             return redirect()->back()
-                ->with('error', 'Gagal menghapus data: ' . $e->getMessage());
+                ->with('error', 'Gagal menghapus data: '.$e->getMessage());
         }
     }
 
@@ -314,14 +314,14 @@ class VtrenController extends Controller
 
         $data = $query->orderBy('created_at', 'desc')->get();
 
-        $filename = 'list_catatan_kartu_vtren_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
+        $filename = 'list_catatan_kartu_vtren_'.Carbon::now()->format('Y-m-d_H-i-s').'.csv';
 
         $headers = [
-            "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=$filename",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
         ];
 
         $rows = [[
@@ -336,7 +336,7 @@ class VtrenController extends Controller
             'PIC',
             'Jumlah Kartu Terpakai Per Hari',
             'Tanggal',
-            'Dibuat Pada'
+            'Dibuat Pada',
         ]];
 
         $no = 1;
@@ -353,7 +353,7 @@ class VtrenController extends Controller
                 $row->pic ?? '',
                 $row->jumlah_kartu_terpakai_perhari ?? '',
                 $row->tanggal ? Carbon::parse($row->tanggal)->format('Y-m-d') : '',
-                $row->created_at ? Carbon::parse($row->created_at)->format('Y-m-d H:i:s') : ''
+                $row->created_at ? Carbon::parse($row->created_at)->format('Y-m-d H:i:s') : '',
             ];
         }
 
@@ -399,7 +399,7 @@ class VtrenController extends Controller
             }),
             'kartu_terpakai_perhari' => $data->sum(function ($item) {
                 return intval($item->jumlah_kartu_terpakai_perhari ?? 0);
-            })
+            }),
         ];
 
         $pdfData = [
@@ -407,18 +407,20 @@ class VtrenController extends Controller
             'data' => $data,
             'totals' => $totals,
             'generated_at' => Carbon::now()->format('d M Y H:i:s'),
-            'total_records' => $data->count()
+            'total_records' => $data->count(),
         ];
 
-        $pdf = Pdf::loadView('export.public.catatanKartuVtren.indexVtren', $pdfData);
+        $pdf = Pdf::loadView('export.public.catatanKartuVtren.indexVtren', $pdfData)
+            ->setPaper('a4', 'landscape');
 
         // Optional: Set paper size and orientation
         $pdf->setPaper('A4', 'landscape');
 
-        $filename = 'list_catatan_kartu_vtren_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
+        $filename = 'list_catatan_kartu_vtren_'.Carbon::now()->translatedFormat('d_M_Y').'.pdf';
 
         return $pdf->download($filename);
     }
+
     public function getDashboardStats()
     {
         $totalData = Vtren::count();
@@ -449,7 +451,7 @@ class VtrenController extends Controller
             'pending' => $statusPending,
             'bulan_ini' => $bulanIni,
             'total_spam_tertangani' => $totalSpamTertangani,
-            'total_kartu_terpakai' => $totalKartuTerpakai
+            'total_kartu_terpakai' => $totalKartuTerpakai,
         ];
     }
 
@@ -461,13 +463,13 @@ class VtrenController extends Controller
         if ($upt) {
             return response()->json([
                 'status' => 'success',
-                'nama_wilayah' => $upt->nama_wilayah
+                'nama_wilayah' => $upt->nama_wilayah,
             ]);
         }
 
         return response()->json([
             'status' => 'error',
-            'message' => 'Ponpes not found'
+            'message' => 'Ponpes not found',
         ]);
     }
 }

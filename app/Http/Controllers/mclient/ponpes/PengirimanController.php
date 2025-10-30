@@ -4,22 +4,21 @@ namespace App\Http\Controllers\mclient\ponpes;
 
 use App\Http\Controllers\Controller;
 use App\Models\mclient\ponpes\Pengiriman;
+use App\Models\user\pic\Pic;
 use App\Models\user\ponpes\Ponpes;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Carbon\Carbon;
-use App\Models\user\pic\Pic;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class PengirimanController extends Controller
 {
-
     private function getJenisLayanan()
     {
         return [
             'vtren' => 'VTREN',
             'reguler' => 'Reguler',
-            'vtrenreg' => 'VTREN + Reguler'
+            'vtrenreg' => 'VTREN + Reguler',
         ];
     }
 
@@ -34,7 +33,7 @@ class PengirimanController extends Controller
         $perPage = $request->get('per_page', 10);
 
         // Validate per_page
-        if (!in_array($perPage, [10, 15, 20, 'all'])) {
+        if (! in_array($perPage, [10, 15, 20, 'all'])) {
             $perPage = 10;
         }
 
@@ -84,27 +83,27 @@ class PengirimanController extends Controller
     private function applyFilters($query, Request $request)
     {
         // Column-specific search
-        if ($request->has('search_nama_ponpes') && !empty($request->search_nama_ponpes)) {
+        if ($request->has('search_nama_ponpes') && ! empty($request->search_nama_ponpes)) {
             $query->whereHas('ponpes.namaWilayah', function ($q) use ($request) {
-                $q->where('nama_ponpes', 'LIKE', '%' . $request->search_nama_ponpes . '%');
+                $q->where('nama_ponpes', 'LIKE', '%'.$request->search_nama_ponpes.'%');
             });
         }
-        if ($request->has('search_nama_wilayah') && !empty($request->search_nama_wilayah)) {
+        if ($request->has('search_nama_wilayah') && ! empty($request->search_nama_wilayah)) {
             $query->whereHas('ponpes.namaWilayah', function ($q) use ($request) {
-                $q->where('nama_wilayah', 'LIKE', '%' . $request->search_nama_wilayah . '%');
+                $q->where('nama_wilayah', 'LIKE', '%'.$request->search_nama_wilayah.'%');
             });
         }
-        if ($request->has('search_jenis_layanan') && !empty($request->search_jenis_layanan)) {
-            $query->where('jenis_layanan', 'LIKE', '%' . $request->search_jenis_layanan . '%');
+        if ($request->has('search_jenis_layanan') && ! empty($request->search_jenis_layanan)) {
+            $query->where('jenis_layanan', 'LIKE', '%'.$request->search_jenis_layanan.'%');
         }
-        if ($request->has('search_keterangan') && !empty($request->search_keterangan)) {
-            $query->where('keterangan', 'LIKE', '%' . $request->search_keterangan . '%');
+        if ($request->has('search_keterangan') && ! empty($request->search_keterangan)) {
+            $query->where('keterangan', 'LIKE', '%'.$request->search_keterangan.'%');
         }
-        if ($request->has('search_status') && !empty($request->search_status)) {
+        if ($request->has('search_status') && ! empty($request->search_status)) {
             $searchStatus = strtolower($request->search_status);
 
             $query->where(function ($q) use ($searchStatus) {
-                $q->where('status', 'LIKE', '%' . $searchStatus . '%');
+                $q->where('status', 'LIKE', '%'.$searchStatus.'%');
 
                 // Jika mencari "belum" atau "ditentukan", include yang NULL/empty
                 if (str_contains($searchStatus, 'belum') || str_contains($searchStatus, 'ditentukan')) {
@@ -113,26 +112,26 @@ class PengirimanController extends Controller
                 }
             });
         }
-        if ($request->has('search_pic_1') && !empty($request->search_pic_1)) {
-            $query->where('pic_1', 'LIKE', '%' . $request->search_pic_1 . '%');
+        if ($request->has('search_pic_1') && ! empty($request->search_pic_1)) {
+            $query->where('pic_1', 'LIKE', '%'.$request->search_pic_1.'%');
         }
-        if ($request->has('search_pic_2') && !empty($request->search_pic_2)) {
-            $query->where('pic_2', 'LIKE', '%' . $request->search_pic_2 . '%');
+        if ($request->has('search_pic_2') && ! empty($request->search_pic_2)) {
+            $query->where('pic_2', 'LIKE', '%'.$request->search_pic_2.'%');
         }
 
         // Date range filtering for tanggal_pengiriman
-        if ($request->has('search_tanggal_pengiriman_dari') && !empty($request->search_tanggal_pengiriman_dari)) {
+        if ($request->has('search_tanggal_pengiriman_dari') && ! empty($request->search_tanggal_pengiriman_dari)) {
             $query->whereDate('tanggal_pengiriman', '>=', $request->search_tanggal_pengiriman_dari);
         }
-        if ($request->has('search_tanggal_pengiriman_sampai') && !empty($request->search_tanggal_pengiriman_sampai)) {
+        if ($request->has('search_tanggal_pengiriman_sampai') && ! empty($request->search_tanggal_pengiriman_sampai)) {
             $query->whereDate('tanggal_pengiriman', '<=', $request->search_tanggal_pengiriman_sampai);
         }
 
         // Date range filtering for tanggal_sampai
-        if ($request->has('search_tanggal_sampai_dari') && !empty($request->search_tanggal_sampai_dari)) {
+        if ($request->has('search_tanggal_sampai_dari') && ! empty($request->search_tanggal_sampai_dari)) {
             $query->whereDate('tanggal_sampai', '>=', $request->search_tanggal_sampai_dari);
         }
-        if ($request->has('search_tanggal_sampai_sampai') && !empty($request->search_tanggal_sampai_sampai)) {
+        if ($request->has('search_tanggal_sampai_sampai') && ! empty($request->search_tanggal_sampai_sampai)) {
             $query->whereDate('tanggal_sampai', '<=', $request->search_tanggal_sampai_sampai);
         }
 
@@ -201,7 +200,7 @@ class PengirimanController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Gagal menambahkan data: ' . $e->getMessage());
+                ->with('error', 'Gagal menambahkan data: '.$e->getMessage());
         }
     }
 
@@ -269,7 +268,7 @@ class PengirimanController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Gagal update data: ' . $e->getMessage());
+                ->with('error', 'Gagal update data: '.$e->getMessage());
         }
     }
 
@@ -285,10 +284,9 @@ class PengirimanController extends Controller
                 ->with('success', "Data pengiriman monitoring client '{$jenisLayanan}' di Ponpes '{$namaPonpes}' berhasil dihapus!");
         } catch (\Exception $e) {
             return redirect()->back()
-                ->with('error', 'Gagal menghapus data: ' . $e->getMessage());
+                ->with('error', 'Gagal menghapus data: '.$e->getMessage());
         }
     }
-
 
     // EXPORT DATA PDF & CSV GLOBAL
     public function exportListPdf(Request $request)
@@ -308,11 +306,12 @@ class PengirimanController extends Controller
         $pdfData = [
             'title' => 'List Data Pengiriman Ponpes',
             'data' => $data,
-            'generated_at' => Carbon::now()->format('d M Y H:i:s')
+            'generated_at' => Carbon::now()->format('d M Y H:i:s'),
         ];
 
-        $pdf = Pdf::loadView('export.public.mclient.ponpes.indexPengiriman', $pdfData);
-        $filename = 'list_pengiriman_ponpes_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
+        $pdf = Pdf::loadView('export.public.mclient.ponpes.indexPengiriman', $pdfData)
+            ->setPaper('a4', 'landscape');
+        $filename = 'list_pengiriman_ponpes_'.Carbon::now()->translatedFormat('d_M_Y').'.pdf';
 
         return $pdf->download($filename);
     }
@@ -331,14 +330,14 @@ class PengirimanController extends Controller
 
         $data = $query->orderBy('created_at', 'desc')->get();
 
-        $filename = 'List_Pengiriman_Ponpes_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
+        $filename = 'List_Pengiriman_Ponpes_'.Carbon::now()->format('Y-m-d_H-i-s').'.csv';
 
         $headers = [
             'Content-type' => 'text/csv',
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
+            'Content-Disposition' => "attachment; filename=$filename",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
         ];
 
         $rows = [['No', 'Nama Ponpes', 'Jenis Layanan', 'Keterangan', 'Tanggal Pengiriman', 'Tanggal Sampai', 'Durasi (Hari)', 'Status', 'Pic 1', 'Pic 2', 'Dibuat Pada']];
@@ -355,7 +354,7 @@ class PengirimanController extends Controller
                 $row->status,
                 $row->pic_1,
                 $row->pic_2,
-                $row->created_at ? $row->created_at->format('Y-m-d H:i:s') : ''
+                $row->created_at ? $row->created_at->format('Y-m-d H:i:s') : '',
             ];
         }
 
@@ -366,6 +365,7 @@ class PengirimanController extends Controller
             }
             fclose($file);
         };
+
         return response()->stream($callback, 200, $headers);
     }
 }

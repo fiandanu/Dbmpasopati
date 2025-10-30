@@ -1,47 +1,94 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
+
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title }}</title>
     <style>
+        @page {
+            size: A4;
+            margin: 15mm;
+        }
+
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
-            font-size: 12px;
+            font-size: 10px;
+            margin: 0;
+            padding: 20px;
         }
+
         .header {
             text-align: center;
             margin-bottom: 20px;
             border-bottom: 2px solid #333;
             padding-bottom: 10px;
         }
+
         .header h1 {
             margin: 0;
-            font-size: 16px;
+            font-size: 18px;
+            color: #333;
         }
-        .info {
-            margin-bottom: 15px;
+
+        .header p {
+            margin: 5px 0 0 0;
             font-size: 10px;
             color: #666;
         }
+
+        .info {
+            margin-bottom: 15px;
+            font-size: 9px;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
         }
-        th, td {
-            border: 1px solid #333;
-            padding: 6px;
-            text-align: left;
-            font-size: 10px;
+
+        table thead {
+            background-color: #6f42c1;
+            color: white;
         }
-        th {
-            background-color: #f2f2f2;
+
+        table thead th {
+            padding: 8px;
+            text-align: center;
+            font-size: 8px;
+            border: 1px solid #ddd;
             font-weight: bold;
+        }
+
+        table tbody td {
+            padding: 6px;
+            border: 1px solid #ddd;
+            font-size: 8px;
             text-align: center;
         }
-        .text-center {
-            text-align: center;
+
+        table tbody td:nth-child(2) {
+            text-align: left;
         }
+
+        table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        table tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 8px;
+            color: #666;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+        }
+
         .no-data {
             text-align: center;
             padding: 40px;
@@ -50,12 +97,16 @@
         }
     </style>
 </head>
+
 <body>
     <div class="header">
         <h1>{{ $title }}</h1>
+        <p>Laporan Data Kendala</p>
     </div>
+
     <div class="info">
-        <p>Generated on: {{ $generated_at ?? \Carbon\Carbon::now()->format('d M Y H:i:s') }}</p>
+        <strong>Tanggal Generate:</strong> {{ $generated_at ?? \Carbon\Carbon::now()->format('d M Y H:i:s') }}<br>
+        <strong>Total Data:</strong> {{ count($data) }} record
     </div>
 
     @if (count($data) > 0)
@@ -70,7 +121,7 @@
                 @php $no = 1; @endphp
                 @foreach ($data as $d)
                     <tr>
-                        <td class="text-center">{{ $no++ }}</td>
+                        <td>{{ $no++ }}</td>
                         <td>{{ $d['jenis_kendala'] }}</td>
                     </tr>
                 @endforeach
@@ -81,5 +132,11 @@
             <p>Tidak ada data Kendala yang tersedia</p>
         </div>
     @endif
+
+    <div class="footer">
+        <p>Dokumen ini digenerate secara otomatis oleh sistem Database UPT</p>
+        <p>&copy; {{ date('Y') }} Database UPT - All Rights Reserved</p>
+    </div>
 </body>
+
 </html>

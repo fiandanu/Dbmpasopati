@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\user\kendalapic;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\user\pic\Pic;
 use App\Models\user\kendala\Kendala;
+use App\Models\user\pic\Pic;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use Carbon\Carbon;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class PicController extends Controller
 {
@@ -17,6 +17,7 @@ class PicController extends Controller
     {
         $datakendala = Kendala::all();
         $datapic = Pic::all();
+
         return view('user.indexKendalaPic', compact('datakendala', 'datapic'));
     }
 
@@ -41,6 +42,7 @@ class PicController extends Controller
         ];
 
         Pic::create($datapic);
+
         return redirect()->back()->with('success', 'Data PIC berhasil ditambahkan!');
     }
 
@@ -48,6 +50,7 @@ class PicController extends Controller
     {
         $datapic = Pic::findOrFail($id);
         $datapic->delete();
+
         return redirect()->back()->with('success', 'Data PIC berhasil dihapus!');
     }
 
@@ -80,14 +83,14 @@ class PicController extends Controller
         $query = Pic::query();
         $data = $query->orderBy('nama_pic', 'asc')->get();
 
-        $filename = 'list_pic_' . Carbon::now()->translatedFormat('d_M_Y') . '.csv';
+        $filename = 'list_pic_'.Carbon::now()->translatedFormat('d_M_Y').'.csv';
 
         $headers = [
-            "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=$filename",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
         ];
 
         $columns = ['No', 'Nama PIC'];
@@ -99,7 +102,7 @@ class PicController extends Controller
             foreach ($data as $d) {
                 fputcsv($file, [
                     $no++,
-                    $d->nama_pic
+                    $d->nama_pic,
                 ]);
             }
             fclose($file);
@@ -116,11 +119,12 @@ class PicController extends Controller
         $pdfData = [
             'title' => 'List PIC',
             'data' => $data,
-            'generated_at' => Carbon::now()->format('d M Y H:i:s')
+            'generated_at' => Carbon::now()->format('d M Y H:i:s'),
         ];
 
-        $pdf = Pdf::loadView('export.public.user.pic', $pdfData);
-        $filename = 'list_pic_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
+        $pdf = Pdf::loadView('export.public.user.pic', $pdfData)
+            ->setPaper('a4', 'landscape');
+        $filename = 'list_pic_'.Carbon::now()->translatedFormat('d_M_Y').'.pdf';
 
         return $pdf->download($filename);
     }

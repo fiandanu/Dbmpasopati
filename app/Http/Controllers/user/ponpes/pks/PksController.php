@@ -3,25 +3,25 @@
 namespace App\Http\Controllers\user\ponpes\pks;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\user\ponpes\Ponpes;
 use App\Models\db\ponpes\UploadFolderPonpesPks;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Log;
-use Carbon\Carbon;
-use Symfony\Component\HttpFoundation\StreamedResponse;
+use App\Models\user\ponpes\Ponpes;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class PksController extends Controller
 {
     private function calculatePdfStatus($uploadFolder)
     {
-        if (!$uploadFolder) {
+        if (! $uploadFolder) {
             return 'Belum Upload';
         }
 
-        $hasPdf1 = !empty($uploadFolder->uploaded_pdf_1);
-        $hasPdf2 = !empty($uploadFolder->uploaded_pdf_2);
+        $hasPdf1 = ! empty($uploadFolder->uploaded_pdf_1);
+        $hasPdf2 = ! empty($uploadFolder->uploaded_pdf_2);
 
         if ($hasPdf1 && $hasPdf2) {
             return 'Sudah Upload (2/2)';
@@ -35,33 +35,33 @@ class PksController extends Controller
     private function applyFilters($query, Request $request)
     {
         // Global search
-        if ($request->has('table_search') && !empty($request->table_search)) {
+        if ($request->has('table_search') && ! empty($request->table_search)) {
             $searchTerm = $request->table_search;
             $query->where(function ($q) use ($searchTerm) {
-                $q->where('nama_ponpes', 'LIKE', '%' . $searchTerm . '%')
+                $q->where('nama_ponpes', 'LIKE', '%'.$searchTerm.'%')
                     ->orWhereHas('namaWilayah', function ($q) use ($searchTerm) {
-                        $q->where('nama_wilayah', 'LIKE', '%' . $searchTerm . '%');
+                        $q->where('nama_wilayah', 'LIKE', '%'.$searchTerm.'%');
                     })
-                    ->orWhere('tanggal', 'LIKE', '%' . $searchTerm . '%');
+                    ->orWhere('tanggal', 'LIKE', '%'.$searchTerm.'%');
             });
         }
 
         // Column-specific searches
-        if ($request->has('search_namaponpes') && !empty($request->search_namaponpes)) {
-            $query->where('nama_ponpes', 'LIKE', '%' . $request->search_namaponpes . '%');
+        if ($request->has('search_namaponpes') && ! empty($request->search_namaponpes)) {
+            $query->where('nama_ponpes', 'LIKE', '%'.$request->search_namaponpes.'%');
         }
 
-        if ($request->has('search_wilayah') && !empty($request->search_wilayah)) {
+        if ($request->has('search_wilayah') && ! empty($request->search_wilayah)) {
             $query->whereHas('namaWilayah', function ($q) use ($request) {
-                $q->where('nama_wilayah', 'LIKE', '%' . $request->search_wilayah . '%');
+                $q->where('nama_wilayah', 'LIKE', '%'.$request->search_wilayah.'%');
             });
         }
 
         // Date range filtering
-        if ($request->has('search_tanggal_dari') && !empty($request->search_tanggal_dari)) {
+        if ($request->has('search_tanggal_dari') && ! empty($request->search_tanggal_dari)) {
             $query->whereDate('tanggal', '>=', $request->search_tanggal_dari);
         }
-        if ($request->has('search_tanggal_sampai') && !empty($request->search_tanggal_sampai)) {
+        if ($request->has('search_tanggal_sampai') && ! empty($request->search_tanggal_sampai)) {
             $query->whereDate('tanggal', '<=', $request->search_tanggal_sampai);
         }
 
@@ -70,14 +70,17 @@ class PksController extends Controller
 
     private function applyPdfStatusFilter($data, Request $request)
     {
-        if ($request->has('search_status') && !empty($request->search_status)) {
+        if ($request->has('search_status') && ! empty($request->search_status)) {
             $statusSearch = strtolower($request->search_status);
+
             return $data->filter(function ($d) use ($statusSearch) {
                 // PERBAIKAN: Gunakan uploadFolderPks
                 $status = strtolower($this->calculatePdfStatus($d->uploadFolderPks));
+
                 return strpos($status, $statusSearch) !== false;
             });
         }
+
         return $data;
     }
 
@@ -94,7 +97,7 @@ class PksController extends Controller
         $perPage = $request->get('per_page', 10);
 
         // Validate per_page
-        if (!in_array($perPage, [10, 15, 20, 'all'])) {
+        if (! in_array($perPage, [10, 15, 20, 'all'])) {
             $perPage = 10;
         }
 
@@ -131,7 +134,7 @@ class PksController extends Controller
                 [
                     'path' => $request->url(),
                     'query' => $request->query(),
-                    'pageName' => 'page'
+                    'pageName' => 'page',
                 ]
             );
         }
@@ -166,14 +169,14 @@ class PksController extends Controller
             $data = $data->sortBy('tanggal')->values();
         }
 
-        $filename = 'list_ponpes_pks_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
+        $filename = 'list_ponpes_pks_'.Carbon::now()->format('Y-m-d_H-i-s').'.csv';
 
         $headers = [
-            "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=$filename",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
         ];
 
         $rows = [['No', 'Nama Ponpes', 'Nama Wilayah', 'Tipe', 'Tanggal Dibuat', 'Tanggal Kontrak', 'Tanggal Jatuh Tempo', 'Status Upload PDF']];
@@ -189,7 +192,7 @@ class PksController extends Controller
                 $d->tanggal ? Carbon::parse($d->tanggal)->format('d M Y') : '-',
                 $d->uploadFolderPks && $d->uploadFolderPks->tanggal_kontrak ? Carbon::parse($d->uploadFolderPks->tanggal_kontrak)->format('d M Y') : '-',
                 $d->uploadFolderPks && $d->uploadFolderPks->tanggal_jatuh_tempo ? Carbon::parse($d->uploadFolderPks->tanggal_jatuh_tempo)->format('d M Y') : '-',
-                $status
+                $status,
             ];
         }
 
@@ -222,11 +225,12 @@ class PksController extends Controller
         $pdfData = [
             'title' => 'List Data Ponpes PKS',
             'data' => $data,
-            'generated_at' => Carbon::now()->format('d M Y H:i:s')
+            'generated_at' => Carbon::now()->format('d M Y H:i:s'),
         ];
 
-        $pdf = Pdf::loadView('export.public.db.ponpes.indexPks', $pdfData);
-        $filename = 'list_ponpes_pks_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
+        $pdf = Pdf::loadView('export.public.db.ponpes.indexPks', $pdfData)
+            ->setPaper('a4', 'landscape');
+        $filename = 'list_ponpes_pks_'.Carbon::now()->translatedFormat('d_M_Y').'.pdf';
 
         return $pdf->download($filename);
     }
@@ -235,29 +239,30 @@ class PksController extends Controller
     {
         try {
             // Validasi folder number
-            if (!in_array($folderNumber, [1, 2])) {
+            if (! in_array($folderNumber, [1, 2])) {
                 return abort(404, 'Nomor folder tidak valid.');
             }
 
             $ponpes = Ponpes::findOrFail($id);
             $uploadFolder = UploadFolderPonpesPks::where('data_ponpes_id', $id)->first();
 
-            $columnName = 'uploaded_pdf_' . $folderNumber;
+            $columnName = 'uploaded_pdf_'.$folderNumber;
 
-            if (!$uploadFolder || empty($uploadFolder->$columnName)) {
+            if (! $uploadFolder || empty($uploadFolder->$columnName)) {
                 return abort(404, 'File PDF belum diupload untuk folder ini.');
             }
 
-            $filePath = storage_path('app/public/' . $uploadFolder->$columnName);
+            $filePath = storage_path('app/public/'.$uploadFolder->$columnName);
 
-            if (!file_exists($filePath)) {
+            if (! file_exists($filePath)) {
                 return abort(404, 'File tidak ditemukan di storage.');
             }
 
             return response()->file($filePath);
         } catch (\Exception $e) {
-            Log::error('Error viewing PDF: ' . $e->getMessage());
-            return abort(500, 'Error loading PDF: ' . $e->getMessage());
+            Log::error('Error viewing PDF: '.$e->getMessage());
+
+            return abort(500, 'Error loading PDF: '.$e->getMessage());
         }
     }
 
@@ -273,19 +278,19 @@ class PksController extends Controller
                 'uploaded_pdf.max' => 'Ukuran file maksimal 10MB.',
             ]);
 
-            if (!$request->hasFile('uploaded_pdf')) {
+            if (! $request->hasFile('uploaded_pdf')) {
                 return redirect()->back()->with('error', 'File tidak ditemukan dalam request!');
             }
 
             // Validasi folder number (1 atau 2)
-            if (!in_array($folderNumber, [1, 2])) {
+            if (! in_array($folderNumber, [1, 2])) {
                 return redirect()->back()->with('error', 'Nomor folder tidak valid!');
             }
 
             $ponpes = Ponpes::findOrFail($id);
             $file = $request->file('uploaded_pdf');
 
-            if (!$file || !$file->isValid()) {
+            if (! $file || ! $file->isValid()) {
                 return redirect()->back()->with('error', 'File tidak valid!');
             }
 
@@ -296,27 +301,27 @@ class PksController extends Controller
             );
 
             // Tentukan kolom berdasarkan folder number
-            $columnName = 'uploaded_pdf_' . $folderNumber;
+            $columnName = 'uploaded_pdf_'.$folderNumber;
 
             // Hapus file lama jika ada
-            if (!empty($uploadFolder->$columnName) && Storage::disk('public')->exists($uploadFolder->$columnName)) {
+            if (! empty($uploadFolder->$columnName) && Storage::disk('public')->exists($uploadFolder->$columnName)) {
                 Storage::disk('public')->delete($uploadFolder->$columnName);
             }
 
             // Buat nama file unik
             $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
             $sanitizedName = preg_replace('/[^A-Za-z0-9\-_.]/', '_', $originalName);
-            $filename = time() . '_folder' . $folderNumber . '_' . $sanitizedName . '.pdf';
+            $filename = time().'_folder'.$folderNumber.'_'.$sanitizedName.'.pdf';
 
             // Simpan file
-            $directory = 'ponpes/pks/folder_' . $folderNumber;
-            if (!Storage::disk('public')->exists($directory)) {
+            $directory = 'ponpes/pks/folder_'.$folderNumber;
+            if (! Storage::disk('public')->exists($directory)) {
                 Storage::disk('public')->makeDirectory($directory);
             }
 
             $path = $file->storeAs($directory, $filename, 'public');
 
-            if (!$path) {
+            if (! $path) {
                 return redirect()->back()->with('error', 'Gagal menyimpan file!');
             }
 
@@ -326,12 +331,13 @@ class PksController extends Controller
 
             Log::info("PDF uploaded successfully for Ponpes PKS ID: {$id}, Folder: {$folderNumber}, Path: {$path}");
 
-            return redirect()->back()->with('success', 'PDF Folder ' . $folderNumber . ' berhasil di-upload!');
+            return redirect()->back()->with('success', 'PDF Folder '.$folderNumber.' berhasil di-upload!');
         } catch (\Illuminate\Validation\ValidationException $e) {
             return redirect()->back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
-            Log::error('Error uploading PDF PKS: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Gagal upload file: ' . $e->getMessage());
+            Log::error('Error uploading PDF PKS: '.$e->getMessage());
+
+            return redirect()->back()->with('error', 'Gagal upload file: '.$e->getMessage());
         }
     }
 
@@ -339,16 +345,16 @@ class PksController extends Controller
     {
         try {
             // Validasi folder number
-            if (!in_array($folderNumber, [1, 2])) {
+            if (! in_array($folderNumber, [1, 2])) {
                 return redirect()->back()->with('error', 'Nomor folder tidak valid.');
             }
 
             $ponpes = Ponpes::findOrFail($id);
             $uploadFolder = UploadFolderPonpesPks::where('data_ponpes_id', $id)->first();
 
-            $columnName = 'uploaded_pdf_' . $folderNumber;
+            $columnName = 'uploaded_pdf_'.$folderNumber;
 
-            if (!$uploadFolder || empty($uploadFolder->$columnName)) {
+            if (! $uploadFolder || empty($uploadFolder->$columnName)) {
                 return redirect()->back()->with('error', 'File PDF belum di-upload untuk folder ini.');
             }
 
@@ -364,10 +370,11 @@ class PksController extends Controller
 
             Log::info("PDF deleted successfully for Ponpes PKS ID: {$id}, Folder: {$folderNumber}");
 
-            return redirect()->back()->with('success', 'File PDF Folder ' . $folderNumber . ' berhasil dihapus');
+            return redirect()->back()->with('success', 'File PDF Folder '.$folderNumber.' berhasil dihapus');
         } catch (\Exception $e) {
-            Log::error('Error deleting PDF PKS: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Gagal menghapus file: ' . $e->getMessage());
+            Log::error('Error deleting PDF PKS: '.$e->getMessage());
+
+            return redirect()->back()->with('error', 'Gagal menghapus file: '.$e->getMessage());
         }
     }
 
@@ -396,8 +403,9 @@ class PksController extends Controller
 
             return redirect()->back()->with('success', 'Data PKS berhasil diupdate');
         } catch (\Exception $e) {
-            Log::error('Error updating PKS: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Gagal mengupdate data: ' . $e->getMessage());
+            Log::error('Error updating PKS: '.$e->getMessage());
+
+            return redirect()->back()->with('error', 'Gagal mengupdate data: '.$e->getMessage());
         }
     }
 
@@ -416,7 +424,7 @@ class PksController extends Controller
             // Cari Ponpes berdasarkan nama_ponpes saja (nama sudah unik)
             $ponpes = Ponpes::where('nama_ponpes', $request->nama_ponpes)->first();
 
-            if (!$ponpes) {
+            if (! $ponpes) {
                 return redirect()->back()->with('error', 'Data Ponpes tidak ditemukan')->withInput();
             }
 
@@ -431,8 +439,9 @@ class PksController extends Controller
 
             return redirect()->back()->with('success', 'Data PKS berhasil ditambahkan');
         } catch (\Exception $e) {
-            Log::error('Error creating PKS: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Gagal menambahkan data: ' . $e->getMessage())->withInput();
+            Log::error('Error creating PKS: '.$e->getMessage());
+
+            return redirect()->back()->with('error', 'Gagal menambahkan data: '.$e->getMessage())->withInput();
         }
     }
 
@@ -444,11 +453,11 @@ class PksController extends Controller
 
             if ($uploadFolder) {
                 // Hapus file PDF yang terkait (kedua folder)
-                if (!empty($uploadFolder->uploaded_pdf_1) && Storage::disk('public')->exists($uploadFolder->uploaded_pdf_1)) {
+                if (! empty($uploadFolder->uploaded_pdf_1) && Storage::disk('public')->exists($uploadFolder->uploaded_pdf_1)) {
                     Storage::disk('public')->delete($uploadFolder->uploaded_pdf_1);
                 }
 
-                if (!empty($uploadFolder->uploaded_pdf_2) && Storage::disk('public')->exists($uploadFolder->uploaded_pdf_2)) {
+                if (! empty($uploadFolder->uploaded_pdf_2) && Storage::disk('public')->exists($uploadFolder->uploaded_pdf_2)) {
                     Storage::disk('public')->delete($uploadFolder->uploaded_pdf_2);
                 }
 
@@ -460,8 +469,9 @@ class PksController extends Controller
 
             return redirect()->back()->with('success', 'Data PKS berhasil dihapus');
         } catch (\Exception $e) {
-            Log::error('Error deleting Ponpes PKS: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Gagal menghapus data: ' . $e->getMessage());
+            Log::error('Error deleting Ponpes PKS: '.$e->getMessage());
+
+            return redirect()->back()->with('error', 'Gagal menghapus data: '.$e->getMessage());
         }
     }
 }

@@ -3,17 +3,17 @@
 namespace App\Http\Controllers\user\user;
 
 use App\Http\Controllers\Controller;
-use App\Models\user\provider\Provider;
-use Illuminate\Http\Request;
+use App\Models\user\namaWilayah\NamaWilayah;
 use App\Models\user\ponpes\Ponpes;
+use App\Models\user\provider\Provider;
 use App\Models\user\vpn\Vpn;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use Barryvdh\DomPDF\Facade\Pdf;
-use App\Models\user\namaWilayah\NamaWilayah;
 
 class ListDataPonpesController extends Controller
 {
@@ -41,17 +41,17 @@ class ListDataPonpesController extends Controller
         'pin_tes',
         'no_pemanggil',
         'email_airdroid',
-        'password'
+        'password',
     ];
 
     private function calculateStatus($dataOpsional)
     {
-        if (!$dataOpsional) {
+        if (! $dataOpsional) {
             return 'Belum di Update';
         }
         $filledFields = 0;
         foreach ($this->optionalFields as $field) {
-            if (!empty($dataOpsional->$field)) {
+            if (! empty($dataOpsional->$field)) {
                 $filledFields++;
             }
         }
@@ -70,56 +70,58 @@ class ListDataPonpesController extends Controller
     private function applyFilters($query, Request $request)
     {
         // Global search
-        if ($request->has('table_search') && !empty($request->table_search)) {
+        if ($request->has('table_search') && ! empty($request->table_search)) {
             $searchTerm = $request->table_search;
             $query->where(function ($q) use ($searchTerm) {
-                $q->where('nama_ponpes', 'LIKE', '%' . $searchTerm . '%')
+                $q->where('nama_ponpes', 'LIKE', '%'.$searchTerm.'%')
                     ->orWhereHas('namaWilayah', function ($q) use ($searchTerm) { // PERBAIKAN
-                        $q->where('nama_wilayah', 'LIKE', '%' . $searchTerm . '%');
+                        $q->where('nama_wilayah', 'LIKE', '%'.$searchTerm.'%');
                     })
-                    ->orWhere('tanggal', 'LIKE', '%' . $searchTerm . '%')
+                    ->orWhere('tanggal', 'LIKE', '%'.$searchTerm.'%')
                     ->orWhereHas('dataOpsional', function ($subQuery) use ($searchTerm) {
-                        $subQuery->where('pic_upt', 'LIKE', '%' . $searchTerm . '%')
-                            ->orWhere('alamat', 'LIKE', '%' . $searchTerm . '%')
-                            ->orWhere('provider_internet', 'LIKE', '%' . $searchTerm . '%');
+                        $subQuery->where('pic_upt', 'LIKE', '%'.$searchTerm.'%')
+                            ->orWhere('alamat', 'LIKE', '%'.$searchTerm.'%')
+                            ->orWhere('provider_internet', 'LIKE', '%'.$searchTerm.'%');
                     });
             });
         }
 
         // Column-specific searches
-        if ($request->has('search_namaponpes') && !empty($request->search_namaponpes)) {
-            $query->where('nama_ponpes', 'LIKE', '%' . $request->search_namaponpes . '%');
+        if ($request->has('search_namaponpes') && ! empty($request->search_namaponpes)) {
+            $query->where('nama_ponpes', 'LIKE', '%'.$request->search_namaponpes.'%');
         }
-        if ($request->has('search_wilayah') && !empty($request->search_wilayah)) {
+        if ($request->has('search_wilayah') && ! empty($request->search_wilayah)) {
             $query->whereHas('namaWilayah', function ($q) use ($request) { // PERBAIKAN
-                $q->where('nama_wilayah', 'LIKE', '%' . $request->search_wilayah . '%');
+                $q->where('nama_wilayah', 'LIKE', '%'.$request->search_wilayah.'%');
             });
         }
-        if ($request->has('search_tipe') && !empty($request->search_tipe)) {
-            $query->where('tipe', 'LIKE', '%' . $request->search_tipe . '%');
+        if ($request->has('search_tipe') && ! empty($request->search_tipe)) {
+            $query->where('tipe', 'LIKE', '%'.$request->search_tipe.'%');
         }
 
         // Date range filtering
-        if ($request->has('search_tanggal_dari') && !empty($request->search_tanggal_dari)) {
+        if ($request->has('search_tanggal_dari') && ! empty($request->search_tanggal_dari)) {
             $query->whereDate('tanggal', '>=', $request->search_tanggal_dari);
         }
-        if ($request->has('search_tanggal_sampai') && !empty($request->search_tanggal_sampai)) {
+        if ($request->has('search_tanggal_sampai') && ! empty($request->search_tanggal_sampai)) {
             $query->whereDate('tanggal', '<=', $request->search_tanggal_sampai);
         }
 
         return $query;
     }
 
-
     private function applyStatusFilter($data, Request $request)
     {
-        if ($request->has('search_status') && !empty($request->search_status)) {
+        if ($request->has('search_status') && ! empty($request->search_status)) {
             $statusSearch = strtolower($request->search_status);
+
             return $data->filter(function ($d) use ($statusSearch) {
                 $status = strtolower($this->calculateStatus($d->dataOpsional));
+
                 return strpos($status, $statusSearch) !== false;
             });
         }
+
         return $data;
     }
 
@@ -134,7 +136,7 @@ class ListDataPonpesController extends Controller
             [
                 'path' => $request->url(),
                 'query' => $request->query(),
-                'pageName' => 'page'
+                'pageName' => 'page',
             ]
         );
     }
@@ -151,7 +153,7 @@ class ListDataPonpesController extends Controller
         // Cari semua data dengan nama Ponpes base yang sama (dengan atau tanpa suffix)
         $relatedData = Ponpes::where(function ($query) use ($namaPonpesBase) {
             $query->where('nama_ponpes', $namaPonpesBase)
-                ->orWhere('nama_ponpes', $namaPonpesBase . ' (VtrenReg)');
+                ->orWhere('nama_ponpes', $namaPonpesBase.' (VtrenReg)');
         })->get();
 
         // Jika hanya tersisa 1 data, hapus suffix (VtrenReg)
@@ -164,8 +166,8 @@ class ListDataPonpesController extends Controller
         // Jika masih ada 2 data (reguler dan vtren), pastikan keduanya menggunakan suffix
         elseif ($relatedData->count() == 2) {
             foreach ($relatedData as $data) {
-                if (!str_contains($data->nama_ponpes, '(VtrenReg)')) {
-                    $data->update(['nama_ponpes' => $namaPonpesBase . ' (VtrenReg)']);
+                if (! str_contains($data->nama_ponpes, '(VtrenReg)')) {
+                    $data->update(['nama_ponpes' => $namaPonpesBase.' (VtrenReg)']);
                 }
             }
         }
@@ -184,7 +186,7 @@ class ListDataPonpesController extends Controller
         $perPage = $request->get('per_page', 10);
 
         // Validate per_page
-        if (!in_array($perPage, [10, 15, 20, 'all'])) {
+        if (! in_array($perPage, [10, 15, 20, 'all'])) {
             $perPage = 10;
         }
 
@@ -216,7 +218,7 @@ class ListDataPonpesController extends Controller
                 [
                     'path' => $request->url(),
                     'query' => $request->query(),
-                    'pageName' => 'page'
+                    'pageName' => 'page',
                 ]
             );
         }
@@ -266,7 +268,7 @@ class ListDataPonpesController extends Controller
         // Tentukan nama Ponpes berdasarkan jumlah tipe yang dipilih
         $namaPonpes = $cleanNamaPonpes;
         if (count($selectedTypes) == 2 && in_array('reguler', $selectedTypes) && in_array('vtren', $selectedTypes)) {
-            $namaPonpes = $cleanNamaPonpes . ' (VtrenReg)';
+            $namaPonpes = $cleanNamaPonpes.' (VtrenReg)';
         }
 
         // Validasi manual untuk kombinasi nama Ponpes + tipe
@@ -298,7 +300,8 @@ class ListDataPonpesController extends Controller
 
         // Berikan pesan berdasarkan hasil
         if (count($createdRecords) > 0) {
-            $message = 'Data Ponpes berhasil ditambahkan untuk tipe: ' . implode(', ', $createdRecords);
+            $message = 'Data Ponpes berhasil ditambahkan untuk tipe: '.implode(', ', $createdRecords);
+
             return redirect()->route('UserPonpes.UserPage')->with('success', $message);
         } else {
             return redirect()->back()
@@ -311,7 +314,7 @@ class ListDataPonpesController extends Controller
     {
         $dataponpes = Ponpes::find($id);
 
-        if (!$dataponpes) {
+        if (! $dataponpes) {
             return redirect()->route('UserPonpes.UserPage')->with('error', 'Data tidak ditemukan!');
         }
 
@@ -345,7 +348,7 @@ class ListDataPonpesController extends Controller
                         if ($existingRecord) {
                             $fail("Nama Ponpes '{$value}' dengan tipe '{$request->tipe}' sudah ada.");
                         }
-                    }
+                    },
                 ],
                 'nama_wilayah_id' => 'required|exists:nama_wilayah,id|string',
                 'tipe' => 'required|string|in:reguler,vtren',
@@ -365,7 +368,7 @@ class ListDataPonpesController extends Controller
 
         $dataponpes = Ponpes::findOrFail($id);
         $dataponpes->nama_ponpes = $request->nama_ponpes;
-        $dataponpes->nama_wilayah_id  = $request->nama_wilayah_id;
+        $dataponpes->nama_wilayah_id = $request->nama_wilayah_id;
         $dataponpes->tipe = $request->tipe;
         $dataponpes->save();
 
@@ -374,7 +377,7 @@ class ListDataPonpesController extends Controller
 
     public function exportListCsv(Request $request): StreamedResponse
     {
-        $query = Ponpes::with(['dataOpsional', 'namaWilayah'])->whereIn('tipe', ['reguler', 'vtren']); // PERBAIKAN: Tambah namaWilayah
+        $query = Ponpes::with(['dataOpsional', 'namaWilayah'])->whereIn('tipe', ['reguler', 'vtren']);
         $query = $this->applyFilters($query, $request);
 
         // Add date sorting when date filters are applied
@@ -392,27 +395,25 @@ class ListDataPonpesController extends Controller
             $data = $data->sortBy('tanggal')->values();
         }
 
-        $filename = 'list_ponpes_reguler_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
+        $filename = 'list_ponpes_reguler_'.Carbon::now()->format('Y-m-d_H-i-s').'.csv';
 
         $headers = [
-            "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=$filename",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
         ];
 
-        $rows = [['No', 'Nama Ponpes', 'Nama Wilayah', 'Tipe', 'Tanggal Dibuat', 'Status Update']];
+        $rows = [['No', 'Nama Ponpes', 'Nama Wilayah', 'Tipe', 'Tanggal Dibuat']];
         $no = 1;
         foreach ($data as $d) {
-            $status = $this->calculateStatus($d->dataOpsional);
             $rows[] = [
                 $no++,
                 $d->nama_ponpes,
-                $d->namaWilayah->nama_wilayah ?? '-', // PERBAIKAN: Gunakan relasi
+                $d->namaWilayah->nama_wilayah ?? '-', // PERBAIKAN: Gunakan relasi namaWilayah
                 ucfirst($d->tipe),
                 \Carbon\Carbon::parse($d->tanggal)->format('d M Y'),
-                $status
             ];
         }
 
@@ -427,9 +428,10 @@ class ListDataPonpesController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
+    // PERBAIKAN METHOD exportListPdf (Line ~460)
     public function exportListPdf(Request $request)
     {
-        $query = Ponpes::with(['dataOpsional', 'namaWilayah'])->whereIn('tipe', ['reguler', 'vtren']); // PERBAIKAN: Tambah namaWilayah
+        $query = Ponpes::with(['dataOpsional', 'namaWilayah'])->whereIn('tipe', ['reguler', 'vtren']);
         $query = $this->applyFilters($query, $request);
 
         // Add date sorting when date filters are applied
@@ -442,12 +444,15 @@ class ListDataPonpesController extends Controller
         // Apply status filter
         $data = $this->applyStatusFilter($data, $request);
 
-        // Convert collection to array with calculated status
+        // Convert collection to array with nama_wilayah
         $dataArray = [];
         foreach ($data as $d) {
-            $dataItem = $d->toArray();
-            $dataItem['calculated_status'] = $this->calculateStatus($d->dataOpsional);
-            $dataArray[] = $dataItem;
+            $dataArray[] = [
+                'nama_ponpes' => $d->nama_ponpes,
+                'nama_wilayah' => $d->namaWilayah->nama_wilayah ?? '-', // PERBAIKAN: Ambil nama_wilayah
+                'tipe' => $d->tipe,
+                'tanggal' => $d->tanggal,
+            ];
         }
 
         // Additional sorting using correct field name
@@ -455,19 +460,20 @@ class ListDataPonpesController extends Controller
             usort($dataArray, function ($a, $b) {
                 $dateA = strtotime($a['tanggal']);
                 $dateB = strtotime($b['tanggal']);
+
                 return $dateA - $dateB;
             });
         }
 
         $pdfData = [
-            'title' => 'List Data Ponpes Reguler',
+            'title' => 'List Data Ponpes',
             'data' => $dataArray,
-            'optionalFields' => $this->optionalFields,
-            'generated_at' => Carbon::now()->format('d M Y H:i:s')
+            'generated_at' => Carbon::now()->format('d M Y H:i:s'),
         ];
 
-        $pdf = Pdf::loadView('export.public.user.indexPonpes', $pdfData);
-        $filename = 'list_ponpes_reguler_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
+        $pdf = Pdf::loadView('export.public.user.indexPonpes', $pdfData)
+            ->setPaper('a4', 'landscape');
+        $filename = 'list_ponpes_'.Carbon::now()->translatedFormat('d_M_Y').'.pdf';
 
         return $pdf->download($filename);
     }

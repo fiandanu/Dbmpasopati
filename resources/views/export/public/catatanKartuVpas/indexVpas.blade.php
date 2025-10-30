@@ -1,61 +1,69 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title }}</title>
     <style>
+        @page {
+            size: A4 landscape;
+            margin: 15mm;
+        }
+
         body {
-            font-family: poppins, sans-serif;
-            margin: 20px;
-            font-size: 12px;
-            color: #333;
+            font-family: Arial, sans-serif;
+            font-size: 10px;
+            margin: 0;
+            padding: 20px;
         }
 
         .header {
             text-align: center;
-            margin-bottom: 25px;
-            border-bottom: 3px solid #4a5568;
-            padding-bottom: 15px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
         }
 
         .header h1 {
             margin: 0;
             font-size: 18px;
-            color: #2d3748;
-            font-weight: 700;
+            color: #333;
+        }
+
+        .header p {
+            margin: 5px 0 0 0;
+            font-size: 10px;
+            color: #666;
         }
 
         .info {
-            margin-bottom: 20px;
-            font-size: 10px;
-            color: #718096;
-            text-align: right;
+            margin-bottom: 15px;
+            font-size: 9px;
         }
 
-        /* Total Summary Cards */
+        /* Summary Cards */
         .summary-section {
-            border-radius: 6px;
-            /* margin-bottom: 25px; */
-            /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
-            /* background: #718096; */
-            /* padding: 20px; */
-            /* border-radius: 8px; */
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            border: 1px solid #ddd;
         }
 
         .summary-title {
             text-align: center;
-            /* color: #ffffff; */
-            font-size: 14px;
+            font-size: 11px;
             font-weight: bold;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
+            color: #333;
             text-transform: uppercase;
-            letter-spacing: 1px;
         }
 
         .summary-grid {
             display: table;
             width: 100%;
-            border-spacing: 10px;
+            border-spacing: 8px;
         }
 
         .summary-row {
@@ -65,112 +73,80 @@
         .summary-card {
             display: table-cell;
             width: 16.66%;
-            /* background-color: #ffffff; */
-            padding: 12px;
+            background-color: #ffffff;
+            padding: 10px;
             border-radius: 6px;
-            border: 1px solid #e2e8f0;
+            border: 1px solid #ddd;
             text-align: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .summary-card-label {
-            font-size: 9px;
-            color: #718096;
-            margin-bottom: 6px;
+            font-size: 8px;
+            color: #666;
+            margin-bottom: 5px;
             font-weight: 600;
             text-transform: uppercase;
         }
 
         .summary-card-value {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: bold;
-            margin: 0;
+            color: #6f42c1;
         }
-/* 
-        .card-blue .summary-card-value {
-            color: #3182ce;
-        }
-
-        .card-green .summary-card-value {
-            color: #38a169;
-        }
-
-        .card-cyan .summary-card-value {
-            color: #00b5d8;
-        }
-
-        .card-orange .summary-card-value {
-            color: #dd6b20;
-        }
-
-        .card-red .summary-card-value {
-            color: #e53e3e;
-        }
-
-         .summary-card-value {
-            color: #805ad5;
-        } */
 
         /* Table Styles */
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
-        th,
-        td {
-            border: 1px solid #e2e8f0;
+        table thead {
+            background-color: #6f42c1;
+            color: white;
+        }
+
+        table thead th {
             padding: 8px;
-            text-align: left;
-            font-size: 10px;
-        }
-
-        th {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #404650;
+            text-align: center;
+            font-size: 8px;
+            border: 1px solid #ddd;
             font-weight: bold;
+        }
+
+        table tbody td {
+            padding: 6px;
+            border: 1px solid #ddd;
+            font-size: 8px;
             text-align: center;
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
-        tbody tr:nth-child(odd) {
-            background-color: #f7fafc;
+        table tbody td:nth-child(2) {
+            text-align: left;
         }
 
-        tbody tr:nth-child(even) {
-            background-color: #ffffff;
+        table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
         }
 
-        tbody tr:hover {
-            background-color: #edf2f7;
+        table tbody tr:hover {
+            background-color: #f5f5f5;
         }
 
-        .text-center {
+        .footer {
+            margin-top: 20px;
             text-align: center;
+            font-size: 8px;
+            color: #666;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
         }
 
         .no-data {
             text-align: center;
             padding: 40px;
-            color: #a0aec0;
+            color: #666;
             font-style: italic;
-            background-color: #f7fafc;
-            border-radius: 8px;
-            border: 2px dashed #cbd5e0;
-        }
-
-        /* Footer */
-        .footer {
-            margin-top: 30px;
-            padding-top: 15px;
-            border-top: 2px solid #e2e8f0;
-            text-align: center;
-            font-size: 9px;
-            color: #718096;
         }
     </style>
 </head>
@@ -178,16 +154,18 @@
 <body>
     <div class="header">
         <h1>{{ $title }}</h1>
+        <p>Laporan Data Catatan Kartu VPAS</p>
     </div>
 
     <div class="info">
-        <p><strong>Generated on:</strong> {{ $generated_at }}</p>
+        <strong>Tanggal Generate:</strong> {{ $generated_at }}<br>
+        <strong>Total Data:</strong> {{ $total_records ?? count($data) }} record
     </div>
 
     @if (count($data) > 0)
         <!-- Total Summary Section -->
         <div class="summary-section">
-            <div class="summary-title"> Total Kalkulasi Data</div>
+            <div class="summary-title">Total Kalkulasi Data</div>
             <div class="summary-grid">
                 <div class="summary-row">
                     <div class="summary-card">
@@ -214,7 +192,7 @@
                             {{ number_format($totals['kartu_belum_register']) }}
                         </div>
                     </div>
-                    <div class="summary-card ">
+                    <div class="summary-card">
                         <div class="summary-card-label">WA Terpakai</div>
                         <div class="summary-card-value">
                             {{ number_format($totals['whatsapp_terpakai']) }}
@@ -251,17 +229,17 @@
                 @php $no = 1; @endphp
                 @foreach ($data as $d)
                     <tr>
-                        <td class="text-center">{{ $no++ }}</td>
+                        <td>{{ $no++ }}</td>
                         <td>{{ $d->nama_upt ?? '-' }}</td>
-                        <td class="text-center">{{ $d->spam_vpas_kartu_baru ?? '-' }}</td>
-                        <td class="text-center">{{ $d->spam_vpas_kartu_bekas ?? '-' }}</td>
-                        <td class="text-center">{{ $d->spam_vpas_kartu_goip ?? '-' }}</td>
-                        <td class="text-center">{{ $d->kartu_belum_teregister ?? '-' }}</td>
-                        <td class="text-center">{{ $d->whatsapp_telah_terpakai ?? '-' }}</td>
-                        <td class="text-center">{{ $d->card_supporting ?? '-' }}</td>
+                        <td>{{ $d->spam_vpas_kartu_baru ?? '-' }}</td>
+                        <td>{{ $d->spam_vpas_kartu_bekas ?? '-' }}</td>
+                        <td>{{ $d->spam_vpas_kartu_goip ?? '-' }}</td>
+                        <td>{{ $d->kartu_belum_teregister ?? '-' }}</td>
+                        <td>{{ $d->whatsapp_telah_terpakai ?? '-' }}</td>
+                        <td>{{ $d->card_supporting ?? '-' }}</td>
                         <td>{{ $d->pic ?? '-' }}</td>
-                        <td class="text-center">{{ $d->jumlah_kartu_terpakai_perhari ?? '-' }}</td>
-                        <td class="text-center">
+                        <td>{{ $d->jumlah_kartu_terpakai_perhari ?? '-' }}</td>
+                        <td>
                             {{ $d->tanggal ? \Carbon\Carbon::parse($d->tanggal)->format('d M Y') : '-' }}
                         </td>
                     </tr>
@@ -270,11 +248,12 @@
         </table>
 
         <div class="footer">
-            <p>Dokumen ini digenerate secara otomatis oleh sistem | Total {{ $total_records ?? count($data) }} data</p>
+            <p>Dokumen ini digenerate secara otomatis oleh sistem Database UPT</p>
+            <p>&copy; {{ date('Y') }} Database UPT - All Rights Reserved</p>
         </div>
     @else
         <div class="no-data">
-            <p>📭 Tidak ada data catatan kartu VPAS yang tersedia</p>
+            <p>Tidak ada data catatan kartu VPAS yang tersedia</p>
         </div>
     @endif
 </body>

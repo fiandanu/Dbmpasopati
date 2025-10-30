@@ -1,9 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title }}</title>
     <style>
+        @page {
+            size: A4 landscape;
+            margin: 15mm;
+        }
+
         body {
             font-family: Arial, sans-serif;
             font-size: 10px;
@@ -111,6 +118,13 @@
             display: inline-block;
         }
 
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-style: italic;
+        }
+
         .footer {
             margin-top: 20px;
             text-align: center;
@@ -125,24 +139,27 @@
 <body>
     <div class="header">
         <h1>{{ $title }}</h1>
+        <p>Laporan Data Kunjungan</p>
     </div>
+
     <div class="info">
-        <p>Generated on: {{ $generated_at }}</p>
+        <strong>Tanggal Generate:</strong> {{ $generated_at }}<br>
+        <strong>Total Data:</strong> {{ count($data) }} record
     </div>
 
     @if (count($data) > 0)
         <table>
             <thead>
                 <tr>
-                    <th style="width: 5%;">No</th>
-                    <th style="width: 15%;">Nama UPT</th>
-                    <th style="width: 10%;">Kanwil</th>
-                    <th style="width: 12%;">Jenis Layanan</th>
-                    <th style="width: 15%;">Keterangan</th>
-                    <th style="width: 15%;">Jadwal</th>
-                    <th style="width: 15%;">Tanggal Selesai</th>
-                    <th style="width: 8%;">Durasi hari</th>
-                    <th style="width: 10%;">Status</th>
+                    <th style="width: 4%;">No</th>
+                    <th style="width: 13%;">Nama UPT</th>
+                    <th style="width: 9%;">Kanwil</th>
+                    <th style="width: 10%;">Jenis Layanan</th>
+                    <th style="width: 13%;">Keterangan</th>
+                    <th style="width: 10%;">Jadwal</th>
+                    <th style="width: 10%;">Tanggal Selesai</th>
+                    <th style="width: 7%;">Durasi</th>
+                    <th style="width: 9%;">Status</th>
                     <th style="width: 8%;">PIC 1</th>
                     <th style="width: 7%;">PIC 2</th>
                 </tr>
@@ -202,9 +219,14 @@
         </table>
     @else
         <div class="no-data">
-            <p>Tidak ada data monitoring client Reguler yang tersedia</p>
+            <p>Tidak ada data kunjungan yang tersedia</p>
         </div>
     @endif
+
+    <div class="footer">
+        <p>Dokumen ini digenerate secara otomatis oleh sistem Monitoring Client</p>
+        <p>&copy; {{ date('Y') }} Database UPT - All Rights Reserved</p>
+    </div>
 </body>
 
 </html>

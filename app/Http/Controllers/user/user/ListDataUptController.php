@@ -3,21 +3,20 @@
 namespace App\Http\Controllers\user\user;
 
 use App\Http\Controllers\Controller;
+use App\Models\user\kanwil\Kanwil;
 use App\Models\user\provider\Provider;
-use Illuminate\Http\Request;
 use App\Models\user\upt\Upt;
 use App\Models\user\vpn\Vpn;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use Barryvdh\DomPDF\Facade\Pdf;
-use App\Models\user\kanwil\Kanwil;
 
 class ListDataUptController extends Controller
 {
-
     private $optionalFields = [
         'pic_upt',
         'no_telpon',
@@ -42,17 +41,17 @@ class ListDataUptController extends Controller
         'no_pemanggil',
         'email_airdroid',
         'password',
-        'pin_tes'
+        'pin_tes',
     ];
 
     private function calculateStatus($dataOpsional)
     {
-        if (!$dataOpsional) {
+        if (! $dataOpsional) {
             return 'Belum di Update';
         }
         $filledFields = 0;
         foreach ($this->optionalFields as $field) {
-            if (!empty($dataOpsional->$field)) {
+            if (! empty($dataOpsional->$field)) {
                 $filledFields++;
             }
         }
@@ -71,40 +70,40 @@ class ListDataUptController extends Controller
     private function applyFilters($query, Request $request)
     {
         // Global search
-        if ($request->has('table_search') && !empty($request->table_search)) {
+        if ($request->has('table_search') && ! empty($request->table_search)) {
             $searchTerm = $request->table_search;
             $query->where(function ($q) use ($searchTerm) {
-                $q->where('namaupt', 'LIKE', '%' . $searchTerm . '%')
+                $q->where('namaupt', 'LIKE', '%'.$searchTerm.'%')
                     ->orWhereHas('kanwil', function ($q) use ($searchTerm) {
-                        $q->where('nama', 'LIKE', '%' . $searchTerm . '%');
+                        $q->where('nama', 'LIKE', '%'.$searchTerm.'%');
                     })
-                    ->orWhere('tanggal', 'LIKE', '%' . $searchTerm . '%')
+                    ->orWhere('tanggal', 'LIKE', '%'.$searchTerm.'%')
                     ->orWhereHas('dataOpsional', function ($subQuery) use ($searchTerm) {
-                        $subQuery->where('pic_upt', 'LIKE', '%' . $searchTerm . '%')
-                            ->orWhere('alamat', 'LIKE', '%' . $searchTerm . '%')
-                            ->orWhere('provider_internet', 'LIKE', '%' . $searchTerm . '%');
+                        $subQuery->where('pic_upt', 'LIKE', '%'.$searchTerm.'%')
+                            ->orWhere('alamat', 'LIKE', '%'.$searchTerm.'%')
+                            ->orWhere('provider_internet', 'LIKE', '%'.$searchTerm.'%');
                     });
             });
         }
 
         // Column-specific searches
-        if ($request->has('search_namaupt') && !empty($request->search_namaupt)) {
-            $query->where('namaupt', 'LIKE', '%' . $request->search_namaupt . '%');
+        if ($request->has('search_namaupt') && ! empty($request->search_namaupt)) {
+            $query->where('namaupt', 'LIKE', '%'.$request->search_namaupt.'%');
         }
-        if ($request->has('search_kanwil') && !empty($request->search_kanwil)) {
+        if ($request->has('search_kanwil') && ! empty($request->search_kanwil)) {
             $query->whereHas('kanwil', function ($q) use ($request) {
-                $q->where('kanwil', 'LIKE', '%' . $request->search_kanwil . '%');
+                $q->where('kanwil', 'LIKE', '%'.$request->search_kanwil.'%');
             });
         }
-        if ($request->has('search_tipe') && !empty($request->search_tipe)) {
-            $query->where('tipe', 'LIKE', '%' . $request->search_tipe . '%');
+        if ($request->has('search_tipe') && ! empty($request->search_tipe)) {
+            $query->where('tipe', 'LIKE', '%'.$request->search_tipe.'%');
         }
 
         // Date range filtering
-        if ($request->has('search_tanggal_dari') && !empty($request->search_tanggal_dari)) {
+        if ($request->has('search_tanggal_dari') && ! empty($request->search_tanggal_dari)) {
             $query->whereDate('tanggal', '>=', $request->search_tanggal_dari);
         }
-        if ($request->has('search_tanggal_sampai') && !empty($request->search_tanggal_sampai)) {
+        if ($request->has('search_tanggal_sampai') && ! empty($request->search_tanggal_sampai)) {
             $query->whereDate('tanggal', '<=', $request->search_tanggal_sampai);
         }
 
@@ -113,13 +112,16 @@ class ListDataUptController extends Controller
 
     private function applyStatusFilter($data, Request $request)
     {
-        if ($request->has('search_status') && !empty($request->search_status)) {
+        if ($request->has('search_status') && ! empty($request->search_status)) {
             $statusSearch = strtolower($request->search_status);
+
             return $data->filter(function ($d) use ($statusSearch) {
                 $status = strtolower($this->calculateStatus($d->dataOpsional));
+
                 return strpos($status, $statusSearch) !== false;
             });
         }
+
         return $data;
     }
 
@@ -134,7 +136,7 @@ class ListDataUptController extends Controller
             [
                 'path' => $request->url(),
                 'query' => $request->query(),
-                'pageName' => 'page'
+                'pageName' => 'page',
             ]
         );
     }
@@ -152,7 +154,7 @@ class ListDataUptController extends Controller
         // Cari semua data dengan nama UPT base yang sama (dengan atau tanpa suffix)
         $relatedData = Upt::where(function ($query) use ($namaUptBase) {
             $query->where('namaupt', $namaUptBase)
-                ->orWhere('namaupt', $namaUptBase . ' (VpasReg)');
+                ->orWhere('namaupt', $namaUptBase.' (VpasReg)');
         })->get();
 
         // Jika hanya tersisa 1 data, hapus suffix (VpasReg)
@@ -165,8 +167,8 @@ class ListDataUptController extends Controller
         // Jika masih ada 2 data (reguler dan vpas), pastikan keduanya menggunakan suffix
         elseif ($relatedData->count() == 2) {
             foreach ($relatedData as $data) {
-                if (!str_contains($data->namaupt, '(VpasReg)')) {
-                    $data->update(['namaupt' => $namaUptBase . ' (VpasReg)']);
+                if (! str_contains($data->namaupt, '(VpasReg)')) {
+                    $data->update(['namaupt' => $namaUptBase.' (VpasReg)']);
                 }
             }
         }
@@ -185,7 +187,7 @@ class ListDataUptController extends Controller
         $perPage = $request->get('per_page', 10);
 
         // Validate per_page
-        if (!in_array($perPage, [10, 15, 20, 'all'])) {
+        if (! in_array($perPage, [10, 15, 20, 'all'])) {
             $perPage = 10; // Changed from 20 to 10 as default
         }
 
@@ -217,7 +219,7 @@ class ListDataUptController extends Controller
                 [
                     'path' => $request->url(),
                     'query' => $request->query(),
-                    'pageName' => 'page'
+                    'pageName' => 'page',
                 ]
             );
         }
@@ -267,7 +269,7 @@ class ListDataUptController extends Controller
         // Tentukan nama UPT berdasarkan jumlah tipe yang dipilih
         $namaUpt = $cleanNamaUpt;
         if (count($selectedTypes) == 2 && in_array('reguler', $selectedTypes) && in_array('vpas', $selectedTypes)) {
-            $namaUpt = $cleanNamaUpt . ' (VpasReg)';
+            $namaUpt = $cleanNamaUpt.' (VpasReg)';
         }
 
         // Validasi manual untuk kombinasi nama UPT + tipe
@@ -299,7 +301,8 @@ class ListDataUptController extends Controller
 
         // Berikan pesan berdasarkan hasil
         if (count($createdRecords) > 0) {
-            $message = 'Data UPT berhasil ditambahkan untuk tipe: ' . implode(', ', $createdRecords);
+            $message = 'Data UPT berhasil ditambahkan untuk tipe: '.implode(', ', $createdRecords);
+
             return redirect()->route('User.UserPage')->with('success', $message);
         } else {
             return redirect()->back()
@@ -312,7 +315,7 @@ class ListDataUptController extends Controller
     {
         $dataupt = Upt::find($id);
 
-        if (!$dataupt) {
+        if (! $dataupt) {
             return redirect()->route('User.UserPage')->with('error', 'Data tidak ditemukan!');
         }
 
@@ -346,7 +349,7 @@ class ListDataUptController extends Controller
                         if ($existingRecord) {
                             $fail("Nama UPT '{$value}' dengan tipe '{$request->tipe}' sudah ada.");
                         }
-                    }
+                    },
                 ],
                 'kanwil_id' => 'required|exists:kanwil,id',
                 'tipe' => 'required|string|in:reguler,vpas',
@@ -394,14 +397,14 @@ class ListDataUptController extends Controller
             $data = $data->sortBy('tanggal')->values(); // Re-sort collection by tanggal
         }
 
-        $filename = 'list_upt_reguler_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
+        $filename = 'list_upt_reguler_'.Carbon::now()->format('Y-m-d_H-i-s').'.csv';
 
         $headers = [
-            "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=$filename",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
         ];
 
         $rows = [['No', 'Nama UPT', 'Kanwil', 'Tipe', 'Tanggal Dibuat', 'Status Update']];
@@ -414,7 +417,7 @@ class ListDataUptController extends Controller
                 $d->kanwil->kanwil ?? '-',
                 ucfirst($d->tipe),
                 \Carbon\Carbon::parse($d->tanggal)->format('d M Y'),
-                $status
+                $status,
             ];
         }
 
@@ -428,6 +431,7 @@ class ListDataUptController extends Controller
 
         return response()->stream($callback, 200, $headers);
     }
+
     public function exportListPdf(Request $request)
     {
         $query = Upt::with('dataOpsional')->whereIn('tipe', ['reguler', 'vpas']);
@@ -444,16 +448,16 @@ class ListDataUptController extends Controller
         $data = $this->applyStatusFilter($data, $request);
 
         $pdfData = [
-            'title' => 'List Data UPT Reguler',
+            'title' => 'List Data UPT',
             'data' => $data,
             'optionalFields' => $this->optionalFields,
-            'generated_at' => Carbon::now()->format('d M Y H:i:s')
+            'generated_at' => Carbon::now()->format('d M Y H:i:s'),
         ];
 
-        $pdf = Pdf::loadView('export.public.user.indexUpt', $pdfData);
-        $filename = 'list_upt_reguler_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
+        $pdf = Pdf::loadView('export.public.user.indexUpt', $pdfData)
+            ->setPaper('a4', 'landscape');
+        $filename = 'list_upt_reguler_'.Carbon::now()->translatedFormat('d_M_Y').'.pdf';
 
         return $pdf->download($filename);
     }
-
 }

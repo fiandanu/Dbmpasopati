@@ -183,7 +183,7 @@ class RegullerController extends Controller
         }
 
         // Filter by jenis_layanan
-        if ($request->has('search_jenis_layanan') && !empty($request->search_jenis_layanan)) {
+        if ($request->has('search_jenis_layanan') && ! empty($request->search_jenis_layanan)) {
             $collection = $collection->filter(function ($item) use ($request) {
                 return stripos($item['jenis_layanan'], $request->search_jenis_layanan) !== false;
             });
@@ -281,24 +281,24 @@ class RegullerController extends Controller
         // Column-specific searches
         if ($request->has('search_nama_upt') && ! empty($request->search_nama_upt)) {
             $query->whereHas('upt', function ($q) use ($request) {
-                $q->where('namaupt', 'LIKE', '%' . $request->search_nama_upt . '%');
+                $q->where('namaupt', 'LIKE', '%'.$request->search_nama_upt.'%');
             });
         }
 
         if ($request->has('search_kanwil') && ! empty($request->search_kanwil)) {
             $query->whereHas('upt.kanwil', function ($q) use ($request) {
-                $q->where('kanwil', 'LIKE', '%' . $request->search_kanwil . '%');
+                $q->where('kanwil', 'LIKE', '%'.$request->search_kanwil.'%');
             });
         }
 
         if ($request->has('search_detail_kendala') && ! empty($request->search_detail_kendala)) {
-            $query->where('detail_kendala', 'LIKE', '%' . $request->search_detail_kendala . '%');
+            $query->where('detail_kendala', 'LIKE', '%'.$request->search_detail_kendala.'%');
         }
 
         if ($request->has('search_jenis_kendala') && ! empty($request->search_jenis_kendala)) {
             $searchJenisKendala = strtolower($request->search_jenis_kendala);
             $query->where(function ($q) use ($searchJenisKendala) {
-                $q->where('jenis_kendala', 'LIKE', '%' . $searchJenisKendala . '%');
+                $q->where('jenis_kendala', 'LIKE', '%'.$searchJenisKendala.'%');
                 // Jika mencari "belum" atau "ditentukan", include yang NULL/empty
                 if (str_contains($searchJenisKendala, 'belum') || str_contains($searchJenisKendala, 'ditentukan')) {
                     $q->orWhereNull('jenis_kendala')
@@ -311,7 +311,7 @@ class RegullerController extends Controller
             $searchStatus = strtolower($request->search_status);
 
             $query->where(function ($q) use ($searchStatus) {
-                $q->where('status', 'LIKE', '%' . $searchStatus . '%');
+                $q->where('status', 'LIKE', '%'.$searchStatus.'%');
 
                 // Jika mencari "belum" atau "ditentukan", include yang NULL/empty
                 if (str_contains($searchStatus, 'belum') || str_contains($searchStatus, 'ditentukan')) {
@@ -322,10 +322,10 @@ class RegullerController extends Controller
         }
 
         if ($request->has('search_pic_1') && ! empty($request->search_pic_1)) {
-            $query->where('pic_1', 'LIKE', '%' . $request->search_pic_1 . '%');
+            $query->where('pic_1', 'LIKE', '%'.$request->search_pic_1.'%');
         }
         if ($request->has('search_pic_2') && ! empty($request->search_pic_2)) {
-            $query->where('pic_2', 'LIKE', '%' . $request->search_pic_2 . '%');
+            $query->where('pic_2', 'LIKE', '%'.$request->search_pic_2.'%');
         }
 
         // Date range filtering
@@ -412,7 +412,7 @@ class RegullerController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Gagal menambahkan data: ' . $e->getMessage());
+                ->with('error', 'Gagal menambahkan data: '.$e->getMessage());
         }
     }
 
@@ -483,7 +483,7 @@ class RegullerController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Gagal update data: ' . $e->getMessage());
+                ->with('error', 'Gagal update data: '.$e->getMessage());
         }
     }
 
@@ -498,11 +498,9 @@ class RegullerController extends Controller
                 ->with('success', "Data monitoring client Reguller di UPT '{$namaUpt}' berhasil dihapus!");
         } catch (\Exception $e) {
             return redirect()->back()
-                ->with('error', 'Gagal menghapus data: ' . $e->getMessage());
+                ->with('error', 'Gagal menghapus data: '.$e->getMessage());
         }
     }
-
-
 
     // EXPORT DATA MONIORING CLIENT
     public function exportMonitoringClientCsv(Request $request): StreamedResponse
@@ -573,7 +571,7 @@ class RegullerController extends Controller
         // Apply filters
         $allData = $this->applyMonitoringFilters($allData, $request);
 
-        $filename = 'monitoring_client_upt_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
+        $filename = 'monitoring_client_upt_'.Carbon::now()->format('Y-m-d_H-i-s').'.csv';
 
         $headers = [
             'Content-type' => 'text/csv',
@@ -682,8 +680,9 @@ class RegullerController extends Controller
             'generated_at' => Carbon::now()->format('d M Y H:i:s'),
         ];
 
-        $pdf = Pdf::loadView('export.public.mclient.MclientUpt', $pdfData);
-        $filename = 'monitoring_client_upt_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
+        $pdf = Pdf::loadView('export.public.mclient.MclientUpt', $pdfData)
+            ->setPaper('a4', 'landscape');
+        $filename = 'monitoring_client_upt_'.Carbon::now()->translatedFormat('d_M_Y').'.pdf';
 
         return $pdf->download($filename);
     }
@@ -710,8 +709,9 @@ class RegullerController extends Controller
             'generated_at' => Carbon::now()->format('d M Y H:i:s'),
         ];
 
-        $pdf = Pdf::loadView('export.public.mclient.upt.indexReguller', $pdfData);
-        $filename = 'list_monitoring_client_reguler_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
+        $pdf = Pdf::loadView('export.public.mclient.upt.indexReguller', $pdfData)
+            ->setPaper('a4', 'landscape');
+        $filename = 'list_monitoring_client_reguler_'.Carbon::now()->translatedFormat('d_M_Y').'.pdf';
 
         return $pdf->download($filename);
     }
@@ -731,7 +731,7 @@ class RegullerController extends Controller
 
         $data = $query->orderBy('created_at', 'desc')->get();
 
-        $filename = 'list_monitoring_client_reguler_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
+        $filename = 'list_monitoring_client_reguler_'.Carbon::now()->format('Y-m-d_H-i-s').'.csv';
 
         $headers = [
             'Content-type' => 'text/csv',

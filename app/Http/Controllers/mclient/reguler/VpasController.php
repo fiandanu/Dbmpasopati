@@ -303,7 +303,8 @@ class VpasController extends Controller
             'generated_at' => Carbon::now()->format('d M Y H:i:s'),
         ];
 
-        $pdf = Pdf::loadView('export.public.mclient.upt.indexVpas', $pdfData);
+        $pdf = Pdf::loadView('export.public.mclient.upt.indexVpas', $pdfData)
+            ->setPaper('a4', 'landscape');
         $filename = 'list_monitoring_client_vpas_'.Carbon::now()->translatedFormat('d_M_Y').'.pdf';
 
         return $pdf->download($filename);

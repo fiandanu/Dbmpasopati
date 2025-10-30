@@ -4,13 +4,13 @@ namespace App\Http\Controllers\tutorial\upt;
 
 use App\Http\Controllers\Controller;
 use App\Models\tutorial\upt\Reguller;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Log;
-use Carbon\Carbon;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class RegullerController extends Controller
 {
@@ -20,8 +20,8 @@ class RegullerController extends Controller
         $totalFolders = 10;
 
         for ($i = 1; $i <= 10; $i++) {
-            $column = 'pdf_folder_' . $i;
-            if (!empty($reguller->$column)) {
+            $column = 'pdf_folder_'.$i;
+            if (! empty($reguller->$column)) {
                 $uploadedFolders++;
             }
         }
@@ -31,32 +31,32 @@ class RegullerController extends Controller
         } elseif ($uploadedFolders == $totalFolders) {
             return '10/10 Folder';
         } else {
-            return $uploadedFolders . '/' . $totalFolders . ' Terupload';
+            return $uploadedFolders.'/'.$totalFolders.' Terupload';
         }
     }
 
     private function applyFilters($query, Request $request)
     {
         // Global search
-        if ($request->has('table_search') && !empty($request->table_search)) {
+        if ($request->has('table_search') && ! empty($request->table_search)) {
             $searchTerm = $request->table_search;
             $query->where(function ($q) use ($searchTerm) {
-                $q->where('tutor_reguller', 'LIKE', '%' . $searchTerm . '%')
-                    ->orWhere('tanggal', 'LIKE', '%' . $searchTerm . '%');
+                $q->where('tutor_reguller', 'LIKE', '%'.$searchTerm.'%')
+                    ->orWhere('tanggal', 'LIKE', '%'.$searchTerm.'%');
             });
         }
 
         // Column-specific searches
-        if ($request->has('search_judul_tutorial') && !empty($request->search_judul_tutorial)) {
-            $query->where('tutor_reguller', 'LIKE', '%' . $request->search_judul_tutorial . '%');
+        if ($request->has('search_judul_tutorial') && ! empty($request->search_judul_tutorial)) {
+            $query->where('tutor_reguller', 'LIKE', '%'.$request->search_judul_tutorial.'%');
         }
 
         // Date range filtering
-        if ($request->has('search_tanggal_dibuat_dari') && !empty($request->search_tanggal_dibuat_dari)) {
+        if ($request->has('search_tanggal_dibuat_dari') && ! empty($request->search_tanggal_dibuat_dari)) {
             $query->whereDate('tanggal', '>=', $request->search_tanggal_dibuat_dari);
         }
 
-        if ($request->has('search_tanggal_dibuat_sampai') && !empty($request->search_tanggal_dibuat_sampai)) {
+        if ($request->has('search_tanggal_dibuat_sampai') && ! empty($request->search_tanggal_dibuat_sampai)) {
             $query->whereDate('tanggal', '<=', $request->search_tanggal_dibuat_sampai);
         }
 
@@ -65,13 +65,16 @@ class RegullerController extends Controller
 
     private function applyPdfStatusFilter($data, Request $request)
     {
-        if ($request->has('search_status') && !empty($request->search_status)) {
+        if ($request->has('search_status') && ! empty($request->search_status)) {
             $statusSearch = strtolower($request->search_status);
+
             return $data->filter(function ($d) use ($statusSearch) {
                 $status = strtolower($this->calculatePdfStatus($d));
+
                 return strpos($status, $statusSearch) !== false;
             });
         }
+
         return $data;
     }
 
@@ -112,7 +115,7 @@ class RegullerController extends Controller
         $perPage = $request->get('per_page', 10);
 
         // Validate per_page
-        if (!in_array($perPage, [10, 15, 20, 'all'])) {
+        if (! in_array($perPage, [10, 15, 20, 'all'])) {
             $perPage = 10;
         }
 
@@ -149,7 +152,7 @@ class RegullerController extends Controller
                 [
                     'path' => $request->url(),
                     'query' => $request->query(),
-                    'pageName' => 'page'
+                    'pageName' => 'page',
                 ]
             );
         }
@@ -163,51 +166,54 @@ class RegullerController extends Controller
             $dataupt = Reguller::findOrFail($id);
 
             for ($i = 1; $i <= 10; $i++) {
-                $column = 'pdf_folder_' . $i;
-                if (!empty($dataupt->$column) && Storage::disk('public')->exists($dataupt->$column)) {
+                $column = 'pdf_folder_'.$i;
+                if (! empty($dataupt->$column) && Storage::disk('public')->exists($dataupt->$column)) {
                     Storage::disk('public')->delete($dataupt->$column);
                 }
             }
 
             $dataupt->delete();
+
             return redirect()->back()->with('success', 'Data berhasil dihapus');
         } catch (\Exception $e) {
-            Log::error('Error deleting Reguller: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Gagal menghapus data: ' . $e->getMessage());
+            Log::error('Error deleting Reguller: '.$e->getMessage());
+
+            return redirect()->back()->with('error', 'Gagal menghapus data: '.$e->getMessage());
         }
     }
 
     public function viewUploadedPDF($id, $folder)
     {
         try {
-            if (!in_array($folder, range(1, 10))) {
+            if (! in_array($folder, range(1, 10))) {
                 return abort(400, 'Folder tidak valid.');
             }
 
             $tutorial = Reguller::findOrFail($id);
-            $column = 'pdf_folder_' . $folder;
+            $column = 'pdf_folder_'.$folder;
 
             if (empty($tutorial->$column)) {
-                return abort(404, 'File PDF belum diupload untuk folder ' . $folder . '.');
+                return abort(404, 'File PDF belum diupload untuk folder '.$folder.'.');
             }
 
-            $filePath = storage_path('app/public/' . $tutorial->$column);
+            $filePath = storage_path('app/public/'.$tutorial->$column);
 
-            if (!file_exists($filePath)) {
+            if (! file_exists($filePath)) {
                 return abort(404, 'File tidak ditemukan di storage.');
             }
 
             return response()->file($filePath);
         } catch (\Exception $e) {
-            Log::error('Error viewing PDF: ' . $e->getMessage());
-            return abort(500, 'Error loading PDF: ' . $e->getMessage());
+            Log::error('Error viewing PDF: '.$e->getMessage());
+
+            return abort(500, 'Error loading PDF: '.$e->getMessage());
         }
     }
 
     public function uploadFilePDF(Request $request, $id, $folder)
     {
         try {
-            if (!in_array($folder, range(1, 10))) {
+            if (! in_array($folder, range(1, 10))) {
                 return redirect()->back()->with('error', 'Folder tidak valid.');
             }
 
@@ -216,37 +222,37 @@ class RegullerController extends Controller
             ], [
                 'uploaded_pdf.required' => 'File PDF harus dipilih.',
                 'uploaded_pdf.mimes' => 'File harus berformat PDF.',
-                'uploaded_pdf.max' => 'Ukuran file maksimal 10MB.'
+                'uploaded_pdf.max' => 'Ukuran file maksimal 10MB.',
             ]);
 
-            if (!$request->hasFile('uploaded_pdf')) {
+            if (! $request->hasFile('uploaded_pdf')) {
                 return redirect()->back()->with('error', 'File tidak ditemukan dalam request!');
             }
 
             $tutorial = Reguller::findOrFail($id);
             $file = $request->file('uploaded_pdf');
 
-            if (!$file || !$file->isValid()) {
+            if (! $file || ! $file->isValid()) {
                 return redirect()->back()->with('error', 'File tidak valid!');
             }
 
-            $column = 'pdf_folder_' . $folder;
-            if (!empty($tutorial->$column) && Storage::disk('public')->exists($tutorial->$column)) {
+            $column = 'pdf_folder_'.$folder;
+            if (! empty($tutorial->$column) && Storage::disk('public')->exists($tutorial->$column)) {
                 Storage::disk('public')->delete($tutorial->$column);
             }
 
             $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
             $sanitizedName = preg_replace('/[^A-Za-z0-9\-_.]/', '_', $originalName);
-            $filename = time() . '_' . $sanitizedName . '.pdf';
+            $filename = time().'_'.$sanitizedName.'.pdf';
 
-            $directory = 'tutorial/upt/reguller/folder_' . $folder;
-            if (!Storage::disk('public')->exists($directory)) {
+            $directory = 'tutorial/upt/reguller/folder_'.$folder;
+            if (! Storage::disk('public')->exists($directory)) {
                 Storage::disk('public')->makeDirectory($directory);
             }
 
             $path = $file->storeAs($directory, $filename, 'public');
 
-            if (!$path) {
+            if (! $path) {
                 return redirect()->back()->with('error', 'Gagal menyimpan file!');
             }
 
@@ -255,27 +261,28 @@ class RegullerController extends Controller
 
             Log::info("PDF uploaded successfully for Reguller ID: {$id}, Folder: {$folder}, Path: {$path}");
 
-            return redirect()->back()->with('success', 'PDF berhasil di-upload ke folder ' . $folder . '!');
+            return redirect()->back()->with('success', 'PDF berhasil di-upload ke folder '.$folder.'!');
         } catch (\Illuminate\Validation\ValidationException $e) {
             return redirect()->back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
-            Log::error('Error uploading PDF Reguller: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Gagal upload file: ' . $e->getMessage());
+            Log::error('Error uploading PDF Reguller: '.$e->getMessage());
+
+            return redirect()->back()->with('error', 'Gagal upload file: '.$e->getMessage());
         }
     }
 
     public function deleteFilePDF($id, $folder)
     {
         try {
-            if (!in_array($folder, range(1, 10))) {
+            if (! in_array($folder, range(1, 10))) {
                 return redirect()->back()->with('error', 'Folder tidak valid.');
             }
 
             $tutorial = Reguller::findOrFail($id);
-            $column = 'pdf_folder_' . $folder;
+            $column = 'pdf_folder_'.$folder;
 
             if (empty($tutorial->$column)) {
-                return redirect()->back()->with('error', 'File PDF belum di-upload di folder ' . $folder . '.');
+                return redirect()->back()->with('error', 'File PDF belum di-upload di folder '.$folder.'.');
             }
 
             if (Storage::disk('public')->exists($tutorial->$column)) {
@@ -285,10 +292,11 @@ class RegullerController extends Controller
             $tutorial->$column = null;
             $tutorial->save();
 
-            return redirect()->back()->with('success', 'File PDF di folder ' . $folder . ' berhasil dihapus');
+            return redirect()->back()->with('success', 'File PDF di folder '.$folder.' berhasil dihapus');
         } catch (\Exception $e) {
-            Log::error('Error deleting PDF Reguller: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Gagal menghapus file: ' . $e->getMessage());
+            Log::error('Error deleting PDF Reguller: '.$e->getMessage());
+
+            return redirect()->back()->with('error', 'Gagal menghapus file: '.$e->getMessage());
         }
     }
 
@@ -314,11 +322,12 @@ class RegullerController extends Controller
         $pdfData = [
             'title' => 'List Data Tutorial Reguler',
             'data' => $data,
-            'generated_at' => Carbon::now()->format('d M Y H:i:s')
+            'generated_at' => Carbon::now()->format('d M Y H:i:s'),
         ];
 
-        $pdf = Pdf::loadView('export.public.tutorial.upt.indexReguler', $pdfData);
-        $filename = 'list_tutorial_reguler_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
+        $pdf = Pdf::loadView('export.public.tutorial.upt.indexReguler', $pdfData)
+            ->setPaper('a4', 'landscape');
+        $filename = 'list_tutorial_reguler_'.Carbon::now()->translatedFormat('d_M_Y').'.pdf';
 
         return $pdf->download($filename);
     }
@@ -343,14 +352,14 @@ class RegullerController extends Controller
             $data = $data->sortBy('tanggal')->values();
         }
 
-        $filename = 'list_tutorial_reguler_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
+        $filename = 'list_tutorial_reguler_'.Carbon::now()->format('Y-m-d_H-i-s').'.csv';
 
         $headers = [
-            "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=$filename",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
         ];
 
         $rows = [['No', 'Judul Tutorial', 'Tanggal Dibuat', 'Status Upload PDF']];
@@ -361,7 +370,7 @@ class RegullerController extends Controller
                 $no++,
                 $d->tutor_reguller,
                 Carbon::parse($d->tanggal)->format('d M Y'),
-                $status
+                $status,
             ];
         }
 
@@ -375,5 +384,4 @@ class RegullerController extends Controller
 
         return response()->stream($callback, 200, $headers);
     }
-    
 }

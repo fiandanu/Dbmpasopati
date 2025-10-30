@@ -4,9 +4,9 @@ namespace App\Http\Controllers\user\ponpes;
 
 use App\Http\Controllers\Controller;
 use App\Models\user\ponpes\Ponpes;
-use Illuminate\Http\Request;
-use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DashboardPonpesController extends Controller
@@ -44,7 +44,7 @@ class DashboardPonpesController extends Controller
             $perPage = $request->get('per_page', 10);
 
             // Validate per_page
-            if (!in_array($perPage, [10, 15, 20, 'all'])) {
+            if (! in_array($perPage, [10, 15, 20, 'all'])) {
                 $perPage = 10;
             }
 
@@ -78,7 +78,7 @@ class DashboardPonpesController extends Controller
                     [
                         'path' => $request->url(),
                         'query' => $request->query(),
-                        'pageName' => 'page'
+                        'pageName' => 'page',
                     ]
                 );
             }
@@ -112,32 +112,32 @@ class DashboardPonpesController extends Controller
         } catch (\Exception $e) {
             // Jika terjadi error, redirect dengan pesan error
             return redirect()->route('database.DbPonpes')
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+                ->with('error', 'Terjadi kesalahan: '.$e->getMessage());
         }
     }
 
     private function applyFilters($query, Request $request)
     {
-        if ($request->has('search_namaponpes') && !empty($request->search_namaponpes)) {
-            $query->where('nama_ponpes', 'LIKE', '%' . $request->search_namaponpes . '%');
+        if ($request->has('search_namaponpes') && ! empty($request->search_namaponpes)) {
+            $query->where('nama_ponpes', 'LIKE', '%'.$request->search_namaponpes.'%');
         }
 
-        if ($request->has('search_wilayah') && !empty($request->search_wilayah)) {
+        if ($request->has('search_wilayah') && ! empty($request->search_wilayah)) {
             $query->whereHas('namaWilayah', function ($q) use ($request) {
-                $q->where('nama_wilayah', 'LIKE', '%' . $request->search_wilayah . '%');
+                $q->where('nama_wilayah', 'LIKE', '%'.$request->search_wilayah.'%');
             });
         }
 
         // ===== TAMBAH INI: Filter tipe =====
-        if ($request->has('search_tipe') && !empty($request->search_tipe)) {
-            $query->where('tipe', 'LIKE', '%' . $request->search_tipe . '%');
+        if ($request->has('search_tipe') && ! empty($request->search_tipe)) {
+            $query->where('tipe', 'LIKE', '%'.$request->search_tipe.'%');
         }
         // ===== AKHIR PENAMBAHAN =====
 
         // ===== UBAH INI: Filter Extension Universal =====
-        if ($request->has('search_extension') && !empty($request->search_extension)) {
+        if ($request->has('search_extension') && ! empty($request->search_extension)) {
             $query->whereHas('dataOpsional', function ($q) use ($request) {
-                $q->where('jumlah_extension', 'LIKE', '%' . $request->search_extension . '%');
+                $q->where('jumlah_extension', 'LIKE', '%'.$request->search_extension.'%');
             });
         }
         // ===== AKHIR PERUBAHAN =====
@@ -148,28 +148,30 @@ class DashboardPonpesController extends Controller
     private function applyStatusFilter($data, Request $request)
     {
         // PKS Status filter
-        if ($request->has('search_status_pks') && !empty($request->search_status_pks)) {
+        if ($request->has('search_status_pks') && ! empty($request->search_status_pks)) {
             $statusSearch = strtolower($request->search_status_pks);
             $data = $data->filter(function ($d) use ($statusSearch) {
                 $status = strtolower($this->calculatePksStatus($d->uploadFolderPks));
+
                 return strpos($status, $statusSearch) !== false;
             });
         }
 
         // SPP Status filter
-        if ($request->has('search_status_spp') && !empty($request->search_status_spp)) {
+        if ($request->has('search_status_spp') && ! empty($request->search_status_spp)) {
             $statusSearch = strtolower($request->search_status_spp);
             $data = $data->filter(function ($d) use ($statusSearch) {
                 $status = strtolower($this->calculateSppStatus($d->uploadFolderSpp));
+
                 return strpos($status, $statusSearch) !== false;
             });
         }
 
         // ===== UBAH INI: Status Wartel Universal =====
-        if ($request->has('search_status_wartel') && !empty($request->search_status_wartel)) {
+        if ($request->has('search_status_wartel') && ! empty($request->search_status_wartel)) {
             $statusSearch = strtolower(trim($request->search_status_wartel));
             $data = $data->filter(function ($d) use ($statusSearch) {
-                if (!$d->dataOpsional || !isset($d->dataOpsional->status_wartel)) {
+                if (! $d->dataOpsional || ! isset($d->dataOpsional->status_wartel)) {
                     return $statusSearch === '-';
                 }
 
@@ -191,12 +193,12 @@ class DashboardPonpesController extends Controller
 
     private function calculatePksStatus($uploadFolder)
     {
-        if (!$uploadFolder) {
+        if (! $uploadFolder) {
             return 'Belum Upload';
         }
 
-        $hasPdf1 = !empty($uploadFolder->uploaded_pdf_1);
-        $hasPdf2 = !empty($uploadFolder->uploaded_pdf_2);
+        $hasPdf1 = ! empty($uploadFolder->uploaded_pdf_1);
+        $hasPdf2 = ! empty($uploadFolder->uploaded_pdf_2);
 
         if ($hasPdf1 && $hasPdf2) {
             return 'Sudah Upload (2/2)';
@@ -209,14 +211,14 @@ class DashboardPonpesController extends Controller
 
     private function calculateSppStatus($uploadFolder)
     {
-        if (!$uploadFolder) {
+        if (! $uploadFolder) {
             return 'Belum Upload';
         }
 
         $uploadedFolders = 0;
         for ($i = 1; $i <= 10; $i++) {
-            $column = 'pdf_folder_' . $i;
-            if (!empty($uploadFolder->$column)) {
+            $column = 'pdf_folder_'.$i;
+            if (! empty($uploadFolder->$column)) {
                 $uploadedFolders++;
             }
         }
@@ -226,7 +228,7 @@ class DashboardPonpesController extends Controller
         } elseif ($uploadedFolders == 10) {
             return '10/10 Folder';
         } else {
-            return $uploadedFolders . '/10 Terupload';
+            return $uploadedFolders.'/10 Terupload';
         }
     }
 
@@ -245,14 +247,14 @@ class DashboardPonpesController extends Controller
         $data = $query->orderBy('nama_ponpes', 'asc')->get();
         $data = $this->applyStatusFilter($data, $request);
 
-        $filename = 'dashboard_ponpes_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
+        $filename = 'dashboard_ponpes_'.Carbon::now()->format('Y-m-d_H-i-s').'.csv';
 
         $headers = [
-            "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=$filename",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
         ];
 
         // Header CSV dengan kolom Tipe
@@ -272,7 +274,7 @@ class DashboardPonpesController extends Controller
                 $this->calculatePksStatus($d->uploadFolderPks),
                 $this->calculateSppStatus($d->uploadFolderSpp),
                 $extension,
-                $statusWartel
+                $statusWartel,
             ];
         }
 
@@ -286,6 +288,7 @@ class DashboardPonpesController extends Controller
 
         return response()->stream($callback, 200, $headers);
     }
+
     public function exportPdf(Request $request)
     {
         $query = Ponpes::with(['namaWilayah', 'uploadFolderPks', 'uploadFolderSpp', 'dataOpsional']);
@@ -304,17 +307,19 @@ class DashboardPonpesController extends Controller
         $data = $data->map(function ($item) {
             $item->pks_status = $this->calculatePksStatus($item->uploadFolderPks);
             $item->spp_status = $this->calculateSppStatus($item->uploadFolderSpp);
+
             return $item;
         });
 
         $pdfData = [
             'title' => 'Dashboard Database PONPES',
             'data' => $data,
-            'generated_at' => Carbon::now()->format('d M Y H:i:s')
+            'generated_at' => Carbon::now()->format('d M Y H:i:s'),
         ];
 
-        $pdf = Pdf::loadView('export.public.db.DatabasePonpes', $pdfData);
-        $filename = 'dashboard_ponpes_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
+        $pdf = Pdf::loadView('export.public.db.DatabasePonpes', $pdfData)
+            ->setPaper('a4', 'landscape');
+        $filename = 'dashboard_ponpes_'.Carbon::now()->translatedFormat('d_M_Y').'.pdf';
 
         return $pdf->download($filename);
     }
@@ -341,13 +346,14 @@ class DashboardPonpesController extends Controller
         foreach ($data as $item) {
             $uploadFolder = $item->uploadFolderPks;
 
-            if (!$uploadFolder) {
+            if (! $uploadFolder) {
                 $belumUpload++;
+
                 continue;
             }
 
-            $hasPdf1 = !empty($uploadFolder->uploaded_pdf_1);
-            $hasPdf2 = !empty($uploadFolder->uploaded_pdf_2);
+            $hasPdf1 = ! empty($uploadFolder->uploaded_pdf_1);
+            $hasPdf2 = ! empty($uploadFolder->uploaded_pdf_2);
 
             if ($hasPdf1 && $hasPdf2) {
                 $sudahUpload++;
@@ -388,15 +394,16 @@ class DashboardPonpesController extends Controller
         foreach ($data as $item) {
             $uploadFolder = $item->uploadFolderSpp;
 
-            if (!$uploadFolder) {
+            if (! $uploadFolder) {
                 $belumUpload++;
+
                 continue;
             }
 
             $uploadedFolders = 0;
             for ($i = 1; $i <= 10; $i++) {
-                $column = 'pdf_folder_' . $i;
-                if (!empty($uploadFolder->$column)) {
+                $column = 'pdf_folder_'.$i;
+                if (! empty($uploadFolder->$column)) {
                     $uploadedFolders++;
                 }
             }
@@ -441,7 +448,7 @@ class DashboardPonpesController extends Controller
             'no_pemanggil',
             'email_airdroid',
             'password',
-            'pin_tes'
+            'pin_tes',
         ];
 
         $query = Ponpes::where('tipe', 'vtren');
@@ -464,14 +471,15 @@ class DashboardPonpesController extends Controller
         foreach ($data as $item) {
             $dataOpsional = $item->dataOpsional;
 
-            if (!$dataOpsional) {
+            if (! $dataOpsional) {
                 $belumUpdate++;
+
                 continue;
             }
 
             $filledFields = 0;
             foreach ($optionalFields as $field) {
-                if (!empty($dataOpsional->$field)) {
+                if (! empty($dataOpsional->$field)) {
                     $filledFields++;
                 }
             }
@@ -517,7 +525,7 @@ class DashboardPonpesController extends Controller
             'jumlah_extension',
             'no_extension',
             'extension_password',
-            'pin_tes'
+            'pin_tes',
         ];
 
         $query = Ponpes::where('tipe', 'reguler');
@@ -540,14 +548,15 @@ class DashboardPonpesController extends Controller
         foreach ($data as $item) {
             $dataOpsional = $item->dataOpsional;
 
-            if (!$dataOpsional) {
+            if (! $dataOpsional) {
                 $belumUpdate++;
+
                 continue;
             }
 
             $filledFields = 0;
             foreach ($optionalFields as $field) {
-                if (!empty($dataOpsional->$field)) {
+                if (! empty($dataOpsional->$field)) {
                     $filledFields++;
                 }
             }

@@ -3,16 +3,16 @@
 namespace App\Http\Controllers\user\upt\vpas;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Models\db\upt\DataOpsionalUpt;
 use App\Models\user\provider\Provider;
 use App\Models\user\upt\Upt;
-use App\Models\db\upt\DataOpsionalUpt;
 use App\Models\user\vpn\Vpn;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\DB;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class VpasController extends Controller
 {
@@ -37,17 +37,17 @@ class VpasController extends Controller
         'no_pemanggil',
         'email_airdroid',
         'password',
-        'pin_tes'
+        'pin_tes',
     ];
 
     private function calculateStatus($dataOpsional)
     {
-        if (!$dataOpsional) {
+        if (! $dataOpsional) {
             return 'Belum di Update';
         }
         $filledFields = 0;
         foreach ($this->optionalFields as $field) {
-            if (!empty($dataOpsional->$field)) {
+            if (! empty($dataOpsional->$field)) {
                 $filledFields++;
             }
         }
@@ -67,23 +67,23 @@ class VpasController extends Controller
     {
 
         // Column-specific searches
-        if ($request->has('search_namaupt') && !empty($request->search_namaupt)) {
-            $query->where('namaupt', 'LIKE', '%' . $request->search_namaupt . '%');
+        if ($request->has('search_namaupt') && ! empty($request->search_namaupt)) {
+            $query->where('namaupt', 'LIKE', '%'.$request->search_namaupt.'%');
         }
-        if ($request->has('search_kanwil') && !empty($request->search_kanwil)) {
+        if ($request->has('search_kanwil') && ! empty($request->search_kanwil)) {
             $query->whereHas('kanwil', function ($q) use ($request) {
-                $q->where('kanwil', 'LIKE', '%' . $request->search_kanwil . '%');
+                $q->where('kanwil', 'LIKE', '%'.$request->search_kanwil.'%');
             });
         }
-        if ($request->has('search_tipe') && !empty($request->search_tipe)) {
-            $query->where('tipe', 'LIKE', '%' . $request->search_tipe . '%');
+        if ($request->has('search_tipe') && ! empty($request->search_tipe)) {
+            $query->where('tipe', 'LIKE', '%'.$request->search_tipe.'%');
         }
 
         // Date range filtering
-        if ($request->has('search_tanggal_dari') && !empty($request->search_tanggal_dari)) {
+        if ($request->has('search_tanggal_dari') && ! empty($request->search_tanggal_dari)) {
             $query->whereDate('tanggal', '>=', $request->search_tanggal_dari);
         }
-        if ($request->has('search_tanggal_sampai') && !empty($request->search_tanggal_sampai)) {
+        if ($request->has('search_tanggal_sampai') && ! empty($request->search_tanggal_sampai)) {
             $query->whereDate('tanggal', '<=', $request->search_tanggal_sampai);
         }
 
@@ -92,13 +92,16 @@ class VpasController extends Controller
 
     private function applyStatusFilter($data, Request $request)
     {
-        if ($request->has('search_status') && !empty($request->search_status)) {
+        if ($request->has('search_status') && ! empty($request->search_status)) {
             $statusSearch = strtolower($request->search_status);
+
             return $data->filter(function ($d) use ($statusSearch) {
                 $status = strtolower($this->calculateStatus($d->dataOpsional));
+
                 return strpos($status, $statusSearch) !== false;
             });
         }
+
         return $data;
     }
 
@@ -113,7 +116,7 @@ class VpasController extends Controller
         $perPage = $request->get('per_page', 10);
 
         // Validate per_page
-        if (!in_array($perPage, [10, 15, 20, 'all'])) {
+        if (! in_array($perPage, [10, 15, 20, 'all'])) {
             $perPage = 20;
         }
 
@@ -150,7 +153,7 @@ class VpasController extends Controller
                 [
                     'path' => $request->url(),
                     'query' => $request->query(),
-                    'pageName' => 'page'
+                    'pageName' => 'page',
                 ]
             );
         }
@@ -286,10 +289,12 @@ class VpasController extends Controller
             );
 
             DB::commit();
+
             return redirect()->back()->with('success', 'Data berhasil diupdate!');
         } catch (\Exception $e) {
             DB::rollback();
-            return redirect()->back()->with('error', 'Gagal update data: ' . $e->getMessage());
+
+            return redirect()->back()->with('error', 'Gagal update data: '.$e->getMessage());
         }
     }
 
@@ -297,7 +302,7 @@ class VpasController extends Controller
     {
         $dataupt = Upt::find($id);
 
-        if (!$dataupt) {
+        if (! $dataupt) {
             return redirect()->route('vpas.ListDataVpas')->with('error', 'Data tidak ditemukan!');
         }
 
@@ -313,7 +318,6 @@ class VpasController extends Controller
         return redirect()->route('vpas.ListDataVpas')->with('success', 'Data berhasil dihapus!');
     }
 
-
     private function removeVpasRegSuffix($namaUpt)
     {
         // Hapus semua kemungkinan suffix (VpasReg) yang mungkin ganda
@@ -322,14 +326,14 @@ class VpasController extends Controller
 
     private function updateUptNamesBySuffix($namaUptBase)
     {
-        $relatedData = Upt::where('namaupt', 'LIKE', $namaUptBase . '%')->get();
+        $relatedData = Upt::where('namaupt', 'LIKE', $namaUptBase.'%')->get();
 
         // Jika ada 2 atau lebih data dengan nama base yang sama, pastikan ada suffix
         if ($relatedData->count() >= 2) {
             foreach ($relatedData as $data) {
-                if (!str_contains($data->namaupt, '(VpasReg)')) {
+                if (! str_contains($data->namaupt, '(VpasReg)')) {
                     $data->update([
-                        'namaupt' => $namaUptBase . ' (VpasReg)'
+                        'namaupt' => $namaUptBase.' (VpasReg)',
                     ]);
                 }
             }
@@ -339,7 +343,7 @@ class VpasController extends Controller
             $remainingData = $relatedData->first();
             if (str_contains($remainingData->namaupt, '(VpasReg)')) {
                 $remainingData->update([
-                    'namaupt' => $namaUptBase
+                    'namaupt' => $namaUptBase,
                 ]);
             }
         }
@@ -364,21 +368,20 @@ class VpasController extends Controller
         return ucfirst($status);
     }
 
-    
     // Export data PDF INDIVIDUAL
     public function exportVerticalCsv($id): StreamedResponse
     {
         $user = Upt::with('dataOpsional')->findOrFail($id);
         $dataOpsional = $user->dataOpsional;
 
-        $filename = 'data_upt_vpas_' . $user->namaupt . '.csv';
+        $filename = 'data_upt_vpas_'.$user->namaupt.'.csv';
 
         $headers = [
-            "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=$filename",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
         ];
 
         $rows = [
@@ -424,14 +427,15 @@ class VpasController extends Controller
         $user = Upt::with('dataOpsional')->findOrFail($id);
 
         $data = [
-            'title' => 'Data UPT VPAS ' . $user->namaupt,
+            'title' => 'Data UPT VPAS '.$user->namaupt,
             'user' => $user,
         ];
 
-        $pdf = Pdf::loadView('export.private.upt.indexUpt', $data);
-        return $pdf->download('data_upt_vpas_' . $user->namaupt . '.pdf');
-    }
+        $pdf = Pdf::loadView('export.private.upt.indexUpt', $data)
+            ->setPaper('a4', 'landscape');
 
+        return $pdf->download('data_upt_vpas_'.$user->namaupt.'.pdf');
+    }
 
     // Export data CSV GLOBAL
     public function exportListCsv(Request $request): StreamedResponse
@@ -454,14 +458,14 @@ class VpasController extends Controller
             $data = $data->sortBy('tanggal')->values();
         }
 
-        $filename = 'list_upt_vpas_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
+        $filename = 'list_upt_vpas_'.Carbon::now()->format('Y-m-d_H-i-s').'.csv';
 
         $headers = [
-            "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=$filename",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
         ];
 
         $rows = [['No', 'Nama UPT', 'Kanwil', 'Tipe', 'Tanggal Dibuat', 'Status Update']];
@@ -474,7 +478,7 @@ class VpasController extends Controller
                 $d->kanwil->kanwil,
                 ucfirst($d->tipe),
                 \Carbon\Carbon::parse($d->tanggal)->format('d M Y'),
-                $status
+                $status,
             ];
         }
 
@@ -509,13 +513,13 @@ class VpasController extends Controller
             'title' => 'List Data UPT VPAS',
             'data' => $data,
             'optionalFields' => $this->optionalFields,
-            'generated_at' => Carbon::now()->format('d M Y H:i:s')
+            'generated_at' => Carbon::now()->format('d M Y H:i:s'),
         ];
 
-        $pdf = Pdf::loadView('export.public.db.upt.indexVpas', $pdfData);
-        $filename = 'list_upt_vpas_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
+        $pdf = Pdf::loadView('export.public.db.upt.indexVpas', $pdfData)
+            ->setPaper('a4', 'landscape');
+        $filename = 'list_upt_vpas_'.Carbon::now()->translatedFormat('d_M_Y').'.pdf';
 
         return $pdf->download($filename);
     }
-
 }

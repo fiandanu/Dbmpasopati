@@ -6,12 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title }}</title>
     <style>
+        @page {
+            size: A4 landscape;
+            margin: 15mm;
+        }
+
         body {
             font-family: Arial, sans-serif;
             font-size: 10px;
             margin: 0;
             padding: 20px;
         }
+
 
         .header {
             text-align: center;
@@ -165,7 +171,7 @@
                     <td>{{ $no++ }}</td>
                     <td>{{ $d->namaupt }}</td>
                     <td>
-                        <span class="tag">{{ $d->kanwil->kanwil }}</span>
+                        <span>{{ $d->kanwil->kanwil }}</span>
                     </td>
                     <td>
                         <span class="badge badge-{{ $d->tipe == 'vpas' ? 'vpas' : 'reguler' }}">

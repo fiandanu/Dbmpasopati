@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title }}</title>
     <style>
+        @page {
+            size: A4 landscape;
+            margin: 15mm;
+        }
+
         body {
             font-family: Arial, sans-serif;
             font-size: 10px;
@@ -165,7 +170,7 @@
                     <td>{{ $no++ }}</td>
                     <td>{{ $d->nama_ponpes }}</td>
                     <td>
-                        <span class="tag">{{ $d->namaWilayah->nama_wilayah }}</span>
+                        <span>{{ $d->namaWilayah->nama_wilayah }}</span>
                     </td>
                     <td>
                         <span class="badge badge-{{ $d->tipe == 'vtren' ? 'vtren' : 'reguler' }}">

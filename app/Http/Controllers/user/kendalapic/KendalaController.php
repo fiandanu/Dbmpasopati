@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\user\kendalapic;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\user\kendala\Kendala;
 use App\Models\user\pic\Pic;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use Carbon\Carbon;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class KendalaController extends Controller
 {
@@ -17,6 +17,7 @@ class KendalaController extends Controller
     {
         $datakendala = Kendala::all();
         $datapic = Pic::all();
+
         return view('user.indexKendalaPic', compact('datakendala', 'datapic'));
     }
 
@@ -41,6 +42,7 @@ class KendalaController extends Controller
         ];
 
         Kendala::create($datakendala);
+
         return redirect()->back()->with('success', 'Data kendala berhasil ditambahkan!');
     }
 
@@ -48,6 +50,7 @@ class KendalaController extends Controller
     {
         $datakendala = Kendala::findOrFail($id);
         $datakendala->delete();
+
         return redirect()->back()->with('success', 'Data kendala berhasil dihapus!');
     }
 
@@ -80,14 +83,14 @@ class KendalaController extends Controller
         $query = Kendala::query();
         $data = $query->orderBy('jenis_kendala', 'asc')->get();
 
-        $filename = 'list_kendala_' . Carbon::now()->translatedFormat('d_M_Y') . '.csv';
+        $filename = 'list_kendala_'.Carbon::now()->translatedFormat('d_M_Y').'.csv';
 
         $headers = [
-            "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=$filename",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
         ];
 
         $columns = ['No', 'Jenis Kendala'];
@@ -99,7 +102,7 @@ class KendalaController extends Controller
             foreach ($data as $d) {
                 fputcsv($file, [
                     $no++,
-                    $d->jenis_kendala
+                    $d->jenis_kendala,
                 ]);
             }
             fclose($file);
@@ -116,13 +119,13 @@ class KendalaController extends Controller
         $pdfData = [
             'title' => 'List Kendala',
             'data' => $data,
-            'generated_at' => Carbon::now()->format('d M Y H:i:s')
+            'generated_at' => Carbon::now()->format('d M Y H:i:s'),
         ];
 
-        $pdf = Pdf::loadView('export.public.user.kendala', $pdfData);
-        $filename = 'list_kendala_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
+        $pdf = Pdf::loadView('export.public.user.kendala', $pdfData)
+            ->setPaper('a4', 'landscape');
+        $filename = 'list_kendala_'.Carbon::now()->translatedFormat('d_M_Y').'.pdf';
 
         return $pdf->download($filename);
     }
-
 }

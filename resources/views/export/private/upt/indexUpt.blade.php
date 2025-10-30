@@ -1,114 +1,177 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 
 <head>
-    <meta charset="utf-8">
-    <title>Export PDF</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ $title }}</title>
     <style>
-        body {
-            font-family: DejaVu Sans, sans-serif;
-            font-size: 12px;
+        @page {
+            size: A4;
+            margin: 15mm;
         }
 
-        .title {
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 10px;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .header {
             text-align: center;
-            font-weight: bold;
-            font-size: 16px;
             margin-bottom: 20px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .header p {
+            margin: 5px 0 0 0;
+            font-size: 10px;
+            color: #666;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
-        td,
-        th {
-            border: 1px solid #000;
+        table thead {
+            background-color: #6f42c1;
+            color: white;
+        }
+
+        table thead th {
+            padding: 8px;
+            text-align: center;
+            font-size: 8px;
+            border: 1px solid #ddd;
+            font-weight: bold;
+        }
+
+        table tbody td {
             padding: 6px 10px;
+            border: 1px solid #ddd;
+            font-size: 8px;
             vertical-align: top;
         }
 
-        th {
-            background-color: #f0f0f0;
-            text-align: left;
+        table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
         }
 
         .section-header {
+            background-color: #6f42c1;
+            color: white;
             font-weight: bold;
-            background-color: #e4e4e4;
             text-align: center;
+            padding: 8px;
         }
 
-        .nowrap {
+        .label-cell {
             white-space: nowrap;
             width: 30%;
+            font-weight: 600;
+            background-color: #f5f5f5;
         }
 
         .extension-table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .extension-table thead {
+            background-color: #6f42c1;
+            color: white;
         }
 
         .extension-table th {
-            background-color: #f0f0f0;
+            padding: 8px;
             text-align: center;
+            font-size: 8px;
+            border: 1px solid #ddd;
             font-weight: bold;
         }
 
         .extension-table td {
+            padding: 6px;
+            border: 1px solid #ddd;
+            font-size: 8px;
             text-align: center;
             word-wrap: break-word;
+        }
+
+        .extension-table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 8px;
+            color: #666;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
         }
     </style>
 </head>
 
 <body>
-    <div class="title">{{ $title }}</div>
+    <div class="header">
+        <h1>{{ $title }}</h1>
+        <p>Detail Data UPT VPAS</p>
+    </div>
+
     <table>
         <tr>
             <td colspan="2" class="section-header">Data Opsional</td>
         </tr>
         <tr>
-            <td class="nowrap">PIC UPT</td>
+            <td class="label-cell">PIC UPT</td>
             <td>{{ $user->dataOpsional->pic_upt ?? '' }}</td>
         </tr>
         <tr>
-            <td>No. Telpon</td>
+            <td class="label-cell">No. Telpon</td>
             <td>{{ $user->dataOpsional->no_telpon ?? '' }}</td>
         </tr>
         <tr>
-            <td>Alamat</td>
+            <td class="label-cell">Alamat</td>
             <td>{{ $user->dataOpsional->alamat ?? '' }}</td>
         </tr>
         <tr>
-            <td>Kanwil</td>
+            <td class="label-cell">Kanwil</td>
             <td>{{ $user->kanwil->kanwil }}</td>
         </tr>
         <tr>
-            <td>Jumlah WBP</td>
+            <td class="label-cell">Jumlah WBP</td>
             <td>{{ $user->dataOpsional->jumlah_wbp ?? '' }}</td>
         </tr>
         <tr>
-            <td>Jumlah Line Reguler Terpasang</td>
+            <td class="label-cell">Jumlah Line Reguler Terpasang</td>
             <td>{{ $user->dataOpsional->jumlah_line ?? '' }}</td>
         </tr>
         <tr>
-            <td>Provider Internet</td>
+            <td class="label-cell">Provider Internet</td>
             <td>{{ $user->dataOpsional->provider_internet ?? '' }}</td>
         </tr>
         <tr>
-            <td>Kecepatan Internet (mbps)</td>
+            <td class="label-cell">Kecepatan Internet (mbps)</td>
             <td>{{ $user->dataOpsional->kecepatan_internet ?? '' }}</td>
         </tr>
         <tr>
-            <td>Tarif Wartel</td>
+            <td class="label-cell">Tarif Wartel</td>
             <td>{{ $user->dataOpsional->tarif_wartel ?? '' }}</td>
         </tr>
-
         <tr>
-            <td>Status Wartel</td>
+            <td class="label-cell">Status Wartel</td>
             <td>
                 @php
                     $status = $user->dataOpsional->status_wartel ?? '';
@@ -132,19 +195,19 @@
             <td colspan="2" class="section-header">IMC PAS</td>
         </tr>
         <tr>
-            <td>Akses Topup Pulsa</td>
+            <td class="label-cell">Akses Topup Pulsa</td>
             <td>{{ $user->dataOpsional->akses_topup_pulsa ?? '' }}</td>
         </tr>
         <tr>
-            <td>Password Topup</td>
+            <td class="label-cell">Password Topup</td>
             <td>{{ $user->dataOpsional->password_topup ?? '' }}</td>
         </tr>
         <tr>
-            <td>Akses Download Rekaman</td>
+            <td class="label-cell">Akses Download Rekaman</td>
             <td>{{ $user->dataOpsional->akses_download_rekaman ?? '' }}</td>
         </tr>
         <tr>
-            <td>Password Download</td>
+            <td class="label-cell">Password Download</td>
             <td>{{ $user->dataOpsional->password_download ?? '' }}</td>
         </tr>
 
@@ -152,19 +215,19 @@
             <td colspan="2" class="section-header">Akses VPN</td>
         </tr>
         <tr>
-            <td>Internet Protocol</td>
+            <td class="label-cell">Internet Protocol</td>
             <td>{{ $user->dataOpsional->internet_protocol ?? '' }}</td>
         </tr>
         <tr>
-            <td>VPN User</td>
+            <td class="label-cell">VPN User</td>
             <td>{{ $user->dataOpsional->vpn_user ?? '' }}</td>
         </tr>
         <tr>
-            <td>VPN Password</td>
+            <td class="label-cell">VPN Password</td>
             <td>{{ $user->dataOpsional->vpn_password ?? '' }}</td>
         </tr>
         <tr>
-            <td>Jenis VPN</td>
+            <td class="label-cell">Jenis VPN</td>
             <td>{{ $user->dataOpsional->vpn->jenis_vpn ?? '' }}</td>
         </tr>
 
@@ -172,20 +235,17 @@
             <td colspan="2" class="section-header">Extension VPAS</td>
         </tr>
         <tr>
-            <td>Jumlah Extension</td>
+            <td class="label-cell">Jumlah Extension</td>
             <td>{{ $user->dataOpsional->jumlah_extension ?? '' }}</td>
         </tr>
         <tr>
-            <td>PIN Tes</td>
+            <td class="label-cell">PIN Tes</td>
             <td>{{ $user->dataOpsional->pin_tes ?? '' }}</td>
         </tr>
     </table>
 
     <!-- Tabel Extension Terpisah -->
-    <div class="section-header"
-        style="text-align: center; font-weight: bold; background-color: #e4e4e4; padding: 8px; margin-bottom: 10px;">
-        Daftar Extension dan Password
-    </div>
+    <div class="section-header">Daftar No Pemanggil, Email AirDroid dan Password</div>
     <table class="extension-table">
         <thead>
             <tr>
@@ -214,11 +274,16 @@
 
             @if($maxRows == 0)
                 <tr>
-                    <td colspan="3" style="text-align: center; font-style: italic;">Tidak ada data extension</td>
+                    <td colspan="4" style="text-align: center; font-style: italic;">Tidak ada data extension</td>
                 </tr>
             @endif
         </tbody>
     </table>
+
+    <div class="footer">
+        <p>Dokumen ini digenerate secara otomatis oleh sistem Database UPT</p>
+        <p>&copy; {{ date('Y') }} Database UPT - All Rights Reserved</p>
+    </div>
 </body>
 
 </html>

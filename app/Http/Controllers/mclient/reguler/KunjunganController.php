@@ -4,48 +4,47 @@ namespace App\Http\Controllers\mclient\reguler;
 
 use App\Http\Controllers\Controller;
 use App\Models\mclient\Kunjungan;
+use App\Models\user\pic\Pic;
 use App\Models\user\upt\Upt;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Carbon\Carbon;
-use App\Models\user\pic\Pic;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class KunjunganController extends Controller
 {
-
     private function applyFilters($query, Request $request)
     {
         // column-specific search
 
-        if ($request->has('search_nama_upt') && !empty($request->search_nama_upt)) {
+        if ($request->has('search_nama_upt') && ! empty($request->search_nama_upt)) {
             $query->whereHas('upt', function ($q) use ($request) {
-                $q->where('namaupt', 'LIKE', '%' . $request->search_nama_upt . '%');
+                $q->where('namaupt', 'LIKE', '%'.$request->search_nama_upt.'%');
             });
         }
 
-        if ($request->has('search_kanwil') && !empty($request->search_kanwil)) {
+        if ($request->has('search_kanwil') && ! empty($request->search_kanwil)) {
             $query->whereHas('upt.kanwil', function ($q) use ($request) {
-                $q->where('kanwil', 'LIKE', '%' . $request->search_kanwil . '%');
+                $q->where('kanwil', 'LIKE', '%'.$request->search_kanwil.'%');
             });
         }
 
-        if ($request->has('search_detail_kendala') && !empty($request->search_detail_kendala)) {
-            $query->where('detail_kendala', 'LIKE', '%' . $request->search_detail_kendala . '%');
+        if ($request->has('search_detail_kendala') && ! empty($request->search_detail_kendala)) {
+            $query->where('detail_kendala', 'LIKE', '%'.$request->search_detail_kendala.'%');
         }
 
-        if ($request->has('search_jenis_layanan') && !empty($request->search_jenis_layanan)) {
-            $query->where('jenis_layanan', 'LIKE', '%' . $request->search_jenis_layanan . '%');
+        if ($request->has('search_jenis_layanan') && ! empty($request->search_jenis_layanan)) {
+            $query->where('jenis_layanan', 'LIKE', '%'.$request->search_jenis_layanan.'%');
         }
-        if ($request->has('search_keterangan') && !empty($request->search_keterangan)) {
-            $query->where('keterangan', 'LIKE', '%' . $request->search_keterangan . '%');
+        if ($request->has('search_keterangan') && ! empty($request->search_keterangan)) {
+            $query->where('keterangan', 'LIKE', '%'.$request->search_keterangan.'%');
         }
 
-        if ($request->has('search_status') && !empty($request->search_status)) {
+        if ($request->has('search_status') && ! empty($request->search_status)) {
             $searchStatus = strtolower($request->search_status);
 
             $query->where(function ($q) use ($searchStatus) {
-                $q->where('status', 'LIKE', '%' . $searchStatus . '%');
+                $q->where('status', 'LIKE', '%'.$searchStatus.'%');
 
                 // Jika mencari "belum" atau "ditentukan", include yang NULL/empty
                 if (str_contains($searchStatus, 'belum') || str_contains($searchStatus, 'ditentukan')) {
@@ -55,24 +54,24 @@ class KunjunganController extends Controller
             });
         }
 
-        if ($request->has('search_pic_1') && !empty($request->search_pic_1)) {
-            $query->where('pic_1', 'LIKE', '%' . $request->search_pic_1 . '%');
+        if ($request->has('search_pic_1') && ! empty($request->search_pic_1)) {
+            $query->where('pic_1', 'LIKE', '%'.$request->search_pic_1.'%');
         }
-        if ($request->has('search_pic_2') && !empty($request->search_pic_2)) {
-            $query->where('pic_2', 'LIKE', '%' . $request->search_pic_2 . '%');
+        if ($request->has('search_pic_2') && ! empty($request->search_pic_2)) {
+            $query->where('pic_2', 'LIKE', '%'.$request->search_pic_2.'%');
         }
 
         // Date range filtering
-        if ($request->has('search_tanggal_terlapor_dari') && !empty($request->search_tanggal_terlapor_dari)) {
+        if ($request->has('search_tanggal_terlapor_dari') && ! empty($request->search_tanggal_terlapor_dari)) {
             $query->whereDate('tanggal_terlapor', '>=', $request->search_tanggal_terlapor_dari);
         }
-        if ($request->has('search_tanggal_terlapor_sampai') && !empty($request->search_tanggal_terlapor_sampai)) {
+        if ($request->has('search_tanggal_terlapor_sampai') && ! empty($request->search_tanggal_terlapor_sampai)) {
             $query->whereDate('tanggal_terlapor', '<=', $request->search_tanggal_terlapor_sampai);
         }
-        if ($request->has('search_tanggal_selesai_dari') && !empty($request->search_tanggal_selesai_dari)) {
+        if ($request->has('search_tanggal_selesai_dari') && ! empty($request->search_tanggal_selesai_dari)) {
             $query->whereDate('tanggal_selesai', '>=', $request->search_tanggal_selesai_dari);
         }
-        if ($request->has('search_tanggal_selesai_sampai') && !empty($request->search_tanggal_selesai_sampai)) {
+        if ($request->has('search_tanggal_selesai_sampai') && ! empty($request->search_tanggal_selesai_sampai)) {
             $query->whereDate('tanggal_selesai', '<=', $request->search_tanggal_selesai_sampai);
         }
 
@@ -84,7 +83,7 @@ class KunjunganController extends Controller
         return [
             'vpas' => 'VPAS',
             'reguler' => 'Reguler',
-            'vpasreg' => 'VPAS + Reguler'
+            'vpasreg' => 'VPAS + Reguler',
         ];
     }
 
@@ -99,7 +98,7 @@ class KunjunganController extends Controller
         $perPage = $request->get('per_page', 10);
 
         // Validate per_page
-        if (!in_array($perPage, [10, 15, 20, 'all'])) {
+        if (! in_array($perPage, [10, 15, 20, 'all'])) {
             $perPage = 10;
         }
 
@@ -128,7 +127,7 @@ class KunjunganController extends Controller
             ->map(function ($upt) {
                 return [
                     'namaupt' => $upt->namaupt,
-                    'kanwil' => $upt->kanwil->kanwil ?? '-'
+                    'kanwil' => $upt->kanwil->kanwil ?? '-',
                 ];
             });
 
@@ -139,7 +138,7 @@ class KunjunganController extends Controller
             ->map(function ($upt) {
                 return [
                     'namaupt' => $upt->namaupt,
-                    'kanwil' => $upt->kanwil->kanwil ?? '-'
+                    'kanwil' => $upt->kanwil->kanwil ?? '-',
                 ];
             });
 
@@ -157,7 +156,6 @@ class KunjunganController extends Controller
             'jenisLayananOptions'
         ));
     }
-
 
     public function MclientKunjunganStore(Request $request)
     {
@@ -227,7 +225,7 @@ class KunjunganController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Gagal menambahkan data: ' . $e->getMessage());
+                ->with('error', 'Gagal menambahkan data: '.$e->getMessage());
         }
     }
 
@@ -305,7 +303,7 @@ class KunjunganController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Gagal update data: ' . $e->getMessage());
+                ->with('error', 'Gagal update data: '.$e->getMessage());
         }
     }
 
@@ -321,7 +319,7 @@ class KunjunganController extends Controller
                 ->with('success', "Data kunjungan monitoring client '{$jenisLayanan}' di UPT '{$namaUpt}' berhasil dihapus!");
         } catch (\Exception $e) {
             return redirect()->back()
-                ->with('error', 'Gagal menghapus data: ' . $e->getMessage());
+                ->with('error', 'Gagal menghapus data: '.$e->getMessage());
         }
     }
 
@@ -343,11 +341,12 @@ class KunjunganController extends Controller
         $pdfData = [
             'title' => 'List Data Kunjungan Ponpes',
             'data' => $data,
-            'generated_at' => Carbon::now()->format('d M Y H:i:s')
+            'generated_at' => Carbon::now()->format('d M Y H:i:s'),
         ];
 
-        $pdf = Pdf::loadView('export.public.mclient.upt.indexKunjungan', $pdfData);
-        $filename = 'list_kunjungan_ponpes_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
+        $pdf = Pdf::loadView('export.public.mclient.upt.indexKunjungan', $pdfData)
+            ->setPaper('a4', 'landscape');
+        $filename = 'list_kunjungan_ponpes_'.Carbon::now()->translatedFormat('d_M_Y').'.pdf';
 
         return $pdf->download($filename);
     }
@@ -366,14 +365,14 @@ class KunjunganController extends Controller
 
         $data = $query->orderBy('created_at', 'desc')->get();
 
-        $filename = 'List_Kunjungan_Ponpes_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
+        $filename = 'List_Kunjungan_Ponpes_'.Carbon::now()->format('Y-m-d_H-i-s').'.csv';
 
         $headers = [
             'Content-type' => 'text/csv',
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
+            'Content-Disposition' => "attachment; filename=$filename",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
         ];
 
         $rows = [['No', 'Nama UPT', 'Kanwil', 'Jenis Layanan', 'Keterangan', 'Jadwal', 'Tanggal Selesai', 'Durasi (Hari)', 'Status', 'Pic 1', 'Pic 2', 'Dibuat Pada']];
@@ -391,7 +390,7 @@ class KunjunganController extends Controller
                 $row->status,
                 $row->pic_1,
                 $row->pic_2,
-                $row->created_at ? $row->created_at->format('Y-m-d H:i:s') : ''
+                $row->created_at ? $row->created_at->format('Y-m-d H:i:s') : '',
             ];
         }
 
@@ -402,7 +401,7 @@ class KunjunganController extends Controller
             }
             fclose($file);
         };
+
         return response()->stream($callback, 200, $headers);
     }
-
 }

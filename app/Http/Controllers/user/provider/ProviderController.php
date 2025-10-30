@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\user\provider;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\user\provider\Provider;
 use App\Models\user\vpn\Vpn;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use Carbon\Carbon;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class ProviderController extends Controller
 {
@@ -17,6 +17,7 @@ class ProviderController extends Controller
     {
         $dataprovider = Provider::all();
         $datavpn = Vpn::all();
+
         return view('user.indexProvider', compact('dataprovider', 'datavpn'));
     }
 
@@ -41,6 +42,7 @@ class ProviderController extends Controller
         ];
 
         Provider::create($dataprovider);
+
         return redirect()->back()->with('success', 'Data provider berhasil ditambahkan!');
     }
 
@@ -48,6 +50,7 @@ class ProviderController extends Controller
     {
         $dataprovider = Provider::findOrFail($id);
         $dataprovider->delete();
+
         return redirect()->back()->with('success', 'Data provider berhasil dihapus!');
     }
 
@@ -80,14 +83,14 @@ class ProviderController extends Controller
         $query = Provider::query();
         $data = $query->orderBy('nama_provider', 'asc')->get();
 
-        $filename = 'list_provider_' . Carbon::now()->translatedFormat('d_M_Y') . '.csv';
+        $filename = 'list_provider_'.Carbon::now()->translatedFormat('d_M_Y').'.csv';
 
         $headers = [
-            "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=$filename",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
         ];
 
         $columns = ['No', 'Nama Provider'];
@@ -99,7 +102,7 @@ class ProviderController extends Controller
             foreach ($data as $d) {
                 fputcsv($file, [
                     $no++,
-                    $d->nama_provider
+                    $d->nama_provider,
                 ]);
             }
             fclose($file);
@@ -116,11 +119,12 @@ class ProviderController extends Controller
         $pdfData = [
             'title' => 'List Provider',
             'data' => $data,
-            'generated_at' => Carbon::now()->format('d M Y H:i:s')
+            'generated_at' => Carbon::now()->format('d M Y H:i:s'),
         ];
 
-        $pdf = Pdf::loadView('export.public.user.provider', $pdfData);
-        $filename = 'list_provider_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
+        $pdf = Pdf::loadView('export.public.user.provider', $pdfData)
+            ->setPaper('a4', 'landscape');
+        $filename = 'list_provider_'.Carbon::now()->translatedFormat('d_M_Y').'.pdf';
 
         return $pdf->download($filename);
     }

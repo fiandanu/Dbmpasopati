@@ -1,80 +1,146 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
+
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title }}</title>
     <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            margin: 20px;
-            font-size: 12px;
+        @page {
+            size: A4 landscape;
+            margin: 15mm;
         }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 10px;
+            margin: 0;
+            padding: 20px;
+        }
+
         .header {
             text-align: center;
             margin-bottom: 20px;
             border-bottom: 2px solid #333;
             padding-bottom: 10px;
         }
+
         .header h1 {
             margin: 0;
-            font-size: 16px;
+            font-size: 18px;
+            color: #333;
         }
-        .info {
-            margin-bottom: 15px;
+
+        .header p {
+            margin: 5px 0 0 0;
             font-size: 10px;
             color: #666;
         }
-        table { 
-            width: 100%; 
-            border-collapse: collapse; 
+
+        .info {
+            margin-bottom: 15px;
+            font-size: 9px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
             margin-top: 10px;
         }
-        th, td { 
-            border: 1px solid #333; 
-            padding: 6px; 
-            text-align: left; 
-            font-size: 10px;
+
+        table thead {
+            background-color: #6f42c1;
+            color: white;
         }
-        th { 
-            background-color: #f2f2f2; 
+
+        table thead th {
+            padding: 8px;
+            text-align: center;
+            font-size: 8px;
+            border: 1px solid #ddd;
             font-weight: bold;
+        }
+
+        table tbody td {
+            padding: 6px;
+            border: 1px solid #ddd;
+            font-size: 8px;
             text-align: center;
         }
-        .text-center {
-            text-align: center;
+
+        table tbody td:nth-child(2),
+        table tbody td:nth-child(3) {
+            text-align: left;
         }
-        .status-belum { 
-            color: #dc3545;
+
+        table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        table tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .badge {
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 8px;
             font-weight: bold;
+            display: inline-block;
         }
-        .status-sudah { 
-            color: #28a745;
-            font-weight: bold;
+
+        .badge-success {
+            background-color: #28a745;
+            color: white;
         }
-        .status-sebagian { 
-            color: #ffc107;
-            font-weight: bold;
+
+        .badge-warning {
+            background-color: #ffc107;
+            color: #333;
         }
+
+        .badge-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .badge-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .badge-vpas {
+            background-color: #6f42c1;
+            color: white;
+        }
+
         .no-data {
             text-align: center;
             padding: 40px;
             color: #666;
             font-style: italic;
         }
-        .vpas-badge {
-            background-color: #6c757d;
-            color: white;
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-size: 9px;
+
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 8px;
+            color: #666;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
         }
     </style>
 </head>
+
 <body>
     <div class="header">
         <h1>{{ $title }}</h1>
+        <p>Laporan Data VPAS</p>
     </div>
+
     <div class="info">
-        <p>Generated on: {{ $generated_at ?? \Carbon\Carbon::now()->format('d M Y H:i:s') }}</p>
+        <strong>Tanggal Generate:</strong> {{ $generated_at ?? \Carbon\Carbon::now()->format('d M Y H:i:s') }}<br>
+        <strong>Total Data:</strong> {{ count($data) }} record
     </div>
 
     @if (count($data) > 0)
@@ -109,7 +175,7 @@
                             }
                             $totalFields = count($optionalFields);
                             $percentage = $totalFields > 0 ? round(($filledFields / $totalFields) * 100) : 0;
-                            
+
                             if ($filledFields == 0) {
                                 $status = 'Belum di Update';
                             } elseif ($filledFields == $totalFields) {
@@ -118,31 +184,41 @@
                                 $status = "Sebagian ({$percentage}%)";
                             }
                         }
-                        
-                        // Determine CSS class based on status
+
+                        // Determine badge class based on status
                         if (str_contains(strtolower($status), 'belum')) {
-                            $statusClass = 'status-belum';
+                            $badgeClass = 'badge-secondary';
                         } elseif (str_contains(strtolower($status), 'sudah')) {
-                            $statusClass = 'status-sudah';
+                            $badgeClass = 'badge-success';
                         } else {
-                            $statusClass = 'status-sebagian';
+                            $badgeClass = 'badge-warning';
                         }
                     @endphp
                     <tr>
-                        <td class="text-center">{{ $no++ }}</td>
+                        <td>{{ $no++ }}</td>
                         <td>{{ $d->namaupt }}</td>
                         <td>{{ $d->kanwil->kanwil }}</td>
-                        <td class="text-center">
-                            <span class="vpas-badge">{{ ucfirst($d->tipe) }}</span>
+                        <td>
+                            <span class="badge badge-vpas">{{ ucfirst($d->tipe) }}</span>
                         </td>
-                        <td class="text-center">{{ \Carbon\Carbon::parse($d->tanggal)->format('d M Y') }}</td>
-                        <td class="text-center {{ $statusClass }}">{{ $status }}</td>
+                        <td>{{ \Carbon\Carbon::parse($d->tanggal)->format('d M Y') }}</td>
+                        <td>
+                            <span class="badge {{ $badgeClass }}">{{ $status }}</span>
+                        </td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
     @else
+        <div class="no-data">
+            <p>Tidak ada data VPAS yang tersedia</p>
         </div>
     @endif
+
+    <div class="footer">
+        <p>Dokumen ini digenerate secara otomatis oleh sistem Database UPT</p>
+        <p>&copy; {{ date('Y') }} Database UPT - All Rights Reserved</p>
+    </div>
 </body>
+
 </html>
