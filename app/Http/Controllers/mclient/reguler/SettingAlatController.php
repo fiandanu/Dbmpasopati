@@ -364,7 +364,7 @@ class SettingAlatController extends Controller
         foreach ($data as $row) {
             $rows[] = [
                 $no++,
-                $row->nama_upt,
+                $row->upt->namaupt,
                 $row->jenis_layanan,
                 $row->keterangan,
                 $row->tanggal_terlapor ? $row->tanggal_terlapor->format('Y-m-d') : '',

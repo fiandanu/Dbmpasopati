@@ -58,6 +58,9 @@ Kode yang perlu dirapihin lagi di bagian
 
 - app\Http\Controllers\user\ponpes\vtren\VtrenController.php [di method exportPonpesCsv $rows]
 
+
+Kode yang perlu di cek ulang di Mclient UPT 
+
 =============================================================
 📝 CATATAN REVISI
 =============================================================
@@ -76,44 +79,22 @@ Kode yang perlu dirapihin lagi di bagian
  - tanggal pembuatan
 
 
- dibuat kolom untuk di halaman home usernya itu 
+- dibuat kolom untuk di halaman home usernya itu 
  terakhir login dan tanggal pembuatan user
-
 
 - Di semua keterangan dibuat limit 100 kata 
 
-
-
-
 - di halaman pengiriman alat di kolom penerima diketik sendiri DI HALAMAN PONPES DAN UPT MCLIENT
-
-
-
 
 🔄 menampilkan keseluruhan total data di bawah perncarian kartu gsm vpas vtren
 (Pembenaran Layout)
-
-
 
 - di mclient dashboard di munculkan data yang paling awal itu yang paling lama belum selesai dan yang baru dipaling bawah
   yang sudah selesai urutannya dipaling bawah 
   -
 
-  - menu dibuat dropdown di mclient upt dan vpas
-  - yang dibuat dropdown itu menu,status, tipe 
-
-
-
 
 <!-- - menu user di limit 1000 data -->
-<!-- - kartu terpakai/hari menjadi kartu terpakai dibahian kartu -->
-- susunan tanggal di samping nama upt 
-
-  total keseluruhan kartu di pdf
-  penambahan durasi hari di bagian pdf
-
-  pada bagian grafik menampilkan komplen, status pekerjaan, klasifikasi masalah pengelompokkan masalah, pengelompokan kartu, monitoring pks menampilkan tanggal pks sampai dengan tanggal, berapa jatuh tempo
-
 
 =============================================================
 ✅ REVISI SELESAI
@@ -145,6 +126,8 @@ Kode yang perlu dirapihin lagi di bagian
 
 ✅
 - di halaman DB UPT PONPES dibuat untuk halaman Export PDF dan CSV
+- menu dibuat dropdown di mclient upt dan vpas
+- yang dibuat dropdown itu menu,status, tipe 
 
 
 

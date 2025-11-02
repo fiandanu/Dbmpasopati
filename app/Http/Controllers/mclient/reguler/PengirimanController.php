@@ -137,7 +137,7 @@ class PengirimanController extends Controller
         foreach ($data as $row) {
             $rows[] = [
                 $no++,
-                $row->nama_upt,
+                $row->upt->namaupt,
                 $row->jenis_layanan,
                 $row->keterangan,
                 $row->tanggal_pengiriman ? $row->tanggal_pengiriman->format('Y-m-d') : '',

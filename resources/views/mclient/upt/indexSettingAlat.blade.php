@@ -621,7 +621,7 @@
                                                         <input type="hidden" name="nama_upt"
                                                             value="{{ $d->upt->namaupt ?? '' }}">
                                                     </div>
-                                                    
+
                                                 </div>
 
                                                 <!-- Detail Setting Alat -->
@@ -762,8 +762,7 @@
                                         value="{{ request('search_nama_upt') }}">
                                 @endif
                                 @if (request('search_kanwil'))
-                                    <input type="hidden" name="search_kanwil"
-                                        value="{{ request('search_kanwil') }}">
+                                    <input type="hidden" name="search_kanwil" value="{{ request('search_kanwil') }}">
                                 @endif
                                 @if (request('search_jenis_layanan'))
                                     <input type="hidden" name="search_jenis_layanan"
@@ -1247,12 +1246,20 @@
                 }
             });
 
-            // Clear individual column search when input is emptied
-            $('.column-search input').on('keyup', function(e) {
-                if (e.which === 13 && $(this).val().trim() === '') {
-                    applyFilters(); // Apply filters to update URL (removing empty filter)
+            // AUTO REFRESH KETIKA INPUT PENCARIAN DIKOSONGKAN
+            $('.column-search input').on('input', function() {
+                if ($(this).val().trim() === '') {
+                    let inputName = $(this).attr('name');
+                    let url = new URL(window.location.href);
+
+                    if (url.searchParams.has(inputName)) {
+                        url.searchParams.delete(inputName);
+                        url.searchParams.delete('page');
+                        window.location.href = url.toString();
+                    }
                 }
             });
+
 
             // Download functions with current filters
             window.downloadCsv = function() {

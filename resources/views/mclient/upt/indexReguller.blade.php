@@ -918,7 +918,6 @@
         integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-
     {{-- JS Real-time Duration Counter --}}
     <script>
         // Fungsi untuk menghitung dan format durasi real-time
@@ -998,7 +997,6 @@
             }
         });
     </script>
-    
 
     {{-- JS Modal --}}
     <script>
@@ -1187,7 +1185,7 @@
         });
     </script>
 
-    {{-- Search and Filter JavaScript --}}
+    {{-- SEARCH FILTER BY KOLOM JS --}}
     <script>
         $(document).ready(function() {
             // Function to get current filter values
@@ -1195,8 +1193,8 @@
                 return {
                     search_nama_upt: $('#search-nama-upt').val().trim(),
                     search_kanwil: $('#search-kanwil').val().trim(),
-                    search_jenis_kendala: $('#search-jenis-kendala').val().trim(), 
-                    search_detail_kendala: $('#search-detail-kendala').val().trim(), 
+                    search_jenis_kendala: $('#search-jenis-kendala').val().trim(),
+                    search_detail_kendala: $('#search-detail-kendala').val().trim(),
                     search_status: $('#search-status').val().trim(),
                     search_pic_1: $('#search-pic-1').val().trim(),
                     search_pic_2: $('#search-pic-2').val().trim(),
@@ -1278,10 +1276,17 @@
                 }
             });
 
-            // Clear individual column search when input is emptied
-            $('.column-search input').on('keyup', function(e) {
-                if (e.which === 13 && $(this).val().trim() === '') {
-                    applyFilters(); // Apply filters to update URL (removing empty filter)
+            // AUTO REFRESH KETIKA INPUT PENCARIAN DIKOSONGKAN
+            $('.column-search input').on('input', function() {
+                if ($(this).val().trim() === '') {
+                    let inputName = $(this).attr('name');
+                    let url = new URL(window.location.href);
+
+                    if (url.searchParams.has(inputName)) {
+                        url.searchParams.delete(inputName);
+                        url.searchParams.delete('page');
+                        window.location.href = url.toString();
+                    }
                 }
             });
 

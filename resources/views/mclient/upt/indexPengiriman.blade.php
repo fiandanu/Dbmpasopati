@@ -725,11 +725,8 @@
                                                     <div class="column">
                                                         <div class="mb-3">
                                                             <label for="pic_2{{ $d->id }}">Penerima</label>
-                                                            <input type="text"
-                                                                class="form-control" 
-                                                                name="pic_2"
-                                                                id="pic-2"
-                                                                value="{{ $d->pic_2 ?? '' }}"
+                                                            <input type="text" class="form-control" name="pic_2"
+                                                                id="pic-2" value="{{ $d->pic_2 ?? '' }}"
                                                                 placeholder="Edit nama penerima">
                                                         </div>
                                                     </div>
@@ -1242,10 +1239,17 @@
                 }
             });
 
-            // Clear individual column search when input is emptied
-            $('.column-search input').on('keyup', function(e) {
-                if (e.which === 13 && $(this).val().trim() === '') {
-                    applyFilters(); // Apply filters to update URL (removing empty filter)
+            // AUTO REFRESH KETIKA INPUT PENCARIAN DIKOSONGKAN
+            $('.column-search input').on('input', function() {
+                if ($(this).val().trim() === '') {
+                    let inputName = $(this).attr('name');
+                    let url = new URL(window.location.href);
+
+                    if (url.searchParams.has(inputName)) {
+                        url.searchParams.delete(inputName);
+                        url.searchParams.delete('page');
+                        window.location.href = url.toString();
+                    }
                 }
             });
 

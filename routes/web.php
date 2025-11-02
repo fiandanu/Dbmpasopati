@@ -24,11 +24,11 @@ Route::get('/MonitoringPonpes', [MonitoringServerController::class, 'MonitoringP
 
 // Monitoring Client
 Route::get('/GrafikClient', [HomeController::class, 'GrafikClient'])->name('GrafikClient');
-Route::get('/KomplainUpt', [RegullerController::class, 'monitoringClientUptOverview'])->name('KomplainUpt');
+// Route::get('/KomplainUpt', [RegullerController::class, 'monitoringClientUptOverview'])->name('KomplainUpt');
 Route::get('/KomplainPonpes', [HomeController::class, 'KomplainPonpes'])->name('KomplainPonpes');
 Route::get('/PencatatanKartu', [HomeController::class, 'PencatatanKartu'])->name('PencatatanKartu');
 
 // Monitoring Client UPT - Overview dan Export
 Route::get('/monitoring-client-upt', [RegullerController::class, 'monitoringClientUptOverview'])->name('mclient.upt.overview');
-Route::get('/monitoring-client-upt/export-csv', [RegullerController::class, 'exportMonitoringClientCsv'])->name('mclient.upt.export.csv');
-Route::get('/monitoring-client-upt/export-pdf', [RegullerController::class, 'exportMonitoringClientPdf'])->name('mclient.upt.export.pdf');
+// Route::get('/monitoring-client-upt/export-csv', [RegullerController::class, 'exportMonitoringClientCsv'])->name('mclient.upt.export.csv');
+// Route::get('/monitoring-client-upt/export-pdf', [RegullerController::class, 'exportMonitoringClientPdf'])->name('mclient.upt.export.pdf');

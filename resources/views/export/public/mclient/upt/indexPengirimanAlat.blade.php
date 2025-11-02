@@ -173,7 +173,7 @@
                     @endphp
                     <tr>
                         <td>{{ $no++ }}</td>
-                        <td>{{ $d->nama_upt ?? '-' }}</td>
+                        <td>{{ $d->upt->namaupt ?? '-' }}</td>
                         <td>{{ $d->jenis_layanan ?? '-' }}</td>
                         <td>{{ Str::limit($d->keterangan ?? '-', 50) }}</td>
                         <td>

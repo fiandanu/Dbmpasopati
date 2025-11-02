@@ -13,6 +13,19 @@
                             </button>
                             <h1 class="headline-large-32 mb-0">Komplain UPT</h1>
                         </div>
+
+                        {{-- BUTTON DOWNLOAD PDF CSV TOP --}}
+                        <div class="d-flex gap-3">
+                            <button onclick="downloadCsvTop()"
+                                class="btn-page d-flex justify-content-center align-items-center" title="Download CSV">
+                                <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export CSV
+                            </button>
+                            <button onclick="downloadPdfTop()"
+                                class="btn-page d-flex justify-content-center align-items-center" title="Download PDF">
+                                <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PDF
+                            </button>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -20,72 +33,227 @@
 
         <div class="content">
             <div class="container-fluid">
-                <div class="row">
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+
                     <!-- Kategori VPAS -->
-                    <div class="col-xl col-lg-4 col-md-6 mb-3">
+                    <div class="mb-3">
                         <div class="card-kategori">
                             <h3>Komplain VPAS</h3>
                             <p class="text-kategori mb-2">Layanan VPAS</p>
                             <div class="data-badge mb-3">
-                                <span class="checkmark">✓</span>
+                                <ion-icon name="analytics-outline"></ion-icon>
                                 {{ number_format($totalVpas) }} Data
                             </div>
-                            <a href="{{ route('mcvpas.ListDataMclientVpas') }}" class="list-button">Selengkapnya</a>
+
+                            <div class="flex-row">
+
+                                <!-- Legend -->
+                                <div class="chart-legend">
+                                    <div class="legend-item">
+                                        {{-- <span class="legend-color legend-color-belum"></span> --}}
+                                        <span class="legend-text">Belum Ditentukan</span>
+                                        <span class="legend-count">{{ $statusStats['vpas']['belum_ditentukan'] }}</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        {{-- <span class="legend-color legend-color-selesai"></span> --}}
+                                        <span class="legend-text">Selesai</span>
+                                        <span class="legend-count">{{ $statusStats['vpas']['selesai'] }}</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        {{-- <span class="legend-color legend-color-proses"></span> --}}
+                                        <span class="legend-text">Proses</span>
+                                        <span class="legend-count">{{ $statusStats['vpas']['proses'] }}</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        {{-- <span class="legeCnd-color legend-color-terjadwal"></span> --}}
+                                        <span class="legend-text">Terjadwal</span>
+                                        <span class="legend-count">{{ $statusStats['vpas']['terjadwal'] }}</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        {{-- <span class="legend-color legend-color-pending"></span> --}}
+                                        <span class="legend-text">Pending</span>
+                                        <span class="legend-count">{{ $statusStats['vpas']['pending'] }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="{{ route('mcvpas.ListDataMclientVpas') }}" class="list-button mt-3">Selengkapnya</a>
                         </div>
                     </div>
 
                     <!-- Kategori Reguller -->
-                    <div class="col-xl col-lg-4 col-md-6 mb-3">
+                    <div class="mb-3">
                         <div class="card-kategori">
                             <h3>Komplain Reguller</h3>
                             <p class="text-kategori mb-2">Layanan Reguller</p>
                             <div class="data-badge mb-3">
-                                <span class="checkmark">✓</span>
+                                <ion-icon name="analytics-outline"></ion-icon>
                                 {{ number_format($totalReguler) }} Data
                             </div>
-                            <a href="{{ route('mcreguler.ListDataMclientReguller') }}" class="list-button">Selengkapnya</a>
+
+                            <!-- Legend -->
+                            <div class="chart-legend">
+                                <div class="legend-item">
+                                    {{-- <span class="legend-color legend-color-belum"></span> --}}
+                                    <span class="legend-text">Belum Ditentukan</span>
+                                    <span class="legend-count">{{ $statusStats['reguler']['belum_ditentukan'] }}</span>
+                                </div>
+                                <div class="legend-item">
+                                    {{-- <span class="legend-color legend-color-selesai"></span> --}}
+                                    <span class="legend-text">Selesai</span>
+                                    <span class="legend-count">{{ $statusStats['reguler']['selesai'] }}</span>
+                                </div>
+                                <div class="legend-item">
+                                    {{-- <span class="legend-color legend-color-proses"></span> --}}
+                                    <span class="legend-text">Proses</span>
+                                    <span class="legend-count">{{ $statusStats['reguler']['proses'] }}</span>
+                                </div>
+                                <div class="legend-item">
+                                    {{-- <span class="legend-color legend-color-terjadwal"></span> --}}
+                                    <span class="legend-text">Terjadwal</span>
+                                    <span class="legend-count">{{ $statusStats['reguler']['terjadwal'] }}</span>
+                                </div>
+                                <div class="legend-item">
+                                    {{-- <span class="legend-color legend-color-pending"></span> --}}
+                                    <span class="legend-text">Pending</span>
+                                    <span class="legend-count">{{ $statusStats['reguler']['pending'] }}</span>
+                                </div>
+                            </div>
+
+                            <a href="{{ route('mcreguler.ListDataMclientReguller') }}"
+                                class="list-button mt-3">Selengkapnya</a>
                         </div>
                     </div>
 
                     <!-- Kategori Kunjungan UPT -->
-                    <div class="col-xl col-lg-4 col-md-6 mb-3">
+                    <div class="mb-3">
                         <div class="card-kategori">
                             <h3>Kunjungan UPT</h3>
                             <p class="text-kategori mb-2">Kunjungan Monitoring Client</p>
                             <div class="data-badge mb-3">
-                                <span class="checkmark">✓</span>
+                                <ion-icon name="analytics-outline"></ion-icon>
                                 {{ number_format($totalKunjungan) }} Data
                             </div>
+
+                            <!-- Legend -->
+                            <div class="chart-legend">
+                                <div class="legend-item">
+                                    {{-- <span class="legend-color legend-color-belum"></span> --}}
+                                    <span class="legend-text">Belum Ditentukan</span>
+                                    <span class="legend-count">{{ $statusStats['kunjungan']['belum_ditentukan'] }}</span>
+                                </div>
+                                <div class="legend-item">
+                                    {{-- <span class="legend-color legend-color-selesai"></span> --}}
+                                    <span class="legend-text">Selesai</span>
+                                    <span class="legend-count">{{ $statusStats['kunjungan']['selesai'] }}</span>
+                                </div>
+                                <div class="legend-item">
+                                    {{-- <span class="legend-color legend-color-proses"></span> --}}
+                                    <span class="legend-text">Proses</span>
+                                    <span class="legend-count">{{ $statusStats['kunjungan']['proses'] }}</span>
+                                </div>
+                                <div class="legend-item">
+                                    {{-- <span class="legend-color legend-color-terjadwal"></span> --}}
+                                    <span class="legend-text">Terjadwal</span>
+                                    <span class="legend-count">{{ $statusStats['kunjungan']['terjadwal'] }}</span>
+                                </div>
+                                <div class="legend-item">
+                                    {{-- <span class="legend-color legend-color-pending"></span> --}}
+                                    <span class="legend-text">Pending</span>
+                                    <span class="legend-count">{{ $statusStats['kunjungan']['pending'] }}</span>
+                                </div>
+                            </div>
+
                             <a href="{{ route('mclientkunjunganupt.ListDataMclientKunjungan') }}"
-                                class="list-button">Selengkapnya</a>
+                                class="list-button mt-3">Selengkapnya</a>
                         </div>
                     </div>
 
                     <!-- Kategori Pengiriman Alat UPT -->
-                    <div class="col-xl col-lg-4 col-md-6 mb-3">
+                    <div class="mb-3">
                         <div class="card-kategori">
                             <h3>Pengiriman Alat UPT</h3>
-                            <p class="text-kategori mb-2">Layanan Pengiriman Alat UPT</p>
+                            <p class="text-kategori mb-2">Layanan Pengiriman Alat</p>
                             <div class="data-badge mb-3">
-                                <span class="checkmark">✓</span>
+                                <ion-icon name="analytics-outline"></ion-icon>
                                 {{ number_format($totalPengiriman) }} Data
                             </div>
+
+                            <!-- Legend -->
+                            <div class="chart-legend">
+                                <div class="legend-item">
+                                    {{-- <span class="legend-color legend-color-belum"></span> --}}
+                                    <span class="legend-text">Belum Ditentukan</span>
+                                    <span class="legend-count">{{ $statusStats['pengiriman']['belum_ditentukan'] }}</span>
+                                </div>
+                                <div class="legend-item">
+                                    {{-- <span class="legend-color legend-color-selesai"></span> --}}
+                                    <span class="legend-text">Selesai</span>
+                                    <span class="legend-count">{{ $statusStats['pengiriman']['selesai'] }}</span>
+                                </div>
+                                <div class="legend-item">
+                                    {{-- <span class="legend-color legend-color-proses"></span> --}}
+                                    <span class="legend-text">Proses</span>
+                                    <span class="legend-count">{{ $statusStats['pengiriman']['proses'] }}</span>
+                                </div>
+                                <div class="legend-item">
+                                    {{-- <span class="legend-color legend-color-terjadwal"></span> --}}
+                                    <span class="legend-text">Terjadwal</span>
+                                    <span class="legend-count">{{ $statusStats['pengiriman']['terjadwal'] }}</span>
+                                </div>
+                                <div class="legend-item">
+                                    {{-- <span class="legend-color legend-color-pending"></span> --}}
+                                    <span class="legend-text">Pending</span>
+                                    <span class="legend-count">{{ $statusStats['pengiriman']['pending'] }}</span>
+                                </div>
+                            </div>
+
                             <a href="{{ route('mclientpengirimanupt.ListDataMclientPengirimanUpt') }}"
-                                class="list-button">Selengkapnya</a>
+                                class="list-button mt-3">Selengkapnya</a>
                         </div>
                     </div>
 
                     <!-- Kategori Setting Alat UPT -->
-                    <div class="col-xl col-lg-4 col-md-6 mb-3">
+                    <div class="mb-3">
                         <div class="card-kategori">
                             <h3>Setting Alat UPT</h3>
                             <p class="text-kategori mb-2">Layanan Setting Alat UPT</p>
                             <div class="data-badge mb-3">
-                                <span class="checkmark">✓</span>
+                                <ion-icon name="analytics-outline"></ion-icon>
                                 {{ number_format($totalSettingAlat) }} Data
                             </div>
+
+                            <!-- Legend -->
+                            <div class="chart-legend">
+                                <div class="legend-item">
+                                    {{-- <span class="legend-color legend-color-belum"></span> --}}
+                                    <span class="legend-text">Belum Ditentukan</span>
+                                    <span
+                                        class="legend-count">{{ $statusStats['setting_alat']['belum_ditentukan'] }}</span>
+                                </div>
+                                <div class="legend-item">
+                                    {{-- <span class="legend-color legend-color-selesai"></span> --}}
+                                    <span class="legend-text">Selesai</span>
+                                    <span class="legend-count">{{ $statusStats['setting_alat']['selesai'] }}</span>
+                                </div>
+                                <div class="legend-item">
+                                    {{-- <span class="legend-color legend-color-proses"></span> --}}
+                                    <span class="legend-text">Proses</span>
+                                    <span class="legend-count">{{ $statusStats['setting_alat']['proses'] }}</span>
+                                </div>
+                                <div class="legend-item">
+                                    {{-- <span class="legend-color legend-color-terjadwal"></span> --}}
+                                    <span class="legend-text">Terjadwal</span>
+                                    <span class="legend-count">{{ $statusStats['setting_alat']['terjadwal'] }}</span>
+                                </div>
+                                <div class="legend-item">
+                                    {{-- <span class="legend-color legend-color-pending"></span> --}}
+                                    <span class="legend-text">Pending</span>
+                                    <span class="legend-count">{{ $statusStats['setting_alat']['pending'] }}</span>
+                                </div>
+                            </div>
+
                             <a href="{{ route('mclientsettingalatupt.ListDataMclientSettingAlat') }}"
-                                class="list-button">Selengkapnya</a>
+                                class="list-button mt-3">Selengkapnya</a>
                         </div>
                     </div>
 
@@ -114,6 +282,7 @@
                                     title="Tanggal Sampai">
                             </div>
 
+                            {{-- BUTTON DOWNLOAD PDF CSV --}}
                             <button onclick="downloadCsv()"
                                 class="btn-page d-flex justify-content-center align-items-center" title="Download CSV">
                                 <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export CSV
@@ -122,6 +291,7 @@
                                 class="btn-page d-flex justify-content-center align-items-center" title="Download PDF">
                                 <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PDF
                             </button>
+
                         </div>
                     </div>
                 </div>
@@ -176,8 +346,8 @@
                                             <div class="btn-searchbar column-search">
                                                 <select id="search-jenis-layanan" name="search_jenis_layanan">
                                                     <option value="">Semua</option>
-                                                    <option value="Komplain Vpas">Komplain Vpas</option>
-                                                    <option value="Komplain Reguler">Komplain Reguler</option>
+                                                    <option value="Vpas">Komplain Vpas</option>
+                                                    <option value="Reguler">Komplain Reguler</option>
                                                     <option value="Kunjungan">Kunjungan Upt</option>
                                                     <option value="Pengiriman Alat">Pengiriman Alat</option>
                                                     <option value="Setting Alat">Setting Alat</option>
@@ -418,7 +588,7 @@
                 window.location.href = url.toString();
             };
 
-            // Clear individual filter when backspace/delete and field becomes empty
+            // AUTO REFRESH KETIKA INPUT PENCARIAN DIKOSONGKAN
             $('.column-search input').on('input', function() {
                 if ($(this).val().trim() === '') {
                     let inputName = $(this).attr('name');
@@ -475,7 +645,7 @@
                 let filters = getFilters();
                 let form = document.createElement('form');
                 form.method = 'GET';
-                form.action = '{{ route('mclient.upt.export.csv') }}';
+                form.action = '{{ route('MclientUptDashboard.mclient.upt.export.csv') }}';
                 form.target = '_blank';
 
                 Object.keys(filters).forEach(key => {
@@ -498,7 +668,7 @@
                 let filters = getFilters();
                 let form = document.createElement('form');
                 form.method = 'GET';
-                form.action = '{{ route('mclient.upt.export.pdf') }}';
+                form.action = '{{ route('MclientUptDashboard.mclient.upt.export.pdf') }}';
                 form.target = '_blank';
 
                 Object.keys(filters).forEach(key => {
@@ -515,6 +685,19 @@
                 form.submit();
                 document.body.removeChild(form);
             };
+
+
+
+            // Download CSV Summary (Top Button)
+            window.downloadCsvTop = function() {
+                window.location.href = '{{ route('MclientUptDashboard.mclient.upt.summary.export.csv') }}';
+            };
+
+            // Download PDF Summary (Top Button)
+            window.downloadPdfTop = function() {
+                window.location.href = '{{ route('MclientUptDashboard.mclient.upt.summary.export.pdf') }}';
+            };
+
 
             // Load filter values from URL on page load
             const urlParams = new URLSearchParams(window.location.search);

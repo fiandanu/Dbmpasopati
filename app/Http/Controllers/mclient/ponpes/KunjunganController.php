@@ -35,7 +35,7 @@ class KunjunganController extends Controller
 
         $pdf = Pdf::loadView('export.public.mclient.ponpes.indexKunjungan', $pdfData)
             ->setPaper('a4', 'landscape');
-        $filename = 'list_kunjungan_ponpes_'.Carbon::now()->translatedFormat('d_M_Y').'.pdf';
+        $filename = 'list_kunjungan_ponpes_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
 
         return $pdf->download($filename);
     }
@@ -54,7 +54,7 @@ class KunjunganController extends Controller
 
         $data = $query->orderBy('created_at', 'desc')->get();
 
-        $filename = 'List_Kunjungan_Ponpes_'.Carbon::now()->format('Y-m-d_H-i-s').'.csv';
+        $filename = 'List_Kunjungan_Ponpes_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
 
         $headers = [
             'Content-type' => 'text/csv',
@@ -164,25 +164,29 @@ class KunjunganController extends Controller
     {
         // Column-specific search
         if ($request->has('search_nama_ponpes') && ! empty($request->search_nama_ponpes)) {
-            $query->where('nama_ponpes', 'LIKE', '%'.$request->search_nama_ponpes.'%');
+            $query->whereHas('ponpes', function ($q) use ($request) {
+                $q->where('nama_ponpes', 'LIKE', '%' . $request->search_nama_ponpes . '%');
+            });
         }
         if ($request->has('search_nama_wilayah') && ! empty($request->search_nama_wilayah)) {
-            $query->where('nama_wilayah', 'LIKE', '%'.$request->search_nama_wilayah.'%');
+            $query->whereHas('ponpes.namaWilayah', function ($q) use ($request) {
+                $q->where('nama_wilayah', 'LIKE', '%' . $request->search_nama_wilayah . '%');
+            });
         }
         if ($request->has('search_jenis_layanan') && ! empty($request->search_jenis_layanan)) {
-            $query->where('jenis_layanan', 'LIKE', '%'.$request->search_jenis_layanan.'%');
+            $query->where('jenis_layanan', 'LIKE', '%' . $request->search_jenis_layanan . '%');
         }
         if ($request->has('search_keterangan') && ! empty($request->search_keterangan)) {
-            $query->where('keterangan', 'LIKE', '%'.$request->search_keterangan.'%');
+            $query->where('keterangan', 'LIKE', '%' . $request->search_keterangan . '%');
         }
         if ($request->has('search_status') && ! empty($request->search_status)) {
-            $query->where('status', 'LIKE', '%'.$request->search_status.'%');
+            $query->where('status', 'LIKE', '%' . $request->search_status . '%');
         }
         if ($request->has('search_pic_1') && ! empty($request->search_pic_1)) {
-            $query->where('pic_1', 'LIKE', '%'.$request->search_pic_1.'%');
+            $query->where('pic_1', 'LIKE', '%' . $request->search_pic_1 . '%');
         }
         if ($request->has('search_pic_2') && ! empty($request->search_pic_2)) {
-            $query->where('pic_2', 'LIKE', '%'.$request->search_pic_2.'%');
+            $query->where('pic_2', 'LIKE', '%' . $request->search_pic_2 . '%');
         }
 
         // Date range filtering
@@ -264,7 +268,7 @@ class KunjunganController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Gagal menambahkan data: '.$e->getMessage());
+                ->with('error', 'Gagal menambahkan data: ' . $e->getMessage());
         }
     }
 
@@ -326,7 +330,7 @@ class KunjunganController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Gagal update data: '.$e->getMessage());
+                ->with('error', 'Gagal update data: ' . $e->getMessage());
         }
     }
 
@@ -342,7 +346,7 @@ class KunjunganController extends Controller
                 ->with('success', "Data kunjungan monitoring client '{$jenisLayanan}' di Ponpes '{$namaPonpes}' berhasil dihapus!");
         } catch (\Exception $e) {
             return redirect()->back()
-                ->with('error', 'Gagal menghapus data: '.$e->getMessage());
+                ->with('error', 'Gagal menghapus data: ' . $e->getMessage());
         }
     }
 }

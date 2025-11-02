@@ -172,7 +172,7 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th class="text-center align-top">
+                                            <th>
                                                 <div class="d-flex flex-column gap-12">
                                                     <span>Nama Ponpes</span>
                                                     <div class="btn-searchbar column-search">
@@ -181,6 +181,18 @@
                                                         </span>
                                                         <input type="text" id="search-nama_ponpes"
                                                             name="search_nama_ponpes" placeholder="Search">
+                                                    </div>
+                                                </div>
+                                            </th>
+                                            <th>
+                                                <div class="d-flex flex-column gap-12">
+                                                    <span>Nama Wilayah</span>
+                                                    <div class="btn-searchbar column-search">
+                                                        <span>
+                                                            <i class="fas fa-search"></i>
+                                                        </span>
+                                                        <input type="text" id="search-nama-wilayah"
+                                                            name="search_nama_wilayah" placeholder="Search">
                                                     </div>
                                                 </div>
                                             </th>
@@ -269,7 +281,8 @@
                                         @forelse ($data as $d)
                                             <tr>
                                                 <td class="text-center">{{ $no++ }}</td>
-                                                <td>{{ $d->nama_ponpes ?? '-' }}</td>
+                                                <td>{{ $d->ponpes->nama_ponpes ?? '-' }}</td>
+                                                <td>{{ $d->ponpes->namaWilayah->nama_wilayah ?? '-' }}</td>
                                                 <td class="text-center">
                                                     @php
                                                         $layananClass = match (strtolower($d->jenis_layanan ?? '')) {
@@ -822,6 +835,10 @@
                                     <input type="hidden" name="search_nama_ponpes"
                                         value="{{ request('search_nama_ponpes') }}">
                                 @endif
+                                @if (request('search_nama_wilayah'))
+                                    <input type="hidden" name="search_nama_wilayah"
+                                        value="{{ request('search_nama_wilayah') }}">
+                                @endif
                                 @if (request('search_jenis_layanan'))
                                     <input type="hidden" name="search_jenis_layanan"
                                         value="{{ request('search_jenis_layanan') }}">
@@ -1207,6 +1224,7 @@
             function getFilters() {
                 return {
                     search_nama_ponpes: $('#search-nama_ponpes').val().trim(),
+                    search_nama_wilayah: $('#search-nama-wilayah').val().trim(),
                     search_jenis_layanan: $('#search-jenis_layanan').val().trim(),
                     search_keterangan: $('#search-keterangan').val().trim(),
                     search_status: $('#search-status').val().trim(),
@@ -1227,6 +1245,7 @@
 
                 // Remove existing filter parameters
                 url.searchParams.delete('search_nama_ponpes');
+                url.searchParams.delete('search_nama_wilayah');
                 url.searchParams.delete('search_jenis_layanan');
                 url.searchParams.delete('search_keterangan');
                 url.searchParams.delete('search_status');
@@ -1252,6 +1271,7 @@
             window.clearAllFilters = function() {
                 // Clear semua input field dulu
                 $('#search-nama_ponpes').val('');
+                $('#search-nama-wilayah').val('');
                 $('#search-jenis_layanan').val('');
                 $('#search-keterangan').val('');
                 $('#search-status').val('');
@@ -1266,6 +1286,7 @@
 
                 // Remove all search parameters
                 url.searchParams.delete('search_nama_ponpes');
+                url.searchParams.delete('search_nama_wilayah');
                 url.searchParams.delete('search_jenis_layanan');
                 url.searchParams.delete('search_keterangan');
                 url.searchParams.delete('search_status');
@@ -1343,6 +1364,9 @@
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('search_nama_ponpes')) {
                 $('#search-nama_ponpes').val(urlParams.get('search_nama_ponpes'));
+            }
+            if (urlParams.get('search_nama_wilayah')) {
+                $('#search-nama-wilayah').val(urlParams.get('get_nama_wilayah'));
             }
             if (urlParams.get('search_jenis_layanan')) {
                 $('#search-jenis_layanan').val(urlParams.get('search_jenis_layanan'));

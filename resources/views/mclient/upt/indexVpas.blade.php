@@ -1078,7 +1078,6 @@
         // ======================================
 
 
-
         // PADA SAAT MEMILIH DATA UPT, DROPDOWN OTOMATIS DISEMBUNYIKAN
         function selectUpt(uptId, namaUpt, kanwil) {
             console.log('Selected UPT:', {
@@ -1276,13 +1275,21 @@
                 }
             });
 
-            // Clear individual column search when input is emptied
-            $('.column-search input').on('keyup', function(e) {
-                if (e.which === 13 && $(this).val().trim() === '') {
-                    applyFilters(); // Apply filters to update URL (removing empty filter)
+            // AUTO REFRESH KETIKA INPUT PENCARIAN DIKOSONGKAN
+            $('.column-search input').on('input', function() {
+                if ($(this).val().trim() === '') {
+                    let inputName = $(this).attr('name');
+                    let url = new URL(window.location.href);
+
+                    if (url.searchParams.has(inputName)) {
+                        url.searchParams.delete(inputName);
+                        url.searchParams.delete('page');
+                        window.location.href = url.toString();
+                    }
                 }
             });
 
+        
             // Download functions with current filters
             window.downloadCsv = function() {
                 let filters = getFilters();
