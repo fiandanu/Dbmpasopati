@@ -127,7 +127,7 @@ class VtrenController extends Controller
 
     public function MclientVtrenStore(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
 
         $validator = Validator::make(
             $request->all(),

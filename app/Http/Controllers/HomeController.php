@@ -11,19 +11,9 @@ class HomeController extends Controller
         return view('dashboard.dashboard');
     }
 
-    public function sidebar()
-    {
-        return view('sidebar.sidebar');
-    }
-
     public function GrafikClient()
     {
         return view('mclient.indexGrafik');
-    }
-
-    public function KomplainUpt()
-    {
-        return view('mclient.indexUpt');
     }
 
     public function KomplainPonpes()
@@ -31,7 +21,7 @@ class HomeController extends Controller
         return view('mclient.indexPonpes');
     }
 
-    public function PencatatanKartu(){
-        return view('mclient.indexCard');
-    }
+    // public function PencatatanKartu(){
+    //     return view('mclient.indexCard');
+    // }
 }

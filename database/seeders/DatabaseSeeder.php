@@ -140,11 +140,15 @@ class DatabaseSeeder extends Seeder
         DataOpsionalUptFactory::new()->count(500)->create();
         DataOpsionalPonpesFactory::new()->count(500)->create();
 
-        // 
+        // URUTAN KETIGA MEMBUAT MCLIENT UPT FACTORY
         VpasFactory::new()->count(200)->create(); 
         RegullerFactory::new()->count(200)->create(); 
         KunjunganFactory::new()->count(200)->create(); 
         SettingFactory::new()->count(200)->create(); 
-        PengirimanFactory::new()->count(200)->create(); 
+        PengirimanFactory::new()->count(200)->create();
+        
+        // URUTAN KE EMPAT MEMBUAT MCLIENT PONPES FACTORY
+        
+
     }
 }

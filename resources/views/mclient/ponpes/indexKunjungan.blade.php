@@ -414,6 +414,7 @@
                                 </div>
                             @endif
                         </div>
+
                         {{-- Add Modal --}}
                         <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel"
                             aria-hidden="true">
@@ -1059,7 +1060,8 @@
                 const option = document.createElement('a');
                 option.className = 'dropdown-item ponpes-option';
                 option.href = '#';
-                option.textContent = `${ponpes.nama_ponpes} - ${ponpes.nama_wilayah}`;
+                option.textContent =
+                    `${ponpes.nama_ponpes} - ${ponpes.nama_wilayah?.nama_wilayah || 'Wilayah tidak tersedia'}`;
                 option.setAttribute('data-value', ponpes.id); // UBAH: simpan ID, bukan nama
                 option.setAttribute('data-nama-wilayah', ponpes.nama_wilayah);
                 option.onclick = function() {

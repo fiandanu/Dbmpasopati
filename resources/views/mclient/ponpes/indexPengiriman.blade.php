@@ -557,11 +557,8 @@
                                                 <div class="column">
                                                     <div class="mb-3">
                                                         <label for="pic_2">Penerima</label>
-                                                        <input type="text"
-                                                            class="form-control"
-                                                            id="pic_2"
-                                                            name="pic_2"
-                                                            placeholder="Masukan nama penerima">
+                                                        <input type="text" class="form-control" id="pic_2"
+                                                            name="pic_2" placeholder="Masukan nama penerima">
                                                     </div>
                                                 </div>
                                             </div>
@@ -757,12 +754,9 @@
                                                     <div class="column">
                                                         <div class="mb-3">
                                                             <label for="pic_2{{ $d->id }}">Penerima</label>
-                                                            <input type="text"
-                                                            class="form-control"
-                                                            id="pic-2"
-                                                            name="pic_2"
-                                                            value="{{ $d->pic_2 ?? '' }}"
-                                                            placeholder="Edit nama penerima">
+                                                            <input type="text" class="form-control" id="pic-2"
+                                                                name="pic_2" value="{{ $d->pic_2 ?? '' }}"
+                                                                placeholder="Edit nama penerima">
                                                         </div>
                                                     </div>
                                                 </div>

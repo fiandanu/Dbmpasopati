@@ -55,6 +55,7 @@ class RouteServiceProvider extends ServiceProvider
                 require base_path('routes/mclient/upt/settingAlat.php');
                 require base_path('routes/mclient/upt/vpas.php');
                 require base_path('routes/mclient/upt/reguller.php');
+                require base_path('routes/mclient/ponpes/ponpesDashboard.php');
                 require base_path('routes/mclient/ponpes/settingponpes.php');
                 require base_path('routes/mclient/ponpes/pengiriman.php');
                 require base_path('routes/mclient/ponpes/vtren.php');

@@ -3,37 +3,37 @@
 namespace App\Http\Controllers\mclient;
 
 use App\Http\Controllers\Controller;
-use App\Models\mclient\Kunjungan;
-use App\Models\mclient\Pengiriman;
-use App\Models\mclient\Reguller;
-use App\Models\mclient\SettingAlat;
-use App\Models\mclient\Vpas;
+use App\Models\mclient\ponpes\Kunjungan;
+use App\Models\mclient\ponpes\Pengiriman;
+use App\Models\mclient\ponpes\Vtren;
+use App\Models\mclient\ponpes\Reguller;
+use App\Models\mclient\ponpes\SettingPonpes;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class DashboardUptController extends Controller
+class DashboardPonpesController extends Controller
 {
     private function applyMonitoringFilters(Collection $collection, Request $request)
     {
-        // Filter by nama_upt
-        if ($request->has('search_nama_upt') && ! empty($request->search_nama_upt)) {
+        // Filter by nama_ponpes
+        if ($request->has('search_nama_ponpes') && !empty($request->search_nama_ponpes)) {
             $collection = $collection->filter(function ($item) use ($request) {
-                return stripos($item['nama_upt'], $request->search_nama_upt) !== false;
+                return stripos($item['nama_ponpes'], $request->search_nama_ponpes) !== false;
             });
         }
 
-        // Filter by kanwil
-        if ($request->has('search_kanwil') && ! empty($request->search_kanwil)) {
+        // Filter by nama_wilayah
+        if ($request->has('search_nama_wilayah') && !empty($request->search_nama_wilayah)) {
             $collection = $collection->filter(function ($item) use ($request) {
-                return stripos($item['kanwil'], $request->search_kanwil) !== false;
+                return stripos($item['nama_wilayah'], $request->search_nama_wilayah) !== false;
             });
         }
 
         // Filter by tipe
-        if ($request->has('search_tipe') && ! empty($request->search_tipe)) {
+        if ($request->has('search_tipe') && !empty($request->search_tipe)) {
             $collection = $collection->filter(function ($item) use ($request) {
                 return stripos($item['tipe'], $request->search_tipe) !== false;
             });
@@ -47,14 +47,14 @@ class DashboardUptController extends Controller
         }
 
         // Filter by jenis_kendala
-        if ($request->has('search_jenis_kendala') && ! empty($request->search_jenis_kendala)) {
+        if ($request->has('search_jenis_kendala') && !empty($request->search_jenis_kendala)) {
             $collection = $collection->filter(function ($item) use ($request) {
                 return stripos($item['jenis_kendala'], $request->search_jenis_kendala) !== false;
             });
         }
 
         // Filter by status
-        if ($request->has('search_status') && ! empty($request->search_status)) {
+        if ($request->has('search_status') && !empty($request->search_status)) {
             $searchStatus = strtolower($request->search_status);
             $collection = $collection->filter(function ($item) use ($searchStatus) {
                 $itemStatus = strtolower($item['status']);
@@ -74,14 +74,14 @@ class DashboardUptController extends Controller
         }
 
         // Date range filters
-        if ($request->has('search_tanggal_dari') && ! empty($request->search_tanggal_dari)) {
+        if ($request->has('search_tanggal_dari') && !empty($request->search_tanggal_dari)) {
             $collection = $collection->filter(function ($item) use ($request) {
                 return $item['tanggal_terlapor'] &&
                     $item['tanggal_terlapor']->format('Y-m-d') >= $request->search_tanggal_dari;
             });
         }
 
-        if ($request->has('search_tanggal_sampai') && ! empty($request->search_tanggal_sampai)) {
+        if ($request->has('search_tanggal_sampai') && !empty($request->search_tanggal_sampai)) {
             $collection = $collection->filter(function ($item) use ($request) {
                 return $item['tanggal_terlapor'] &&
                     $item['tanggal_terlapor']->format('Y-m-d') <= $request->search_tanggal_sampai;
@@ -91,15 +91,15 @@ class DashboardUptController extends Controller
         return $collection;
     }
 
-    public function monitoringClientUptOverview(Request $request)
+    public function monitoringClientPonpesOverview(Request $request)
     {
         // Collect data from all monitoring client tables
-        $regulerData = Reguller::with(['upt.kanwil'])->get()->map(function ($item) {
+        $regulerData = Reguller::with(['ponpes.namaWilayah'])->get()->map(function ($item) {
             return [
                 'id' => $item->id,
-                'nama_upt' => $item->upt->namaupt ?? '-',
-                'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
+                'nama_ponpes' => $item->ponpes->nama_ponpes ?? '-',
+                'nama_wilayah' => $item->ponpes->namaWilayah->nama_wilayah ?? '-',
+                'tipe' => $item->ponpes->tipe ?? '-',
                 'jenis_layanan' => 'Komplain Reguler',
                 'jenis_kendala' => $item->jenis_kendala ?? 'Belum ditentukan',
                 'status' => $item->status ?? 'Belum ditentukan',
@@ -109,13 +109,13 @@ class DashboardUptController extends Controller
             ];
         });
 
-        $vpasData = Vpas::with(['upt.kanwil'])->get()->map(function ($item) {
+        $vtrenData = Vtren::with(['ponpes.namaWilayah'])->get()->map(function ($item) {
             return [
                 'id' => $item->id,
-                'nama_upt' => $item->upt->namaupt ?? '-',
-                'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
-                'jenis_layanan' => 'Komplain Vpas',
+                'nama_ponpes' => $item->ponpes->nama_ponpes ?? '-',
+                'nama_wilayah' => $item->ponpes->namaWilayah->nama_wilayah ?? '-',
+                'tipe' => $item->ponpes->tipe ?? '-',
+                'jenis_layanan' => 'Komplain Vtren',
                 'jenis_kendala' => $item->jenis_kendala ?? 'Belum ditentukan',
                 'status' => $item->status ?? 'Belum ditentukan',
                 'tanggal_terlapor' => $item->tanggal_terlapor,
@@ -124,13 +124,13 @@ class DashboardUptController extends Controller
             ];
         });
 
-        $kunjunganData = Kunjungan::with(['upt.kanwil'])->get()->map(function ($item) {
+        $kunjunganData = Kunjungan::with(['ponpes.namaWilayah'])->get()->map(function ($item) {
             return [
                 'id' => $item->id,
-                'nama_upt' => $item->upt->namaupt ?? '-',
-                'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
-                'jenis_layanan' => 'Kunjungan upt',
+                'nama_ponpes' => $item->ponpes->nama_ponpes ?? '-',
+                'nama_wilayah' => $item->ponpes->namaWilayah->nama_wilayah ?? '-',
+                'tipe' => $item->ponpes->tipe ?? '-',
+                'jenis_layanan' => 'Kunjungan Ponpes',
                 'jenis_kendala' => $item->keterangan ?? 'Monitoring rutin',
                 'status' => $item->status ?? 'Belum ditentukan',
                 'tanggal_terlapor' => $item->jadwal,
@@ -139,12 +139,12 @@ class DashboardUptController extends Controller
             ];
         });
 
-        $pengirimanData = Pengiriman::with(['upt.kanwil'])->get()->map(function ($item) {
+        $pengirimanData = Pengiriman::with(['ponpes.namaWilayah'])->get()->map(function ($item) {
             return [
                 'id' => $item->id,
-                'nama_upt' => $item->upt->namaupt ?? '-',
-                'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
+                'nama_ponpes' => $item->ponpes->nama_ponpes ?? '-',
+                'nama_wilayah' => $item->ponpes->namaWilayah->nama_wilayah ?? '-',
+                'tipe' => $item->ponpes->tipe ?? '-',
                 'jenis_layanan' => 'Pengiriman Alat',
                 'jenis_kendala' => $item->keterangan ?? 'Pengiriman alat',
                 'status' => $item->status ?? 'Belum ditentukan',
@@ -154,12 +154,12 @@ class DashboardUptController extends Controller
             ];
         });
 
-        $settingAlatData = SettingAlat::with(['upt.kanwil'])->get()->map(function ($item) {
+        $settingAlatData = SettingPonpes::with(['ponpes.namaWilayah'])->get()->map(function ($item) {
             return [
                 'id' => $item->id,
-                'nama_upt' => $item->upt->namaupt ?? '-',
-                'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
+                'nama_ponpes' => $item->ponpes->nama_ponpes ?? '-',
+                'nama_wilayah' => $item->ponpes->namaWilayah->nama_wilayah ?? '-',
+                'tipe' => $item->ponpes->tipe ?? '-',
                 'jenis_layanan' => 'Setting Alat',
                 'jenis_kendala' => $item->keterangan ?? 'Setting alat',
                 'status' => $item->status ?? 'Belum ditentukan',
@@ -172,7 +172,7 @@ class DashboardUptController extends Controller
         // Merge all data
         $allData = collect()
             ->merge($regulerData)
-            ->merge($vpasData)
+            ->merge($vtrenData)
             ->merge($kunjunganData)
             ->merge($pengirimanData)
             ->merge($settingAlatData);
@@ -185,7 +185,7 @@ class DashboardUptController extends Controller
 
         // Calculate statistics
         $totalKomplain = $allData->count();
-        $totalVpas = $vpasData->count();
+        $totalVtren = $vtrenData->count();
         $totalReguler = $regulerData->count();
         $totalKunjungan = $kunjunganData->count();
         $totalPengiriman = $pengirimanData->count();
@@ -193,12 +193,12 @@ class DashboardUptController extends Controller
 
         // Calculate statistics by status for each category
         $statusStats = [
-            'vpas' => [
-                'pending' => $vpasData->where('status', 'pending')->count(),
-                'proses' => $vpasData->where('status', 'proses')->count(),
-                'terjadwal' => $vpasData->where('status', 'terjadwal')->count(),
-                'selesai' => $vpasData->where('status', 'selesai')->count(),
-                'belum_ditentukan' => $vpasData->whereIn('status', ['', 'Belum ditentukan', null])->count(),
+            'vtren' => [
+                'pending' => $vtrenData->where('status', 'pending')->count(),
+                'proses' => $vtrenData->where('status', 'proses')->count(),
+                'terjadwal' => $vtrenData->where('status', 'terjadwal')->count(),
+                'selesai' => $vtrenData->where('status', 'selesai')->count(),
+                'belum_ditentukan' => $vtrenData->whereIn('status', ['', 'Belum ditentukan', null])->count(),
             ],
             'reguler' => [
                 'pending' => $regulerData->where('status', 'pending')->count(),
@@ -233,7 +233,7 @@ class DashboardUptController extends Controller
         // Pagination
         $perPage = $request->get('per_page', 10);
 
-        if (! in_array($perPage, [10, 15, 20, 'all'])) {
+        if (!in_array($perPage, [10, 15, 20, 'all'])) {
             $perPage = 10;
         }
 
@@ -258,10 +258,10 @@ class DashboardUptController extends Controller
             );
         }
 
-        return view('mclient.indexUpt', compact(
+        return view('mclient.indexPonpes', compact(
             'data',
             'totalKomplain',
-            'totalVpas',
+            'totalVtren',
             'totalReguler',
             'totalKunjungan',
             'totalPengiriman',
@@ -270,28 +270,27 @@ class DashboardUptController extends Controller
         ));
     }
 
-
-    // EXPORT GOLBAL DATA DASHBOARD ATAS
+    // EXPORT GLOBAL DATA DASHBOARD ATAS
     public function exportMonitoringClientSummaryPdf(Request $request)
     {
         // Get raw data untuk statistik
-        $vpasData = Vpas::with(['upt.kanwil'])->get();
-        $regulerData = Reguller::with(['upt.kanwil'])->get();
-        $kunjunganData = Kunjungan::with(['upt.kanwil'])->get();
-        $pengirimanData = Pengiriman::with(['upt.kanwil'])->get();
-        $settingAlatData = SettingAlat::with(['upt.kanwil'])->get();
+        $vtrenData = Vtren::with(['ponpes.namaWilayah'])->get();
+        $regulerData = Reguller::with(['ponpes.namaWilayah'])->get();
+        $kunjunganData = Kunjungan::with(['ponpes.namaWilayah'])->get();
+        $pengirimanData = Pengiriman::with(['ponpes.namaWilayah'])->get();
+        $settingAlatData = SettingPonpes::with(['ponpes.namaWilayah'])->get();
 
         // Calculate statistics by status for each category
         $summaryData = [
             [
-                'kategori' => 'Komplain VPAS',
-                'layanan' => 'Layanan VPAS',
-                'total' => $vpasData->count(),
-                'belum_ditentukan' => $vpasData->whereIn('status', ['', 'Belum ditentukan', null])->count(),
-                'pending' => $vpasData->where('status', 'pending')->count(),
-                'proses' => $vpasData->where('status', 'proses')->count(),
-                'terjadwal' => $vpasData->where('status', 'terjadwal')->count(),
-                'selesai' => $vpasData->where('status', 'selesai')->count(),
+                'kategori' => 'Komplain VTREN',
+                'layanan' => 'Layanan VTREN',
+                'total' => $vtrenData->count(),
+                'belum_ditentukan' => $vtrenData->whereIn('status', ['', 'Belum ditentukan', null])->count(),
+                'pending' => $vtrenData->where('status', 'pending')->count(),
+                'proses' => $vtrenData->where('status', 'proses')->count(),
+                'terjadwal' => $vtrenData->where('status', 'terjadwal')->count(),
+                'selesai' => $vtrenData->where('status', 'selesai')->count(),
             ],
             [
                 'kategori' => 'Komplain Reguler',
@@ -304,7 +303,7 @@ class DashboardUptController extends Controller
                 'selesai' => $regulerData->where('status', 'selesai')->count(),
             ],
             [
-                'kategori' => 'Kunjungan UPT',
+                'kategori' => 'Kunjungan Ponpes',
                 'layanan' => 'Kunjungan Monitoring Client',
                 'total' => $kunjunganData->count(),
                 'belum_ditentukan' => $kunjunganData->whereIn('status', ['', 'Belum ditentukan', null])->count(),
@@ -314,7 +313,7 @@ class DashboardUptController extends Controller
                 'selesai' => $kunjunganData->where('status', 'selesai')->count(),
             ],
             [
-                'kategori' => 'Pengiriman Alat UPT',
+                'kategori' => 'Pengiriman Alat Ponpes',
                 'layanan' => 'Layanan Pengiriman Alat',
                 'total' => $pengirimanData->count(),
                 'belum_ditentukan' => $pengirimanData->whereIn('status', ['', 'Belum ditentukan', null])->count(),
@@ -324,8 +323,8 @@ class DashboardUptController extends Controller
                 'selesai' => $pengirimanData->where('status', 'selesai')->count(),
             ],
             [
-                'kategori' => 'Setting Alat UPT',
-                'layanan' => 'Layanan Setting Alat UPT',
+                'kategori' => 'Setting Alat Ponpes',
+                'layanan' => 'Layanan Setting Alat Ponpes',
                 'total' => $settingAlatData->count(),
                 'belum_ditentukan' => $settingAlatData->whereIn('status', ['', 'Belum ditentukan', null])->count(),
                 'pending' => $settingAlatData->where('status', 'pending')->count(),
@@ -336,20 +335,20 @@ class DashboardUptController extends Controller
         ];
 
         // Calculate grand total
-        $grandTotal = $vpasData->count() + $regulerData->count() + $kunjunganData->count()
+        $grandTotal = $vtrenData->count() + $regulerData->count() + $kunjunganData->count()
             + $pengirimanData->count() + $settingAlatData->count();
 
         $pdfData = [
-            'title' => 'Ringkasan Monitoring Client UPT',
+            'title' => 'Ringkasan Monitoring Client Ponpes',
             'data' => $summaryData,
             'grandTotal' => $grandTotal,
             'generated_at' => Carbon::now()->format('d M Y H:i:s'),
         ];
 
-        $pdf = Pdf::loadView('export.public.mclient.DashboardSummaryUpt', $pdfData)
+        $pdf = Pdf::loadView('export.public.mclient.DashboardSummaryPonpes', $pdfData)
             ->setPaper('a4', 'portrait');
 
-        $filename = 'ringkasan_monitoring_client_' . Carbon::now()->format('d_M_Y_His') . '.pdf';
+        $filename = 'ringkasan_monitoring_client_ponpes_' . Carbon::now()->format('d_M_Y_His') . '.pdf';
 
         return $pdf->download($filename);
     }
@@ -357,13 +356,13 @@ class DashboardUptController extends Controller
     public function exportMonitoringClientSummaryCsv(Request $request): StreamedResponse
     {
         // Get raw data untuk statistik
-        $vpasData = Vpas::with(['upt.kanwil'])->get();
-        $regulerData = Reguller::with(['upt.kanwil'])->get();
-        $kunjunganData = Kunjungan::with(['upt.kanwil'])->get();
-        $pengirimanData = Pengiriman::with(['upt.kanwil'])->get();
-        $settingAlatData = SettingAlat::with(['upt.kanwil'])->get();
+        $vtrenData = Vtren::with(['ponpes.namaWilayah'])->get();
+        $regulerData = Reguller::with(['ponpes.namaWilayah'])->get();
+        $kunjunganData = Kunjungan::with(['ponpes.namaWilayah'])->get();
+        $pengirimanData = Pengiriman::with(['ponpes.namaWilayah'])->get();
+        $settingAlatData = SettingPonpes::with(['ponpes.namaWilayah'])->get();
 
-        $filename = 'ringkasan_monitoring_client_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
+        $filename = 'ringkasan_monitoring_client_ponpes_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
 
         $headers = [
             'Content-type' => 'text/csv',
@@ -373,11 +372,11 @@ class DashboardUptController extends Controller
             'Expires' => '0',
         ];
 
-        $callback = function () use ($vpasData, $regulerData, $kunjunganData, $pengirimanData, $settingAlatData) {
+        $callback = function () use ($vtrenData, $regulerData, $kunjunganData, $pengirimanData, $settingAlatData) {
             $file = fopen('php://output', 'w');
 
             // Header CSV
-            fputcsv($file, ['RINGKASAN MONITORING CLIENT UPT']);
+            fputcsv($file, ['RINGKASAN MONITORING CLIENT PONPES']);
             fputcsv($file, ['Tanggal Export: ' . Carbon::now()->format('d M Y H:i:s')]);
             fputcsv($file, []); // Empty row
 
@@ -398,14 +397,14 @@ class DashboardUptController extends Controller
             $no = 1;
             $summaryData = [
                 [
-                    'kategori' => 'Komplain VPAS',
-                    'layanan' => 'Layanan VPAS',
-                    'total' => $vpasData->count(),
-                    'belum_ditentukan' => $vpasData->whereIn('status', ['', 'Belum ditentukan', null])->count(),
-                    'pending' => $vpasData->where('status', 'pending')->count(),
-                    'proses' => $vpasData->where('status', 'proses')->count(),
-                    'terjadwal' => $vpasData->where('status', 'terjadwal')->count(),
-                    'selesai' => $vpasData->where('status', 'selesai')->count(),
+                    'kategori' => 'Komplain VTREN',
+                    'layanan' => 'Layanan VTREN',
+                    'total' => $vtrenData->count(),
+                    'belum_ditentukan' => $vtrenData->whereIn('status', ['', 'Belum ditentukan', null])->count(),
+                    'pending' => $vtrenData->where('status', 'pending')->count(),
+                    'proses' => $vtrenData->where('status', 'proses')->count(),
+                    'terjadwal' => $vtrenData->where('status', 'terjadwal')->count(),
+                    'selesai' => $vtrenData->where('status', 'selesai')->count(),
                 ],
                 [
                     'kategori' => 'Komplain Reguler',
@@ -418,7 +417,7 @@ class DashboardUptController extends Controller
                     'selesai' => $regulerData->where('status', 'selesai')->count(),
                 ],
                 [
-                    'kategori' => 'Kunjungan UPT',
+                    'kategori' => 'Kunjungan Ponpes',
                     'layanan' => 'Kunjungan Monitoring Client',
                     'total' => $kunjunganData->count(),
                     'belum_ditentukan' => $kunjunganData->whereIn('status', ['', 'Belum ditentukan', null])->count(),
@@ -428,7 +427,7 @@ class DashboardUptController extends Controller
                     'selesai' => $kunjunganData->where('status', 'selesai')->count(),
                 ],
                 [
-                    'kategori' => 'Pengiriman Alat UPT',
+                    'kategori' => 'Pengiriman Alat Ponpes',
                     'layanan' => 'Layanan Pengiriman Alat',
                     'total' => $pengirimanData->count(),
                     'belum_ditentukan' => $pengirimanData->whereIn('status', ['', 'Belum ditentukan', null])->count(),
@@ -438,8 +437,8 @@ class DashboardUptController extends Controller
                     'selesai' => $pengirimanData->where('status', 'selesai')->count(),
                 ],
                 [
-                    'kategori' => 'Setting Alat UPT',
-                    'layanan' => 'Layanan Setting Alat UPT',
+                    'kategori' => 'Setting Alat Ponpes',
+                    'layanan' => 'Layanan Setting Alat Ponpes',
                     'total' => $settingAlatData->count(),
                     'belum_ditentukan' => $settingAlatData->whereIn('status', ['', 'Belum ditentukan', null])->count(),
                     'pending' => $settingAlatData->where('status', 'pending')->count(),
@@ -487,55 +486,55 @@ class DashboardUptController extends Controller
     public function exportMonitoringClientCsv(Request $request): StreamedResponse
     {
         // Get all data
-        $regulerData = Reguller::with(['upt.kanwil'])->get()->map(function ($item) {
+        $regulerData = Reguller::with(['ponpes.namaWilayah'])->get()->map(function ($item) {
             return [
-                'nama_upt' => $item->upt->namaupt ?? '-',
-                'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
-                'jenis_layanan' => 'Keluhan Reguler',
+                'nama_ponpes' => $item->ponpes->nama_ponpes ?? '-',
+                'nama_wilayah' => $item->ponpes->namaWilayah->nama_wilayah ?? '-',
+                'tipe' => $item->ponpes->tipe ?? '-',
+                'jenis_layanan' => 'Komplain Reguler',
                 'jenis_kendala' => $item->jenis_kendala ?? 'Belum ditentukan',
                 'status' => $item->status ?? 'Belum ditentukan',
             ];
         });
 
-        $vpasData = Vpas::with(['upt.kanwil'])->get()->map(function ($item) {
+        $vtrenData = Vtren::with(['ponpes.namaWilayah'])->get()->map(function ($item) {
             return [
-                'nama_upt' => $item->upt->namaupt ?? '-',
-                'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
-                'jenis_layanan' => 'Keluhan Vpas',
+                'nama_ponpes' => $item->ponpes->nama_ponpes ?? '-',
+                'nama_wilayah' => $item->ponpes->namaWilayah->nama_wilayah ?? '-',
+                'tipe' => $item->ponpes->tipe ?? '-',
+                'jenis_layanan' => 'Komplain VTREN',
                 'jenis_kendala' => $item->jenis_kendala ?? 'Belum ditentukan',
                 'status' => $item->status ?? 'Belum ditentukan',
             ];
         });
 
-        $kunjunganData = Kunjungan::with(['upt.kanwil'])->get()->map(function ($item) {
+        $kunjunganData = Kunjungan::with(['ponpes.namaWilayah'])->get()->map(function ($item) {
             return [
-                'nama_upt' => $item->upt->namaupt ?? '-',
-                'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
+                'nama_ponpes' => $item->ponpes->nama_ponpes ?? '-',
+                'nama_wilayah' => $item->ponpes->namaWilayah->nama_wilayah ?? '-',
+                'tipe' => $item->ponpes->tipe ?? '-',
                 'jenis_layanan' => 'Kunjungan',
                 'jenis_kendala' => $item->keterangan ?? 'Monitoring rutin',
                 'status' => $item->status ?? 'Belum ditentukan',
             ];
         });
 
-        $pengirimanData = Pengiriman::with(['upt.kanwil'])->get()->map(function ($item) {
+        $pengirimanData = Pengiriman::with(['ponpes.namaWilayah'])->get()->map(function ($item) {
             return [
-                'nama_upt' => $item->upt->namaupt ?? '-',
-                'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
+                'nama_ponpes' => $item->ponpes->nama_ponpes ?? '-',
+                'nama_wilayah' => $item->ponpes->namaWilayah->nama_wilayah ?? '-',
+                'tipe' => $item->ponpes->tipe ?? '-',
                 'jenis_layanan' => 'Pengiriman Alat',
                 'jenis_kendala' => $item->keterangan ?? 'Pengiriman alat',
                 'status' => $item->status ?? 'Belum ditentukan',
             ];
         });
 
-        $settingAlatData = SettingAlat::with(['upt.kanwil'])->get()->map(function ($item) {
+        $settingAlatData = SettingPonpes::with(['ponpes.namaWilayah'])->get()->map(function ($item) {
             return [
-                'nama_upt' => $item->upt->namaupt ?? '-',
-                'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
+                'nama_ponpes' => $item->ponpes->nama_ponpes ?? '-',
+                'nama_wilayah' => $item->ponpes->namaWilayah->nama_wilayah ?? '-',
+                'tipe' => $item->ponpes->tipe ?? '-',
                 'jenis_layanan' => 'Setting Alat',
                 'jenis_kendala' => $item->keterangan ?? 'Setting alat',
                 'status' => $item->status ?? 'Belum ditentukan',
@@ -544,7 +543,7 @@ class DashboardUptController extends Controller
 
         $allData = collect()
             ->merge($regulerData)
-            ->merge($vpasData)
+            ->merge($vtrenData)
             ->merge($kunjunganData)
             ->merge($pengirimanData)
             ->merge($settingAlatData);
@@ -552,7 +551,7 @@ class DashboardUptController extends Controller
         // Apply filters
         $allData = $this->applyMonitoringFilters($allData, $request);
 
-        $filename = 'monitoring_client_upt_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
+        $filename = 'monitoring_client_ponpes_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
 
         $headers = [
             'Content-type' => 'text/csv',
@@ -562,14 +561,14 @@ class DashboardUptController extends Controller
             'Expires' => '0',
         ];
 
-        $rows = [['No', 'Nama UPT', 'Kanwil', 'Tipe', 'Jenis Layanan', 'Jenis Kendala', 'Status']];
+        $rows = [['No', 'Nama Ponpes', 'Wilayah', 'Tipe', 'Menu', 'Jenis Kendala', 'Status']];
         $no = 1;
 
         foreach ($allData as $row) {
             $rows[] = [
                 $no++,
-                $row['nama_upt'],
-                $row['kanwil'],
+                $row['nama_ponpes'],
+                $row['nama_wilayah'],
                 ucfirst($row['tipe']),
                 $row['jenis_layanan'],
                 $row['jenis_kendala'],
@@ -591,55 +590,55 @@ class DashboardUptController extends Controller
     public function exportMonitoringClientPdf(Request $request)
     {
         // Similar to CSV but return PDF
-        $regulerData = Reguller::with(['upt.kanwil'])->get()->map(function ($item) {
+        $regulerData = Reguller::with(['ponpes.namaWilayah'])->get()->map(function ($item) {
             return [
-                'nama_upt' => $item->upt->namaupt ?? '-',
-                'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
+                'nama_ponpes' => $item->ponpes->nama_ponpes ?? '-',
+                'nama_wilayah' => $item->ponpes->namaWilayah->nama_wilayah ?? '-',
+                'tipe' => $item->ponpes->tipe ?? '-',
                 'jenis_layanan' => 'Komplain Reguler',
                 'jenis_kendala' => $item->jenis_kendala ?? 'Belum ditentukan',
                 'status' => $item->status ?? 'Belum ditentukan',
             ];
         });
 
-        $vpasData = Vpas::with(['upt.kanwil'])->get()->map(function ($item) {
+        $vtrenData = Vtren::with(['ponpes.namaWilayah'])->get()->map(function ($item) {
             return [
-                'nama_upt' => $item->upt->namaupt ?? '-',
-                'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
-                'jenis_layanan' => 'Komplain Vpas',
+                'nama_ponpes' => $item->ponpes->nama_ponpes ?? '-',
+                'nama_wilayah' => $item->ponpes->namaWilayah->nama_wilayah ?? '-',
+                'tipe' => $item->ponpes->tipe ?? '-',
+                'jenis_layanan' => 'Komplain VTREN',
                 'jenis_kendala' => $item->jenis_kendala ?? 'Belum ditentukan',
                 'status' => $item->status ?? 'Belum ditentukan',
             ];
         });
 
-        $kunjunganData = Kunjungan::with(['upt.kanwil'])->get()->map(function ($item) {
+        $kunjunganData = Kunjungan::with(['ponpes.namaWilayah'])->get()->map(function ($item) {
             return [
-                'nama_upt' => $item->upt->namaupt ?? '-',
-                'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
+                'nama_ponpes' => $item->ponpes->nama_ponpes ?? '-',
+                'nama_wilayah' => $item->ponpes->namaWilayah->nama_wilayah ?? '-',
+                'tipe' => $item->ponpes->tipe ?? '-',
                 'jenis_layanan' => 'Kunjungan',
                 'jenis_kendala' => $item->keterangan ?? 'Monitoring rutin',
                 'status' => $item->status ?? 'Belum ditentukan',
             ];
         });
 
-        $pengirimanData = Pengiriman::with(['upt.kanwil'])->get()->map(function ($item) {
+        $pengirimanData = Pengiriman::with(['ponpes.namaWilayah'])->get()->map(function ($item) {
             return [
-                'nama_upt' => $item->upt->namaupt ?? '-',
-                'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
+                'nama_ponpes' => $item->ponpes->nama_ponpes ?? '-',
+                'nama_wilayah' => $item->ponpes->namaWilayah->nama_wilayah ?? '-',
+                'tipe' => $item->ponpes->tipe ?? '-',
                 'jenis_layanan' => 'Pengiriman Alat',
                 'jenis_kendala' => $item->keterangan ?? 'Pengiriman alat',
                 'status' => $item->status ?? 'Belum ditentukan',
             ];
         });
 
-        $settingAlatData = SettingAlat::with(['upt.kanwil'])->get()->map(function ($item) {
+        $settingAlatData = SettingPonpes::with(['ponpes.namaWilayah'])->get()->map(function ($item) {
             return [
-                'nama_upt' => $item->upt->namaupt ?? '-',
-                'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
+                'nama_ponpes' => $item->ponpes->nama_ponpes ?? '-',
+                'nama_wilayah' => $item->ponpes->namaWilayah->nama_wilayah ?? '-',
+                'tipe' => $item->ponpes->tipe ?? '-',
                 'jenis_layanan' => 'Setting Alat',
                 'jenis_kendala' => $item->keterangan ?? 'Setting alat',
                 'status' => $item->status ?? 'Belum ditentukan',
@@ -648,7 +647,7 @@ class DashboardUptController extends Controller
 
         $allData = collect()
             ->merge($regulerData)
-            ->merge($vpasData)
+            ->merge($vtrenData)
             ->merge($kunjunganData)
             ->merge($pengirimanData)
             ->merge($settingAlatData);
@@ -656,15 +655,14 @@ class DashboardUptController extends Controller
         $allData = $this->applyMonitoringFilters($allData, $request);
 
         $pdfData = [
-            'title' => 'Monitoring Client UPT',
+            'title' => 'Monitoring Client Ponpes',
             'data' => $allData,
             'generated_at' => Carbon::now()->format('d M Y H:i:s'),
         ];
 
-        $pdf = Pdf::loadView('export.public.mclient.DashboardUpt', $pdfData);
-        $filename = 'monitoring_client_upt_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
+        $pdf = Pdf::loadView('export.public.mclient.DashboardPonpes', $pdfData);
+        $filename = 'monitoring_client_ponpes_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
 
         return $pdf->download($filename);
     }
-    
 }
