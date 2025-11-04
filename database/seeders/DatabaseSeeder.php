@@ -10,7 +10,7 @@ use App\Models\mclient\Vpas;
 use Illuminate\Database\Seeder;
 use App\Models\user\kanwil\Kanwil;
 use App\Models\user\kendala\Kendala;
-use App\Models\user\NamaWilayah\NamaWilayah;
+use App\Models\user\namaWilayah\NamaWilayah;
 use App\Models\user\pic\Pic;
 use App\Models\user\provider\Provider;
 

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\user\user;
 
 use App\Http\Controllers\Controller;
-use App\Models\user\NamaWilayah\NamaWilayah;
+use App\Models\user\namaWilayah\NamaWilayah;
 use App\Models\user\ponpes\Ponpes;
 use App\Models\user\provider\Provider;
 use App\Models\user\vpn\Vpn;

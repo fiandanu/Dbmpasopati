@@ -4,7 +4,7 @@ namespace App\Http\Controllers\user\user;
 
 use App\Http\Controllers\Controller;
 use App\Models\user\kanwil\Kanwil;
-use App\Models\user\NamaWilayah\NamaWilayah;
+use App\Models\user\namaWilayah\NamaWilayah;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
