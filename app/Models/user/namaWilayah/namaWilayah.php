@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\user\namaWilayah;
+namespace App\Models\user\NamaWilayah;
 
 use App\Models\user\ponpes\Ponpes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
