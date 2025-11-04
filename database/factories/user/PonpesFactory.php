@@ -3,7 +3,7 @@
 namespace Database\Factories\user;
 
 use App\Models\user\ponpes\Ponpes;
-use App\Models\user\namaWilayah\NamaWilayah;
+use App\Models\user\NamaWilayah\NamaWilayah;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class PonpesFactory extends Factory
