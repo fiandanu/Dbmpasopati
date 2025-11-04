@@ -1,8 +1,7 @@
 <?php
 
-
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\tutorial\upt\RegullerController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/tutorial', [RegullerController::class, 'tutorial'])->name('tutorial');
 

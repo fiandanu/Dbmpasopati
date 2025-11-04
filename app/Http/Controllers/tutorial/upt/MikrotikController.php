@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\tutorial\upt;
 
 use App\Http\Controllers\Controller;
-use App\Models\tutorial\upt\mikrotik;
+use App\Models\tutorial\upt\Mikrotik;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
