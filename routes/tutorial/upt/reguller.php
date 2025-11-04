@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\TutorialController;
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\tutorial\upt\RegullerController;
 
