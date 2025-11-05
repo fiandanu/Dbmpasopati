@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\user\upt\Upt;
 
+// MEMBENARKAN FILE MODEL DI BAGIAN CATATAN KARTU DARI catatan.php menjadi Catatan.php
 class Catatan extends Model
 {
     use HasFactory;
