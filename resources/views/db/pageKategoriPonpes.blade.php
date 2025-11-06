@@ -16,105 +16,123 @@
                 </div>
         </section>
 
-        <!-- CARD KATEGORI (sama seperti yang ada) -->
-        <div class="content">
-            <div class="container-fluid">
-                <div class="row">
-                    <!-- Kategori PKS -->
-                    <div class="col-md-3">
-                        <div class="card-kategori">
-                            <h3>PKS</h3>
-                            <p class="text-kategori mb-2">Surat Perjanjian Kerja Sama</p>
-                            <div class="data-badge mb-3">
-                                <span class="checkmark">✓</span>
-                                100 Data
-                            </div>
-                            <a href="{{ route('DbPonpes.pks.ListDataPks') }}" class="list-button">Selengkapnya</a>
-                        </div>
-                    </div>
+        <!-- CARD KATEGORI -->
 
-                    <!-- Kategori SPP -->
-                    <div class="col-md-3">
-                        <div class="card-kategori">
-                            <h3>SPP</h3>
-                            <p class="text-kategori mb-2">Surat Perintah Pemasangan</p>
-                            <div class="data-badge mb-3">
-                                <span class="checkmark">✓</span>
-                                100 Data
-                            </div>
-                            <a href="{{ route('sppPonpes.ListDataSpp') }}" class="list-button">Selengkapnya</a>
-                        </div>
-                    </div>
-
-                    <!-- Kategori VTREN -->
-                    <div class="col-md-3">
-                        <div class="card-kategori">
-                            <h3>VTREN</h3>
-                            <p class="text-kategori mb-2">Layanan VTREN</p>
-                            <div class="data-badge mb-3">
-                                <span class="checkmark">✓</span>
-                                100 Data
-                            </div>
-                            <a href="{{ route('DbPonpes.ListDataVtrend') }}" class="list-button">Selengkapnya</a>
-                        </div>
-                    </div>
-
-                    <!-- Kategori REGULER -->
-                    <div class="col-md-3">
-                        <div class="card-kategori">
-                            <h3>REGULER</h3>
-                            <p class="text-kategori mb-2">Layanan Reguler</p>
-                            <div class="data-badge mb-3">
-                                <span class="checkmark">✓</span>
-                                100 Data
-                            </div>
-                            <a href="{{ route('ponpes.ListDataPonpes') }}" class="list-button">Selengkapnya</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- TABLE SECTION -->
         <section class="content">
             <div class="container-fluid">
-                <!-- Statistik Database PONPES -->
                 <div class="row mt-3 mb-3">
                     <div class="col-12">
-                        <div class="card shadow-sm">
-                            <div class="card-header">
-                                <h5 class="mb-0">Statistik Database PONPES</h5>
+                        <div class="card-body">
+
+                            {{-- CARD KATEGORI --}}
+                            <div class="row mb-3">
+                                <!-- Kategori PKS -->
+                                <div class="col-md-3 mb-2">
+                                    <div class="card-kategori">
+                                        <h3>PKS</h3>
+                                        <p class="text-kategori mb-2">Surat Perjanjian Kerja Sama</p>
+                                        <div class="data-badge mb-3">
+                                            <span class="checkmark">✓</span>
+                                            100 Data
+                                        </div>
+                                        <a href="{{ route('DbPonpes.pks.ListDataPks') }}"
+                                            class="list-button">Selengkapnya</a>
+                                    </div>
+                                </div>
+
+                                <!-- Kategori SPP -->
+                                <div class="col-md-3 mb-2">
+                                    <div class="card-kategori">
+                                        <h3>SPP</h3>
+                                        <p class="text-kategori mb-2">Surat Perintah Pemasangan</p>
+                                        <div class="data-badge mb-3">
+                                            <span class="checkmark">✓</span>
+                                            100 Data
+                                        </div>
+                                        <a href="{{ route('sppPonpes.ListDataSpp') }}" class="list-button">Selengkapnya</a>
+                                    </div>
+                                </div>
+
+                                <!-- Kategori VTREN -->
+                                <div class="col-md-3 mb-2">
+                                    <div class="card-kategori">
+                                        <h3>VTREN</h3>
+                                        <p class="text-kategori mb-2">Layanan VTREN</p>
+                                        <div class="data-badge mb-3">
+                                            <span class="checkmark">✓</span>
+                                            100 Data
+                                        </div>
+                                        <a href="{{ route('DbPonpes.ListDataVtrend') }}"
+                                            class="list-button">Selengkapnya</a>
+                                    </div>
+                                </div>
+
+                                <!-- Kategori REGULER -->
+                                <div class="col-md-3 mb-2">
+                                    <div class="card-kategori">
+                                        <h3>REGULER</h3>
+                                        <p class="text-kategori mb-2">Layanan Reguler</p>
+                                        <div class="data-badge mb-3">
+                                            <span class="checkmark">✓</span>
+                                            100 Data
+                                        </div>
+                                        <a href="{{ route('ponpes.ListDataPonpes') }}" class="list-button">Selengkapnya</a>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="card-body">
-                                <div class="row text-center">
-                                    <div class="col-md-4 mb-3">
-                                        <div class="border rounded p-3 h-100">
-                                            <p class="mb-1 text-muted small">Total Data PONPES</p>
-                                            <h4 class="mb-0 font-weight-bold">{{ number_format($totalPonpes) }}</h4>
+
+                            {{-- CARD TOTAL --}}
+                            <div class="row">
+                                <div class="col-md-4 mb-2">
+                                    <div class="card-total">
+                                        <div class="w-full">
+                                            <h1 class="title-medium-18">Total Data PONPES</h1>
+                                            <h4 class="display-medium-48">{{ number_format($totalPonpes) }}</h4>
+                                        </div>
+                                        <div class="icon-card-total">
+                                            <span class="material-symbols-outlined">
+                                                mosque
+                                            </span>
                                         </div>
                                     </div>
-                                    <div class="col-md-4 mb-3">
-                                        <div class="border rounded p-3 h-100">
-                                            <p class="mb-1 text-muted small">Total Extension VTREN</p>
-                                            <h4 class="mb-0 font-weight-bold">{{ number_format($totalExtensionVtren) }}</h4>
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <div class="card-total">
+                                        <div class="w-full">
+                                            <h1 class="title-medium-18">Total Extension VTREN</h1>
+                                            <h4 class="display-medium-48">{{ number_format($totalExtensionVtren) }}</h4>
+                                        </div>
+                                        <div class="icon-card-total">
+                                            <span class="material-symbols-outlined">
+                                                video_chat
+                                            </span>
                                         </div>
                                     </div>
-                                    <div class="col-md-4 mb-3">
-                                        <div class="border rounded p-3 h-100">
-                                            <p class="mb-1 text-muted small">Total Extension Reguler</p>
-                                            <h4 class="mb-0 font-weight-bold">{{ number_format($totalExtensionReguler) }}
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <div class="card-total">
+                                        <div class="w-full">
+                                            <h1 class="title-medium-18">Total Extension Reguler</h1>
+                                            <h4 class="display-medium-48">{{ number_format($totalExtensionReguler) }}
                                             </h4>
+                                        </div>
+                                        <div class="icon-card-total">
+                                            <span class="material-symbols-outlined">
+                                                video_camera_front
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
 
                 <div class="row mb-3 align-items-center">
                     <div class="col d-flex justify-content-between align-items-center">
-                        <h3 class="headline-medium-24">Data PONPES Keseluruhan</h3>
                         <div class="d-flex align-items-center gap-2 flex-wrap">
                             <div class="d-flex gap-2" id="export-buttons">
                                 <button onclick="downloadCsv()"

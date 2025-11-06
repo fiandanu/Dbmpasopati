@@ -79,7 +79,7 @@
 
                         </div>
 
-
+                        {{-- CARD TOTAL --}}
                         <div class="row">
                             <div class="col-md-4 mb-2">
                                 <div class="card-total">
@@ -121,6 +121,7 @@
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
 

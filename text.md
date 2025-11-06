@@ -119,6 +119,31 @@ NAMA UPT SEBELUMYA KECIL
 📝 CATATAN REVISI
 =============================================================
 
+- di Db Upt di pks Nama Ponpes Diubah Menjadi Nama UPT
+
+- di bagian Pencatatan Kartu Vpas di buat jumlah totalya otomatis, dihitung dari kolom kartu baru, kartu bekas, kartu goip otomatis di jumlah otomatis  
+- kartu terpakai diubah ke jumlah kartu terpakai
+- di catatan kartu vpas nama Upt masih hilang
+- terpakai disebelah whatsaap terpakai, pic dibuat ke paling kanan aja
+- tanggal disebelum nama Upt 
+- Db Upt di munculin status Pks yang upload, Status Spp juga , Vpas/reguler dimunculin status wartel belum aktif dan aktif jumlahnya 
+
+- Grafik Upt dan Grafik Ponpes Dibuat halaman baru
+- Di pencatatan kartu Vpas di munculin total berdasarkan
+hari, bulan, tahun,
+
+- total kartu dibuat perbulan grafiknya
+- kartu baru sampe wa terpakai dibuat perhari
+dibuat line chart / bar chart disetiap bulan otomatis ke arsip dan masuk kebulan baru secara realtime
+grafik dibuat secara realtime berjalan terus,
+
+- Komplain Vpas Dibuat jumlah presentase dari jenis kendala dibuat perbulan, intinya diambil dari jenis kendala
+
+
+
+
+
+
 - KHUSUS ROLE USER
  Super Admin,Teknisi, Marketing
 
@@ -128,9 +153,23 @@ NAMA UPT SEBELUMYA KECIL
  - password 
  - keterangan
  - status kalo aktif role bisa login, dan sebaliknya 
- - level akses 
+ - level akses / rolenya 
  - history login 
  - tanggal pembuatan
+
+
+- Rule Role Marketing
+ - Marketing hanya bisa melihat dan edit 
+ -(tidak bisa menghapus data)
+ - di halaman data manajemen di hide untuk role ini
+ - hanya bisa tambah edit di Halaman Db pks dan spp saja
+
+- Rule Teknisi 
+ - (tidak bisa menghapus data)
+ - bisa membuat data di semua halaman Edit Dan tambah
+
+catatan 
+yang bisa membuat user dan role itu hanya super admin
 
 
 - dibuat kolom untuk di halaman home usernya itu 
