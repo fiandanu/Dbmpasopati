@@ -28,6 +28,11 @@
     @vite('resources/css/app.css')
     {{-- Tailwind Css --}}
 
+    {{-- Material Symbols Google --}}
+
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+
     {{-- Disabled --}}
     {{-- Bootstrap 4 --}}
     {{-- <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/css/bootstrap.min.css" rel="stylesheet"> --}}

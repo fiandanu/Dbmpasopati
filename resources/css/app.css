@@ -112,7 +112,7 @@
     --danger-09: #75000b;
     --danger-10: #3d0006;
 
-    --purple-00: #eae6f9;
+    --purple-00: #F4F3FC;
     --purple-01: #d4cdf4;
     --purple-02: #b1a3ea;
     --purple-03: #8d7ae1;
@@ -298,9 +298,8 @@
 
 .nav-icon {
     margin-right: 10px;
-    color: var(--Netral-1); 
+    color: var(--Netral-1);
 }
-
 
 .nav-treeview .nav-link.active .nav-icon {
     color: var(--Secondary-09); /* #0d3c7c for active sub-menu icon */
@@ -357,7 +356,7 @@
 
 .display-medium-48 {
     font-family: var(--font-primary);
-    font-weight: var(--weight-regular);
+    font-weight: var(--weight-semi-bold);
     font-size: var(--display-medium-size);
     line-height: var(--display-medium-line-height);
 }
@@ -485,9 +484,9 @@ h5 {
 }
 
 .card {
-    border: solid 1px var(--Netral-6);
+    border: solid 1px var(--Netral-8);
     box-shadow: 0 3px 7px rgba(0, 0, 0, 0.25);
-    border-radius: 0.75rem;
+    border-radius: 32px;
     overflow: hidden;
 }
 
@@ -704,11 +703,14 @@ a:hover {
 }
 
 .btn-page {
+    display: flex;
+    align-items: center;
     height: 50px;
     padding: 0.5rem 1rem;
-    border: 1px solid var(--Netral-7);
+    /* border: 1px solid var(--Netral-7); */
     border-radius: 12px;
-    background: white;
+    background: var(--purple-00);
+    color: var(--purple-07);
     cursor: pointer;
     transition: 0.2s;
 }
@@ -892,11 +894,44 @@ textarea.form-control {
 .card-kategori {
     width: 100%;
     background: white;
-    border-radius: 12px;
+    border-radius: 32px;
     padding: 20px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
+}
+
+.card-total {
+    width: 100%;
+    height: 168px;
+    display: flex;
+    background: white;
+    border-radius: 32px;
+    padding: 33px 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-total .w-full {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.icon-card-total {
+    width: 70px;
+    height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 100%;
+    background-color: var(--purple-00);
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+
+.icon-card-total .material-symbols-outlined {
+    font-size: 36px;
+    color: var(--purple-07);
 }
 
 .pks-title {
@@ -918,8 +953,8 @@ textarea.form-control {
     display: inline-flex;
     height: 26px;
     align-items: center;
-    background: var(--purple-07);
-    color: white;
+    background: var(--purple-00);
+    color: var(--purple-07);
     padding: 8px 16px;
     border-radius: 12px;
     font-size: 14px;
@@ -939,7 +974,7 @@ textarea.form-control {
     color: white;
     border: none;
     padding: 14px 20px;
-    border-radius: 12px;
+    border-radius: 32px;
     font-size: 16px;
     font-weight: 500;
     text-decoration: none;
@@ -1059,7 +1094,6 @@ body {
     background-color: var(--danger-01);
     color: var(--danger-07);
 }
-
 
 .nav-pills .nav-link:not(.active):hover {
     color: var(--Netral-);

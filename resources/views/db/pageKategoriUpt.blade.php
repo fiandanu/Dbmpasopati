@@ -17,116 +17,108 @@
                 </div>
         </section>
 
-        <!-- CARD KATEGORI -->
-        <div class="content">
-            <div class="container-fluid">
-                <div class="row">
-                    <!-- Kategori PKS -->
-                    <div class="col-md-3">
-                        <div class="card-kategori">
-                            <h3>PKS</h3>
-                            <p class="text-kategori mb-2">Surat Perjanjian Kerja Sama</p>
-                            {{-- <div class="data-badge mb-3">
-                                <span class="checkmark">✓</span>
-                                100 Data
-                            </div> --}}
-                            <a href="{{ route('dbpks.ListDataPks') }}" class="list-button">Selengkapnya</a>
-                        </div>
-                    </div>
-
-                    <!-- Kategori SPP -->
-                    <div class="col-md-3">
-                        <div class="card-kategori">
-                            <h3>SPP</h3>
-                            <p class="text-kategori mb-2">Surat Perintah Pemasangan</p>
-                            {{-- <div class="data-badge mb-3">
-                                <span class="checkmark">✓</span>
-                                100 Data
-                            </div> --}}
-                            <a href="{{ route('spp.ListDataSpp') }}" class="list-button">Selengkapnya</a>
-                        </div>
-                    </div>
-
-                    <!-- Kategori VPAS -->
-                    <div class="col-md-3">
-                        <div class="card-kategori">
-                            <h3>VPAS</h3>
-                            <p class="text-kategori mb-2">Layanan VPAS</p>
-                            {{-- <div class="data-badge mb-3">
-                                <span class="checkmark">✓</span>
-                                100 Data
-                            </div> --}}
-                            <a href="{{ route('vpas.ListDataVpas') }}" class="list-button">Selengkapnya</a>
-                        </div>
-                    </div>
-
-                    <!-- Kategori REGULER -->
-                    <div class="col-md-3">
-                        <div class="card-kategori">
-                            <h3>REGULER</h3>
-                            <p class="text-kategori mb-2">Layanan Reguler</p>
-                            {{-- <div class="data-badge mb-3">
-                                <span class="checkmark">✓</span>
-                                100 Data
-                            </div> --}}
-                            <a href="{{ route('upt.ListDataReguller') }}" class="list-button">Selengkapnya</a>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-
         <!-- TABLE SECTION -->
         <section class="content">
-
-
             <div class="container-fluid">
-                <div class="row mt-3 mb-3">
-                    <div class="col-12">
-                        <div class="card shadow-sm">
-                            <div class="card-header">
-                                <h5 class="mb-0">Statistik Database UPT</h5>
+                <div class="row mb-3">
+                    <div class="card-body">
+
+                        <!-- CARD KATEGORI -->
+                        <div class="row mb-3">
+                            <!-- Kategori PKS -->
+                            <div class="col-md-3 mb-2">
+                                <div class="card-kategori">
+                                    <h3>PKS</h3>
+                                    <p class="text-kategori mb-2">Surat Perjanjian Kerja Sama</p>
+                                    <div class="data-badge mb-3">
+                                        <span class="checkmark">✓</span>
+                                        100 Data
+                                    </div>
+                                    <a href="{{ route('dbpks.ListDataPks') }}" class="list-button">Selengkapnya</a>
+                                </div>
                             </div>
-                            <div class="card-body">
-                                <div class="row text-center">
-                                    <div class="col-md-4 mb-3">
-                                        <div class="border rounded p-3 h-100">
-                                            <p class="mb-1 text-muted small">Total Data UPT</p>
-                                            <h4 class="mb-0 font-weight-bold">{{ number_format($totalUpt) }}</h4>
-                                        </div>
+
+                            <!-- Kategori SPP -->
+                            <div class="col-md-3 mb-2">
+                                <div class="card-kategori">
+                                    <h3>SPP</h3>
+                                    <p class="text-kategori mb-2">Surat Perintah Pemasangan</p>
+                                    <div class="data-badge mb-3">
+                                        <span class="checkmark">✓</span>
+                                        100 Data
                                     </div>
-                                    <div class="col-md-4 mb-3">
-                                        <div class="border rounded p-3 h-100">
-                                            <p class="mb-1 text-muted small">Total Extension VPAS</p>
-                                            <h4 class="mb-0 font-weight-bold">{{ number_format($totalExtensionVpas) }}</h4>
-                                        </div>
+                                    <a href="{{ route('spp.ListDataSpp') }}" class="list-button">Selengkapnya</a>
+                                </div>
+                            </div>
+
+                            <!-- Kategori VPAS -->
+                            <div class="col-md-3 mb-2">
+                                <div class="card-kategori">
+                                    <h3>VPAS</h3>
+                                    <p class="text-kategori mb-2">Layanan VPAS</p>
+                                    <div class="data-badge mb-3">
+                                        <span class="checkmark">✓</span>
+                                        100 Data
                                     </div>
-                                    <div class="col-md-4 mb-3">
-                                        <div class="border rounded p-3 h-100">
-                                            <p class="mb-1 text-muted small">Total Extension Reguler</p>
-                                            <h4 class="mb-0 font-weight-bold">{{ number_format($totalExtensionReguler) }}
-                                            </h4>
-                                        </div>
+                                    <a href="{{ route('vpas.ListDataVpas') }}" class="list-button">Selengkapnya</a>
+                                </div>
+                            </div>
+
+                            <!-- Kategori REGULER -->
+                            <div class="col-md-3 mb-2">
+                                <div class="card-kategori">
+                                    <h3>REGULER</h3>
+                                    <p class="text-kategori mb-2">Layanan Reguler</p>
+                                    <div class="data-badge mb-3">
+                                        <span class="checkmark">✓</span>
+                                        100 Data
+                                    </div>
+                                    <a href="{{ route('upt.ListDataReguller') }}" class="list-button">Selengkapnya</a>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-md-4 mb-2">
+                                <div class="card-total">
+                                    <div class="w-full">
+                                        <h1 class="title-medium-18">Total Data UPT</h1>
+                                        <span class="display-medium-48">{{ number_format($totalUpt) }}</span>
+                                    </div>
+                                    <div class="icon-card-total">
+                                        <span class="material-symbols-outlined">
+                                            mosque
+                                        </span>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row mb-3 align-items-center">
-                    <div class="col d-flex justify-content-between align-items-center">
-                        <h3 class="headline-medium-24">Data UPT Keseluruhan</h3>
-                        <div class="d-flex align-items-center gap-2 flex-wrap">
-                            <div class="d-flex gap-2" id="export-buttons">
-                                <button onclick="downloadCsv()"
-                                    class="btn-page d-flex justify-content-center align-items-center" title="Download CSV">
-                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export CSV
-                                </button>
-                                <button onclick="downloadPdf()"
-                                    class="btn-page d-flex justify-content-center align-items-center" title="Download PDF">
-                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PDF
-                                </button>
+                            <div class="col-md-4 mb-2">
+                                <div class="card-total">
+                                    <div class="w-full">
+                                        <h1 class="title-medium-18">Vpas Extension</h1>
+                                        <span class="display-medium-48">{{ number_format($totalExtensionVpas) }}</span>
+                                    </div>
+                                    <div class="icon-card-total">
+                                        <span class="material-symbols-outlined">
+                                            video_chat
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <div class="card-total">
+                                    <div class="w-full">
+                                        <h1 class="title-medium-18">Reguler Extension</h1>
+                                        <span class="display-medium-48">{{ number_format($totalExtensionReguler) }}</span>
+                                    </div>
+                                    <div class="icon-card-total">
+                                        <span class="material-symbols-outlined">
+                                            video_camera_front
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -134,14 +126,33 @@
 
                 <section class="content">
                     <div class="container-fluid">
+                        <div class="row mb-3 align-items-center">
+                            <div class="col d-flex justify-content-between align-items-center">
+                                <h3 class="headline-medium-24">Data UPT Keseluruhan</h3>
+                                <div class="d-flex align-items-center gap-2 flex-wrap">
+                                    <div class="d-flex gap-2" id="export-buttons">
+                                        <button onclick="downloadCsv()"
+                                            class="btn-page d-flex justify-content-center align-items-center"
+                                            title="Download CSV">
+                                            <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export CSV
+                                        </button>
+                                        <button onclick="downloadPdf()"
+                                            class="btn-page d-flex justify-content-center align-items-center"
+                                            title="Download PDF">
+                                            <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PDF
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="d-flex gap-12 mb-3">
                             <div class="gap-12 w-fit text-center">
-                                <div class="d-flex justify-content-center align-items-center gap-12">
-                                    <div class="flex-column btn-searchbar column-search">
+                                <div class="d-flex gap-12">
+                                    <div class="btn-page">
                                         <input type="date" id="search-tanggal-dari" name="search_tanggal_dari"
                                             title="Tanggal Dari">
                                     </div>
-                                    <div class="flex-column btn-searchbar column-search">
+                                    <div class="btn-page">
                                         <input type="date" id="search-tanggal-sampai" name="search_tanggal_sampai"
                                             title="Tanggal Sampai">
                                     </div>
@@ -159,8 +170,8 @@
                                             <div class="d-flex flex-column gap-12">
                                                 <span>No</span>
                                                 <div class="d-flex align-items-center gap-2">
-                                                    <button type="button" class="btn-purple w-auto" onclick="applyFilters()"
-                                                        title="Cari Semua Filter">
+                                                    <button type="button" class="btn-purple w-auto"
+                                                        onclick="applyFilters()" title="Cari Semua Filter">
                                                         <i class="fas fa-search"></i> Cari
                                                     </button>
                                                 </div>
@@ -204,7 +215,8 @@
                                                 <span>Status PKS</span>
                                                 <div class="btn-searchbar column-search">
                                                     <span><i class="fas fa-search"></i></span>
-                                                    <input type="text" id="search-status-pks" name="search_status_pks">
+                                                    <input type="text" id="search-status-pks"
+                                                        name="search_status_pks">
                                                 </div>
                                             </div>
                                         </th>
@@ -214,7 +226,8 @@
                                                 <span>Status SPP</span>
                                                 <div class="btn-searchbar column-search">
                                                     <span><i class="fas fa-search"></i></span>
-                                                    <input type="text" id="search-status-spp" name="search_status_spp">
+                                                    <input type="text" id="search-status-spp"
+                                                        name="search_status_spp">
                                                 </div>
                                             </div>
                                         </th>
@@ -264,8 +277,12 @@
                                             </td>
                                             <td class="text-center-status">
                                                 @php
-                                                    $hasPdf1 = $d->uploadFolderPks && !empty($d->uploadFolderPks->uploaded_pdf_1);
-                                                    $hasPdf2 = $d->uploadFolderPks && !empty($d->uploadFolderPks->uploaded_pdf_2);
+                                                    $hasPdf1 =
+                                                        $d->uploadFolderPks &&
+                                                        !empty($d->uploadFolderPks->uploaded_pdf_1);
+                                                    $hasPdf2 =
+                                                        $d->uploadFolderPks &&
+                                                        !empty($d->uploadFolderPks->uploaded_pdf_2);
                                                 @endphp
 
                                                 @if (!$hasPdf1 && !$hasPdf2)
@@ -296,7 +313,8 @@
                                                 @elseif($uploadedFolders == $totalFolders)
                                                     <span class="badge-succes">10/10 Folder</span>
                                                 @else
-                                                    <span class="badge-prosses">{{ $uploadedFolders }}/{{ $totalFolders }}
+                                                    <span
+                                                        class="badge-prosses">{{ $uploadedFolders }}/{{ $totalFolders }}
                                                         Terupload</span>
                                                 @endif
                                             </td>
@@ -347,10 +365,12 @@
                             <div class="btn-datakolom">
                                 <form method="GET" class="d-flex align-items-center">
                                     @if (request('search_namaupt'))
-                                        <input type="hidden" name="search_namaupt" value="{{ request('search_namaupt') }}">
+                                        <input type="hidden" name="search_namaupt"
+                                            value="{{ request('search_namaupt') }}">
                                     @endif
                                     @if (request('search_kanwil'))
-                                        <input type="hidden" name="search_kanwil" value="{{ request('search_kanwil') }}">
+                                        <input type="hidden" name="search_kanwil"
+                                            value="{{ request('search_kanwil') }}">
                                     @endif
                                     @if (request('search_status_pks'))
                                         <input type="hidden" name="search_status_pks"
@@ -372,7 +392,8 @@
                                         <input type="hidden" name="search_tipe" value="{{ request('search_tipe') }}">
                                     @endif
                                     @if (request('search_extension'))
-                                        <input type="hidden" name="search_extension" value="{{ request('search_extension') }}">
+                                        <input type="hidden" name="search_extension"
+                                            value="{{ request('search_extension') }}">
                                     @endif
                                     @if (request('search_status_wartel'))
                                         <input type="hidden" name="search_status_wartel"
@@ -388,11 +409,15 @@
                                     <div class="d-flex align-items-center">
                                         <select name="per_page" class="form-control form-control-sm pr-2"
                                             style="width: auto;" onchange="this.form.submit()">
-                                            <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10
+                                            <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>
+                                                10
                                             </option>
-                                            <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>15</option>
-                                            <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20</option>
-                                            <option value="all" {{ request('per_page') == 'all' ? 'selected' : '' }}>Semua
+                                            <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>15
+                                            </option>
+                                            <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20
+                                            </option>
+                                            <option value="all" {{ request('per_page') == 'all' ? 'selected' : '' }}>
+                                                Semua
                                             </option>
                                         </select>
                                         <span>Rows</span>
@@ -416,7 +441,8 @@
                                     <button class="btn-page" disabled>&laquo; Previous</button>
                                 @else
                                     <button class="btn-datakolom w-auto p-3">
-                                        <a href="{{ $data->appends(request()->query())->previousPageUrl() }}">&laquo; Previous</a>
+                                        <a href="{{ $data->appends(request()->query())->previousPageUrl() }}">&laquo;
+                                            Previous</a>
                                     </button>
                                 @endif
 
@@ -444,7 +470,7 @@
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
             // ============ FILTER FUNCTIONALITY ============
 
             // Function to get current filter values
@@ -464,7 +490,7 @@
             }
 
             // Function to apply filters and redirect
-            window.applyFilters = function () {
+            window.applyFilters = function() {
                 let filters = getFilters();
                 let url = new URL(window.location.href);
 
@@ -491,7 +517,7 @@
             };
 
             // Clear individual filter when backspace/delete and field becomes empty
-            $('.column-search input').on('input', function () {
+            $('.column-search input').on('input', function() {
                 if ($(this).val().trim() === '') {
                     let inputName = $(this).attr('name');
                     let url = new URL(window.location.href);
@@ -505,10 +531,10 @@
             });
 
             // Function to clear all search filters
-            window.clearAllFilters = function () {
+            window.clearAllFilters = function() {
                 $('#search-namaupt').val('');
                 $('#search-kanwil').val('');
-                $('#search-tipe').on('change', function () {
+                $('#search-tipe').on('change', function() {
                     applyFilters();
                 });
                 $('#search-status-pks').val('');
@@ -534,7 +560,7 @@
             };
 
             // Enter key to search
-            $('.column-search input').on('keypress', function (e) {
+            $('.column-search input').on('keypress', function(e) {
                 if (e.which === 13) {
                     e.preventDefault();
                     applyFilters();
@@ -542,11 +568,11 @@
             });
 
             // Dropdown change to search
-            $('#search-tipe').on('change', function () {
+            $('#search-tipe').on('change', function() {
                 applyFilters();
             });
 
-            window.downloadCsv = function () {
+            window.downloadCsv = function() {
                 let filters = getFilters();
                 let form = document.createElement('form');
                 form.method = 'GET';
@@ -569,7 +595,7 @@
             };
 
             // Download PDF function
-            window.downloadPdf = function () {
+            window.downloadPdf = function() {
                 let filters = getFilters();
                 let form = document.createElement('form');
                 form.method = 'GET';
@@ -623,7 +649,8 @@
             }
 
             // Show export buttons if there's data
-            if ($("#TableDashboard tbody tr").length > 0 && !$("#TableDashboard tbody tr").find('td[colspan="8"]').length) {
+            if ($("#TableDashboard tbody tr").length > 0 && !$("#TableDashboard tbody tr").find('td[colspan="8"]')
+                .length) {
                 $("#export-buttons").show();
             } else {
                 $("#export-buttons").hide();

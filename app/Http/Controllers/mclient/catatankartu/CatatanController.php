@@ -14,6 +14,8 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class CatatanController extends Controller
 {
+
+    // dihapus dan di ketik lagi catatan modelnya di controller
     public function ListDataMclientCatatanVpas(Request $request)
     {
         $query = Catatan::with(['upt.kanwil']);

@@ -273,11 +273,11 @@
                 <div class="d-flex gap-12 mb-3">
                     <div class="gap-12 w-fit text-center">
                         <div class="d-flex justify-content-center align-items-center gap-12">
-                            <div class="flex-column btn-searchbar column-search">
+                            <div class="btn-page">
                                 <input type="date" id="search-tanggal-dari" name="search_tanggal_dari"
                                     title="Tanggal Dari">
                             </div>
-                            <div class="flex-column btn-searchbar column-search">
+                            <div class="btn-page">
                                 <input type="date" id="search-tanggal-sampai" name="search_tanggal_sampai"
                                     title="Tanggal Sampai">
                             </div>

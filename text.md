@@ -61,6 +61,60 @@ Kode yang perlu dirapihin lagi di bagian
 
 Kode yang perlu di cek ulang di Mclient UPT 
 
+
+CASE SENSITIF NAMA WILAYAH
+
+data@data:/var/www/Dbmpasopati/app/Models/user$ cd namaWilayah
+data@data:/var/www/Dbmpasopati/app/Models/user/namaWilayah$ ls
+namaWilayah.php
+data@data:/var/www/Dbmpasopati/app/Models/user/namaWilayah$
+
+NAMA WILAYAH MENGGUNAKAN HURUF BESAR DIAWAL
+-NamaWilayah
+-NamaWilayah.php
+
+
+
+CASE SENSITIF MIKROTIK CONTROLLER
+
+data@data:/var/www/Dbmpasopati/app/Http/Controllers/tutorial/upt$ ls
+MikrotikController.php  ServerController.php
+RegullerController.php  VpasController.php
+data@data:/var/www/Dbmpasopati/app/Http/Controllers/tutorial/upt$ mv MikrotikController.php mikrotikController.php
+mv: cannot move 'MikrotikController.php' to 'mikrotikController.php': Permission denied
+data@data:/var/www/Dbmpasopati/app/Http/Controllers/tutorial/upt$ sudo mv Mi
+krotikController.php mikrotikController.php
+data@data:/var/www/Dbmpasopati/app/Http/Controllers/tutorial/upt$ htop
+data@data:/var/www/Dbmpasopati/app/Http/Controllers/tutorial/upt$ ls
+mikrotikController.php  ServerController.php
+RegullerController.php  VpasController.php
+
+TUTORIAL MIKROTIK CONTROLLER MENGGUNAKAN HURUF BESAR DIAWAL, HARUSNYA HURUF KECIL
+- mikrotikController.php
+
+
+
+
+PADA DATABASE SEEDER
+
+data@data:/var/www/Dbmpasopati/database/factories$ ls
+DataOpsionalPonpesFactory.php  PonpesFactory.php  upt
+DataOpsionalUptFactory.php     providers          user
+mclient                        tutorial           UserFactory.php
+data@data:/var/www/Dbmpasopati/database/factories$ mv upt Upt
+mv: cannot move 'upt' to 'Upt': Permission denied
+data@data:/var/www/Dbmpasopati/database/factories$ sudo mv upt Upt
+[sudo] password for data:
+data@data:/var/www/Dbmpasopati/database/factories$ ls
+DataOpsionalPonpesFactory.php  PonpesFactory.php  Upt
+DataOpsionalUptFactory.php     providers          user
+mclient                        tutorial           UserFactory.php
+
+NAMA UPT SEBELUMYA KECIL 
+- upt menjadi Upt
+
+
+
 =============================================================
 📝 CATATAN REVISI
 =============================================================
@@ -69,11 +123,11 @@ Kode yang perlu di cek ulang di Mclient UPT
  Super Admin,Teknisi, Marketing
 
  kolom di role 
- - username
- - nama
- - password
+ - username 
+ - nama 
+ - password 
  - keterangan
- - status kalo aktif role bisa login, dan sebaliknya
+ - status kalo aktif role bisa login, dan sebaliknya 
  - level akses 
  - history login 
  - tanggal pembuatan
@@ -84,7 +138,6 @@ Kode yang perlu di cek ulang di Mclient UPT
 
 - Di semua keterangan dibuat limit 100 kata 
 
-- di halaman pengiriman alat di kolom penerima diketik sendiri DI HALAMAN PONPES DAN UPT MCLIENT
 
 🔄 menampilkan keseluruhan total data di bawah perncarian kartu gsm vpas vtren
 (Pembenaran Layout)
@@ -128,6 +181,7 @@ Kode yang perlu di cek ulang di Mclient UPT
 - di halaman DB UPT PONPES dibuat untuk halaman Export PDF dan CSV
 - menu dibuat dropdown di mclient upt dan vpas
 - yang dibuat dropdown itu menu,status, tipe 
+- di halaman pengiriman alat di kolom penerima diketik sendiri DI HALAMAN PONPES DAN UPT MCLIENT
 
 
 
