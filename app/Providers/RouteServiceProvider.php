@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Route;
 
 class RouteServiceProvider extends ServiceProvider
 {
-    public const HOME = '/home';
+    public const HOME = '/dashboard';
 
     public function boot(): void
     {
@@ -20,8 +20,8 @@ class RouteServiceProvider extends ServiceProvider
 
         $this->routes(function () {
             Route::middleware('api')
-                ->prefix('api')
-                ->group(base_path('routes/api.php'));
+                ->prefix('api');
+                // ->group(base_path('routes/api.php'));
 
             Route::middleware('web')->group(function () {
                 require base_path('routes/web.php');
@@ -77,6 +77,7 @@ class RouteServiceProvider extends ServiceProvider
                 require base_path('routes/user/ponpes.php');
                 require base_path('routes/user/kanwil.php');
                 require base_path('routes/user/namawilayah.php');
+                require base_path('routes/user/user_role.php');
             });
         });
     }

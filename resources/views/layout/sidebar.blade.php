@@ -6,148 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Dbm | Pasopati</title>
     <x-headlink></x-headlink>
-
-    <style>
-        :root {
-            --Netral-10: #FFFFFF;
-            --Netral-9: #FAFAFA;
-            --Netral-8: #EBEBEB;
-            --Netral-7: #DEDEDE;
-            --Netral-6: #C7C7C7;
-            --Netral-5: #ABABAB;
-            --Netral-4: #949494;
-            --Netral-3: #757575;
-            --Netral-2: #616161;
-            --Netral-1: #3D3D3D;
-            --Netral-0: #262626;
-
-            --Primary-01: #C7F5D5;
-            --Primary-02: #93EBAF;
-            --Primary-03: #5BE186;
-            --Primary-04: #27D35D;
-            --Primary-05: #1D9D45;
-            --Primary-06: #177D37;
-            --Primary-07: #125F2A;
-            --Primary-08: #0C411D;
-            --Primary-09: #061E0D;
-            --Primary-10: #031108;
-
-            --Secondary-00: #F1F6FE;
-            --Secondary-01: #E7F0FD;
-            --Secondary-02: #C5DAFC;
-            --Secondary-03: #99BFFA;
-            --Secondary-04: #639DF7;
-            --Secondary-05: #3882F5;
-            --Secondary-06: #186CE1;
-            --Secondary-07: #155DC2;
-            --Secondary-08: #124FA6;
-            --Secondary-09: #0D3C7C;
-            --Secondary-10: #08244A;
-
-            --yellow-00: #FFFDF0;
-            --yellow-01: #FFFAD6;
-            --yellow-02: #FFF7B8;
-            --yellow-03: #FFF28F;
-            --yellow-04: #FFEE70;
-            --yellow-05: #FFE942;
-            --yellow-06: #FFE314;
-            --yellow-07: #D6BD00;
-            --yellow-08: #AD9900;
-            --yellow-09: #756800;
-            --yellow-10: #3D3600;
-
-            --danger-00: #FFF0F1;
-            --danger-01: #FFD6D9;
-            --danger-02: #FFB8BF;
-            --danger-03: #FF8F9A;
-            --danger-04: #FF707E;
-            --danger-05: #FF4255;
-            --danger-06: #FF142B;
-            --danger-07: #D60015;
-            --danger-08: #AD0011;
-            --danger-09: #75000B;
-            --danger-10: #3D0006;
-        }
-
-        .modal-title {
-            color: #2d3748;
-            font-weight: 600;
-        }
-
-        .section-title {
-            color: #2b6cb0;
-            font-weight: 600;
-            font-size: 1.25rem;
-        }
-
-        .form-label {
-            color: #2d3748;
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-        }
-
-
-        .text-muted {
-            color: #718096;
-        }
-
-        .btn-primary {
-            background-color: #2b6cb0;
-            border-color: #2b6cb0;
-            border-radius: 6px;
-        }
-
-        .btn-primary:hover {
-            background-color: #2c5282;
-            border-color: #2c5282;
-        }
-
-        .btn-secondary {
-            background-color: #718096;
-            border-color: #718096;
-            border-radius: 6px;
-        }
-
-        .btn-secondary:hover {
-            background-color: #5a667a;
-            border-color: #5a667a;
-        }
-
-        .border-bottom {
-            border-color: #cbd5e0;
-        }
-
-        .btn-close-custom {
-            background: transparent;
-            border: none;
-            font-size: 1.5rem;
-            color: #333;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            outline: none;
-        }
-
-        .btn-close-custom:hover {
-            background: #f1f3f5;
-            color: #000;
-            transform: scale(1.1);
-        }
-
-        .btn-close-custom:focus {
-            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
-        }
-
-        .btn-close-custom .ion-icon {
-            font-size: 1.8rem;
-            line-height: 1;
-        }
-    </style>
-
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -158,19 +16,16 @@
             <!-- Sidebar -->
             <div class="sidebar">
                 <!-- Sidebar user panel -->
-                <div class="d-flex justify-content-center user-panel mt-3 pb-3 mb-3 d-flex align-items-center">
-                    <div class="d-flex justify-content-center">
-                        <span>
-                            <i class="nav-icon fas fa-user"></i>
-                        </span>
+                <div class="d-flex justify-content-center mt-2 py-2 user-panel d-flex align-items-center">
+                    <div class="flex justify-center">
+                        <img src="{{ asset('img/logo_pasopati.webp') }}" alt="Logo Pasopati" class="logo-responsive">
                     </div>
-                    <div class="info">
-                        <a href="#" class="d-block font-weight-medium">Alexander Pierce</a>
+                    <div class="d-flex justify-content-center">
                     </div>
                 </div>
 
                 <!-- Sidebar Menu -->
-                <nav class="mt-2">
+                <nav class="">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                         data-accordion="false">
                         <!-- Data Base -->
@@ -227,7 +82,7 @@
 
                         <!-- Monitoring Customer -->
                         <li
-                            class="nav-item {{ Route::is('GrafikClient') || Route::is('MclientUptDashboard.KomplainUpt') || Route::is('MclientPonpesDashboard.KomplainPonpes') || Route::is('ListDataMclientCatatanVpas') || Route::is('ListDataMclientCatatanVtren') || Route::is('mcvpas.ListDataMclientVpas') || Route::is('mcreguler.ListDataMclientReguller') || Route::is('mclientkunjunganupt.ListDataMclientKunjungan') || Route::is('mclientpengirimanupt.ListDataMclientPengirimanUpt') || Route::is('mclientsettingalatupt.ListDataMclientSettingAlat') || Route::is('mcvtren.ListDataMclientVtren') || Route::is('mcponpesreguler.ListDataMclientPonpesReguller') || Route::is('mckunjunganponpes.ListDataMclientPonpesKunjungan') || Route::is('mclientponpessetting.ListDataMclientPonpesSetting') || Route::is('mclientpengirimanponpes.ListDataMclientPonpesPengiriman') ||  Route::is('mccatatanvpas.ListDataMclientCatatanVpas') || Route::is('mccatatanvtren.ListDataMclientCatatanVtren') ? 'menu-open' : '' }}">
+                            class="nav-item {{ Route::is('GrafikClient') || Route::is('MclientUptDashboard.KomplainUpt') || Route::is('MclientPonpesDashboard.KomplainPonpes') || Route::is('ListDataMclientCatatanVpas') || Route::is('ListDataMclientCatatanVtren') || Route::is('mcvpas.ListDataMclientVpas') || Route::is('mcreguler.ListDataMclientReguller') || Route::is('mclientkunjunganupt.ListDataMclientKunjungan') || Route::is('mclientpengirimanupt.ListDataMclientPengirimanUpt') || Route::is('mclientsettingalatupt.ListDataMclientSettingAlat') || Route::is('mcvtren.ListDataMclientVtren') || Route::is('mcponpesreguler.ListDataMclientPonpesReguller') || Route::is('mckunjunganponpes.ListDataMclientPonpesKunjungan') || Route::is('mclientponpessetting.ListDataMclientPonpesSetting') || Route::is('mclientpengirimanponpes.ListDataMclientPonpesPengiriman') || Route::is('mccatatanvpas.ListDataMclientCatatanVpas') || Route::is('mccatatanvtren.ListDataMclientCatatanVtren') ? 'menu-open' : '' }}">
                             <a href="#" class="nav-link ">
                                 <i class="fas fa-eye nav-icon"></i>
                                 <p>Monitoring Customer<i class="right fas fa-angle-left"></i></p>
@@ -303,7 +158,7 @@
 
                         <!-- User -->
                         <li
-                            class="nav-item {{ Route::is('User.UserPage') || Route::is('UserPonpes.UserPage') || Route::is('provider.DataProvider') || Route::is('kendala.DataKendala') || Route::is('kanwil.DataKanwil') ? 'menu-open' : '' }}">
+                            class="nav-item {{ Route::is('UserRole.user-role.index') || Route::is('User.UserPage') || Route::is('UserPonpes.ponpes.index') || Route::is('provider.DataProvider') || Route::is('kendala.DataKendala') || Route::is('kanwil.DataKanwil') ? 'menu-open' : '' }}">
                             <a href="#" class="nav-link">
                                 <i class="fas fa-user nav-icon"></i>
                                 <p>Data Manajemen<i class="right fas fa-angle-left"></i></p>
@@ -316,8 +171,8 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{{ route('UserPonpes.UserPage') }}"
-                                        class="nav-link {{ Route::is('UserPonpes.UserPage') ? 'active' : '' }}">
+                                    <a href="{{ route('UserPonpes.ponpes.index') }}"
+                                        class="nav-link {{ Route::is('UserPonpes.ponpes.index') ? 'active' : '' }}">
                                         <p>Data Ponpes</p>
                                     </a>
                                 </li>
@@ -339,11 +194,39 @@
                                         <p>Data Kanwil/Nama Wilayah</p>
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    @if (Auth::user()->isSuperAdmin())
+                                        <a href="{{ route('UserRole.user-role.index') }}"
+                                            class="nav-link {{ Route::is('UserRole.user-role.index') || Route::is('namawilayah.DataNamaWilayah') ? 'active' : '' }}">
+                                            <p>Kelola User</p>
+                                        </a>
+                                    @endif
+                                </li>
                             </ul>
                         </li>
-
                     </ul>
+                    {{-- Logout Button - Fixed Bottom --}}
+                    <div class="logout-wrapper">
+                        <div class="profile-card">
+                            <div class="profile-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="profile-info">
+                                <h3>{{ Auth::user()->username ?? 'Guest' }}</h3>
+                                <p class="text-kategori">{{ Auth::user()->nama ?? 'Guest' }}</p>
+                            </div>
+                            <form method="POST" action="{{ route('logout') }}" class="profile-action">
+                                @csrf
+                                <button type="submit" class="icon-logout">
+                                    <span class="material-symbols-outlined">
+                                        logout
+                                    </span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </nav>
+
                 <!-- /.sidebar-menu -->
             </div>
             <!-- /.sidebar -->
@@ -360,7 +243,6 @@
     <!-- ./wrapper -->
 
     <x-script></x-script>
-
 
 </body>
 

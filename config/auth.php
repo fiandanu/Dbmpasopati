@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\UserRole;
+use Illuminate\Foundation\Auth\User;
+
 return [
 
     /*
@@ -38,6 +41,10 @@ return [
     'guards' => [
         'web' => [
             'driver' => 'session',
+            'provider' => 'user_roles',
+        ],
+        'sanctum' => [
+            'driver' => 'sanctum',
             'provider' => 'users',
         ],
     ],
@@ -62,13 +69,14 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\Models\User::class,
+            'model' => App\Models\UserRole::class,
         ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        // TAMBAH PROVIDER BARU
+        'user_roles' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\UserRole::class,
+        ],
     ],
 
     /*

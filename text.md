@@ -115,15 +115,32 @@ NAMA UPT SEBELUMYA KECIL
 
 
 
+
+
+
+
+
+HALAMAN GRAFIK UPT DAN PONPES DIBUAT CETAK PDF 
+
+
+DATA YANG NGAMBIL DARI SERVER ITU UPT DAN PONPES YAITU DARI NAMA UPT DAN KANWIL DAN NAMA WILAYAH
+
+
+
+
+
+
+
 =============================================================
 📝 CATATAN REVISI
 =============================================================
 
-- di Db Upt di pks Nama Ponpes Diubah Menjadi Nama UPT
+- di Db Upt di pks Nama Ponpes Diubah Menjadi Nama UPT ✅
 
 - di bagian Pencatatan Kartu Vpas di buat jumlah totalya otomatis, dihitung dari kolom kartu baru, kartu bekas, kartu goip otomatis di jumlah otomatis  
 - kartu terpakai diubah ke jumlah kartu terpakai
-- di catatan kartu vpas nama Upt masih hilang
+- di catatan kartu vpas nama Upt masih hilang di Pdfnya pas download
+
 - terpakai disebelah whatsaap terpakai, pic dibuat ke paling kanan aja
 - tanggal disebelum nama Upt 
 - Db Upt di munculin status Pks yang upload, Status Spp juga , Vpas/reguler dimunculin status wartel belum aktif dan aktif jumlahnya 

@@ -526,7 +526,6 @@
                 </div>
 
             </div><!-- /.container-fluid -->
-
         </section>
         <!-- /.content -->
     </div>

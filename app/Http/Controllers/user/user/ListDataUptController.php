@@ -174,7 +174,7 @@ class ListDataUptController extends Controller
         }
     }
 
-    public function userPage(Request $request)
+    public function UserPage(Request $request)
     {
         // Get UPT data with reguler and vpas types, include relationships
         $query = Upt::with(['dataOpsional', 'uploadFolder'])
@@ -416,7 +416,7 @@ class ListDataUptController extends Controller
                 $d->namaupt,
                 $d->kanwil->kanwil ?? '-',
                 ucfirst($d->tipe),
-                \Carbon\Carbon::parse($d->tanggal)->format('d M Y'),
+                Carbon::parse($d->tanggal)->format('d M Y'),
                 $status,
             ];
         }

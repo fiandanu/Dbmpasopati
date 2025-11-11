@@ -254,7 +254,7 @@
                                     <div class="modal-footer flex-row-reverse justify-content-between">
                                         <button type="button" class="btn-cancel-modal"
                                             data-dismiss="modal">Tutup</button>
-                                        <form action="{{ route('UserPonpes.PonpesPageDestroy', $d->id) }}"
+                                        <form action="{{ route('UserPonpes.ponpes.destroy', $d->id) }}"
                                             method="POST">
                                             @csrf
                                             @method('DELETE')
@@ -269,7 +269,7 @@
                     {{-- User Create Modal --}}
                     <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel"
                         aria-hidden="true">
-                        <form id="addForm" action="{{ route('UserPonpes.UserPageStore') }}" method="POST">
+                        <form id="addForm" action="{{ route('UserPonpes.ponpes.store') }}" method="POST">
                             @csrf
                             <div class="modal-dialog">
                                 <div class="modal-content">
@@ -345,7 +345,7 @@
                     @foreach ($data as $d)
                         <div class="modal fade" id="editModal{{ $d->id }}" tabindex="-1"
                             aria-labelledby="editModalLabel" aria-hidden="true">
-                            <form id="editForm" action="{{ route('UserPonpes.UserPageUpdate', ['id' => $d->id]) }}"
+                            <form id="editForm" action="{{ route('UserPonpes.ponpes.update', ['ponpe' => $d->id]) }}"
                                 method="POST">
                                 @csrf
                                 @method('PUT')

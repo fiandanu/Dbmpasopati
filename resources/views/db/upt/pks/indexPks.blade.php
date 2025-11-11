@@ -651,26 +651,26 @@
                             </div>
                             <div class="column">
                                 <div class="mb-3">
-                                    <label for="namaupt" class="form-label">Nama PONPES
+                                    <label for="namaupt" class="form-label">Nama UPT
                                     </label>
                                     <div class="dropdown">
                                         <div class="input-group">
-                                            <input type="text" class="form-control" id="ponpes_search"
-                                                placeholder="Cari PONPES..." autocomplete="off">
+                                            <input type="text" class="form-control" id="upt_search"
+                                                placeholder="Cari UPT..." autocomplete="off">
                                             <div class="input-group-append">
                                                 <button type="button" class="btn btn-outline-secondary"
-                                                    onclick="togglePonpesDropdown()">
+                                                    onclick="toggleUptDropdown()">
                                                     <i class="fas fa-chevron-down"></i>
                                                 </button>
                                             </div>
                                         </div>
-                                        <div class="dropdown-menu w-100" id="ponpesDropdownMenu"
+                                        <div class="dropdown-menu w-100" id="uptDropdownMenu"
                                             style="max-height: 200px; overflow-y: auto; display: none;">
                                             @foreach ($uptList as $d)
-                                                <a class="dropdown-item ponpes-option" href="#"
+                                                <a class="dropdown-item upt-option" href="#"
                                                     data-value="{{ $d->namaupt }}"
                                                     data-nama-wilayah="{{ $d->kanwil->kanwil }}"
-                                                    onclick="selectPonpes('{{ $d->namaupt }}', '{{ $d->kanwil->kanwil }}')">
+                                                    onclick="selectUpt('{{ $d->namaupt }}', '{{ $d->kanwil->kanwil }}')">
                                                     {{ $d->namaupt }} -
                                                     {{ $d->kanwil->kanwil }}
                                                 </a>
@@ -682,7 +682,7 @@
                                         UPT</small>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="kanwil" class="form-label">Nama UPT</label>
+                                    <label for="kanwil" class="form-label">Kanwil</label>
                                     <input type="text" class="form-control" id="kanwil" name="kanwil" readonly>
                                 </div>
                             </div>
@@ -947,18 +947,17 @@
 
     {{-- JS Modal Add --}}
     <script>
-        // Searchable Ponpes dropdown functionality
         document.addEventListener('DOMContentLoaded', function() {
-            const ponpesSearch = document.getElementById('ponpes_search');
-            const ponpesDropdown = document.getElementById('ponpesDropdownMenu');
-            const ponpesOptions = document.querySelectorAll('.ponpes-option');
+            const uptSearch = document.getElementById('upt_search');
+            const uptDropdown = document.getElementById('uptDropdownMenu');
+            const uptOptions = document.querySelectorAll('.upt-option');
 
-            if (ponpesSearch) {
-                ponpesSearch.addEventListener('input', function() {
+            if (uptSearch) {
+                uptSearch.addEventListener('input', function() {
                     const searchTerm = this.value.toLowerCase();
                     let hasVisibleOption = false;
 
-                    ponpesOptions.forEach(option => {
+                    uptOptions.forEach(option => {
                         const text = option.textContent.toLowerCase();
                         if (text.includes(searchTerm)) {
                             option.style.display = 'block';
@@ -969,20 +968,20 @@
                     });
 
                     if (searchTerm.length > 0 && hasVisibleOption) {
-                        ponpesDropdown.style.display = 'block';
+                        uptDropdown.style.display = 'block';
                     } else {
-                        ponpesDropdown.style.display = 'none';
+                        uptDropdown.style.display = 'none';
                     }
                 });
 
                 // Hapus event listener focus atau modifikasi agar tidak auto-open
-                ponpesSearch.addEventListener('focus', function() {
+                uptSearch.addEventListener('focus', function() {
                     // Hanya buka jika ada input
                     if (this.value.length > 0) {
                         const searchTerm = this.value.toLowerCase();
                         let hasVisibleOption = false;
 
-                        ponpesOptions.forEach(option => {
+                        uptOptions.forEach(option => {
                             const text = option.textContent.toLowerCase();
                             if (text.includes(searchTerm)) {
                                 option.style.display = 'block';
@@ -991,7 +990,7 @@
                         });
 
                         if (hasVisibleOption) {
-                            ponpesDropdown.style.display = 'block';
+                            uptDropdown.style.display = 'block';
                         }
                     }
                 });
@@ -1000,41 +999,41 @@
             // Tutup dropdown saat klik di luar
             document.addEventListener('click', function(event) {
                 if (!event.target.closest('.dropdown')) {
-                    if (ponpesDropdown) {
-                        ponpesDropdown.style.display = 'none';
+                    if (uptDropdown) {
+                        uptDropdown.style.display = 'none';
                     }
                 }
             });
         });
 
-        function togglePonpesDropdown() {
-            const ponpesDropdown = document.getElementById('ponpesDropdownMenu');
-            const ponpesOptions = document.querySelectorAll('.ponpes-option');
+        function toggleUptDropdown() {
+            const uptDropdown = document.getElementById('uptDropdownMenu');
+            const uptOptions = document.querySelectorAll('.upt-option');
 
-            if (ponpesDropdown.style.display === 'none' || ponpesDropdown.style.display === '') {
-                ponpesOptions.forEach(option => {
+            if (uptDropdown.style.display === 'none' || uptDropdown.style.display === '') {
+                uptOptions.forEach(option => {
                     option.style.display = 'block';
                 });
-                ponpesDropdown.style.display = 'block';
+                uptDropdown.style.display = 'block';
             } else {
-                ponpesDropdown.style.display = 'none';
+                uptDropdown.style.display = 'none';
             }
         }
 
-        function selectPonpes(namaPonpes, namaWilayah) {
-            document.getElementById('ponpes_search').value = namaPonpes;
-            document.getElementById('namaupt').value = namaPonpes;
-            document.getElementById('kanwil').value = namaWilayah;
-            document.getElementById('ponpesDropdownMenu').style.display = 'none';
+        function selectUpt(namaUpt, kantorWilayah) {
+            document.getElementById('upt_search').value = namaUpt;
+            document.getElementById('namaupt').value = namaUpt;
+            document.getElementById('kanwil').value = kantorWilayah;
+            document.getElementById('uptDropdownMenu').style.display = 'none';
 
             // Tutup dropdown setelah pilihan dipilih
             event.preventDefault();
         }
 
         // Clear selection when search is cleared
-        const ponpesSearchInput = document.getElementById('ponpes_search');
-        if (ponpesSearchInput) {
-            ponpesSearchInput.addEventListener('input', function() {
+        const uptSearchInput = document.getElementById('upt_search');
+        if (uptSearchInput) {
+            uptSearchInput.addEventListener('input', function() {
                 if (this.value === '') {
                     document.getElementById('namaupt').value = '';
                     document.getElementById('kanwil').value = '';
@@ -1043,14 +1042,14 @@
         }
         // Reset form when modal is closed
         $('#addModal').on('hidden.bs.modal', function() {
-            document.getElementById('ponpes_search').value = '';
+            document.getElementById('upt_search').value = '';
             document.getElementById('namaupt').value = '';
             document.getElementById('kanwil').value = '';
             document.getElementById('tipe_display').value = '';
             document.getElementById('tanggal').value = '';
             document.getElementById('tanggal_kontrak').value = '';
             document.getElementById('tanggal_jatuh_tempo').value = '';
-            document.getElementById('ponpesDropdownMenu').style.display = 'none';
+            document.getElementById('uptDropdownMenu').style.display = 'none';
         });
     </script>
 

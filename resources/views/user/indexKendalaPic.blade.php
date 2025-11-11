@@ -6,7 +6,11 @@
             <div class="container-fluid">
                 <div class="row mb-2 py-3 align-items-center">
                     <div class="col d-flex justify-content-between align-items-center">
-                        <h1 class="headline-large-32">List Data Kendala/PIC</h1>
+                        <div class="d-flex justify-content-center align-items-center gap-12">
+                            <button class="btn-pushmenu" data-widget="pushmenu" href="#" role="button">
+                                <i class="fas fa-bars"></i></button>
+                            <h1 class="headline-large-32">List Data Kendala/PIC</h1>
+                        </div>
                         <div class="d-flex align-items-center gap-2 flex-wrap">
                             <button class="btn-purple" data-bs-toggle="modal" data-bs-target="#addDataModal">
                                 <i class="fa fa-plus"></i> Add Data

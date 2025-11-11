@@ -133,19 +133,19 @@ class DatabaseSeeder extends Seeder
         }
 
         // URUTAN PERTAMA HARUS MEMBUAT UPT FACTORY DULU
-        UptFactory::new()->count(500)->create();
-        PonpesFactory::new()->count(500)->create();
+        UptFactory::new()->count(50)->create();
+        PonpesFactory::new()->count(50)->create();
 
         // URUTAN KEDUA MEMBUAT DATA OPSIONAL UPT FACTORY
-        DataOpsionalUptFactory::new()->count(500)->create();
-        DataOpsionalPonpesFactory::new()->count(500)->create();
+        DataOpsionalUptFactory::new()->count(50)->create();
+        DataOpsionalPonpesFactory::new()->count(50)->create();
 
         // URUTAN KETIGA MEMBUAT MCLIENT UPT FACTORY
-        VpasFactory::new()->count(200)->create(); 
-        RegullerFactory::new()->count(200)->create(); 
-        KunjunganFactory::new()->count(200)->create(); 
-        SettingFactory::new()->count(200)->create(); 
-        PengirimanFactory::new()->count(200)->create();
+        VpasFactory::new()->count(20)->create(); 
+        RegullerFactory::new()->count(20)->create(); 
+        KunjunganFactory::new()->count(20)->create(); 
+        SettingFactory::new()->count(20)->create(); 
+        PengirimanFactory::new()->count(20)->create();
         
         // URUTAN KE EMPAT MEMBUAT MCLIENT PONPES FACTORY
         
