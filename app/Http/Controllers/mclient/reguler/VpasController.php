@@ -17,7 +17,7 @@ class VpasController extends Controller
 {
     public function ListDataMclientVpas(Request $request)
     {
-        $query = Vpas::with(['upt.kanwil']);
+        $query = Vpas::with(['upt.kanwil', 'kendala']);
 
         // Apply filters
         $query = $this->applyFilters($query, $request);
@@ -75,14 +75,14 @@ class VpasController extends Controller
             $query->where('detail_kendala', 'LIKE', '%'.$request->search_detail_kendala.'%');
         }
 
-        if ($request->has('search_jenis_kendala') && ! empty($request->search_jenis_kendala)) {
+        if ($request->has('search_jenis_kendala') && !empty($request->search_jenis_kendala)) {
             $searchJenisKendala = strtolower($request->search_jenis_kendala);
             $query->where(function ($q) use ($searchJenisKendala) {
-                $q->where('jenis_kendala', 'LIKE', '%'.$searchJenisKendala.'%');
-                // Jika mencari "belum" atau "ditentukan", include yang NULL/empty
+                $q->whereHas('kendala', function($subQ) use ($searchJenisKendala) {
+                    $subQ->where('jenis_kendala', 'LIKE', '%'.$searchJenisKendala.'%');
+                });
                 if (str_contains($searchJenisKendala, 'belum') || str_contains($searchJenisKendala, 'ditentukan')) {
-                    $q->orWhereNull('jenis_kendala')
-                        ->orWhere('jenis_kendala', '');
+                    $q->orWhereNull('kendala_id');
                 }
             });
         }
@@ -133,6 +133,7 @@ class VpasController extends Controller
             $request->all(),
             [
                 'data_upt_id' => 'required|exists:data_upt,id',
+                'kendala_id' => 'nullable|exists:kendala,id',
                 'kanwil' => 'nullable|string|max:255',
                 'jenis_kendala' => 'nullable|string',
                 'detail_kendala' => 'nullable|string',
@@ -145,6 +146,7 @@ class VpasController extends Controller
             ],
             [
                 'data_upt_id.required' => 'Nama UPT harus diisi.',
+                'kendala_id' => 'Kendala yang dipilih tidak valid.',
                 'kanwil.string' => 'Kanwil harus berupa teks.',
                 'kanwil.max' => 'Kanwil tidak boleh lebih dari 255 karakter.',
                 'jenis_kendala.string' => 'Kendala VPAS harus berupa teks.',

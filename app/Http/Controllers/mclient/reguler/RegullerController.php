@@ -19,7 +19,7 @@ class RegullerController extends Controller
 
     public function ListDataMclientReguller(Request $request)
     {
-        $query = Reguller::with(['upt.kanwil']);
+        $query = Reguller::with(['upt.kanwil', 'kendala']);
 
         // Apply filter
         $query = $this->applyFilters($query, $request);
@@ -78,14 +78,14 @@ class RegullerController extends Controller
             $query->where('detail_kendala', 'LIKE', '%'.$request->search_detail_kendala.'%');
         }
 
-        if ($request->has('search_jenis_kendala') && ! empty($request->search_jenis_kendala)) {
+        if ($request->has('search_jenis_kendala') && !empty($request->search_jenis_kendala)) {
             $searchJenisKendala = strtolower($request->search_jenis_kendala);
             $query->where(function ($q) use ($searchJenisKendala) {
-                $q->where('jenis_kendala', 'LIKE', '%'.$searchJenisKendala.'%');
-                // Jika mencari "belum" atau "ditentukan", include yang NULL/empty
+                $q->whereHas('kendala', function($subQ) use ($searchJenisKendala) {
+                    $subQ->where('jenis_kendala', 'LIKE', '%'.$searchJenisKendala.'%');
+                });
                 if (str_contains($searchJenisKendala, 'belum') || str_contains($searchJenisKendala, 'ditentukan')) {
-                    $q->orWhereNull('jenis_kendala')
-                        ->orWhere('jenis_kendala', '');
+                    $q->orWhereNull('kendala_id');
                 }
             });
         }
@@ -134,6 +134,7 @@ class RegullerController extends Controller
             $request->all(),
             [
                 'data_upt_id' => 'required|exists:data_upt,id',
+                'kendala_id' => 'nullable|exists:kendala,id',
                 'kanwil' => 'nullable|string|max:255',
                 'jenis_kendala' => 'nullable|string',
                 'detail_kendala' => 'nullable|string',
@@ -146,6 +147,7 @@ class RegullerController extends Controller
             ],
             [
                 'data_upt_id.required' => 'Nama UPT harus diisi.',
+                'kendala_id.exists' => 'Kendala Reguller tidak valid.',
                 'data_upt_id.string' => 'Nama UPT harus berupa teks.',
                 'data_upt_id.max' => 'Nama UPT tidak boleh lebih dari 255 karakter.',
                 'kanwil.string' => 'Kanwil harus berupa teks.',
@@ -205,6 +207,7 @@ class RegullerController extends Controller
             $request->all(),
             [
                 'data_upt_id' => 'required|exists:data_upt,id',
+                'kendala_id' => 'nullable|exists:kendala,id',
                 'kanwil' => 'nullable|string|max:255',
                 'jenis_kendala' => 'nullable|string',
                 'detail_kendala' => 'nullable|string',

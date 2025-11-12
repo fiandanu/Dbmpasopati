@@ -489,13 +489,11 @@
                                                 </div>
                                                 <div class="column">
                                                     <div class="mb-3">
-                                                        <label for="jenis_kendala" class="form-label">Jenis
-                                                            Kendala</label>
-                                                        <select class="form-control" id="jenis_kendala"
-                                                            name="jenis_kendala">
+                                                        <label for="kendala_id" class="form-label">Jenis Kendala</label>
+                                                        <select class="form-control" id="kendala_id" name="kendala_id">
                                                             <option value="">-- Pilih Jenis Kendala --</option>
                                                             @foreach ($jenisKendala as $kendala)
-                                                                <option value="{{ $kendala->jenis_kendala }}">
+                                                                <option value="{{ $kendala->id }}">
                                                                     {{ $kendala->jenis_kendala }}
                                                                 </option>
                                                             @endforeach
@@ -651,29 +649,19 @@
                                                     <div class="row">
                                                         <div class="col">
                                                             <div class="mb-3">
-                                                                <label for="jenis_kendala_edit_{{ $d->id }}"
+                                                                <label for="kendala_id_edit_{{ $d->id }}"
                                                                     class="form-label">Jenis Kendala</label>
                                                                 <select class="form-control"
-                                                                    id="jenis_kendala_edit_{{ $d->id }}"
-                                                                    name="jenis_kendala">
+                                                                    id="kendala_id_edit_{{ $d->id }}"
+                                                                    name="kendala_id">
                                                                     <option value="">-- Pilih Jenis Kendala --
                                                                     </option>
                                                                     @foreach ($jenisKendala as $kendala)
-                                                                        <option value="{{ $kendala->jenis_kendala }}"
-                                                                            {{ $d->jenis_kendala == $kendala->jenis_kendala ? 'selected' : '' }}>
+                                                                        <option value="{{ $kendala->id }}"
+                                                                            {{ $d->kendala_id == $kendala->id ? 'selected' : '' }}>
                                                                             {{ $kendala->jenis_kendala }}
                                                                         </option>
                                                                     @endforeach
-                                                                    @php
-                                                                        $existingKendala = $jenisKendala
-                                                                            ->pluck('jenis_kendala')
-                                                                            ->toArray();
-                                                                    @endphp
-                                                                    @if ($d->jenis_kendala && !in_array($d->jenis_kendala, $existingKendala) && $d->jenis_kendala != 'lainnya')
-                                                                        <option value="{{ $d->jenis_kendala }}" selected>
-                                                                            {{ $d->jenis_kendala }} (Custom)
-                                                                        </option>
-                                                                    @endif
                                                                 </select>
                                                             </div>
                                                             <div class="mb-3">
@@ -922,10 +910,18 @@
     <script>
         // Fungsi untuk menghitung dan format durasi real-time
         function calculateDuration(createdAtStr) {
-            // Parse sebagai UTC untuk menghindari timezone offset
-            const createdAt = new Date(createdAtStr + ' UTC');
+
+            const createdAt = new Date(createdAtStr);
             const now = new Date();
             const diffMs = now - createdAt;
+
+            if (diffMs < 0) return {
+                days: 0,
+                hours: 0,
+                minutes: 0,
+                seconds: 0,
+                formatted: '0 hari 00:00:00'
+            }
 
             // Hitung komponen waktu
             const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
@@ -938,7 +934,16 @@
                 hours: hours,
                 minutes: minutes,
                 seconds: seconds,
-                formatted: `${days} hari ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+                formatted: $ {
+                    days
+                }
+                hari $ {
+                    hours.toString().padStart(2, '0')
+                }: $ {
+                    minutes.toString().padStart(2, '0')
+                }: $ {
+                    seconds.toString().padStart(2, '0')
+                }
             };
         }
 

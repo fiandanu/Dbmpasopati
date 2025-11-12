@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('mclient_reguller', function (Blueprint $table) {
             $table->id();
-            $table->string('jenis_kendala')->nullable();
+            $table->foreignId('data_upt_id')->nullable()->constrained('data_upt')->onDelete('cascade');
+            $table->foreignId('kendala_id')->nullable()->constrained('kendala')->onDelete('set null');
             $table->string('detail_kendala')->nullable();
             $table->string('tanggal_terlapor')->nullable();
             $table->string('tanggal_selesai')->nullable();
@@ -21,9 +22,6 @@ return new class extends Migration
             $table->string('status')->nullable();
             $table->string('pic_1')->nullable();
             $table->string('pic_2')->nullable();
-
-            $table->foreignId('data_upt_id')->nullable()->constrained('data_upt')->onDelete('cascade');
-
             $table->timestamps();
         });
     }

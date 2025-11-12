@@ -21,7 +21,7 @@ class RouteServiceProvider extends ServiceProvider
         $this->routes(function () {
             Route::middleware('api')
                 ->prefix('api');
-                // ->group(base_path('routes/api.php'));
+            // ->group(base_path('routes/api.php'));
 
             Route::middleware('web')->group(function () {
                 require base_path('routes/web.php');
@@ -63,6 +63,8 @@ class RouteServiceProvider extends ServiceProvider
                 require base_path('routes/mclient/ponpes/reguller.php');
                 require base_path('routes/mclient/catatankartu/catatan.php');
                 require base_path('routes/mclient/catatankartu/vtren.php');
+                require base_path('routes/mclient/grafik/grafikupt.php');
+                require base_path('routes/mclient/grafik/grafikponpes.php');
 
                 // Route untuk Provider dan Vpn
                 require base_path('routes/provider/provider.php');

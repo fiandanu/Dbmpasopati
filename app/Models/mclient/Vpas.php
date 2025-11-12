@@ -15,7 +15,7 @@ class Vpas extends Model
 
     protected $fillable = [
         'data_upt_id',
-        'jenis_kendala',
+        'kendala_id',
         'detail_kendala',
         'tanggal_terlapor',
         'tanggal_selesai',
@@ -24,6 +24,16 @@ class Vpas extends Model
         'pic_1',
         'pic_2',
     ];
+
+    public function kendala()
+    {
+        return $this->belongsTo(\App\Models\user\kendala\Kendala::class, 'kendala_id');
+    }
+
+    public function getJenisKendalaAttribute()
+    {
+        return $this->kendala ? $this->kendala->jenis_kendala : null;
+    }
 
     protected $casts = [
         'tanggal_terlapor' => 'date',

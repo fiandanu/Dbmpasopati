@@ -2,10 +2,10 @@
 
 namespace App\Models\mclient\ponpes;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use App\Models\user\ponpes\Ponpes;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Vtren extends Model
 {
@@ -15,7 +15,7 @@ class Vtren extends Model
 
     protected $fillable = [
         'data_ponpes_id',
-        'jenis_kendala',
+        'kendala_id', // Ubah dari 'jenis_kendala'
         'detail_kendala',
         'tanggal_terlapor',
         'tanggal_selesai',
@@ -24,6 +24,18 @@ class Vtren extends Model
         'pic_1',
         'pic_2',
     ];
+
+    // Tambahkan relasi ini
+    public function kendala()
+    {
+        return $this->belongsTo(\App\Models\user\kendala\Kendala::class, 'kendala_id');
+    }
+
+    // Tambahkan accessor untuk backward compatibility
+    public function getJenisKendalaAttribute()
+    {
+        return $this->kendala ? $this->kendala->jenis_kendala : null;
+    }
 
     protected $casts = [
         'tanggal_terlapor' => 'date',
@@ -114,13 +126,14 @@ class Vtren extends Model
         if ($this->tanggal_terlapor && $this->tanggal_selesai) {
             $startDate = Carbon::parse($this->tanggal_terlapor);
             $endDate = Carbon::parse($this->tanggal_selesai);
+
             return $endDate->diffInDays($startDate);
         }
 
         return null;
     }
 
-        public function getDurasiHariAttribute($value)
+    public function getDurasiHariAttribute($value)
     {
         // Jika tanggal_selesai sudah ada, gunakan nilai yang tersimpan
         if ($this->tanggal_selesai) {
@@ -148,12 +161,12 @@ class Vtren extends Model
 
     public function getKendalaSummaryAttribute()
     {
-        if (!$this->jenis_kendala) {
+        if (! $this->jenis_kendala) {
             return 'Tidak ada kendala';
         }
 
         return strlen($this->jenis_kendala) > 50
-            ? substr($this->jenis_kendala, 0, 50) . '...'
+            ? substr($this->jenis_kendala, 0, 50).'...'
             : $this->jenis_kendala;
     }
 
@@ -179,10 +192,10 @@ class Vtren extends Model
 
     public function getDurationTextAttribute()
     {
-        if (!$this->durasi_hari) {
+        if (! $this->durasi_hari) {
             return '-';
         }
 
-        return $this->durasi_hari . ' hari';
+        return $this->durasi_hari.' hari';
     }
 }

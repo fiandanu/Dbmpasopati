@@ -82,7 +82,7 @@
 
                         <!-- Monitoring Customer -->
                         <li
-                            class="nav-item {{ Route::is('GrafikClient') || Route::is('MclientUptDashboard.KomplainUpt') || Route::is('MclientPonpesDashboard.KomplainPonpes') || Route::is('ListDataMclientCatatanVpas') || Route::is('ListDataMclientCatatanVtren') || Route::is('mcvpas.ListDataMclientVpas') || Route::is('mcreguler.ListDataMclientReguller') || Route::is('mclientkunjunganupt.ListDataMclientKunjungan') || Route::is('mclientpengirimanupt.ListDataMclientPengirimanUpt') || Route::is('mclientsettingalatupt.ListDataMclientSettingAlat') || Route::is('mcvtren.ListDataMclientVtren') || Route::is('mcponpesreguler.ListDataMclientPonpesReguller') || Route::is('mckunjunganponpes.ListDataMclientPonpesKunjungan') || Route::is('mclientponpessetting.ListDataMclientPonpesSetting') || Route::is('mclientpengirimanponpes.ListDataMclientPonpesPengiriman') || Route::is('mccatatanvpas.ListDataMclientCatatanVpas') || Route::is('mccatatanvtren.ListDataMclientCatatanVtren') ? 'menu-open' : '' }}">
+                            class="nav-item {{ Route::is('GrafikPonpes') ||Route::is('GrafikClient') || Route::is('MclientUptDashboard.KomplainUpt') || Route::is('MclientPonpesDashboard.KomplainPonpes') || Route::is('ListDataMclientCatatanVpas') || Route::is('ListDataMclientCatatanVtren') || Route::is('mcvpas.ListDataMclientVpas') || Route::is('mcreguler.ListDataMclientReguller') || Route::is('mclientkunjunganupt.ListDataMclientKunjungan') || Route::is('mclientpengirimanupt.ListDataMclientPengirimanUpt') || Route::is('mclientsettingalatupt.ListDataMclientSettingAlat') || Route::is('mcvtren.ListDataMclientVtren') || Route::is('mcponpesreguler.ListDataMclientPonpesReguller') || Route::is('mckunjunganponpes.ListDataMclientPonpesKunjungan') || Route::is('mclientponpessetting.ListDataMclientPonpesSetting') || Route::is('mclientpengirimanponpes.ListDataMclientPonpesPengiriman') ||  Route::is('mccatatanvpas.ListDataMclientCatatanVpas') || Route::is('mccatatanvtren.ListDataMclientCatatanVtren') ? 'menu-open' : '' }}">
                             <a href="#" class="nav-link ">
                                 <i class="fas fa-eye nav-icon"></i>
                                 <p>Monitoring Customer<i class="right fas fa-angle-left"></i></p>
@@ -91,7 +91,13 @@
                                 <li class="nav-item">
                                     <a href="{{ route('GrafikClient') }}"
                                         class="nav-link {{ Route::is('GrafikClient') ? 'active' : '' }}">
-                                        <p>Grafik</p>
+                                        <p>Grafik UPT</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('GrafikPonpes') }}"
+                                        class="nav-link {{ Route::is('GrafikPonpes') ? 'active' : '' }}">
+                                        <p>Grafik Ponpes</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">

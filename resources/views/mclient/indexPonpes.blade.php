@@ -375,7 +375,7 @@
                                         <td><span class="tag tag-success">{{ $d['nama_wilayah'] }}</span></td>
                                         <td class="text-center">
                                             <span class="Tipereguller">
-                                                {{ Str::limit($d['jenis_kendala'], 30) }}
+                                                {{ Str::limit($d['jenis_kendala'] ?? 'Belum Ditentukan', 30) }}
                                             </span>
                                         </td>
                                         <td class="text-center">

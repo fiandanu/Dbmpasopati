@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('mclient_ponpes_vtren', function (Blueprint $table) {
             $table->id();
-            $table->string('jenis_kendala')->nullable();
+            // Ubah dari string nullable menjadi foreign key
+            $table->foreignId('kendala_id')->nullable()->constrained('kendala')->onDelete('set null');
             $table->string('detail_kendala')->nullable();
             $table->string('tanggal_terlapor')->nullable();
             $table->string('tanggal_selesai')->nullable();

@@ -58,13 +58,4 @@ Route::middleware('auth')->group(function () {
         Route::get('/upt', [MonitoringServerController::class, 'MonitoringUpt'])->name('MonitoringUpt');
         Route::get('/ponpes', [MonitoringServerController::class, 'MonitoringPonpes'])->name('MonitoringPonpes');
     });
-
-    /*
-    |--------------------------------------------------------------------------
-    | Monitoring Client Routes
-    |--------------------------------------------------------------------------
-    */
-    Route::prefix('monitoring/client')->group(function () {
-        Route::get('/grafik', [HomeController::class, 'GrafikClient'])->name('GrafikClient');
-    });
 });

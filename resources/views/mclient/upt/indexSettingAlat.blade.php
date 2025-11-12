@@ -867,10 +867,18 @@
     <script>
         // Fungsi untuk menghitung dan format durasi real-time
         function calculateDuration(createdAtStr) {
-            // Parse sebagai UTC untuk menghindari timezone offset
-            const createdAt = new Date(createdAtStr + ' UTC');
+
+            const createdAt = new Date(createdAtStr);
             const now = new Date();
             const diffMs = now - createdAt;
+
+            if (diffMs < 0) return {
+                days: 0,
+                hours: 0,
+                minutes: 0,
+                seconds: 0,
+                formatted: '0 hari 00:00:00'
+            }
 
             // Hitung komponen waktu
             const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
@@ -883,7 +891,16 @@
                 hours: hours,
                 minutes: minutes,
                 seconds: seconds,
-                formatted: `${days} hari ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+                formatted: $ {
+                    days
+                }
+                hari $ {
+                    hours.toString().padStart(2, '0')
+                }: $ {
+                    minutes.toString().padStart(2, '0')
+                }: $ {
+                    seconds.toString().padStart(2, '0')
+                }
             };
         }
 

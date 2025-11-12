@@ -17,7 +17,7 @@ class VtrenController extends Controller
 {
     public function ListDataMclientVtren(Request $request)
     {
-        $query = Vtren::with(['ponpes.namaWilayah']);
+        $query = Vtren::with(['ponpes.namaWilayah', 'kendala']);
 
         // Apply filters
         $query = $this->applyFilters($query, $request);
@@ -72,13 +72,14 @@ class VtrenController extends Controller
             });
         }
 
-        if ($request->has('search_jenis_kendala') && ! empty($request->search_jenis_kendala)) {
+        if ($request->has('search_jenis_kendala') && !empty($request->search_jenis_kendala)) {
             $searchJenisKendala = strtolower($request->search_jenis_kendala);
             $query->where(function ($q) use ($searchJenisKendala) {
-                $q->where('jenis_kendala', 'LIKE', '%'.$searchJenisKendala.'%');
+                $q->whereHas('kendala', function($subQ) use ($searchJenisKendala) {
+                    $subQ->where('jenis_kendala', 'LIKE', '%'.$searchJenisKendala.'%');
+                });
                 if (str_contains($searchJenisKendala, 'belum') || str_contains($searchJenisKendala, 'ditentukan')) {
-                    $q->orWhereNull('jenis_kendala')
-                        ->orWhere('jenis_kendala', '');
+                    $q->orWhereNull('kendala_id');
                 }
             });
         }
@@ -129,24 +130,24 @@ class VtrenController extends Controller
     {
         // dd($request->all());
 
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'data_ponpes_id' => 'required|exists:data_ponpes,id',
-                'jenis_kendala' => 'nullable|string',
-                'detail_kendala' => 'nullable|string|max:100',
-                'tanggal_terlapor' => 'nullable|date',
-                'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_terlapor',
-                'status' => 'nullable|string|in:pending,proses,selesai,terjadwal',
-                'pic_1' => 'nullable|string|max:255',
-                'pic_2' => 'nullable|string|max:255',
-            ],
-            [
-                'data_ponpes_id.required' => 'Nama PONPES wajib dipilih',
-                'data_ponpes_id.exists' => 'PONPES yang dipilih tidak valid',
-                // pesan validasi lainnya...
-            ]
-        );
+    $validator = Validator::make(
+        $request->all(),
+        [
+            'data_ponpes_id' => 'required|exists:data_ponpes,id',
+            'kendala_id' => 'nullable|exists:kendala,id', // Ubah dari jenis_kendala
+            'detail_kendala' => 'nullable|string|max:100',
+            'tanggal_terlapor' => 'nullable|date',
+            'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_terlapor',
+            'status' => 'nullable|string|in:pending,proses,selesai,terjadwal',
+            'pic_1' => 'nullable|string|max:255',
+            'pic_2' => 'nullable|string|max:255',
+        ],
+        [
+            'data_ponpes_id.required' => 'Nama PONPES wajib dipilih',
+            'data_ponpes_id.exists' => 'PONPES yang dipilih tidak valid',
+            'kendala_id.exists' => 'Jenis kendala yang dipilih tidak valid',
+        ]
+    );
 
         if ($validator->fails()) {
             return redirect()->back()
@@ -216,10 +217,10 @@ class VtrenController extends Controller
 
             $data->update($updateData);
 
-            return redirect()->back()->with('success', 'Data berhasil diupdate!');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Gagal: '.$e->getMessage());
-        }
+                return redirect()->back()->with('success', 'Data berhasil diupdate!');
+            } catch (\Exception $e) {
+                return redirect()->back()->with('error', 'Gagal: '.$e->getMessage());
+            }
     }
 
     public function MclientVtrenDestroy($id)

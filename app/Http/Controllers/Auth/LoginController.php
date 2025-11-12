@@ -39,14 +39,14 @@ class LoginController extends Controller
         $user = UserRole::where('username', $credentials['username'])->first();
 
         // Validasi user existence & password
-        if (!$user || !Hash::check($credentials['password'], $user->password)) {
+        if (! $user || ! Hash::check($credentials['password'], $user->password)) {
             throw ValidationException::withMessages([
                 'username' => 'Username atau password salah.',
             ]);
         }
 
         // Validasi status user
-        if (!$user->isActive()) {
+        if (! $user->isActive()) {
             throw ValidationException::withMessages([
                 'username' => 'Akun Anda tidak aktif. Silakan hubungi administrator.',
             ]);
@@ -62,7 +62,7 @@ class LoginController extends Controller
         $request->session()->regenerate();
 
         // Redirect berdasarkan role (opsional)
-        return redirect()->intended(route('dashboard'));
+        return redirect()->intended(route('GrafikClient'));
     }
 
     /**

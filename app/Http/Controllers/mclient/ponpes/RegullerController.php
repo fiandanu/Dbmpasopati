@@ -17,7 +17,7 @@ class RegullerController extends Controller
 {
     public function ListDataMclientPonpesReguller(Request $request)
     {
-        $query = Reguller::with('ponpes.namaWilayah');
+        $query = Reguller::with('ponpes.namaWilayah', 'kendala');
 
         // Apply filter
         $query = $this->applyFilters($query, $request);
@@ -73,11 +73,11 @@ class RegullerController extends Controller
         if ($request->has('search_jenis_kendala') && ! empty($request->search_jenis_kendala)) {
             $searchJenisKendala = strtolower($request->search_jenis_kendala);
             $query->where(function ($q) use ($searchJenisKendala) {
-                $q->where('jenis_kendala', 'LIKE', '%'.$searchJenisKendala.'%');
-                // Jika mencari "belum" atau "ditentukan", include yang NULL/empty
+                $q->whereHas('kendala', function($subQ) use ($searchJenisKendala) {
+                    $subQ->where('jenis_kendala', 'LIKE', '%'.$searchJenisKendala.'%');
+                });
                 if (str_contains($searchJenisKendala, 'belum') || str_contains($searchJenisKendala, 'ditentukan')) {
-                    $q->orWhereNull('jenis_kendala')
-                        ->orWhere('jenis_kendala', '');
+                    $q->orWhereNull('kendala_id');
                 }
             });
         }
@@ -127,6 +127,7 @@ class RegullerController extends Controller
             $request->all(),
             [
                 'data_ponpes_id' => 'required|string|exists:data_ponpes,id',
+                'kendala_id' => 'nullable|integer|exists:kendala,id',
                 'jenis_kendala' => 'nullable|string',
                 'detail_kendala' => 'nullable|string',
                 'tanggal_terlapor' => 'nullable|date',
@@ -138,6 +139,7 @@ class RegullerController extends Controller
             ],
             [
                 'data_ponpes_id.required' => 'Nama Ponpes harus diisi.',
+                'kendala_id.integer' => 'Kendala Reguller harus berupa angka.',
                 'data_ponpes_id.exists' => 'Nama Ponpes tidak ditemukan.',
                 'jenis_kendala.string' => 'Kendala Reguller harus berupa teks.',
                 'detail_kendala.string' => 'Detail kendala Reguller harus berupa teks.',
@@ -185,6 +187,7 @@ class RegullerController extends Controller
             $request->all(),
             [
                 'data_ponpes_id' => 'required|string|exists:data_ponpes,id',
+                'kendala_id' => 'nullable|integer|exists:kendala,id',
                 'jenis_kendala' => 'nullable|string',
                 'detail_kendala' => 'nullable|string',
                 'tanggal_terlapor' => 'nullable|date',
@@ -196,6 +199,7 @@ class RegullerController extends Controller
             ],
             [
                 'data_ponpes_id.required' => 'Nama Ponpes harus diisi.',
+                'kendala_id.integer' => 'Kendala Reguller harus berupa angka.',
                 'data_ponpes_id.exists' => 'Nama Ponpes tidak ditemukan.',
                 'nama_wilayah.string' => 'Nama wilayah harus berupa teks.',
                 'nama_wilayah.max' => 'Nama wilayah tidak boleh lebih dari 255 karakter.',

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\user\ponpes\Ponpes;
 use Carbon\Carbon;
 
+
 class Reguller extends Model
 {
     use HasFactory;
@@ -15,7 +16,7 @@ class Reguller extends Model
 
     protected $fillable = [
         'data_ponpes_id',
-        'jenis_kendala',
+        'kendala_id', // Ubah dari 'jenis_kendala'
         'detail_kendala',
         'tanggal_terlapor',
         'tanggal_selesai',
@@ -24,6 +25,18 @@ class Reguller extends Model
         'pic_1',
         'pic_2',
     ];
+
+    // Tambahkan relasi
+    public function kendala()
+    {
+        return $this->belongsTo(\App\Models\user\kendala\Kendala::class, 'kendala_id');
+    }
+
+    // Accessor untuk backward compatibility
+    public function getJenisKendalaAttribute()
+    {
+        return $this->kendala ? $this->kendala->jenis_kendala : null;
+    }
 
     protected $casts = [
         'tanggal_terlapor' => 'date',
