@@ -334,7 +334,7 @@
                                                         <span class="Tipereguller">{{ $d->durasi_hari }} hari</span>
                                                     @else
                                                         <span class="Tipereguller durasi-realtime"
-                                                            data-created="{{ $d->created_at->format('Y-m-d H:i:s') }}">
+                                                            data-created="{{ ($d->tanggal_terlapor ?? $d->created_at)->format('Y-m-d H:i:s') }}">
                                                             <span class="durasi-text">Menghitung...</span>
                                                         </span>
                                                     @endif
@@ -865,19 +865,19 @@
 
     {{-- JS Real-time Duration Counter --}}
     <script>
-        // Fungsi untuk menghitung dan format durasi real-time
         function calculateDuration(createdAtStr) {
-
             const createdAt = new Date(createdAtStr);
             const now = new Date();
             const diffMs = now - createdAt;
 
-            if (diffMs < 0) return {
-                days: 0,
-                hours: 0,
-                minutes: 0,
-                seconds: 0,
-                formatted: '0 hari 00:00:00'
+            if (diffMs < 0) {
+                return {
+                    days: 0,
+                    hours: 0,
+                    minutes: 0,
+                    seconds: 0,
+                    formatted: '0 hari 00:00:00'
+                };
             }
 
             // Hitung komponen waktu
@@ -891,18 +891,10 @@
                 hours: hours,
                 minutes: minutes,
                 seconds: seconds,
-                formatted: $ {
-                    days
-                }
-                hari $ {
-                    hours.toString().padStart(2, '0')
-                }: $ {
-                    minutes.toString().padStart(2, '0')
-                }: $ {
-                    seconds.toString().padStart(2, '0')
-                }
+                formatted: `${days} hari ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
             };
         }
+
 
         // Update semua durasi yang masih berjalan di tabel
         function updateDurasiRealtime() {
