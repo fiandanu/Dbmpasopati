@@ -58,9 +58,7 @@ Kode yang perlu dirapihin lagi di bagian
 
 - app\Http\Controllers\user\ponpes\vtren\VtrenController.php [di method exportPonpesCsv $rows]
 
-
-Kode yang perlu di cek ulang di Mclient UPT 
-
+Kode yang perlu di cek ulang di Mclient UPT
 
 CASE SENSITIF NAMA WILAYAH
 
@@ -73,135 +71,110 @@ NAMA WILAYAH MENGGUNAKAN HURUF BESAR DIAWAL
 -NamaWilayah
 -NamaWilayah.php
 
-
-
 CASE SENSITIF MIKROTIK CONTROLLER
 
 data@data:/var/www/Dbmpasopati/app/Http/Controllers/tutorial/upt$ ls
-MikrotikController.php  ServerController.php
-RegullerController.php  VpasController.php
+MikrotikController.php ServerController.php
+RegullerController.php VpasController.php
 data@data:/var/www/Dbmpasopati/app/Http/Controllers/tutorial/upt$ mv MikrotikController.php mikrotikController.php
 mv: cannot move 'MikrotikController.php' to 'mikrotikController.php': Permission denied
 data@data:/var/www/Dbmpasopati/app/Http/Controllers/tutorial/upt$ sudo mv Mi
 krotikController.php mikrotikController.php
 data@data:/var/www/Dbmpasopati/app/Http/Controllers/tutorial/upt$ htop
 data@data:/var/www/Dbmpasopati/app/Http/Controllers/tutorial/upt$ ls
-mikrotikController.php  ServerController.php
-RegullerController.php  VpasController.php
+mikrotikController.php ServerController.php
+RegullerController.php VpasController.php
 
 TUTORIAL MIKROTIK CONTROLLER MENGGUNAKAN HURUF BESAR DIAWAL, HARUSNYA HURUF KECIL
+
 - mikrotikController.php
-
-
-
 
 PADA DATABASE SEEDER
 
 data@data:/var/www/Dbmpasopati/database/factories$ ls
-DataOpsionalPonpesFactory.php  PonpesFactory.php  upt
-DataOpsionalUptFactory.php     providers          user
-mclient                        tutorial           UserFactory.php
+DataOpsionalPonpesFactory.php PonpesFactory.php upt
+DataOpsionalUptFactory.php providers user
+mclient tutorial UserFactory.php
 data@data:/var/www/Dbmpasopati/database/factories$ mv upt Upt
 mv: cannot move 'upt' to 'Upt': Permission denied
 data@data:/var/www/Dbmpasopati/database/factories$ sudo mv upt Upt
 [sudo] password for data:
 data@data:/var/www/Dbmpasopati/database/factories$ ls
-DataOpsionalPonpesFactory.php  PonpesFactory.php  Upt
-DataOpsionalUptFactory.php     providers          user
-mclient                        tutorial           UserFactory.php
+DataOpsionalPonpesFactory.php PonpesFactory.php Upt
+DataOpsionalUptFactory.php providers user
+mclient tutorial UserFactory.php
 
-NAMA UPT SEBELUMYA KECIL 
+NAMA UPT SEBELUMYA KECIL
+
 - upt menjadi Upt
 
-
-
-
-
-
-
-
-HALAMAN GRAFIK UPT DAN PONPES DIBUAT CETAK PDF 
-
+HALAMAN GRAFIK UPT DAN PONPES DIBUAT CETAK PDF
 
 DATA YANG NGAMBIL DARI SERVER ITU UPT DAN PONPES YAITU DARI NAMA UPT DAN KANWIL DAN NAMA WILAYAH
-
-
-
-
-
-
 
 =============================================================
 📝 CATATAN REVISI
 =============================================================
 
+- Db Upt di munculin status Pks yang upload, Status Spp juga , Vpas/reguler dimunculin status wartel belum aktif dan aktif jumlahnya
+
 - di Db Upt di pks Nama Ponpes Diubah Menjadi Nama UPT ✅
+- di bagian Pencatatan Kartu Vpas di buat jumlah totalya otomatis, dihitung dari kolom kartu baru, kartu bekas, kartu goip otomatis di jumlah otomatis ✅
+- kartu terpakai diubah ke jumlah kartu terpakai 
+- di catatan kartu vpas nama Upt masih hilang di Pdfnya pas download ✅
 
-- di bagian Pencatatan Kartu Vpas di buat jumlah totalya otomatis, dihitung dari kolom kartu baru, kartu bekas, kartu goip otomatis di jumlah otomatis  
-- kartu terpakai diubah ke jumlah kartu terpakai
-- di catatan kartu vpas nama Upt masih hilang di Pdfnya pas download
+- terpakai disebelah whatsaap terpakai, pic dibuat ke paling kanan aja ✅
+- tanggal disebelum nama Upt ✅
 
-- terpakai disebelah whatsaap terpakai, pic dibuat ke paling kanan aja
-- tanggal disebelum nama Upt 
-- Db Upt di munculin status Pks yang upload, Status Spp juga , Vpas/reguler dimunculin status wartel belum aktif dan aktif jumlahnya 
-
-- Grafik Upt dan Grafik Ponpes Dibuat halaman baru
+- Grafik Upt dan Grafik Ponpes Dibuat halaman baru ✅
 - Di pencatatan kartu Vpas di munculin total berdasarkan
-hari, bulan, tahun,
+  hari, bulan, tahun, ✅
 
-- total kartu dibuat perbulan grafiknya
-- kartu baru sampe wa terpakai dibuat perhari
-dibuat line chart / bar chart disetiap bulan otomatis ke arsip dan masuk kebulan baru secara realtime
-grafik dibuat secara realtime berjalan terus,
+- total kartu dibuat perbulan grafiknya ✅
+- kartu baru sampe wa terpakai dibuat perhari ✅
+  dibuat line chart / bar chart disetiap bulan otomatis ke arsip dan masuk kebulan baru secara realtime
+  grafik dibuat secara realtime berjalan terus, ✅
 
 - Komplain Vpas Dibuat jumlah presentase dari jenis kendala dibuat perbulan, intinya diambil dari jenis kendala
 
+- KHUSUS ROLE USER ✅
+  Super Admin,Teknisi, Marketing
 
+kolom di role
 
-
-
-
-- KHUSUS ROLE USER
- Super Admin,Teknisi, Marketing
-
- kolom di role 
- - username 
- - nama 
- - password 
- - keterangan
- - status kalo aktif role bisa login, dan sebaliknya 
- - level akses / rolenya 
- - history login 
- - tanggal pembuatan
-
+- username
+- nama
+- password
+- keterangan
+- status kalo aktif role bisa login, dan sebaliknya
+- level akses / rolenya
+- history login
+- tanggal pembuatan
 
 - Rule Role Marketing
- - Marketing hanya bisa melihat dan edit 
- -(tidak bisa menghapus data)
- - di halaman data manajemen di hide untuk role ini
- - hanya bisa tambah edit di Halaman Db pks dan spp saja
+- Marketing hanya bisa melihat dan edit
+  -(tidak bisa menghapus data)
+- di halaman data manajemen di hide untuk role ini
+- hanya bisa tambah edit di Halaman Db pks dan spp saja
 
-- Rule Teknisi 
- - (tidak bisa menghapus data)
- - bisa membuat data di semua halaman Edit Dan tambah
+- Rule Teknisi
+- (tidak bisa menghapus data)
+- bisa membuat data di semua halaman Edit Dan tambah
 
-catatan 
+catatan
 yang bisa membuat user dan role itu hanya super admin
 
+- dibuat kolom untuk di halaman home usernya itu
+  terakhir login dan tanggal pembuatan user
 
-- dibuat kolom untuk di halaman home usernya itu 
- terakhir login dan tanggal pembuatan user
-
-- Di semua keterangan dibuat limit 100 kata 
-
+- Di semua keterangan dibuat limit 100 kata
 
 🔄 menampilkan keseluruhan total data di bawah perncarian kartu gsm vpas vtren
 (Pembenaran Layout)
 
 - di mclient dashboard di munculkan data yang paling awal itu yang paling lama belum selesai dan yang baru dipaling bawah
-  yang sudah selesai urutannya dipaling bawah 
-  -
-
+  yang sudah selesai urutannya dipaling bawah
+    -
 
 <!-- - menu user di limit 1000 data -->
 
@@ -209,7 +182,7 @@ yang bisa membuat user dan role itu hanya super admin
 ✅ REVISI SELESAI
 =============================================================
 
--- Check Ulang 
+-- Check Ulang
 20/10/2025
 ✅ Kanwil dan Nama Wilayah dibuat menjadi dropdown saja ------- done
 ✅ pada saat menentukan tanggal terlapor maka otomatis hari akan berjalan
@@ -224,22 +197,24 @@ yang bisa membuat user dan role itu hanya super admin
 ✅ perbaikan pencarian status upload pdf di spp di bagian database upt dan ponpes
 
     di bagian add modal dan edit belum
+
 ✅ pic 1 menjadi pic dan pic 2 menjadi penerima di bagian pengiriman alat ponpes
+
 - (Nama Db Belum Diubah)
-✅ tanggal selesai di ganti menjadi tnaggal diterima di bagian pengiriman alat ponpes
-✅ Tanggal Kontrak dan Jatuh Tempo
+  ✅ tanggal selesai di ganti menjadi tnaggal diterima di bagian pengiriman alat ponpes
+  ✅ Tanggal Kontrak dan Jatuh Tempo
 
 ✅
+
 - Jumlah SST Reguller Diambil dari jumlah extension
 - Jumlah SST Vpas Diambil dari jumlah extension
 
 ✅
+
 - di halaman DB UPT PONPES dibuat untuk halaman Export PDF dan CSV
 - menu dibuat dropdown di mclient upt dan vpas
-- yang dibuat dropdown itu menu,status, tipe 
+- yang dibuat dropdown itu menu,status, tipe
 - di halaman pengiriman alat di kolom penerima diketik sendiri DI HALAMAN PONPES DAN UPT MCLIENT
-
-
 
 =============================================================
 📊 PROGRESS SUMMARY

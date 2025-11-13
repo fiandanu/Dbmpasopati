@@ -209,11 +209,11 @@
                                             @endphp
 
                                             @if (!$hasPdf1 && !$hasPdf2)
-                                                <span class="badge body-small-12">Belum Upload</span>
+                                                <span class="badge body-small-12">Belum upload</span>
                                             @elseif ($hasPdf1 && $hasPdf2)
-                                                <span class="badge-succes">Sudah Upload (2/2)</span>
+                                                <span class="badge-succes">Lengkap (2/2)</span>
                                             @else
-                                                <span class="badge-prosses">Sudah Upload (1/2)</span>
+                                                <span class="badge-prosses">Sebagian (1/2)</span>
                                             @endif
                                         </td>
                                         <td class="text-center">
@@ -497,6 +497,7 @@
                                             </div>
                                         </div>
                                     @endfor
+                                    
                                 @empty
                                     <tr>
                                         <td colspan="7" class="text-center">

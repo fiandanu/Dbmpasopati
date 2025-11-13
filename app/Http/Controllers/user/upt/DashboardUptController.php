@@ -22,10 +22,10 @@ class DashboardUptController extends Controller
             $baseQuery->whereDate('tanggal', '<=', $request->search_tanggal_sampai);
         }
 
-        $pksData = $this->getPksStatistics($request);
-        $sppData = $this->getSppStatistics($request);
-        $vpasData = $this->getVpasStatistics($request);
-        $regulerData = $this->getRegulerStatistics($request);
+        $pksData = $this->getPksStatistics();
+        $sppData = $this->getSppStatistics();
+        $vpasData = $this->getVpasStatistics();
+        $regulerData = $this->getRegulerStatistics();
 
         $query = Upt::with(['kanwil', 'uploadFolderPks', 'uploadFolderSpp', 'dataOpsional']);
 
@@ -79,25 +79,25 @@ class DashboardUptController extends Controller
     private function applyFilters($query, Request $request)
     {
         if ($request->has('search_namaupt') && ! empty($request->search_namaupt)) {
-            $query->where('namaupt', 'LIKE', '%'.$request->search_namaupt.'%');
+            $query->where('namaupt', 'LIKE', '%' . $request->search_namaupt . '%');
         }
 
         if ($request->has('search_kanwil') && ! empty($request->search_kanwil)) {
             $query->whereHas('kanwil', function ($q) use ($request) {
-                $q->where('kanwil', 'LIKE', '%'.$request->search_kanwil.'%');
+                $q->where('kanwil', 'LIKE', '%' . $request->search_kanwil . '%');
             });
         }
 
         // ===== UBAH INI: Filter tipe =====
         if ($request->has('search_tipe') && ! empty($request->search_tipe)) {
-            $query->where('tipe', 'LIKE', '%'.$request->search_tipe.'%');
+            $query->where('tipe', 'LIKE', '%' . $request->search_tipe . '%');
         }
         // ===== AKHIR PERUBAHAN =====
 
         // ===== UBAH INI: Filter Extension Universal =====
         if ($request->has('search_extension') && ! empty($request->search_extension)) {
             $query->whereHas('dataOpsional', function ($q) use ($request) {
-                $q->where('jumlah_extension', 'LIKE', '%'.$request->search_extension.'%');
+                $q->where('jumlah_extension', 'LIKE', '%' . $request->search_extension . '%');
             });
         }
         // ===== AKHIR PERUBAHAN =====
@@ -175,7 +175,7 @@ class DashboardUptController extends Controller
 
         $uploadedFolders = 0;
         for ($i = 1; $i <= 10; $i++) {
-            $column = 'pdf_folder_'.$i;
+            $column = 'pdf_folder_' . $i;
             if (! empty($uploadFolder->$column)) {
                 $uploadedFolders++;
             }
@@ -186,7 +186,7 @@ class DashboardUptController extends Controller
         } elseif ($uploadedFolders == 10) {
             return '10/10 Folder';
         } else {
-            return $uploadedFolders.'/10 Terupload';
+            return $uploadedFolders . '/10 Terupload';
         }
     }
 
@@ -198,7 +198,7 @@ class DashboardUptController extends Controller
         $data = $query->orderBy('namaupt', 'asc')->get();
         $data = $this->applyStatusFilter($data, $request);
 
-        $filename = 'dashboard_upt_'.Carbon::now()->format('Y-m-d_H-i-s').'.csv';
+        $filename = 'dashboard_upt_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
 
         $headers = [
             'Content-type' => 'text/csv',
@@ -253,7 +253,7 @@ class DashboardUptController extends Controller
 
         $pdf = Pdf::loadView('export.public.db.DatabaseUPT', $pdfData)
             ->setPaper('a4', 'landscape');
-        $filename = 'dashboard_upt_'.Carbon::now()->translatedFormat('d_M_Y').'.pdf';
+        $filename = 'dashboard_upt_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
 
         return $pdf->download($filename);
     }
@@ -266,19 +266,20 @@ class DashboardUptController extends Controller
         $sebagian = 0;
         $sudahUpload = 0;
 
+        /** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\user\upt\Upt> $data */
         $data = Upt::with('uploadFolderPks')->whereHas('uploadFolderPks')->get();
 
         foreach ($data as $item) {
+            // /** @var \App\Models\user\upt\UploadFolderPks|null $uploadFolder */
             $uploadFolder = $item->uploadFolderPks;
 
-            if (! $uploadFolder) {
+            if (!$uploadFolder) {
                 $belumUpload++;
-
                 continue;
             }
 
-            $hasPdf1 = ! empty($uploadFolder->uploaded_pdf_1);
-            $hasPdf2 = ! empty($uploadFolder->uploaded_pdf_2);
+            $hasPdf1 = !empty($uploadFolder->uploaded_pdf_1);
+            $hasPdf2 = !empty($uploadFolder->uploaded_pdf_2);
 
             if ($hasPdf1 && $hasPdf2) {
                 $sudahUpload++;
@@ -305,21 +306,21 @@ class DashboardUptController extends Controller
         $sebagian = 0;
         $sudahUpload = 0;
 
+        /** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\user\upt\Upt> $data */
         $data = Upt::with('uploadFolderSpp')->whereHas('uploadFolderSpp')->get();
 
         foreach ($data as $item) {
             $uploadFolder = $item->uploadFolderSpp;
 
-            if (! $uploadFolder) {
+            if (!$uploadFolder) {
                 $belumUpload++;
-
                 continue;
             }
 
             $uploadedFolders = 0;
             for ($i = 1; $i <= 10; $i++) {
-                $column = 'pdf_folder_'.$i;
-                if (! empty($uploadFolder->$column)) {
+                $column = 'pdf_folder_' . $i;
+                if (!empty($uploadFolder->$column)) {
                     $uploadedFolders++;
                 }
             }
@@ -351,20 +352,21 @@ class DashboardUptController extends Controller
         $sebagian = 0;
         $sudahUpdate = 0;
 
+        /** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\user\upt\Upt> $data */
         $data = Upt::with('dataOpsional')->where('tipe', 'vpas')->get();
 
         foreach ($data as $item) {
+            // /** @var \App\Models\user\upt\DataOpsional|null $dataOpsional */
             $dataOpsional = $item->dataOpsional;
 
-            if (! $dataOpsional) {
+            if (!$dataOpsional) {
                 $belumUpdate++;
-
                 continue;
             }
 
             $filledFields = 0;
             foreach ($optionalFields as $field) {
-                if (! empty($dataOpsional->$field)) {
+                if (!empty($dataOpsional->$field)) {
                     $filledFields++;
                 }
             }
@@ -398,6 +400,7 @@ class DashboardUptController extends Controller
         $sebagian = 0;
         $sudahUpdate = 0;
 
+        /** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\user\upt\Upt> $data */
         $data = Upt::with('dataOpsional')->where('tipe', 'reguler')->get();
 
         foreach ($data as $item) {
