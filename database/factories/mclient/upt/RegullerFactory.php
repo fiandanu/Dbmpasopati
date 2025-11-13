@@ -3,6 +3,7 @@
 namespace Database\Factories\Mclient\Upt;
 
 use App\Models\mclient\Reguller;
+use App\Models\user\kendala\Kendala;
 use App\Models\user\upt\Upt;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Carbon\Carbon;
@@ -56,7 +57,7 @@ class RegullerFactory extends Factory
 
         return [
             'data_upt_id'      => $upt->id,
-            'jenis_kendala'    => $this->faker->randomElement(self::$jenisKendalaList),
+            'kendala_id'    => Kendala::inRandomOrder()->first()->id,
             'detail_kendala'   => $this->faker->paragraph(2),
             'tanggal_terlapor' => $tanggalTerlapor,
             'tanggal_selesai'  => $tanggalSelesai,
@@ -123,13 +124,6 @@ class RegullerFactory extends Factory
     /**
      * State untuk kendala urgent
      */
-    public function urgent(): static
-    {
-        return $this->state(fn() => [
-            'jenis_kendala' => $this->faker->randomElement(self::$urgentKendalaList),
-            'detail_kendala' => 'URGENT: ' . $this->faker->paragraph(1),
-        ]);
-    }
 
     /**
      * State untuk data bulan ini
@@ -180,10 +174,4 @@ class RegullerFactory extends Factory
     /**
      * State untuk UPT tertentu
      */
-    public function forUpt(Upt $upt): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'data_upt_id' => $upt->id,
-        ]);
-    }
 }

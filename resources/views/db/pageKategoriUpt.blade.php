@@ -270,9 +270,8 @@
                                             <td><span class="tag tag-success">{{ $d->kanwil->kanwil }}</span></td>
                                             <td class="text-center">
                                                 <span
-                                                    class="
-                                                                                                                @if ($d->tipe == 'reguler') Tipereguller
-                                                                                                                @elseif($d->tipe == 'vpas') Tipevpas @endif">
+                                                    class="@if ($d->tipe == 'reguler') Tipereguller
+                                                        @elseif($d->tipe == 'vpas') Tipevpas @endif">
                                                     {{ ucfirst($d->tipe) }}
                                                 </span>
                                             </td>
@@ -359,7 +358,6 @@
                         </div>
                     </div>
 
-                    <!-- Custom Pagination -->
                     <!-- Custom Pagination -->
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <div class="d-flex align-items-center gap-3">
@@ -658,7 +656,6 @@
             }
         });
     </script>
-    </div>
 
 
 @endsection

@@ -230,7 +230,7 @@
                 @foreach ($data as $d)
                     <tr>
                         <td>{{ $no++ }}</td>
-                        <td>{{ $d->nama_ponpes ?? '-' }}</td>
+                        <td>{{ $d->ponpes->nama_ponpes ?? '-' }}</td>
                         <td>{{ $d->spam_vtren_kartu_baru ?? '-' }}</td>
                         <td>{{ $d->spam_vtren_kartu_bekas ?? '-' }}</td>
                         <td>{{ $d->spam_vtren_kartu_goip ?? '-' }}</td>

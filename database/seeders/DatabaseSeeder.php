@@ -141,7 +141,7 @@ class DatabaseSeeder extends Seeder
         DataOpsionalPonpesFactory::new()->count(50)->create();
 
         // URUTAN KETIGA MEMBUAT MCLIENT UPT FACTORY
-        VpasFactory::new()->count(20)->create(); 
+        VpasFactory::new()->count(200)->create(); 
         RegullerFactory::new()->count(20)->create(); 
         KunjunganFactory::new()->count(20)->create(); 
         SettingFactory::new()->count(20)->create(); 

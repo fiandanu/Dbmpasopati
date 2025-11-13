@@ -137,68 +137,92 @@
 
 
                         <div class="row mt-3 mb-3">
-                            <div class="col-12">
-                                <div class="card shadow-sm">
-                                    <div class="card-header bg-primary text-white">
-                                        <h5 class="mb-0">
-                                            <i class="fas fa-calculator mr-2"></i>Total Kalkulasi Data
-                                        </h5>
+                            <!-- Row 1 -->
+                            <div class="col-md-4 mb-2">
+                                <div class="card-total">
+                                    <div class="w-full">
+                                        <h1 class="title-medium-18">Kartu Baru</h1>
+                                        <span class="display-medium-48">{{ number_format($totals['kartu_baru']) }}</span>
                                     </div>
-                                    <div class="card-body">
-                                        <div class="row text-center">
-                                            <div class="col-md-2 mb-3">
-                                                <div class="border rounded p-3 h-100 bg-light">
-                                                    <p class="mb-1 text-muted small">Kartu Baru</p>
-                                                    <h4 class="mb-0 text-primary font-weight-bold">
-                                                        {{ number_format($totals['kartu_baru']) }}
-                                                    </h4>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-2 mb-3">
-                                                <div class="border rounded p-3 h-100 bg-light">
-                                                    <p class="mb-1 text-muted small">Kartu Bekas</p>
-                                                    <h4 class="mb-0 text-success font-weight-bold">
-                                                        {{ number_format($totals['kartu_bekas']) }}
-                                                    </h4>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-2 mb-3">
-                                                <div class="border rounded p-3 h-100 bg-light">
-                                                    <p class="mb-1 text-muted small">Kartu GOIP</p>
-                                                    <h4 class="mb-0 text-info font-weight-bold">
-                                                        {{ number_format($totals['kartu_goip']) }}
-                                                    </h4>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-2 mb-3">
-                                                <div class="border rounded p-3 h-100 bg-light">
-                                                    <p class="mb-1 text-muted small">Kartu Belum Register</p>
-                                                    <h4 class="mb-0 text-warning font-weight-bold">
-                                                        {{ number_format($totals['kartu_belum_register']) }}
-                                                    </h4>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-2 mb-3">
-                                                <div class="border rounded p-3 h-100 bg-light">
-                                                    <p class="mb-1 text-muted small">WA Terpakai</p>
-                                                    <h4 class="mb-0 text-danger font-weight-bold">
-                                                        {{ number_format($totals['whatsapp_terpakai']) }}
-                                                    </h4>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-2 mb-3">
-                                                <div class="border rounded p-3 h-100 bg-light">
-                                                    <p class="mb-1 text-muted small">Total Kartu Terpakai</p>
-                                                    <h4 class="mb-0 text-dark font-weight-bold">
-                                                        {{ number_format($totals['kartu_terpakai_perhari']) }}
-                                                    </h4>
-                                                </div>
-                                            </div>
-                                        </div>
+                                    <div class="icon-card-total">
+                                        <span class="material-symbols-outlined">
+                                            credit_card
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <div class="card-total">
+                                    <div class="w-full">
+                                        <h1 class="title-medium-18">Kartu Bekas</h1>
+                                        <span class="display-medium-48">{{ number_format($totals['kartu_bekas']) }}</span>
+                                    </div>
+                                    <div class="icon-card-total">
+                                        <span class="material-symbols-outlined">
+                                            credit_card_off
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <div class="card-total">
+                                    <div class="w-full">
+                                        <h1 class="title-medium-18">Kartu GOIP</h1>
+                                        <span class="display-medium-48">{{ number_format($totals['kartu_goip']) }}</span>
+                                    </div>
+                                    <div class="icon-card-total">
+                                        <span class="material-symbols-outlined">
+                                            sim_card
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Row 2 -->
+                            <div class="col-md-4 mb-2">
+                                <div class="card-total">
+                                    <div class="w-full">
+                                        <h1 class="title-medium-18">Belum Register</h1>
+                                        <span
+                                            class="display-medium-48">{{ number_format($totals['kartu_belum_register']) }}</span>
+                                    </div>
+                                    <div class="icon-card-total">
+                                        <span class="material-symbols-outlined">
+                                            pending
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <div class="card-total">
+                                    <div class="w-full">
+                                        <h1 class="title-medium-18">WA Terpakai</h1>
+                                        <span
+                                            class="display-medium-48">{{ number_format($totals['whatsapp_terpakai']) }}</span>
+                                    </div>
+                                    <div class="icon-card-total">
+                                        <span class="material-symbols-outlined">
+                                            chat
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <div class="card-total">
+                                    <div class="w-full">
+                                        <h1 class="title-medium-18">Total Terpakai</h1>
+                                        <span
+                                            class="display-medium-48">{{ number_format($totals['kartu_terpakai_perhari']) }}</span>
+                                    </div>
+                                    <div class="icon-card-total">
+                                        <span class="material-symbols-outlined">
+                                            assessment
+                                        </span>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
 
                         <div class="card mt-3">
                             <!-- /.card-header -->
@@ -876,8 +900,7 @@
                                         value="{{ request('search_nama_upt') }}">
                                 @endif
                                 @if (request('search_kanwil'))
-                                    <input type="hidden" name="search_kanwil"
-                                        value="{{ request('search_kanwil') }}">
+                                    <input type="hidden" name="search_kanwil" value="{{ request('search_kanwil') }}">
                                 @endif
                                 @if (request('search_kartu_baru'))
                                     <input type="hidden" name="search_kartu_baru"

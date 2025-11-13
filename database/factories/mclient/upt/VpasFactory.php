@@ -3,6 +3,7 @@
 namespace Database\Factories\Mclient\Upt;
 
 use App\Models\mclient\Vpas;
+use App\Models\user\kendala\Kendala;
 use App\Models\user\upt\Upt;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Carbon\Carbon;
@@ -55,7 +56,7 @@ class VpasFactory extends Factory
 
         return [
             'data_upt_id'      => $upt->id,
-            'jenis_kendala'    => $this->faker->randomElement(self::$jenisKendalaList),
+            'kendala_id'    => Kendala::inRandomOrder()->first()->id,
             'detail_kendala'   => $this->faker->paragraph(2),
             'tanggal_terlapor' => $tanggalTerlapor,
             'tanggal_selesai'  => $tanggalSelesai,
