@@ -241,6 +241,9 @@
                                                     </div>
                                                 </div>
                                             </th>
+                                            <th class="text-center align-top">
+                                                <span>Tanggal</span>
+                                            </th>
                                             <th class="align-top">
                                                 <div class="d-flex flex-column gap-12">
                                                     <span>Nama Ponpes</span>
@@ -327,6 +330,18 @@
                                             </th>
                                             <th class="text-center align-top">
                                                 <div class="d-flex flex-column gap-12">
+                                                    <span>Kartu Terpakai/Hari</span>
+                                                    <div class="btn-searchbar column-search">
+                                                        <span>
+                                                            <i class="fas fa-search"></i>
+                                                        </span>
+                                                        <input type="text" id="search-kartu-terpakai"
+                                                            name="search_kartu_terpakai" placeholder="Search">
+                                                    </div>
+                                                </div>
+                                            </th>
+                                            <th class="text-center align-top">
+                                                <div class="d-flex flex-column gap-12">
                                                     <span>Card Supporting</span>
                                                     <div class="btn-searchbar column-search">
                                                         <span>
@@ -349,21 +364,6 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th class="text-center align-top">
-                                                <div class="d-flex flex-column gap-12">
-                                                    <span>Kartu Terpakai/Hari</span>
-                                                    <div class="btn-searchbar column-search">
-                                                        <span>
-                                                            <i class="fas fa-search"></i>
-                                                        </span>
-                                                        <input type="text" id="search-kartu-terpakai"
-                                                            name="search_kartu_terpakai" placeholder="Search">
-                                                    </div>
-                                                </div>
-                                            </th>
-                                            <th class="text-center align-top">
-                                                <span>Tanggal</span>
-                                            </th>
                                             <th class="text-center align-top">Action</th>
                                         </tr>
                                     </thead>
@@ -379,6 +379,10 @@
                                         @forelse ($data as $d)
                                             <tr>
                                                 <td class="text-center">{{ $no++ }}</td>
+                                                
+                                                <td class="text-center">
+                                                    {{ $d->tanggal ? \Carbon\Carbon::parse($d->tanggal)->translatedFormat('d M Y') : '-' }}
+                                                </td>
                                                 <td>{{ $d->ponpes->nama_ponpes ?? '-' }}</td>
                                                 <td>{{ $d->ponpes->namaWilayah->nama_wilayah ?? '-' }}</td>
                                                 <td class="text-center">
@@ -397,15 +401,12 @@
                                                     {{ $d->whatsapp_telah_terpakai ?? '-' }}
                                                 </td>
                                                 <td class="text-center">
-                                                    {{ $d->card_supporting ?? '-' }}
-                                                </td>
-                                                <td>{{ $d->pic ?? '-' }}</td>
-                                                <td class="text-center">
                                                     {{ $d->jumlah_kartu_terpakai_perhari ?? '-' }}
                                                 </td>
                                                 <td class="text-center">
-                                                    {{ $d->tanggal ? \Carbon\Carbon::parse($d->tanggal)->translatedFormat('d M Y') : '-' }}
+                                                    {{ $d->card_supporting ?? '-' }}
                                                 </td>
+                                                <td>{{ $d->pic ?? '-' }}</td>
                                                 <td>
                                                     {{-- Edit Button --}}
                                                     <a href="#editModal{{ $d->id }}" data-bs-toggle="modal"
@@ -601,6 +602,17 @@
                                                 </div>
                                                 <div class="column">
                                                     <div class="mb-3">
+                                                        <label for="jumlah_kartu_terpakai_perhari"
+                                                            class="form-label">Jumlah
+                                                            Kartu Terpakai Per Hari</label>
+                                                        <input type="text" class="form-control"
+                                                            id="jumlah_kartu_terpakai_perhari"
+                                                            name="jumlah_kartu_terpakai_perhari" value=""
+                                                            placeholder="Auto calculated" readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="column">
+                                                    <div class="mb-3">
                                                         <label for="card_supporting" class="form-label">Card
                                                             Supporting</label>
                                                         <select class="form-control" id="card_supporting"
@@ -612,17 +624,6 @@
                                                                 </option>
                                                             @endforeach
                                                         </select>
-                                                    </div>
-                                                </div>
-                                                <div class="column">
-                                                    <div class="mb-3">
-                                                        <label for="jumlah_kartu_terpakai_perhari"
-                                                            class="form-label">Jumlah
-                                                            Kartu Terpakai Per Hari</label>
-                                                        <input type="text" class="form-control"
-                                                            id="jumlah_kartu_terpakai_perhari"
-                                                            name="jumlah_kartu_terpakai_perhari" value=""
-                                                            placeholder="Jumlah kartu terpakai per hari">
                                                     </div>
                                                 </div>
                                             </div>
@@ -792,7 +793,18 @@
                                                                 placeholder="Jumlah WhatsApp terpakai">
                                                         </div>
                                                     </div>
-
+                                                    <div class="column">
+                                                        <div class="mb-3">
+                                                            <label for="jumlah_kartu_terpakai_perhari{{ $d->id }}"
+                                                                class="form-label">Jumlah Kartu Terpakai Per
+                                                                Hari</label>
+                                                            <input type="text" class="form-control"
+                                                                id="jumlah_kartu_terpakai_perhari{{ $d->id }}"
+                                                                name="jumlah_kartu_terpakai_perhari"
+                                                                value="{{ $d->jumlah_kartu_terpakai_perhari ?? '' }}"
+                                                                placeholder="Auto calculated" readonly>
+                                                        </div>
+                                                    </div>
                                                     <div class="column">
                                                         <div class="mb-3">
                                                             <label for="card_supporting{{ $d->id }}"
@@ -818,18 +830,6 @@
                                                                     </option>
                                                                 @endif
                                                             </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="column">
-                                                        <div class="mb-3">
-                                                            <label for="jumlah_kartu_terpakai_perhari{{ $d->id }}"
-                                                                class="form-label">Jumlah Kartu Terpakai Per
-                                                                Hari</label>
-                                                            <input type="text" class="form-control"
-                                                                id="jumlah_kartu_terpakai_perhari{{ $d->id }}"
-                                                                name="jumlah_kartu_terpakai_perhari"
-                                                                value="{{ $d->jumlah_kartu_terpakai_perhari ?? '' }}"
-                                                                placeholder="Jumlah kartu terpakai per hari">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1391,6 +1391,87 @@
 
             $('.modal').on('hide.bs.modal', function(e) {
                 console.log('Modal is closing');
+            });
+        });
+    </script>
+
+    <script>
+        // ========== AUTO CALCULATE KARTU TERPAKAI - ADD MODAL ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            // Untuk Add Modal
+            const addInputs = [
+                'spam_vtren_kartu_baru',
+                'spam_vtren_kartu_bekas',
+                'spam_vtren_kartu_goip',
+                'kartu_belum_teregister',
+                'whatsapp_telah_terpakai'
+            ];
+
+            function calculateAddModal() {
+                let total = 0;
+                addInputs.forEach(inputId => {
+                    const value = parseInt(document.getElementById(inputId).value) || 0;
+                    total += value;
+                });
+                document.getElementById('jumlah_kartu_terpakai_perhari').value = total;
+            }
+
+            // Attach event listeners untuk Add Modal
+            addInputs.forEach(inputId => {
+                const element = document.getElementById(inputId);
+                if (element) {
+                    element.addEventListener('input', calculateAddModal);
+                    element.addEventListener('change', calculateAddModal);
+                }
+            });
+
+            // ========== AUTO CALCULATE KARTU TERPAKAI - EDIT MODALS ==========
+            @foreach ($data as $d)
+                (function() {
+                    const recordId = {{ $d->id }};
+                    const editInputs = [
+                        'spam_vtren_kartu_baru' + recordId,
+                        'spam_vtren_kartu_bekas' + recordId,
+                        'spam_vtren_kartu_goip' + recordId,
+                        'kartu_belum_teregister' + recordId,
+                        'whatsapp_telah_terpakai' + recordId
+                    ];
+
+                    function calculateEditModal() {
+                        let total = 0;
+                        editInputs.forEach(inputId => {
+                            const element = document.getElementById(inputId);
+                            if (element) {
+                                const value = parseInt(element.value) || 0;
+                                total += value;
+                            }
+                        });
+                        const resultElement = document.getElementById('jumlah_kartu_terpakai_perhari' +
+                            recordId);
+                        if (resultElement) {
+                            resultElement.value = total;
+                        }
+                    }
+
+                    // Attach event listeners untuk Edit Modal
+                    editInputs.forEach(inputId => {
+                        const element = document.getElementById(inputId);
+                        if (element) {
+                            element.addEventListener('input', calculateEditModal);
+                            element.addEventListener('change', calculateEditModal);
+                        }
+                    });
+
+                    // Calculate initial value when modal is shown
+                    $('#editModal' + recordId).on('shown.bs.modal', function() {
+                        calculateEditModal();
+                    });
+                })();
+            @endforeach
+
+            // Reset Add Modal calculation when opened
+            $('#addModal').on('shown.bs.modal', function() {
+                calculateAddModal();
             });
         });
     </script>
