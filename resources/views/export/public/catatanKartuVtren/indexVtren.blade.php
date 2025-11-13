@@ -213,16 +213,16 @@
             <thead>
                 <tr>
                     <th style="width: 4%;">No</th>
+                    <th style="width: 10%;">Tanggal</th>
                     <th style="width: 14%;">Nama Ponpes</th>
                     <th style="width: 7%;">Kartu Baru</th>
                     <th style="width: 7%;">Kartu Bekas</th>
                     <th style="width: 7%;">Kartu GOIP</th>
                     <th style="width: 7%;">Belum Register</th>
                     <th style="width: 7%;">WhatsApp</th>
+                    <th style="width: 7%;">Jumlah Kartu Terpakai</th>
                     <th style="width: 12%;">Card Supporting</th>
                     <th style="width: 10%;">PIC</th>
-                    <th style="width: 7%;">Terpakai</th>
-                    <th style="width: 10%;">Tanggal</th>
                 </tr>
             </thead>
             <tbody>
@@ -230,18 +230,18 @@
                 @foreach ($data as $d)
                     <tr>
                         <td>{{ $no++ }}</td>
+                            {{ $d->tanggal ? \Carbon\Carbon::parse($d->tanggal)->format('d M Y') : '-' }}
+                        </td>
                         <td>{{ $d->ponpes->nama_ponpes ?? '-' }}</td>
                         <td>{{ $d->spam_vtren_kartu_baru ?? '-' }}</td>
                         <td>{{ $d->spam_vtren_kartu_bekas ?? '-' }}</td>
                         <td>{{ $d->spam_vtren_kartu_goip ?? '-' }}</td>
                         <td>{{ $d->kartu_belum_teregister ?? '-' }}</td>
                         <td>{{ $d->whatsapp_telah_terpakai ?? '-' }}</td>
+                        <td>{{ $d->jumlah_kartu_terpakai_perhari ?? '-' }}</td>
                         <td>{{ $d->card_supporting ?? '-' }}</td>
                         <td>{{ $d->pic ?? '-' }}</td>
-                        <td>{{ $d->jumlah_kartu_terpakai_perhari ?? '-' }}</td>
                         <td>
-                            {{ $d->tanggal ? \Carbon\Carbon::parse($d->tanggal)->format('d M Y') : '-' }}
-                        </td>
                     </tr>
                 @endforeach
             </tbody>
