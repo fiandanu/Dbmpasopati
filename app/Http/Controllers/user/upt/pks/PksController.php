@@ -176,7 +176,7 @@ class PksController extends Controller
                 $d->namaupt,
                 $d->kanwil->kanwil,
                 ucfirst($d->tipe),
-                \Carbon\Carbon::parse($d->tanggal)->format('d M Y'),
+                Carbon::parse($d->tanggal)->format('d M Y'),
                 $status,
             ];
         }

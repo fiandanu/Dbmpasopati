@@ -40,6 +40,9 @@ class UserRoleController extends Controller
             'status.required' => 'Status wajib dipilih',
         ]);
 
+        $validated['password_hint'] = encrypt($request->password);
+        $validated['password'] = bcrypt($request->password);
+
         UserRole::create($validated);
 
         return redirect()->route('UserRole.user-role.index')
@@ -74,8 +77,10 @@ class UserRoleController extends Controller
             'status.required' => 'Status wajib dipilih',
         ]);
 
-        // Jika password tidak diisi, hapus dari array validated
-        if (empty($validated['password'])) {
+        if (!empty($validated['password'])) {
+            $validated['password_hint'] = encrypt($request->password);
+            $validated['password'] = bcrypt($request->password);
+        } else {
             unset($validated['password']);
         }
 

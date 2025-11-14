@@ -4,15 +4,12 @@
         <!-- Content Header (Page header) -->
         <div class="content-header">
             <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1 class="m-0">Grafik Monitoring Client PONPES</h1>
-                    </div>
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">Monitoring Client</li>
-                        </ol>
+                <div class="col d-flex justify-content-between align-items-center">
+                    <div class="d-flex justify-center align-items-center gap-12">
+                        <button class="btn-pushmenu" data-widget="pushmenu" role="button">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <h1 class="headline-large-32 mb-0">Grafik Monitoring Client Ponpes</h1>
                     </div>
                 </div>
             </div>
@@ -119,8 +116,7 @@
 
                 <!-- Chart Section - Reguler Kendala -->
                 <div id="reguler-kendala-chart-section" style="display: none;">
-                    <div class="card"
-                        style="border: none; border-radius: 15px; box-shadow: 0 2px 15px rgba(0,0,0,0.08);">
+                    <div class="card" style="border: none; border-radius: 15px; box-shadow: 0 2px 15px rgba(0,0,0,0.08);">
                         <div class="card-header"
                             style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border-radius: 15px 15px 0 0; padding: 1.25rem;">
                             <h5 class="mb-0" style="font-weight: 600;">

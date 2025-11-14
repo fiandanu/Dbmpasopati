@@ -18,6 +18,244 @@
     <!-- tsparticles -->
     <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
     <style>
+        :root {
+            /* Font Families */
+            --font-primary: "Poppins", sans-serif;
+            --font-secondary: "Ag", sans-serif;
+
+            /* Font Sizes and Line Heights */
+            --display-large-size: 64px;
+            --display-large-line-height: 72px;
+            --display-medium-size: 48px;
+            --display-medium-line-height: 56px;
+            --display-small-size: 40px;
+            --display-small-line-height: 48px;
+
+            --headline-large-size: 32px;
+            --headline-large-line-height: 40px;
+            --headline-medium-size: 24px;
+            --headline-medium-line-height: 36px;
+            --headline-small-size: 20px;
+            --headline-small-line-height: 32px;
+
+            --title-large-size: 20px;
+            --title-large-line-height: 28px;
+            --title-large-letter-spacing: 0.4px;
+            --title-medium-size: 18px;
+            --title-medium-line-height: 24px;
+            --title-medium-letter-spacing: 0.16px;
+            --title-small-size: 16px;
+            --title-small-line-height: 20px;
+            --title-small-letter-spacing: 0.12px;
+
+            --label-large-size: 16px;
+            --label-large-line-height: 24px;
+            --label-large-letter-spacing: 0.2px;
+            --label-medium-size: 14px;
+            --label-medium-line-height: 20px;
+            --label-medium-letter-spacing: 0.4px;
+            --label-small-size: 12px;
+            --label-small-line-height: 20px;
+            --label-small-letter-spacing: 0.6px;
+
+            /* Font Weights */
+            --weight-regular: 400;
+            --weight-medium: 500;
+            --weight-semi-bold: 600;
+            --weight-bold: 700;
+
+            --body-small-size: 12px;
+            --body-small-line-height: 20px;
+            --body-medium-size: 14px;
+            --body-medium-line-height: 23px;
+            --body-large-size: 16px;
+            --body-large-line-height: 26px;
+
+            --Netral-10: #ffffff;
+            --Netral-9: #fafafa;
+            --Netral-8: #ebebeb;
+            --Netral-7: #dedede;
+            --Netral-6: #c7c7c7;
+            --Netral-5: #ababab;
+            --Netral-4: #949494;
+            --Netral-3: #757575;
+            --Netral-2: #616161;
+            --Netral-1: #3d3d3d;
+            --Netral-0: #262626;
+
+            --Primary-01: #c7f5d5;
+            --Primary-02: #93ebaf;
+            --Primary-03: #5be186;
+            --Primary-04: #27d35d;
+            --Primary-05: #1d9d45;
+            --Primary-06: #177d37;
+            --Primary-07: #125f2a;
+            --Primary-08: #0c411d;
+            --Primary-09: #061e0d;
+            --Primary-10: #031108;
+
+            --Secondary-00: #f1f6fe;
+            --Secondary-01: #e7f0fd;
+            --Secondary-02: #c5dafc;
+            --Secondary-03: #99bffa;
+            --Secondary-04: #639df7;
+            --Secondary-05: #3882f5;
+            --Secondary-06: #186ce1;
+            --Secondary-07: #155dc2;
+            --Secondary-08: #124fa6;
+            --Secondary-09: #0d3c7c;
+            --Secondary-10: #08244a;
+            --Secondary-Active: #2563eb;
+            /* Tambahan untuk parent dropdown */
+
+            --yellow-00: #fffdf0;
+            --yellow-01: #fffad6;
+            --yellow-02: #fff7b8;
+            --yellow-03: #fff28f;
+            --yellow-04: #ffee70;
+            --yellow-05: #ffe942;
+            --yellow-06: #ffe314;
+            --yellow-07: #d6bd00;
+            --yellow-08: #ad9900;
+            --yellow-09: #756800;
+            --yellow-10: #3d3600;
+
+            --danger-00: #fff0f1;
+            --danger-01: #ffd6d9;
+            --danger-02: #ffb8bf;
+            --danger-03: #ff8f9a;
+            --danger-04: #ff707e;
+            --danger-05: #ff4255;
+            --danger-06: #ff142b;
+            --danger-07: #d60015;
+            --danger-08: #ad0011;
+            --danger-09: #75000b;
+            --danger-10: #3d0006;
+
+            --purple-00: #f4f3fc;
+            --purple-01: #d4cdf4;
+            --purple-02: #b1a3ea;
+            --purple-03: #8d7ae1;
+            --purple-04: #6d54d9;
+            --purple-05: #5537d2;
+            --purple-06: #4429b7;
+            --purple-07: #3b249e;
+            --purple-08: #2b1a74;
+            --purple-09: #1c114b;
+            --purple-10: #0c0821;
+        }
+
+        /* Font Poppins Classes */
+        .poppins-thin {
+            font-family: var(--font-primary);
+            font-weight: 100;
+            font-style: normal;
+        }
+
+        .poppins-extralight {
+            font-family: var(--font-primary);
+            font-weight: 200;
+            font-style: normal;
+        }
+
+        .poppins-light {
+            font-family: var(--font-primary);
+            font-weight: 300;
+            font-style: normal;
+        }
+
+        .poppins-regular {
+            font-family: var(--font-primary);
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        .poppins-medium {
+            font-family: var(--font-primary);
+            font-weight: 500;
+            font-style: normal;
+        }
+
+        .poppins-semibold {
+            font-family: var(--font-primary);
+            font-weight: 600;
+            font-style: normal;
+        }
+
+        .poppins-bold {
+            font-family: var(--font-primary);
+            font-weight: 700;
+            font-style: normal;
+        }
+
+        .poppins-extrabold {
+            font-family: var(--font-primary);
+            font-weight: 800;
+            font-style: normal;
+        }
+
+        .poppins-black {
+            font-family: var(--font-primary);
+            font-weight: 900;
+            font-style: normal;
+        }
+
+        .poppins-thin-italic {
+            font-family: var(--font-primary);
+            font-weight: 100;
+            font-style: italic;
+        }
+
+        .poppins-extralight-italic {
+            font-family: var(--font-primary);
+            font-weight: 200;
+            font-style: italic;
+        }
+
+        .poppins-light-italic {
+            font-family: var(--font-primary);
+            font-weight: 300;
+            font-style: italic;
+        }
+
+        .poppins-regular-italic {
+            font-family: var(--font-primary);
+            font-weight: 400;
+            font-style: italic;
+        }
+
+        .poppins-medium-italic {
+            font-family: var(--font-primary);
+            font-weight: 500;
+            font-style: italic;
+        }
+
+        .poppins-semibold-italic {
+            font-family: var(--font-primary);
+            font-weight: 600;
+            font-style: italic;
+        }
+
+        .poppins-bold-italic {
+            font-family: var(--font-primary);
+            font-weight: 700;
+            font-style: italic;
+        }
+
+        .poppins-extrabold-italic {
+            font-family: var(--font-primary);
+            font-weight: 800;
+            font-style: italic;
+        }
+
+        .poppins-black-italic {
+            font-family: var(--font-primary);
+            font-weight: 900;
+            font-style: italic;
+        }
+
+
+
         .btn-purple {
             padding: 0.5rem;
             width: 100%;

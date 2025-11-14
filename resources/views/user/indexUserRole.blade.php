@@ -115,7 +115,7 @@
                                         </td>
                                         <td class="text-center">
                                             @if ($user->status == 'aktif')
-                                                <span class="badge badge-success">Aktif</span>
+                                                <span class="Tipevpas">Aktif</span>
                                             @else
                                                 <span class="badge badge-secondary">Tidak Aktif</span>
                                             @endif
@@ -170,11 +170,22 @@
                                                                 name="nama" value="{{ $user->nama }}" required>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label for="password">Password <small
-                                                                    class="text-muted">(Kosongkan jika tidak ingin
-                                                                    mengubah)</small></label>
-                                                            <input type="password" class="form-control" id="password"
-                                                                name="password" minlength="8">
+                                                            <label for="password{{ $user->id }}">Password</label>
+                                                            <div class="input-group">
+                                                                <input type="password" class="form-control"
+                                                                    id="password{{ $user->id }}" name="password"
+                                                                    value="{{ $user->password_hint ? decrypt($user->password_hint) : '' }}"
+                                                                    minlength="6">
+                                                                <div class="input-group-append">
+                                                                    <button class="btn btn-outline-secondary"
+                                                                        type="button"
+                                                                        onclick="togglePassword('password{{ $user->id }}', this)">
+                                                                        <i class="fas fa-eye"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                            <small class="text-muted">Kosongkan jika tidak ingin
+                                                                mengubah</small>
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="role">Role <span
@@ -291,14 +302,24 @@
                                 <small class="text-danger">{{ $message }}</small>
                             @enderror
                         </div>
+
                         <div class="form-group">
                             <label for="password">Password <span class="text-danger">*</span></label>
-                            <input type="password" class="form-control @error('password') is-invalid @enderror"
-                                id="password" name="password" minlength="6" required>
+                            <div class="input-group">
+                                <input type="password" class="form-control @error('password') is-invalid @enderror"
+                                    id="password" name="password" required>
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button"
+                                        onclick="togglePassword('password', this)">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
                             @error('password')
                                 <small class="text-danger">{{ $message }}</small>
                             @enderror
                         </div>
+
                         <div class="form-group">
                             <label for="role">Role <span class="text-danger">*</span></label>
                             <select class="form-control @error('role') is-invalid @enderror" id="role"
@@ -344,4 +365,23 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function togglePassword(inputId, button) {
+            const input = document.getElementById(inputId);
+            const icon = button.querySelector('i');
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+    </script>
+
+
 @endsection

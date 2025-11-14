@@ -2,6 +2,7 @@
 
 namespace App\Models\user\NamaWilayah;
 
+
 use App\Models\user\ponpes\Ponpes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

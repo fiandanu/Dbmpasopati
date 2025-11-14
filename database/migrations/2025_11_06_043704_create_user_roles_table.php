@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('username')->unique();
             $table->string('nama');
             $table->string('password');
+            $table->string('password_hint')->nullable();
             $table->string('keterangan')->nullable();
             $table->enum('status', ['aktif', 'tidak_aktif'])->default('tidak_aktif');  
             $table->enum('role', ['super_admin', 'teknisi', 'marketing']);

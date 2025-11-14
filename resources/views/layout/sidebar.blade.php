@@ -32,7 +32,9 @@
                         <li
                             class="nav-item {{ Route::is('database.*') || Route::is('upt.ListDataReguller') || Route::is('vpas.ListDataVpas') || Route::is('spp.ListDataSpp') || Route::is('dbpks.ListDataPks') || Route::is('ponpes.ListDataPonpes') || Route::is('DbPonpes.ListDataVtrend') || Route::is('sppPonpes.ListDataSpp') || Route::is('DbPonpes.pks.ListDataPks') ? 'menu-open' : '' }}">
                             <a href="#" class="nav-link">
-                                <i class="fas fa-database nav-icon"></i>
+                                <span class="material-symbols-outlined">
+                                    database
+                                </span>
                                 <p>DataBase<i class="right fas fa-angle-left"></i></p>
                             </a>
                             <ul class="nav nav-treeview">
@@ -55,7 +57,9 @@
                         <li
                             class="nav-item {{ Route::is('GrafikServer') || Route::is('MonitoringUpt') || Route::is('MonitoringPonpes') ? 'menu-open' : '' }}">
                             <a href="#" class="nav-link">
-                                <i class="fas fa-shield-alt nav-icon"></i>
+                                <span class="material-symbols-outlined">
+                                    shield
+                                </span>
                                 <p>Monitoring Server<i class="right fas fa-angle-left"></i></p>
                             </a>
                             <ul class="nav nav-treeview">
@@ -82,9 +86,11 @@
 
                         <!-- Monitoring Customer -->
                         <li
-                            class="nav-item {{ Route::is('GrafikPonpes') ||Route::is('GrafikClient') || Route::is('MclientUptDashboard.KomplainUpt') || Route::is('MclientPonpesDashboard.KomplainPonpes') || Route::is('ListDataMclientCatatanVpas') || Route::is('ListDataMclientCatatanVtren') || Route::is('mcvpas.ListDataMclientVpas') || Route::is('mcreguler.ListDataMclientReguller') || Route::is('mclientkunjunganupt.ListDataMclientKunjungan') || Route::is('mclientpengirimanupt.ListDataMclientPengirimanUpt') || Route::is('mclientsettingalatupt.ListDataMclientSettingAlat') || Route::is('mcvtren.ListDataMclientVtren') || Route::is('mcponpesreguler.ListDataMclientPonpesReguller') || Route::is('mckunjunganponpes.ListDataMclientPonpesKunjungan') || Route::is('mclientponpessetting.ListDataMclientPonpesSetting') || Route::is('mclientpengirimanponpes.ListDataMclientPonpesPengiriman') ||  Route::is('mccatatanvpas.ListDataMclientCatatanVpas') || Route::is('mccatatanvtren.ListDataMclientCatatanVtren') ? 'menu-open' : '' }}">
+                            class="nav-item {{ Route::is('GrafikPonpes') || Route::is('GrafikClient') || Route::is('MclientUptDashboard.KomplainUpt') || Route::is('MclientPonpesDashboard.KomplainPonpes') || Route::is('ListDataMclientCatatanVpas') || Route::is('ListDataMclientCatatanVtren') || Route::is('mcvpas.ListDataMclientVpas') || Route::is('mcreguler.ListDataMclientReguller') || Route::is('mclientkunjunganupt.ListDataMclientKunjungan') || Route::is('mclientpengirimanupt.ListDataMclientPengirimanUpt') || Route::is('mclientsettingalatupt.ListDataMclientSettingAlat') || Route::is('mcvtren.ListDataMclientVtren') || Route::is('mcponpesreguler.ListDataMclientPonpesReguller') || Route::is('mckunjunganponpes.ListDataMclientPonpesKunjungan') || Route::is('mclientponpessetting.ListDataMclientPonpesSetting') || Route::is('mclientpengirimanponpes.ListDataMclientPonpesPengiriman') || Route::is('mccatatanvpas.ListDataMclientCatatanVpas') || Route::is('mccatatanvtren.ListDataMclientCatatanVtren') ? 'menu-open' : '' }}">
                             <a href="#" class="nav-link ">
-                                <i class="fas fa-eye nav-icon"></i>
+                                <span class="material-symbols-outlined">
+                                    visibility
+                                </span>
                                 <p>Monitoring Customer<i class="right fas fa-angle-left"></i></p>
                             </a>
                             <ul class="nav nav-treeview">
@@ -131,7 +137,9 @@
                         <li
                             class="nav-item {{ Route::is('TutorialUpt') || Route::is('tutor_ponpes_reguller.TutorialPonpes') || Route::is('tutorial_server') || Route::is('tutorial_mikrotik') || Route::is('tutor_vpas.ListDataSpp') || Route::is('tutor_upt.ListDataSpp') || Route::is('tutorial_ponpes_vtren') || Route::is('tutorial_ponpes_reguller') ? 'menu-open' : '' }}">
                             <a href="#" class="nav-link">
-                                <i class="fas fa-lightbulb nav-icon"></i>
+                                <span class="material-symbols-outlined">
+                                    lightbulb_2
+                                </span>
                                 <p>Tutorial<i class="right fas fa-angle-left"></i></p>
                             </a>
                             <ul class="nav nav-treeview">
@@ -166,7 +174,9 @@
                         <li
                             class="nav-item {{ Route::is('UserRole.user-role.index') || Route::is('User.UserPage') || Route::is('UserPonpes.ponpes.index') || Route::is('provider.DataProvider') || Route::is('kendala.DataKendala') || Route::is('kanwil.DataKanwil') ? 'menu-open' : '' }}">
                             <a href="#" class="nav-link">
-                                <i class="fas fa-user nav-icon"></i>
+                                <span class="material-symbols-outlined">
+                                    person
+                                </span>
                                 <p>Data Manajemen<i class="right fas fa-angle-left"></i></p>
                             </a>
                             <ul class="nav nav-treeview">
@@ -201,7 +211,7 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    @if (Auth::user()->isSuperAdmin())
+                                    @if (Auth::check() && Auth::user()->isSuperAdmin())
                                         <a href="{{ route('UserRole.user-role.index') }}"
                                             class="nav-link {{ Route::is('UserRole.user-role.index') || Route::is('namawilayah.DataNamaWilayah') ? 'active' : '' }}">
                                             <p>Kelola User</p>
@@ -218,8 +228,8 @@
                                 <i class="fas fa-user"></i>
                             </div>
                             <div class="profile-info">
-                                <h3>{{ Auth::user()->username ?? 'Guest' }}</h3>
-                                <p class="text-kategori">{{ Auth::user()->nama ?? 'Guest' }}</p>
+                                <h3>{{Auth::user()->username }}</h3>
+                                <p class="text-kategori">{{Auth::user()->nama ?? 'Guest' }}</p>
                             </div>
                             <form method="POST" action="{{ route('logout') }}" class="profile-action">
                                 @csrf

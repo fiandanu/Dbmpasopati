@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\UserRole;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class UserRoleSeeder extends Seeder
 {
@@ -16,7 +17,7 @@ class UserRoleSeeder extends Seeder
         UserRole::create([
             'username' => 'admin',
             'nama' => 'akim',
-            'password' => '12345678',
+            'password' => Hash::make('12345678'),
             'keterangan' => 'Super Admin Aplikasi',
             'status' => 'aktif',
             'role' => 'super_admin',
@@ -25,7 +26,7 @@ class UserRoleSeeder extends Seeder
         UserRole::create([
             'username' => 'teknisi',
             'nama' => 'iwan',
-            'password' => '12345678',
+            'password' => Hash::make('12345678'),
             'keterangan' => 'Teknisi Aplikasi',
             'status' => 'aktif',
             'role' => 'teknisi',
@@ -34,7 +35,7 @@ class UserRoleSeeder extends Seeder
         UserRole::create(attributes: [
             'username' => 'marketing',
             'nama' => 'naura',
-            'password' => '12345678',
+            'password' => Hash::make('12345678'),
             'keterangan' => 'Marketing Aplikasi',
             'status' => 'aktif',
             'role' => 'marketing',

@@ -32,7 +32,23 @@
                                     <p class="text-kategori mb-2">Surat Perjanjian Kerja Sama</p>
                                     <div class="data-badge mb-3">
                                         <span class="checkmark">✓</span>
-                                        100 Data
+                                        {{ $pksStats['total'] }} Data
+                                    </div>
+                                    <div class="flex-row">
+                                        <div class="chart-legend">
+                                            <div class="legend-item">
+                                                <span class="legend-text">Belum upload</span>
+                                                <span class="legend-count">{{ $pksStats['belum_upload'] }}</span>
+                                            </div>
+                                            <div class="legend-item">
+                                                <span class="legend-text">Sebagian</span>
+                                                <span class="legend-count">{{ $pksStats['sebagian'] }}</span>
+                                            </div>
+                                            <div class="legend-item">
+                                                <span class="legend-text">Lengkap</span>
+                                                <span class="legend-count">{{ $pksStats['sudah_upload'] }}</span>
+                                            </div>
+                                        </div>
                                     </div>
                                     <a href="{{ route('dbpks.ListDataPks') }}" class="list-button">Selengkapnya</a>
                                 </div>
@@ -45,7 +61,23 @@
                                     <p class="text-kategori mb-2">Surat Perintah Pemasangan</p>
                                     <div class="data-badge mb-3">
                                         <span class="checkmark">✓</span>
-                                        100 Data
+                                        {{ $sppStats['total'] }} Data
+                                    </div>
+                                    <div class="flex-row">
+                                        <div class="chart-legend">
+                                            <div class="legend-item">
+                                                <span class="legend-text">Belum upload</span>
+                                                <span class="legend-count">{{ $sppStats['belum_upload'] }}</span>
+                                            </div>
+                                            <div class="legend-item">
+                                                <span class="legend-text">Sebagian</span>
+                                                <span class="legend-count">{{ $sppStats['sebagian'] }}</span>
+                                            </div>
+                                            <div class="legend-item">
+                                                <span class="legend-text">Lengkap</span>
+                                                <span class="legend-count">{{ $sppStats['sudah_upload'] }}</span>
+                                            </div>
+                                        </div>
                                     </div>
                                     <a href="{{ route('spp.ListDataSpp') }}" class="list-button">Selengkapnya</a>
                                 </div>
@@ -58,7 +90,19 @@
                                     <p class="text-kategori mb-2">Layanan VPAS</p>
                                     <div class="data-badge mb-3">
                                         <span class="checkmark">✓</span>
-                                        100 Data
+                                        {{ $VpasWartelStats['total'] }} Data
+                                    </div>
+                                    <div class="flex-row">
+                                        <div class="chart-legend">
+                                            <div class="legend-item">
+                                                <span class="legend-text">Wartel tidak aktif</span>
+                                                <span class="legend-count">{{ $VpasWartelStats['tidak_aktif'] }}</span>
+                                            </div>
+                                            <div class="legend-item">
+                                                <span class="legend-text">Wartel aktif</span>
+                                                <span class="legend-count">{{ $VpasWartelStats['aktif'] }}</span>
+                                            </div>
+                                        </div>
                                     </div>
                                     <a href="{{ route('vpas.ListDataVpas') }}" class="list-button">Selengkapnya</a>
                                 </div>
@@ -71,7 +115,19 @@
                                     <p class="text-kategori mb-2">Layanan Reguler</p>
                                     <div class="data-badge mb-3">
                                         <span class="checkmark">✓</span>
-                                        100 Data
+                                        {{ $RegulerWartelStats['total'] }}
+                                    </div>
+                                    <div class="flex-row">
+                                        <div class="chart-legend">
+                                            <div class="legend-item">
+                                                <span class="legend-text">Wartel tidak aktif</span>
+                                                <span class="legend-count">{{ $RegulerWartelStats['tidak_aktif'] }}</span>
+                                            </div>
+                                            <div class="legend-item">
+                                                <span class="legend-text">Wartel aktif</span>
+                                                <span class="legend-count">{{ $RegulerWartelStats['aktif'] }}</span>
+                                            </div>
+                                        </div>
                                     </div>
                                     <a href="{{ route('upt.ListDataReguller') }}" class="list-button">Selengkapnya</a>
                                 </div>
@@ -89,7 +145,7 @@
                                     </div>
                                     <div class="icon-card-total">
                                         <span class="material-symbols-outlined">
-                                            mosque
+                                            account_balance
                                         </span>
                                     </div>
                                 </div>

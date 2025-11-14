@@ -39,6 +39,7 @@ class RegullerController extends Controller
         'pin_tes',
     ];
 
+
     private function calculateStatus($dataOpsional)
     {
         if (! $dataOpsional) {
@@ -67,15 +68,15 @@ class RegullerController extends Controller
 
         // Column-specific searches
         if ($request->has('search_namaupt') && ! empty($request->search_namaupt)) {
-            $query->where('namaupt', 'LIKE', '%'.$request->search_namaupt.'%');
+            $query->where('namaupt', 'LIKE', '%' . $request->search_namaupt . '%');
         }
         if ($request->has('search_kanwil') && ! empty($request->search_kanwil)) {
             $query->whereHas('kanwil', function ($q) use ($request) {
-                $q->where('kanwil', 'LIKE', '%'.$request->search_kanwil.'%');
+                $q->where('kanwil', 'LIKE', '%' . $request->search_kanwil . '%');
             });
         }
         if ($request->has('search_tipe') && ! empty($request->search_tipe)) {
-            $query->where('tipe', 'LIKE', '%'.$request->search_tipe.'%');
+            $query->where('tipe', 'LIKE', '%' . $request->search_tipe . '%');
         }
 
         // FIXED: Date range filtering
@@ -183,7 +184,7 @@ class RegullerController extends Controller
             $data = $data->sortBy('tanggal')->values(); // Re-sort collection by tanggal
         }
 
-        $filename = 'list_upt_reguler_'.Carbon::now()->format('Y-m-d_H-i-s').'.csv';
+        $filename = 'list_upt_reguler_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
 
         $headers = [
             'Content-type' => 'text/csv',
@@ -261,7 +262,7 @@ class RegullerController extends Controller
 
         $pdf = Pdf::loadView('export.public.db.upt.indexReguller', $pdfData)
             ->setPaper('a4', 'landscape');
-        $filename = 'list_upt_reguler_'.Carbon::now()->translatedFormat('d_M_Y').'.pdf';
+        $filename = 'list_upt_reguler_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
 
         return $pdf->download($filename);
     }
@@ -395,7 +396,7 @@ class RegullerController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
 
-            return redirect()->back()->with('error', 'Gagal update data: '.$e->getMessage());
+            return redirect()->back()->with('error', 'Gagal update data: ' . $e->getMessage());
         }
     }
 
@@ -404,7 +405,7 @@ class RegullerController extends Controller
         $user = Upt::with('dataOpsional.vpn', 'kanwil')->findOrFail($id);
         $dataOpsional = $user->dataOpsional;
 
-        $filename = 'data_upt_'.$user->namaupt.'.csv';
+        $filename = 'data_upt_' . $user->namaupt . '.csv';
 
         $headers = [
             'Content-type' => 'text/csv',
@@ -455,13 +456,13 @@ class RegullerController extends Controller
         $user = Upt::with('dataOpsional.vpn')->findOrFail($id);
 
         $data = [
-            'title' => 'Data UPT Reguller '.$user->namaupt,
+            'title' => 'Data UPT Reguller ' . $user->namaupt,
             'user' => $user,
         ];
 
         $pdf = Pdf::loadView('export.private.upt.indexReguller', $data)
             ->setPaper('a4', 'landscape');
 
-        return $pdf->download('data_upt_'.$user->namaupt.'.pdf');
+        return $pdf->download('data_upt_' . $user->namaupt . '.pdf');
     }
 }

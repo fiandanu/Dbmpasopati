@@ -50,7 +50,6 @@
                                 <!-- Legend -->
                                 <div class="chart-legend">
                                     <div class="legend-item">
-                                        {{-- <span class="legend-color legend-color-belum"></span> --}}
                                         <span class="legend-text">Belum Ditentukan</span>
                                         <span class="legend-count">{{ $statusStats['vpas']['belum_ditentukan'] }}</span>
                                     </div>

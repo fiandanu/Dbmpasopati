@@ -61,7 +61,6 @@ class DashboardUptController extends Controller
             ]);
         }
 
-        // ===== UBAH BAGIAN INI: Hitung statistik dari data yang sudah difilter =====
         $totalUpt = $filteredData->count();
 
         $totalExtensionVpas = $filteredData->where('tipe', 'vpas')->sum(function ($upt) {
@@ -71,10 +70,28 @@ class DashboardUptController extends Controller
         $totalExtensionReguler = $filteredData->where('tipe', 'reguler')->sum(function ($upt) {
             return $upt->dataOpsional->jumlah_extension ?? 0;
         });
-        // ===== AKHIR PERUBAHAN =====
 
-        return view('db.pageKategoriUpt', compact('pksData', 'sppData', 'vpasData', 'regulerData', 'data', 'totalUpt', 'totalExtensionVpas', 'totalExtensionReguler'));
+        $pksStats = $this->getPksStatistics();
+        $sppStats = $this->getSppStatistics();
+        $VpasWartelStats = $this->getVpasWartelStatistics();
+        $RegulerWartelStats = $this->getRegulerWartelStatistics();
+
+        return view('db.pageKategoriUpt', compact(
+            'pksData',
+            'sppData',
+            'vpasData',
+            'regulerData',
+            'data',
+            'totalUpt',
+            'totalExtensionVpas',
+            'totalExtensionReguler',
+            'pksStats',
+            'sppStats',
+            'VpasWartelStats',
+            'RegulerWartelStats'
+        ));
     }
+
 
     private function applyFilters($query, Request $request)
     {
@@ -104,6 +121,76 @@ class DashboardUptController extends Controller
 
         return $query;
     }
+
+
+
+
+    private function getVpasWartelStatistics()
+    {
+        $total = Upt::where('tipe', 'vpas')->count();
+
+        $aktif = 0;
+        $tidakAktif = 0;
+
+        /** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\user\upt\Upt> $data */
+        $data = Upt::with('dataOpsional')->where('tipe', 'vpas')->get();
+
+        foreach ($data as $item) {
+            $dataOpsional = $item->dataOpsional;
+
+            if (!$dataOpsional || !isset($dataOpsional->status_wartel)) {
+                $tidakAktif++;
+                continue;
+            }
+
+            if ($dataOpsional->status_wartel == 1) {
+                $aktif++;
+            } else {
+                $tidakAktif++;
+            }
+        }
+
+        return [
+            'total' => $total,
+            'aktif' => $aktif,
+            'tidak_aktif' => $tidakAktif,
+        ];
+    }
+
+    private function getRegulerWartelStatistics()
+    {
+        $total = Upt::where('tipe', 'reguler')->count();
+
+        $aktif = 0;
+        $tidakAktif = 0;
+
+        /** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\user\upt\Upt> $data */
+        $data = Upt::with('dataOpsional')->where('tipe', 'reguler')->get();
+
+
+        foreach ($data as $item) {
+            $dataOpsional = $item->dataOpsional;
+
+            if (!$dataOpsional || !isset($dataOpsional->status_wartel)) {
+                $tidakAktif++;
+                continue;
+            }
+
+            if ($dataOpsional->status_wartel == 1) {
+                $aktif++;
+            } else {
+                $tidakAktif++;
+            }
+        }
+
+        return [
+            'total' => $total,
+            'aktif' => $aktif,
+            'tidak_aktif' => $tidakAktif,
+        ];
+    }
+
+
 
     private function applyStatusFilter($data, Request $request)
     {
@@ -258,19 +345,21 @@ class DashboardUptController extends Controller
         return $pdf->download($filename);
     }
 
+
+
     private function getPksStatistics()
     {
+        // Hitung hanya UPT yang sudah di-add ke PKS (ada di tabel db_upt_pks)
         $total = Upt::whereHas('uploadFolderPks')->count();
 
         $belumUpload = 0;
         $sebagian = 0;
         $sudahUpload = 0;
 
-        /** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\user\upt\Upt> $data */
         $data = Upt::with('uploadFolderPks')->whereHas('uploadFolderPks')->get();
 
+        /** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\user\upt\Upt> $data */
         foreach ($data as $item) {
-            // /** @var \App\Models\user\upt\UploadFolderPks|null $uploadFolder */
             $uploadFolder = $item->uploadFolderPks;
 
             if (!$uploadFolder) {
@@ -300,15 +389,16 @@ class DashboardUptController extends Controller
 
     private function getSppStatistics()
     {
+        // Hitung hanya UPT yang sudah di-add ke SPP (ada di tabel db_upt_spp)
         $total = Upt::whereHas('uploadFolderSpp')->count();
 
         $belumUpload = 0;
         $sebagian = 0;
         $sudahUpload = 0;
 
-        /** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\user\upt\Upt> $data */
         $data = Upt::with('uploadFolderSpp')->whereHas('uploadFolderSpp')->get();
 
+        /** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\user\upt\Upt> $data */
         foreach ($data as $item) {
             $uploadFolder = $item->uploadFolderSpp;
 
@@ -317,6 +407,7 @@ class DashboardUptController extends Controller
                 continue;
             }
 
+            // Hitung berapa folder yang sudah diupload (dari 10 folder)
             $uploadedFolders = 0;
             for ($i = 1; $i <= 10; $i++) {
                 $column = 'pdf_folder_' . $i;
@@ -325,6 +416,7 @@ class DashboardUptController extends Controller
                 }
             }
 
+            // Kategorikan berdasarkan jumlah folder yang diupload
             if ($uploadedFolders == 0) {
                 $belumUpload++;
             } elseif ($uploadedFolders == 10) {

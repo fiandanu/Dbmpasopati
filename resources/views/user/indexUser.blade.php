@@ -203,7 +203,6 @@
                                                     terkait dengan Reguler & VPAS</small>
                                             @endif
                                         </td>
-                                        {{-- <td><span class="tag tag-success">{{ $d->kanwil_id }}</span></td> --}}
                                         <td><span class="tag tag-success">{{ $d->kanwil->kanwil ?? '-' }}</span></td>
                                         <td class="text-center">
                                             <span

@@ -86,7 +86,6 @@
     --Secondary-08: #124fa6;
     --Secondary-09: #0d3c7c;
     --Secondary-10: #08244a;
-    --Secondary-Active: #2563eb; /* Tambahan untuk parent dropdown */
 
     --yellow-00: #fffdf0;
     --yellow-01: #fffad6;
@@ -281,18 +280,17 @@
     font-size: var(--body-medium-size);
     font-weight: var(--weight-medium);
     border-radius: 8px;
+    gap:3px;
     margin: 4px 0;
     padding: 10px 15px;
-    /* background-color: var(--Secondary-Active); */
+    display: flex;
+    align-items: center;
     /* color: var(--Netral-10); White text */
     transition: none; /* No hover effect for parent */
 }
 
 .nav-sidebar .nav-item .nav-link.active {
-    background-color: var(
-        --Secondary-Active
-    ); /* Same color for active parent */
-    /* color: var(--Netral-10); */
+    background-color: var(--purple-01); 
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
@@ -306,13 +304,13 @@
 }
 
 .nav-sidebar .nav-treeview .nav-link:hover {
-    background-color: var(--Secondary-01); /* #e7f0fd for sub-menu hover */
-    color: var(--Secondary-09); /* #0d3c7c for text */
+    background-color: var(--purple-00);
+    color: var(--purple-01);
 }
 
 .nav-sidebar .nav-treeview .nav-link.active {
-    background-color: var(--Secondary-01); /* #e7f0fd for active sub-menu */
-    color: var(--Secondary-09);
+    background-color: var(--purple-00); 
+    color: var(--purple-08);
 }
 
 .nav-icon {
@@ -1251,8 +1249,10 @@ body {
     display: none;
 }
 
-
-/* .nav-sidebar {
-    margin-top: -1rem;
-} */
+.legend-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+}
 

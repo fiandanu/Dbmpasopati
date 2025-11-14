@@ -15,6 +15,7 @@ class UserRole extends Authenticatable
         'username',
         'nama',
         'password',
+        'password_hint',
         'keterangan',
         'status',
         'role',
@@ -31,7 +32,12 @@ class UserRole extends Authenticatable
 
     public function setPasswordAttribute($value)
     {
-        $this->attributes['password'] = Hash::make($value);
+        // Cek apakah sudah di-hash atau belum (hash bcrypt panjangnya 60 karakter dan dimulai dengan $2y$)
+        if (strlen($value) === 60 && str_starts_with($value, '$2y$')) {
+            $this->attributes['password'] = $value; // Sudah di-hash, langsung simpan
+        } else {
+            $this->attributes['password'] = Hash::make($value); // Belum di-hash, hash dulu
+        }
     }
 
     public function isSuperAdmin()
