@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DataBaseController;
-use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MonitoringServerController;
 use Illuminate\Support\Facades\Route;
 
@@ -29,9 +28,6 @@ Route::middleware('auth')->group(function () {
 
     // Logout
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-
-    // Dashboard
-    Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
 
     /*
     |--------------------------------------------------------------------------
