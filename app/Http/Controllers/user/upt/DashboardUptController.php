@@ -93,190 +93,60 @@ class DashboardUptController extends Controller
     }
 
 
-    private function applyFilters($query, Request $request)
+    // EXPORT DATA CARD TOP
+    public function exportCardsPdf(Request $request)
     {
-        if ($request->has('search_namaupt') && ! empty($request->search_namaupt)) {
-            $query->where('namaupt', 'LIKE', '%' . $request->search_namaupt . '%');
+        $baseQuery = Upt::query();
+
+        if ($request->filled('search_tanggal_dari')) {
+            $baseQuery->whereDate('tanggal', '>=', $request->search_tanggal_dari);
+        }
+        if ($request->filled('search_tanggal_sampai')) {
+            $baseQuery->whereDate('tanggal', '<=', $request->search_tanggal_sampai);
         }
 
-        if ($request->has('search_kanwil') && ! empty($request->search_kanwil)) {
-            $query->whereHas('kanwil', function ($q) use ($request) {
-                $q->where('kanwil', 'LIKE', '%' . $request->search_kanwil . '%');
+        $pksStats = $this->getPksStatistics();
+        $sppStats = $this->getSppStatistics();
+        $VpasWartelStats = $this->getVpasWartelStatistics();
+        $RegulerWartelStats = $this->getRegulerWartelStatistics();
+
+        $totalUpt = $baseQuery->count();
+
+        $totalExtensionVpas = Upt::where('tipe', 'vpas')
+            ->with('dataOpsional')
+            ->get()
+            ->sum(function ($upt) {
+                return $upt->dataOpsional->jumlah_extension ?? 0;
             });
-        }
 
-        // ===== UBAH INI: Filter tipe =====
-        if ($request->has('search_tipe') && ! empty($request->search_tipe)) {
-            $query->where('tipe', 'LIKE', '%' . $request->search_tipe . '%');
-        }
-        // ===== AKHIR PERUBAHAN =====
-
-        // ===== UBAH INI: Filter Extension Universal =====
-        if ($request->has('search_extension') && ! empty($request->search_extension)) {
-            $query->whereHas('dataOpsional', function ($q) use ($request) {
-                $q->where('jumlah_extension', 'LIKE', '%' . $request->search_extension . '%');
+        $totalExtensionReguler = Upt::where('tipe', 'reguler')
+            ->with('dataOpsional')
+            ->get()
+            ->sum(function ($upt) {
+                return $upt->dataOpsional->jumlah_extension ?? 0;
             });
-        }
-        // ===== AKHIR PERUBAHAN =====
 
-        return $query;
-    }
-
-
-
-
-    private function getVpasWartelStatistics()
-    {
-        $total = Upt::where('tipe', 'vpas')->count();
-
-        $aktif = 0;
-        $tidakAktif = 0;
-
-        /** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\user\upt\Upt> $data */
-        $data = Upt::with('dataOpsional')->where('tipe', 'vpas')->get();
-
-        foreach ($data as $item) {
-            $dataOpsional = $item->dataOpsional;
-
-            if (!$dataOpsional || !isset($dataOpsional->status_wartel)) {
-                $tidakAktif++;
-                continue;
-            }
-
-            if ($dataOpsional->status_wartel == 1) {
-                $aktif++;
-            } else {
-                $tidakAktif++;
-            }
-        }
-
-        return [
-            'total' => $total,
-            'aktif' => $aktif,
-            'tidak_aktif' => $tidakAktif,
+        $pdfData = [
+            'title' => 'Statistik Database UPT',
+            'pksStats' => $pksStats,
+            'sppStats' => $sppStats,
+            'VpasWartelStats' => $VpasWartelStats,
+            'RegulerWartelStats' => $RegulerWartelStats,
+            'totalUpt' => $totalUpt,
+            'totalExtensionVpas' => $totalExtensionVpas,
+            'totalExtensionReguler' => $totalExtensionReguler,
+            'generated_at' => Carbon::now()->format('d M Y H:i:s'),
         ];
+
+        $pdf = Pdf::loadView('export.public.db.DatabaseUptCards', $pdfData)
+            ->setPaper('a4', 'portrait');
+
+        $filename = 'statistik_upt_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
+
+        return $pdf->download($filename);
     }
 
-    private function getRegulerWartelStatistics()
-    {
-        $total = Upt::where('tipe', 'reguler')->count();
-
-        $aktif = 0;
-        $tidakAktif = 0;
-
-        /** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\user\upt\Upt> $data */
-        $data = Upt::with('dataOpsional')->where('tipe', 'reguler')->get();
-
-
-        foreach ($data as $item) {
-            $dataOpsional = $item->dataOpsional;
-
-            if (!$dataOpsional || !isset($dataOpsional->status_wartel)) {
-                $tidakAktif++;
-                continue;
-            }
-
-            if ($dataOpsional->status_wartel == 1) {
-                $aktif++;
-            } else {
-                $tidakAktif++;
-            }
-        }
-
-        return [
-            'total' => $total,
-            'aktif' => $aktif,
-            'tidak_aktif' => $tidakAktif,
-        ];
-    }
-
-
-
-    private function applyStatusFilter($data, Request $request)
-    {
-        if ($request->has('search_status_pks') && ! empty($request->search_status_pks)) {
-            $statusSearch = strtolower($request->search_status_pks);
-            $data = $data->filter(function ($d) use ($statusSearch) {
-                $status = strtolower($this->calculatePksStatus($d->uploadFolderPks));
-
-                return strpos($status, $statusSearch) !== false;
-            });
-        }
-
-        if ($request->has('search_status_spp') && ! empty($request->search_status_spp)) {
-            $statusSearch = strtolower($request->search_status_spp);
-            $data = $data->filter(function ($d) use ($statusSearch) {
-                $status = strtolower($this->calculateSppStatus($d->uploadFolderSpp));
-
-                return strpos($status, $statusSearch) !== false;
-            });
-        }
-
-        // ===== UBAH INI: Filter Status Wartel Universal =====
-        if ($request->has('search_status_wartel') && ! empty($request->search_status_wartel)) {
-            $statusSearch = strtolower(trim($request->search_status_wartel));
-            $data = $data->filter(function ($d) use ($statusSearch) {
-                if (! $d->dataOpsional || ! isset($d->dataOpsional->status_wartel)) {
-                    return $statusSearch === '-';
-                }
-
-                $status = $d->dataOpsional->status_wartel == 1 ? 'aktif' : 'tidak aktif';
-
-                if ($statusSearch === 'aktif') {
-                    return $d->dataOpsional->status_wartel == 1;
-                } elseif ($statusSearch === 'tidak aktif' || $statusSearch === 'tidak') {
-                    return $d->dataOpsional->status_wartel == 0;
-                }
-
-                return strpos($status, $statusSearch) !== false;
-            });
-        }
-        // ===== AKHIR PERUBAHAN =====
-
-        return $data;
-    }
-
-    private function calculatePksStatus($uploadFolder)
-    {
-        if (! $uploadFolder) {
-            return 'Belum Upload';
-        }
-
-        $hasPdf1 = ! empty($uploadFolder->uploaded_pdf_1);
-        $hasPdf2 = ! empty($uploadFolder->uploaded_pdf_2);
-
-        if ($hasPdf1 && $hasPdf2) {
-            return 'Sudah Upload (2/2)';
-        } elseif ($hasPdf1 || $hasPdf2) {
-            return 'Sebagian (1/2)';
-        } else {
-            return 'Belum Upload';
-        }
-    }
-
-    private function calculateSppStatus($uploadFolder)
-    {
-        if (! $uploadFolder) {
-            return 'Belum Upload';
-        }
-
-        $uploadedFolders = 0;
-        for ($i = 1; $i <= 10; $i++) {
-            $column = 'pdf_folder_' . $i;
-            if (! empty($uploadFolder->$column)) {
-                $uploadedFolders++;
-            }
-        }
-
-        if ($uploadedFolders == 0) {
-            return 'Belum Upload';
-        } elseif ($uploadedFolders == 10) {
-            return '10/10 Folder';
-        } else {
-            return $uploadedFolders . '/10 Terupload';
-        }
-    }
-
+    // EXPORT CSV DAN PDF DATA UPT BOTTOM
     public function exportCsv(Request $request): StreamedResponse
     {
         $query = Upt::with(['kanwil', 'uploadFolderPks', 'uploadFolderSpp', 'dataOpsional']);
@@ -345,11 +215,189 @@ class DashboardUptController extends Controller
         return $pdf->download($filename);
     }
 
+    // FILTER BY KOLOM
+    private function applyFilters($query, Request $request)
+    {
+        if ($request->has('search_namaupt') && ! empty($request->search_namaupt)) {
+            $query->where('namaupt', 'LIKE', '%' . $request->search_namaupt . '%');
+        }
+
+        if ($request->has('search_kanwil') && ! empty($request->search_kanwil)) {
+            $query->whereHas('kanwil', function ($q) use ($request) {
+                $q->where('kanwil', 'LIKE', '%' . $request->search_kanwil . '%');
+            });
+        }
+
+        // ===== UBAH INI: Filter tipe =====
+        if ($request->has('search_tipe') && ! empty($request->search_tipe)) {
+            $query->where('tipe', 'LIKE', '%' . $request->search_tipe . '%');
+        }
+        // ===== AKHIR PERUBAHAN =====
+
+        // ===== UBAH INI: Filter Extension Universal =====
+        if ($request->has('search_extension') && ! empty($request->search_extension)) {
+            $query->whereHas('dataOpsional', function ($q) use ($request) {
+                $q->where('jumlah_extension', 'LIKE', '%' . $request->search_extension . '%');
+            });
+        }
+        // ===== AKHIR PERUBAHAN =====
+
+        return $query;
+    }
+
+    private function getVpasWartelStatistics()
+    {
+        $total = Upt::where('tipe', 'vpas')->count();
+
+        $aktif = 0;
+        $tidakAktif = 0;
+
+        /** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\user\upt\Upt> $data */
+        $data = Upt::with('dataOpsional')->where('tipe', 'vpas')->get();
+
+        foreach ($data as $item) {
+            $dataOpsional = $item->dataOpsional;
+
+            if (!$dataOpsional || !isset($dataOpsional->status_wartel)) {
+                $tidakAktif++;
+                continue;
+            }
+
+            if ($dataOpsional->status_wartel == 1) {
+                $aktif++;
+            } else {
+                $tidakAktif++;
+            }
+        }
+
+        return [
+            'total' => $total,
+            'aktif' => $aktif,
+            'tidak_aktif' => $tidakAktif,
+        ];
+    }
+
+    private function getRegulerWartelStatistics()
+    {
+        $total = Upt::where('tipe', 'reguler')->count();
+
+        $aktif = 0;
+        $tidakAktif = 0;
+
+        /** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\user\upt\Upt> $data */
+        $data = Upt::with('dataOpsional')->where('tipe', 'reguler')->get();
 
 
+        foreach ($data as $item) {
+            $dataOpsional = $item->dataOpsional;
+
+            if (!$dataOpsional || !isset($dataOpsional->status_wartel)) {
+                $tidakAktif++;
+                continue;
+            }
+
+            if ($dataOpsional->status_wartel == 1) {
+                $aktif++;
+            } else {
+                $tidakAktif++;
+            }
+        }
+
+        return [
+            'total' => $total,
+            'aktif' => $aktif,
+            'tidak_aktif' => $tidakAktif,
+        ];
+    }
+
+    private function applyStatusFilter($data, Request $request)
+    {
+        if ($request->has('search_status_pks') && ! empty($request->search_status_pks)) {
+            $statusSearch = strtolower($request->search_status_pks);
+            $data = $data->filter(function ($d) use ($statusSearch) {
+                $status = strtolower($this->calculatePksStatus($d->uploadFolderPks));
+
+                return strpos($status, $statusSearch) !== false;
+            });
+        }
+
+        if ($request->has('search_status_spp') && ! empty($request->search_status_spp)) {
+            $statusSearch = strtolower($request->search_status_spp);
+            $data = $data->filter(function ($d) use ($statusSearch) {
+                $status = strtolower($this->calculateSppStatus($d->uploadFolderSpp));
+
+                return strpos($status, $statusSearch) !== false;
+            });
+        }
+
+        // ===== UBAH INI: Filter Status Wartel Universal =====
+        if ($request->has('search_status_wartel') && ! empty($request->search_status_wartel)) {
+            $statusSearch = strtolower(trim($request->search_status_wartel));
+            $data = $data->filter(function ($d) use ($statusSearch) {
+                if (! $d->dataOpsional || ! isset($d->dataOpsional->status_wartel)) {
+                    return $statusSearch === '-';
+                }
+
+                $status = $d->dataOpsional->status_wartel == 1 ? 'aktif' : 'tidak aktif';
+
+                if ($statusSearch === 'aktif') {
+                    return $d->dataOpsional->status_wartel == 1;
+                } elseif ($statusSearch === 'tidak aktif' || $statusSearch === 'tidak') {
+                    return $d->dataOpsional->status_wartel == 0;
+                }
+
+                return strpos($status, $statusSearch) !== false;
+            });
+        }
+
+        return $data;
+    }
+
+    private function calculatePksStatus($uploadFolder)
+    {
+        if (! $uploadFolder) {
+            return 'Belum Upload';
+        }
+
+        $hasPdf1 = ! empty($uploadFolder->uploaded_pdf_1);
+        $hasPdf2 = ! empty($uploadFolder->uploaded_pdf_2);
+
+        if ($hasPdf1 && $hasPdf2) {
+            return 'Sudah Upload (2/2)';
+        } elseif ($hasPdf1 || $hasPdf2) {
+            return 'Sebagian (1/2)';
+        } else {
+            return 'Belum Upload';
+        }
+    }
+
+    private function calculateSppStatus($uploadFolder)
+    {
+        if (! $uploadFolder) {
+            return 'Belum Upload';
+        }
+
+        $uploadedFolders = 0;
+        for ($i = 1; $i <= 10; $i++) {
+            $column = 'pdf_folder_' . $i;
+            if (! empty($uploadFolder->$column)) {
+                $uploadedFolders++;
+            }
+        }
+
+        if ($uploadedFolders == 0) {
+            return 'Belum Upload';
+        } elseif ($uploadedFolders == 10) {
+            return '10/10 Folder';
+        } else {
+            return $uploadedFolders . '/10 Terupload';
+        }
+    }
+
+
+    // METHOD MENGHITUNG COUNT STATUS UPLOAD FOLDER PKS DAN SPP
     private function getPksStatistics()
     {
-        // Hitung hanya UPT yang sudah di-add ke PKS (ada di tabel db_upt_pks)
         $total = Upt::whereHas('uploadFolderPks')->count();
 
         $belumUpload = 0;
@@ -389,7 +437,6 @@ class DashboardUptController extends Controller
 
     private function getSppStatistics()
     {
-        // Hitung hanya UPT yang sudah di-add ke SPP (ada di tabel db_upt_spp)
         $total = Upt::whereHas('uploadFolderSpp')->count();
 
         $belumUpload = 0;
@@ -407,7 +454,6 @@ class DashboardUptController extends Controller
                 continue;
             }
 
-            // Hitung berapa folder yang sudah diupload (dari 10 folder)
             $uploadedFolders = 0;
             for ($i = 1; $i <= 10; $i++) {
                 $column = 'pdf_folder_' . $i;
@@ -416,7 +462,6 @@ class DashboardUptController extends Controller
                 }
             }
 
-            // Kategorikan berdasarkan jumlah folder yang diupload
             if ($uploadedFolders == 0) {
                 $belumUpload++;
             } elseif ($uploadedFolders == 10) {
@@ -434,62 +479,42 @@ class DashboardUptController extends Controller
         ];
     }
 
+
+    // METHOD MENGHITUNG COUNT STATUS WARTEL
     private function getVpasStatistics()
     {
-        $optionalFields = ['pic_upt', 'no_telpon', 'alamat', 'jumlah_wbp', 'jumlah_line', 'provider_internet', 'kecepatan_internet', 'tarif_wartel', 'status_wartel', 'akses_topup_pulsa', 'password_topup', 'akses_download_rekaman', 'password_download', 'internet_protocol', 'vpn_user', 'vpn_password', 'jumlah_extension', 'no_pemanggil', 'email_airdroid', 'password', 'pin_tes'];
-
         $total = Upt::where('tipe', 'vpas')->count();
 
         $belumUpdate = 0;
-        $sebagian = 0;
         $sudahUpdate = 0;
 
         /** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\user\upt\Upt> $data */
         $data = Upt::with('dataOpsional')->where('tipe', 'vpas')->get();
 
         foreach ($data as $item) {
-            // /** @var \App\Models\user\upt\DataOpsional|null $dataOpsional */
             $dataOpsional = $item->dataOpsional;
 
-            if (!$dataOpsional) {
+            if (!$dataOpsional || !isset($dataOpsional->status_wartel)) {
                 $belumUpdate++;
                 continue;
             }
 
-            $filledFields = 0;
-            foreach ($optionalFields as $field) {
-                if (!empty($dataOpsional->$field)) {
-                    $filledFields++;
-                }
-            }
-
-            $totalFields = count($optionalFields);
-
-            if ($filledFields == 0) {
-                $belumUpdate++;
-            } elseif ($filledFields == $totalFields) {
-                $sudahUpdate++;
-            } else {
-                $sebagian++;
-            }
+            // Jika status_wartel sudah diisi (1 atau 0), dianggap sudah update
+            $sudahUpdate++;
         }
 
         return [
             'total' => $total,
             'belum_update' => $belumUpdate,
-            'sebagian' => $sebagian,
             'sudah_update' => $sudahUpdate,
         ];
     }
 
     private function getRegulerStatistics()
     {
-        $optionalFields = ['pic_upt', 'no_telpon', 'alamat', 'jumlah_wbp', 'jumlah_line', 'provider_internet', 'kecepatan_internet', 'tarif_wartel', 'status_wartel', 'akses_topup_pulsa', 'password_topup', 'akses_download_rekaman', 'password_download', 'internet_protocol', 'vpn_user', 'vpn_password', 'jumlah_extension', 'no_extension', 'extension_password', 'pin_tes'];
-
         $total = Upt::where('tipe', 'reguler')->count();
 
         $belumUpdate = 0;
-        $sebagian = 0;
         $sudahUpdate = 0;
 
         /** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\user\upt\Upt> $data */
@@ -498,34 +523,18 @@ class DashboardUptController extends Controller
         foreach ($data as $item) {
             $dataOpsional = $item->dataOpsional;
 
-            if (! $dataOpsional) {
+            if (!$dataOpsional || !isset($dataOpsional->status_wartel)) {
                 $belumUpdate++;
-
                 continue;
             }
 
-            $filledFields = 0;
-            foreach ($optionalFields as $field) {
-                if (! empty($dataOpsional->$field)) {
-                    $filledFields++;
-                }
-            }
-
-            $totalFields = count($optionalFields);
-
-            if ($filledFields == 0) {
-                $belumUpdate++;
-            } elseif ($filledFields == $totalFields) {
-                $sudahUpdate++;
-            } else {
-                $sebagian++;
-            }
+            // Jika status_wartel sudah diisi (1 atau 0), dianggap sudah update
+            $sudahUpdate++;
         }
 
         return [
             'total' => $total,
             'belum_update' => $belumUpdate,
-            'sebagian' => $sebagian,
             'sudah_update' => $sudahUpdate,
         ];
     }

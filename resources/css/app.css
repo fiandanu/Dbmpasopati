@@ -910,6 +910,7 @@ textarea.form-control {
 
 .card-kategori {
     width: 100%;
+    height: 100%;
     background: white;
     border-radius: 32px;
     padding: 20px;

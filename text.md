@@ -77,10 +77,13 @@ CASE SENSITIF MIKROTIK CONTROLLER
 data@data:/var/www/Dbmpasopati/app/Http/Controllers/tutorial/upt$ ls
 MikrotikController.php ServerController.php
 RegullerController.php VpasController.php
+
 data@data:/var/www/Dbmpasopati/app/Http/Controllers/tutorial/upt$ mv MikrotikController.php mikrotikController.php
 mv: cannot move 'MikrotikController.php' to 'mikrotikController.php': Permission denied
+
 data@data:/var/www/Dbmpasopati/app/Http/Controllers/tutorial/upt$ sudo mv Mi
 krotikController.php mikrotikController.php
+
 data@data:/var/www/Dbmpasopati/app/Http/Controllers/tutorial/upt$ htop
 data@data:/var/www/Dbmpasopati/app/Http/Controllers/tutorial/upt$ ls
 mikrotikController.php ServerController.php
@@ -116,8 +119,6 @@ DATA YANG NGAMBIL DARI SERVER ITU UPT DAN PONPES YAITU DARI NAMA UPT DAN KANWIL 
 =============================================================
 📝 CATATAN REVISI
 =============================================================
-
-- Komplain Vpas Dibuat jumlah presentase dari jenis kendala dibuat perbulan, intinya diambil dari jenis kendala
 
 - KHUSUS ROLE USER ✅
   Super Admin,Teknisi, Marketing
@@ -169,6 +170,7 @@ yang bisa membuat user dan role itu hanya super admin
 -- Check Ulang
 11/14/2025
 
+-- Komplain Vpas Dibuat jumlah presentase dari jenis kendala dibuat perbulan, intinya diambil dari jenis kendala ✅
 - di catatan kartu vpas nama Upt masih hilang di Pdfnya pas download ✅
 - terpakai disebelah whatsaap terpakai, pic dibuat ke paling kanan aja ✅
 - tanggal disebelum nama Upt ✅

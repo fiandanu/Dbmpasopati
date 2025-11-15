@@ -12,4 +12,7 @@ Route::prefix('database')
         // Export routes
         Route::get('/DbPonpes/export/csv', [DashboardPonpesController::class, 'exportCsv'])->name('DbPonpes.export.csv');
         Route::get('/DbPonpes/export/pdf', [DashboardPonpesController::class, 'exportPdf'])->name('DbPonpes.export.pdf');
+
+        // EXPORT CARD KATEGORI PDF
+        Route::get('/DbPonpes/export/cards-pdf', [DashboardPonpesController::class, 'exportCardsPdf'])->name('DbPonpes.export.cards.pdf');
     });

@@ -39,7 +39,6 @@ class RegullerController extends Controller
         'pin_tes',
     ];
 
-
     private function calculateStatus($dataOpsional)
     {
         if (! $dataOpsional) {

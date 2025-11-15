@@ -12,156 +12,221 @@
                             </button>
                             <h1 class="headline-large-32 mb-0">Database PONPES</h1>
                         </div>
+                        <div class="row mb-3">
+                            <div class="col-12 d-flex justify-content-end">
+                                <button onclick="downloadCardsPdf()"
+                                    class="btn-page d-flex justify-content-center align-items-center"
+                                    title="Download Statistik PDF">
+                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export Statistik PDF
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
         </section>
 
-        <!-- CARD KATEGORI -->
-
-
         <!-- TABLE SECTION -->
         <section class="content">
             <div class="container-fluid">
-                <div class="row mt-3 mb-3">
+                <div class="row mb-3">
                     <div class="col-12">
-                        <div class="card-body">
 
-                            {{-- CARD KATEGORI --}}
-                            <div class="row mb-3">
-                                <!-- Kategori PKS -->
-                                <div class="col-md-3 mb-2">
-                                    <div class="card-kategori">
-                                        <h3>PKS</h3>
-                                        <p class="text-kategori mb-2">Surat Perjanjian Kerja Sama</p>
-                                        <div class="data-badge mb-3">
-                                            <span class="checkmark">✓</span>
-                                            100 Data
-                                        </div>
-                                        <a href="{{ route('DbPonpes.pks.ListDataPks') }}"
-                                            class="list-button">Selengkapnya</a>
+                        {{-- CARD KATEGORI --}}
+                        <div class="row mb-3">
+                            <!-- Kategori PKS -->
+                            <div class="col-md-3 mb-2">
+                                <div class="card-kategori">
+                                    <h3>PKS</h3>
+                                    <p class="text-kategori mb-2">Surat Perjanjian Kerja Sama</p>
+                                    <div class="data-badge mb-3">
+                                        <span class="checkmark">✓</span>
+                                        {{ $pksStats['total'] }} Data
                                     </div>
-                                </div>
-
-                                <!-- Kategori SPP -->
-                                <div class="col-md-3 mb-2">
-                                    <div class="card-kategori">
-                                        <h3>SPP</h3>
-                                        <p class="text-kategori mb-2">Surat Perintah Pemasangan</p>
-                                        <div class="data-badge mb-3">
-                                            <span class="checkmark">✓</span>
-                                            100 Data
+                                    <div class="flex-row">
+                                        <div class="chart-legend">
+                                            <div class="legend-item">
+                                                <span class="legend-text">Belum upload</span>
+                                                <span class="legend-count">{{ $pksStats['belum_upload'] }}</span>
+                                            </div>
+                                            <div class="legend-item">
+                                                <span class="legend-text">Sebagian</span>
+                                                <span class="legend-count">{{ $pksStats['sebagian'] }}</span>
+                                            </div>
+                                            <div class="legend-item">
+                                                <span class="legend-text">Lengkap</span>
+                                                <span class="legend-count">{{ $pksStats['sudah_upload'] }}</span>
+                                            </div>
                                         </div>
-                                        <a href="{{ route('sppPonpes.ListDataSpp') }}" class="list-button">Selengkapnya</a>
                                     </div>
-                                </div>
-
-                                <!-- Kategori VTREN -->
-                                <div class="col-md-3 mb-2">
-                                    <div class="card-kategori">
-                                        <h3>VTREN</h3>
-                                        <p class="text-kategori mb-2">Layanan VTREN</p>
-                                        <div class="data-badge mb-3">
-                                            <span class="checkmark">✓</span>
-                                            100 Data
-                                        </div>
-                                        <a href="{{ route('DbPonpes.ListDataVtrend') }}"
-                                            class="list-button">Selengkapnya</a>
-                                    </div>
-                                </div>
-
-                                <!-- Kategori REGULER -->
-                                <div class="col-md-3 mb-2">
-                                    <div class="card-kategori">
-                                        <h3>REGULER</h3>
-                                        <p class="text-kategori mb-2">Layanan Reguler</p>
-                                        <div class="data-badge mb-3">
-                                            <span class="checkmark">✓</span>
-                                            100 Data
-                                        </div>
-                                        <a href="{{ route('ponpes.ListDataPonpes') }}" class="list-button">Selengkapnya</a>
-                                    </div>
+                                    <a href="{{ route('DbPonpes.pks.ListDataPks') }}" class="list-button">Selengkapnya</a>
                                 </div>
                             </div>
 
-                            {{-- CARD TOTAL --}}
-                            <div class="row">
-                                <div class="col-md-4 mb-2">
-                                    <div class="card-total">
-                                        <div class="w-full">
-                                            <h1 class="title-medium-18">Total Data PONPES</h1>
-                                            <h4 class="display-medium-48">{{ number_format($totalPonpes) }}</h4>
+                            <!-- Kategori SPP -->
+                            <div class="col-md-3 mb-2">
+                                <div class="card-kategori">
+                                    <h3>SPP</h3>
+                                    <p class="text-kategori mb-2">Surat Perintah Pemasangan</p>
+                                    <div class="data-badge mb-3">
+                                        <span class="checkmark">✓</span>
+                                        {{ $sppStats['total'] }} Data
+                                    </div>
+                                    <div class="flex-row">
+                                        <div class="chart-legend">
+                                            <div class="legend-item">
+                                                <span class="legend-text">Belum upload</span>
+                                                <span class="legend-count">{{ $sppStats['belum_upload'] }}</span>
+                                            </div>
+                                            <div class="legend-item">
+                                                <span class="legend-text">Sebagian</span>
+                                                <span class="legend-count">{{ $sppStats['sebagian'] }}</span>
+                                            </div>
+                                            <div class="legend-item">
+                                                <span class="legend-text">Lengkap</span>
+                                                <span class="legend-count">{{ $sppStats['sudah_upload'] }}</span>
+                                            </div>
                                         </div>
-                                        <div class="icon-card-total">
-                                            <span class="material-symbols-outlined">
-                                                mosque
+                                    </div>
+                                    <a href="{{ route('sppPonpes.ListDataSpp') }}" class="list-button">Selengkapnya</a>
+                                </div>
+                            </div>
+
+                            <!-- Kategori VTREN -->
+                            <div class="col-md-3 mb-2">
+                                <div class="card-kategori">
+                                    <h3>VTREN</h3>
+                                    <p class="text-kategori mb-2">Layanan VTREN</p>
+                                    <div class="data-badge mb-3">
+                                        <span class="checkmark">✓</span>
+                                        {{ $VtrenWartelStats['total'] }} Data
+                                    </div>
+                                    <div class="flex-row h-full">
+                                        <div class="chart-legend">
+                                            <div class="legend-item">
+                                                <span class="legend-text">Wartel tidak aktif</span>
+                                                <span class="legend-count">{{ $VtrenWartelStats['tidak_aktif'] }}</span>
+                                            </div>
+                                            <span class="legend-item">
+                                                <span class="legend-text">Wartel aktif</span>
+                                                <span class="legend-count">{{ $VtrenWartelStats['aktif'] }}</span>
                                             </span>
                                         </div>
                                     </div>
+                                    <a href="{{ route('DbPonpes.ListDataVtrend') }}" class="list-button">Selengkapnya</a>
                                 </div>
-                                <div class="col-md-4 mb-2">
-                                    <div class="card-total">
-                                        <div class="w-full">
-                                            <h1 class="title-medium-18">Total Extension VTREN</h1>
-                                            <h4 class="display-medium-48">{{ number_format($totalExtensionVtren) }}</h4>
-                                        </div>
-                                        <div class="icon-card-total">
-                                            <span class="material-symbols-outlined">
-                                                video_chat
-                                            </span>
+                            </div>
+
+                            <!-- Kategori REGULER -->
+                            <div class="col-md-3 mb-2">
+                                <div class="card-kategori">
+                                    <h3>REGULER</h3>
+                                    <p class="text-kategori mb-2">Layanan Reguler</p>
+                                    <div class="data-badge mb-3">
+                                        <span class="checkmark">✓</span>
+                                        {{ $RegulerWartelStats['total'] }} Data
+                                    </div>
+                                    <div class="flex-row h-full">
+                                        <div class="chart-legend">
+                                            <div class="legend-item">
+                                                <div class="legend-text">Wartel tidak aktif</div>
+                                                <div class="legend-count">{{ $RegulerWartelStats['tidak_aktif'] }}
+                                                </div>
+                                            </div>
+                                            <div class="legend-item">
+                                                <div class="legend-text">Wartel aktif</div>
+                                                <div class="legend-count">{{ $RegulerWartelStats['aktif'] }}</div>
+                                            </div>
                                         </div>
                                     </div>
+                                    <a href="{{ route('ponpes.ListDataPonpes') }}" class="list-button">Selengkapnya</a>
                                 </div>
-                                <div class="col-md-4 mb-2">
-                                    <div class="card-total">
-                                        <div class="w-full">
-                                            <h1 class="title-medium-18">Total Extension Reguler</h1>
-                                            <h4 class="display-medium-48">{{ number_format($totalExtensionReguler) }}
-                                            </h4>
-                                        </div>
-                                        <div class="icon-card-total">
-                                            <span class="material-symbols-outlined">
-                                                video_camera_front
-                                            </span>
-                                        </div>
+                            </div>
+                        </div>
+
+                        {{-- CARD TOTAL --}}
+                        <div class="row">
+                            <div class="col-md-4 mb-2">
+                                <div class="card-total">
+                                    <div class="w-full">
+                                        <h1 class="title-medium-18">Total Data PONPES</h1>
+                                        <h4 class="display-medium-48">{{ number_format($totalPonpes) }}</h4>
+                                    </div>
+                                    <div class="icon-card-total">
+                                        <span class="material-symbols-outlined">
+                                            mosque
+                                        </span>
                                     </div>
                                 </div>
                             </div>
-
+                            <div class="col-md-4 mb-2">
+                                <div class="card-total">
+                                    <div class="w-full">
+                                        <h1 class="title-medium-18">Total Extension VTREN</h1>
+                                        <h4 class="display-medium-48">{{ number_format($totalExtensionVtren) }}</h4>
+                                    </div>
+                                    <div class="icon-card-total">
+                                        <span class="material-symbols-outlined">
+                                            video_chat
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <div class="card-total">
+                                    <div class="w-full">
+                                        <h1 class="title-medium-18">Total Extension Reguler</h1>
+                                        <h4 class="display-medium-48">{{ number_format($totalExtensionReguler) }}
+                                        </h4>
+                                    </div>
+                                    <div class="icon-card-total">
+                                        <span class="material-symbols-outlined">
+                                            video_camera_front
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+
                     </div>
                 </div>
 
-                <div class="row mb-3 align-items-center">
-                    <div class="col d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center gap-2 flex-wrap">
-                            <div class="d-flex gap-2" id="export-buttons">
-                                <button onclick="downloadCsv()"
-                                    class="btn-page d-flex justify-content-center align-items-center" title="Download CSV">
-                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export CSV
-                                </button>
-                                <button onclick="downloadPdf()"
-                                    class="btn-page d-flex justify-content-center align-items-center" title="Download PDF">
-                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PDF
-                                </button>
+                <section class="content">
+                    <div class="container-fluid">
+                        <div class="row mb-3 align-items-center">
+                            <div class="col d-flex justify-content-between align-items-center">
+                                <h3 class="headline-medium-24">Data Ponpes Keseluruhan</h3>
+                                <div class="d-flex align-items-center gap-2 flex-wrap">
+                                    <div class="d-flex gap-2" id="export-buttons">
+                                        <button onclick="downloadCsv()"
+                                            class="btn-page d-flex justify-content-center align-items-center"
+                                            title="Download CSV">
+                                            <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export CSV
+                                        </button>
+                                        <button onclick="downloadPdf()"
+                                            class="btn-page d-flex justify-content-center align-items-center"
+                                            title="Download PDF">
+                                            <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PDF
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-12 mb-3">
+                            <div class="gap-12 w-fit text-center">
+                                <div class="d-flex justify-content-center align-items-center gap-12">
+                                    <div class="btn-page">
+                                        <input type="date" id="search-tanggal-dari" name="search_tanggal_dari"
+                                            title="Tanggal Dari">
+                                    </div>
+                                    <div class="btn-page">
+                                        <input type="date" id="search-tanggal-sampai" name="search_tanggal_sampai"
+                                            title="Tanggal Sampai">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="d-flex gap-12 mb-3">
-                    <div class="gap-12 w-fit text-center">
-                        <div class="d-flex justify-content-center align-items-center gap-12">
-                            <div class="flex-column btn-searchbar column-search">
-                                <input type="date" id="search-tanggal-dari" name="search_tanggal_dari"
-                                    title="Tanggal Dari">
-                            </div>
-                            <div class="flex-column btn-searchbar column-search">
-                                <input type="date" id="search-tanggal-sampai" name="search_tanggal_sampai"
-                                    title="Tanggal Sampai">
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                </section>
 
                 <div class="card">
                     <div class="card-body table-responsive p-0">
@@ -261,7 +326,8 @@
                                     <tr>
                                         <td class="text-center">{{ $no++ }}</td>
                                         <td>{{ $d->nama_ponpes }}</td>
-                                        <td><span class="tag tag-success">{{ $d->namaWilayah->nama_wilayah ?? '-' }}</span>
+                                        <td><span
+                                                class="tag tag-success">{{ $d->namaWilayah->nama_wilayah ?? '-' }}</span>
                                         </td>
                                         <td class="text-center">
                                             <span
@@ -454,8 +520,6 @@
     <script>
         $(document).ready(function() {
             // ============ FILTER FUNCTIONALITY ============
-
-            // Function to get current filter values
             function getFilters() {
                 return {
                     search_namaponpes: $('#search-namaponpes').val().trim(),
@@ -598,6 +662,36 @@
                 form.submit();
                 document.body.removeChild(form);
             };
+
+            window.downloadCardsPdf = function() {
+                let filters = getFilters();
+                let form = document.createElement('form');
+                form.method = 'GET';
+                form.action = '{{ route('database.DbPonpes.export.cards.pdf') }}';
+                form.target = '_blank';
+
+                // Hanya kirim filter tanggal jika ada
+                if (filters.search_tanggal_dari) {
+                    let input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'search_tanggal_dari';
+                    input.value = filters.search_tanggal_dari;
+                    form.appendChild(input);
+                }
+
+                if (filters.search_tanggal_sampai) {
+                    let input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'search_tanggal_sampai';
+                    input.value = filters.search_tanggal_sampai;
+                    form.appendChild(input);
+                }
+
+                document.body.appendChild(form);
+                form.submit();
+                document.body.removeChild(form);
+            };
+
 
             // ============ LOAD FILTER VALUES FROM URL ============
             const urlParams = new URLSearchParams(window.location.search);
