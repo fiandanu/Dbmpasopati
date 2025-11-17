@@ -86,7 +86,7 @@
                             @endforeach
                         </div>
                     </div>
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -180,7 +180,6 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                    <tbody>
                                         @php
                                             // Calculate starting number for pagination
                                             if (request('per_page') == 'all') {
@@ -224,17 +223,20 @@
                                                 </td>
                                                 <td class="text-center">
                                                     <div class="btn-group" role="group">
-                                                        <button data-toggle="modal"
-                                                            data-target="#uploadModal{{ $d->id }}"
+                                                        <button data-bs-toggle="modal"
+                                                            data-bs-target="#uploadModal{{ $d->id }}"
                                                             title="Upload PDF">
                                                             <ion-icon name="folder-outline"></ion-icon>
                                                         </button>
 
-                                                        <button data-toggle="modal"
-                                                            data-target="#modal-default{{ $d->id }}"
-                                                            title="Hapus Data">
-                                                            <ion-icon name="trash-outline"></ion-icon>
-                                                        </button>
+                                                        @if (Auth::check() && Auth::user()->isSuperAdmin())
+                                                            {{-- DELETE BUTTON --}}
+                                                            <button data-bs-toggle="modal"
+                                                                data-bs-target="#modal-default{{ $d->id }}"
+                                                                title="Hapus Data">
+                                                                <ion-icon name="trash-outline"></ion-icon>
+                                                            </button>
+                                                        @endif
                                                     </div>
                                                 </td>
                                             </tr>
@@ -382,7 +384,7 @@
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn-cancel-modal"
-                                                                    data-dismiss="modal">Tutup</button>
+                                                                    data-bs-dismiss="modal">Tutup</button>
                                                                 <button type="submit" class="btn-purple">Upload
                                                                     PDF</button>
                                                             </div>
@@ -439,7 +441,7 @@
                                                         </div>
                                                         <div class="modal-footer flex-row-reverse justify-content-between">
                                                             <button type="button" class="btn-cancel-modal"
-                                                                data-dismiss="modal">Batal</button>
+                                                                data-bs-dismiss="modal">Batal</button>
                                                             <form
                                                                 action="{{ route('server_page.DataBasePageDestroy', $d->id) }}"
                                                                 method="POST" style="display: inline;">
@@ -716,6 +718,4 @@
             }
         });
     </script>
-
-    {{-- Script yang sudah ada sebelumnya (updateFolder, dll) tetap dipertahankan --}}
 @endsection

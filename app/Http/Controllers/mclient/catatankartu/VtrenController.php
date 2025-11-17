@@ -86,31 +86,31 @@ class VtrenController extends Controller
     {
         // Column-specific searches
         if ($request->has('search_nama_ponpes') && ! empty($request->search_nama_ponpes)) {
-            $query->where('nama_ponpes', 'LIKE', '%'.$request->search_nama_ponpes.'%');
+            $query->where('nama_ponpes', 'LIKE', '%' . $request->search_nama_ponpes . '%');
         }
         if ($request->has('search_kartu_baru') && ! empty($request->search_kartu_baru)) {
-            $query->where('spam_vtren_kartu_baru', 'LIKE', '%'.$request->search_kartu_baru.'%');
+            $query->where('spam_vtren_kartu_baru', 'LIKE', '%' . $request->search_kartu_baru . '%');
         }
         if ($request->has('search_kartu_bekas') && ! empty($request->search_kartu_bekas)) {
-            $query->where('spam_vtren_kartu_bekas', 'LIKE', '%'.$request->search_kartu_bekas.'%');
+            $query->where('spam_vtren_kartu_bekas', 'LIKE', '%' . $request->search_kartu_bekas . '%');
         }
         if ($request->has('search_kartu_goip') && ! empty($request->search_kartu_goip)) {
-            $query->where('spam_vtren_kartu_goip', 'LIKE', '%'.$request->search_kartu_goip.'%');
+            $query->where('spam_vtren_kartu_goip', 'LIKE', '%' . $request->search_kartu_goip . '%');
         }
         if ($request->has('search_kartu_belum_register') && ! empty($request->search_kartu_belum_register)) {
-            $query->where('kartu_belum_teregister', 'LIKE', '%'.$request->search_kartu_belum_register.'%');
+            $query->where('kartu_belum_teregister', 'LIKE', '%' . $request->search_kartu_belum_register . '%');
         }
         if ($request->has('search_whatsapp_terpakai') && ! empty($request->search_whatsapp_terpakai)) {
-            $query->where('whatsapp_telah_terpakai', 'LIKE', '%'.$request->search_whatsapp_terpakai.'%');
+            $query->where('whatsapp_telah_terpakai', 'LIKE', '%' . $request->search_whatsapp_terpakai . '%');
         }
         if ($request->has('search_card_supporting') && ! empty($request->search_card_supporting)) {
-            $query->where('card_supporting', 'LIKE', '%'.$request->search_card_supporting.'%');
+            $query->where('card_supporting', 'LIKE', '%' . $request->search_card_supporting . '%');
         }
         if ($request->has('search_pic') && ! empty($request->search_pic)) {
-            $query->where('pic', 'LIKE', '%'.$request->search_pic.'%');
+            $query->where('pic', 'LIKE', '%' . $request->search_pic . '%');
         }
         if ($request->has('search_kartu_terpakai') && ! empty($request->search_kartu_terpakai)) {
-            $query->where('jumlah_kartu_terpakai_perhari', 'LIKE', '%'.$request->search_kartu_terpakai.'%');
+            $query->where('jumlah_kartu_terpakai_perhari', 'LIKE', '%' . $request->search_kartu_terpakai . '%');
         }
 
         // Date range filtering
@@ -190,7 +190,7 @@ class VtrenController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Gagal menambahkan data: '.$e->getMessage());
+                ->with('error', 'Gagal menambahkan data: ' . $e->getMessage());
         }
     }
 
@@ -281,7 +281,7 @@ class VtrenController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Gagal update data: '.$e->getMessage());
+                ->with('error', 'Gagal update data: ' . $e->getMessage());
         }
     }
 
@@ -296,7 +296,7 @@ class VtrenController extends Controller
                 ->with('success', "Data catatan kartu di Ponpes '{$nama_ponpes}' berhasil dihapus!");
         } catch (\Exception $e) {
             return redirect()->back()
-                ->with('error', 'Gagal menghapus data: '.$e->getMessage());
+                ->with('error', 'Gagal menghapus data: ' . $e->getMessage());
         }
     }
 
@@ -314,7 +314,7 @@ class VtrenController extends Controller
 
         $data = $query->orderBy('created_at', 'desc')->get();
 
-        $filename = 'list_catatan_kartu_vtren_'.Carbon::now()->format('Y-m-d_H-i-s').'.csv';
+        $filename = 'list_catatan_kartu_vtren_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
 
         $headers = [
             'Content-type' => 'text/csv',
@@ -326,6 +326,7 @@ class VtrenController extends Controller
 
         $rows = [[
             'No',
+            'Tanggal',
             'Nama Ponpes',
             'Spam Vtren Kartu Baru',
             'Spam Vtren Kartu Bekas',
@@ -335,7 +336,6 @@ class VtrenController extends Controller
             'Card Supporting',
             'PIC',
             'Jumlah Kartu Terpakai Per Hari',
-            'Tanggal',
             'Dibuat Pada',
         ]];
 
@@ -343,7 +343,8 @@ class VtrenController extends Controller
         foreach ($data as $row) {
             $rows[] = [
                 $no++,
-                $row->nama_ponpes,
+                $row->tanggal ? Carbon::parse($row->tanggal)->format('Y-m-d') : '',
+                $row->ponpes->nama_ponpes,
                 $row->spam_vtren_kartu_baru ?? '',
                 $row->spam_vtren_kartu_bekas ?? '',
                 $row->spam_vtren_kartu_goip ?? '',
@@ -352,7 +353,6 @@ class VtrenController extends Controller
                 $row->card_supporting ?? '',
                 $row->pic ?? '',
                 $row->jumlah_kartu_terpakai_perhari ?? '',
-                $row->tanggal ? Carbon::parse($row->tanggal)->format('Y-m-d') : '',
                 $row->created_at ? Carbon::parse($row->created_at)->format('Y-m-d H:i:s') : '',
             ];
         }
@@ -416,7 +416,7 @@ class VtrenController extends Controller
         // Optional: Set paper size and orientation
         $pdf->setPaper('A4', 'landscape');
 
-        $filename = 'list_catatan_kartu_vtren_'.Carbon::now()->translatedFormat('d_M_Y').'.pdf';
+        $filename = 'list_catatan_kartu_vtren_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
 
         return $pdf->download($filename);
     }

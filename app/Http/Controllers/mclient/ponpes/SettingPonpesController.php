@@ -17,13 +17,13 @@ class SettingPonpesController extends Controller
     {
         $filters = [
             // === Pencarian teks biasa ===
-            'search_keterangan' => fn ($q, $v) => $q->where('keterangan', 'LIKE', "%{$v}%"),
-            'search_pic_1' => fn ($q, $v) => $q->where('pic_1', 'LIKE', "%{$v}%"),
-            'search_pic_2' => fn ($q, $v) => $q->where('pic_2', 'LIKE', "%{$v}%"),
+            'search_keterangan' => fn($q, $v) => $q->where('keterangan', 'LIKE', "%{$v}%"),
+            'search_pic_1' => fn($q, $v) => $q->where('pic_1', 'LIKE', "%{$v}%"),
+            'search_pic_2' => fn($q, $v) => $q->where('pic_2', 'LIKE', "%{$v}%"),
 
             // === Relasi ponpes.namaWilayah ===
-            'search_nama_ponpes' => fn ($q, $v) => $q->whereHas('ponpes.namaWilayah', fn ($qq) => $qq->where('nama_ponpes', 'LIKE', "%{$v}%")),
-            'search_nama_wilayah' => fn ($q, $v) => $q->whereHas('ponpes.namaWilayah', fn ($qq) => $qq->where('nama_wilayah', 'LIKE', "%{$v}%")),
+            'search_nama_ponpes' => fn($q, $v) => $q->whereHas('ponpes.namaWilayah', fn($qq) => $qq->where('nama_ponpes', 'LIKE', "%{$v}%")),
+            'search_nama_wilayah' => fn($q, $v) => $q->whereHas('ponpes.namaWilayah', fn($qq) => $qq->where('nama_wilayah', 'LIKE', "%{$v}%")),
 
             // === Status (khusus: include NULL / empty) ===
             'search_status' => function ($q, $v) {
@@ -39,12 +39,12 @@ class SettingPonpesController extends Controller
             },
 
             // === Rentang tanggal terlapor ===
-            'search_tanggal_terlapor_dari' => fn ($q, $v) => $q->whereDate('tanggal_terlapor', '>=', $v),
-            'search_tanggal_terlapor_sampai' => fn ($q, $v) => $q->whereDate('tanggal_terlapor', '<=', $v),
+            'search_tanggal_terlapor_dari' => fn($q, $v) => $q->whereDate('tanggal_terlapor', '>=', $v),
+            'search_tanggal_terlapor_sampai' => fn($q, $v) => $q->whereDate('tanggal_terlapor', '<=', $v),
 
             // === Rentang tanggal selesai ===
-            'search_tanggal_selesai_dari' => fn ($q, $v) => $q->whereDate('tanggal_selesai', '>=', $v),
-            'search_tanggal_selesai_sampai' => fn ($q, $v) => $q->whereDate('tanggal_selesai', '<=', $v),
+            'search_tanggal_selesai_dari' => fn($q, $v) => $q->whereDate('tanggal_selesai', '>=', $v),
+            'search_tanggal_selesai_sampai' => fn($q, $v) => $q->whereDate('tanggal_selesai', '<=', $v),
         ];
 
         foreach ($filters as $key => $callback) {
@@ -194,7 +194,7 @@ class SettingPonpesController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Gagal menambahkan data: '.$e->getMessage());
+                ->with('error', 'Gagal menambahkan data: ' . $e->getMessage());
         }
     }
 
@@ -263,7 +263,7 @@ class SettingPonpesController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Gagal update data: '.$e->getMessage());
+                ->with('error', 'Gagal update data: ' . $e->getMessage());
         }
     }
 
@@ -279,7 +279,7 @@ class SettingPonpesController extends Controller
                 ->with('success', "Data setting monitoring client '{$jenisLayanan}' di Ponpes '{$namaPonpes}' berhasil dihapus!");
         } catch (\Exception $e) {
             return redirect()->back()
-                ->with('error', 'Gagal menghapus data: '.$e->getMessage());
+                ->with('error', 'Gagal menghapus data: ' . $e->getMessage());
         }
     }
 
@@ -305,7 +305,7 @@ class SettingPonpesController extends Controller
 
         $pdf = Pdf::loadView('export.public.mclient.ponpes.indexSetting', $pdfData)
             ->setPaper('a4', 'landscape');
-        $filename = 'list_setting_ponpes_'.Carbon::now()->translatedFormat('d_M_Y').'.pdf';
+        $filename = 'list_setting_ponpes_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
 
         return $pdf->download($filename);
     }
@@ -324,7 +324,7 @@ class SettingPonpesController extends Controller
 
         $data = $query->orderBy('created_at', 'desc')->get();
 
-        $filename = 'List_Setting_Ponpes_'.Carbon::now()->format('Y-m-d_H-i-s').'.csv';
+        $filename = 'List_Setting_Ponpes_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
 
         $headers = [
             'Content-type' => 'text/csv',
@@ -334,12 +334,13 @@ class SettingPonpesController extends Controller
             'Expires' => '0',
         ];
 
-        $rows = [['No', 'Nama Ponpes', 'Jenis Layanan', 'Keterangan', 'Tanggal Terlapor', 'Tanggal Selesai', 'Durasi (Hari)', 'Status', 'Pic 1', 'Pic 2', 'Dibuat Pada']];
+        $rows = [['No', 'Nama Ponpes', 'Nama Wilayah', 'Jenis Layanan', 'Keterangan', 'Tanggal Terlapor', 'Tanggal Selesai', 'Durasi (Hari)', 'Status', 'Pic 1', 'Pic 2', 'Dibuat Pada']];
         $no = 1;
         foreach ($data as $row) {
             $rows[] = [
                 $no++,
-                $row->nama_ponpes,
+                $row->ponpes->nama_ponpes,
+                $row->ponpes->namaWilayah->nama_wilayah,
                 $row->formatted_jenis_layanan,
                 $row->keterangan,
                 $row->tanggal_terlapor ? $row->tanggal_terlapor->format('Y-m-d') : '',

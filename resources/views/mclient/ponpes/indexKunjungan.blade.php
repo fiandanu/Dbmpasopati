@@ -296,7 +296,7 @@
                                                         {{ $d->formatted_jenis_layanan }}
                                                     </span>
                                                 </td>
-                                                <td>
+                                                <td class="text-center">
                                                     @if ($d->keterangan && strlen($d->keterangan) > 20)
                                                         <div id="short-text-{{ $d->id }}">
                                                             <div>{{ Str::limit($d->keterangan, 20) }}</div>
@@ -513,54 +513,6 @@
                                                     <label for="durasi_hari" class="form-label">Durasi (Hari)</label>
                                                     <input type="number" class="form-control" id="durasi_hari"
                                                         name="durasi_hari" readonly>
-                                                </div>
-
-                                                <div class="mb-3">
-                                                    <label for="jadwal" class="form-label">Jadwal</label>
-                                                    <input type="date" class="form-control" id="jadwal"
-                                                        name="jadwal">
-                                                </div>
-
-                                                <div class="mb-3">
-                                                    <label for="tanggal_selesai" class="form-label">Tanggal
-                                                        Selesai</label>
-                                                    <input type="date" class="form-control" id="tanggal_selesai"
-                                                        name="tanggal_selesai">
-                                                </div>
-
-                                                <div class="mb-3">
-                                                    <label for="status" class="form-label">Status</label>
-                                                    <select class="form-control" id="status" name="status">
-                                                        <option value="">-- Pilih Status --</option>
-                                                        <option value="pending">Pending</option>
-                                                        <option value="proses">Proses</option>
-                                                        <option value="selesai">Selesai</option>
-                                                        <option value="terjadwal">Terjadwal</option>
-                                                    </select>
-                                                </div>
-
-                                                <div class="mb-3">
-                                                    <label for="pic_1" class="form-label">PIC 1</label>
-                                                    <select class="form-control" id="pic_1" name="pic_1">
-                                                        <option value="">-- Pilih PIC 1 --</option>
-                                                        @foreach ($picList as $pic)
-                                                            <option value="{{ $pic->nama_pic }}">
-                                                                {{ $pic->nama_pic }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-
-                                                <div class="mb-3">
-                                                    <label for="pic_2" class="form-label">PIC 2</label>
-                                                    <select class="form-control" id="pic_2" name="pic_2">
-                                                        <option value="">-- Pilih PIC 2 --</option>
-                                                        @foreach ($picList as $pic)
-                                                            <option value="{{ $pic->nama_pic }}">
-                                                                {{ $pic->nama_pic }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
                                                 </div>
 
                                                 <div class="column">

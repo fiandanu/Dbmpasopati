@@ -64,12 +64,13 @@ class KunjunganController extends Controller
             'Expires' => '0',
         ];
 
-        $rows = [['No', 'Nama Ponpes', 'Jenis Layanan', 'Keterangan', 'Jadwal', 'Tanggal Selesai', 'Durasi (Hari)', 'Status', 'Pic 1', 'Pic 2', 'Dibuat Pada']];
+        $rows = [['No', 'Nama Ponpes','Nama Wilayah', 'Jenis Layanan', 'Keterangan', 'Jadwal', 'Tanggal Selesai', 'Durasi (Hari)', 'Status', 'Pic 1', 'Pic 2', 'Dibuat Pada']];
         $no = 1;
         foreach ($data as $row) {
             $rows[] = [
                 $no++,
-                $row->nama_ponpes,
+                $row->ponpes->nama_ponpes,
+                $row->ponpes->namaWilayah->nama_wilayah,
                 $row->jenis_layanan,
                 $row->keterangan,
                 $row->jadwal ? $row->jadwal->format('Y-m-d') : '',

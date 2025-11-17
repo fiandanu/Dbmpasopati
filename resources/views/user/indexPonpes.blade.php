@@ -209,10 +209,13 @@
                                                 data-bs-target="#editModal{{ $d->id }}" title="Edit">
                                                 <ion-icon name="pencil-outline"></ion-icon>
                                             </button>
-                                            <button data-toggle="modal" data-target="#modal-default{{ $d->id }}"
-                                                title="Hapus">
-                                                <ion-icon name="trash-outline"></ion-icon>
-                                            </button>
+
+                                            @if (Auth::check() && Auth::user()->isSuperAdmin())
+                                                <button data-toggle="modal"
+                                                    data-target="#modal-default{{ $d->id }}" title="Hapus">
+                                                    <ion-icon name="trash-outline"></ion-icon>
+                                                </button>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach
@@ -254,8 +257,7 @@
                                     <div class="modal-footer flex-row-reverse justify-content-between">
                                         <button type="button" class="btn-cancel-modal"
                                             data-dismiss="modal">Tutup</button>
-                                        <form action="{{ route('UserPonpes.ponpes.destroy', $d->id) }}"
-                                            method="POST">
+                                        <form action="{{ route('UserPonpes.ponpes.destroy', $d->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn-delete">Hapus</button>

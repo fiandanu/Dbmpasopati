@@ -149,7 +149,7 @@
                                 <div class="card-total">
                                     <div class="w-full">
                                         <h1 class="title-medium-18">Total Data PONPES</h1>
-                                        <h4 class="display-medium-48">{{ number_format($totalPonpes) }}</h4>
+                                        <span class="display-medium-48">{{ number_format($totalPonpes) }}</span>
                                     </div>
                                     <div class="icon-card-total">
                                         <span class="material-symbols-outlined">
@@ -162,7 +162,7 @@
                                 <div class="card-total">
                                     <div class="w-full">
                                         <h1 class="title-medium-18">Total Extension VTREN</h1>
-                                        <h4 class="display-medium-48">{{ number_format($totalExtensionVtren) }}</h4>
+                                        <span class="display-medium-48">{{ number_format($totalExtensionVtren) }}</span>
                                     </div>
                                     <div class="icon-card-total">
                                         <span class="material-symbols-outlined">
@@ -175,8 +175,8 @@
                                 <div class="card-total">
                                     <div class="w-full">
                                         <h1 class="title-medium-18">Total Extension Reguler</h1>
-                                        <h4 class="display-medium-48">{{ number_format($totalExtensionReguler) }}
-                                        </h4>
+                                        <span class="display-medium-48">{{ number_format($totalExtensionReguler) }}
+                                        </span>
                                     </div>
                                     <div class="icon-card-total">
                                         <span class="material-symbols-outlined">
@@ -733,8 +733,5 @@
             }
         });
     </script>
-
-    </div>
-
 
 @endsection

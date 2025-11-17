@@ -85,25 +85,25 @@ class PengirimanController extends Controller
         // Column-specific search
         if ($request->has('search_nama_ponpes') && ! empty($request->search_nama_ponpes)) {
             $query->whereHas('ponpes.namaWilayah', function ($q) use ($request) {
-                $q->where('nama_ponpes', 'LIKE', '%'.$request->search_nama_ponpes.'%');
+                $q->where('nama_ponpes', 'LIKE', '%' . $request->search_nama_ponpes . '%');
             });
         }
         if ($request->has('search_nama_wilayah') && ! empty($request->search_nama_wilayah)) {
             $query->whereHas('ponpes.namaWilayah', function ($q) use ($request) {
-                $q->where('nama_wilayah', 'LIKE', '%'.$request->search_nama_wilayah.'%');
+                $q->where('nama_wilayah', 'LIKE', '%' . $request->search_nama_wilayah . '%');
             });
         }
         if ($request->has('search_jenis_layanan') && ! empty($request->search_jenis_layanan)) {
-            $query->where('jenis_layanan', 'LIKE', '%'.$request->search_jenis_layanan.'%');
+            $query->where('jenis_layanan', 'LIKE', '%' . $request->search_jenis_layanan . '%');
         }
         if ($request->has('search_keterangan') && ! empty($request->search_keterangan)) {
-            $query->where('keterangan', 'LIKE', '%'.$request->search_keterangan.'%');
+            $query->where('keterangan', 'LIKE', '%' . $request->search_keterangan . '%');
         }
         if ($request->has('search_status') && ! empty($request->search_status)) {
             $searchStatus = strtolower($request->search_status);
 
             $query->where(function ($q) use ($searchStatus) {
-                $q->where('status', 'LIKE', '%'.$searchStatus.'%');
+                $q->where('status', 'LIKE', '%' . $searchStatus . '%');
 
                 // Jika mencari "belum" atau "ditentukan", include yang NULL/empty
                 if (str_contains($searchStatus, 'belum') || str_contains($searchStatus, 'ditentukan')) {
@@ -113,10 +113,10 @@ class PengirimanController extends Controller
             });
         }
         if ($request->has('search_pic_1') && ! empty($request->search_pic_1)) {
-            $query->where('pic_1', 'LIKE', '%'.$request->search_pic_1.'%');
+            $query->where('pic_1', 'LIKE', '%' . $request->search_pic_1 . '%');
         }
         if ($request->has('search_pic_2') && ! empty($request->search_pic_2)) {
-            $query->where('pic_2', 'LIKE', '%'.$request->search_pic_2.'%');
+            $query->where('pic_2', 'LIKE', '%' . $request->search_pic_2 . '%');
         }
 
         // Date range filtering for tanggal_pengiriman
@@ -200,7 +200,7 @@ class PengirimanController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Gagal menambahkan data: '.$e->getMessage());
+                ->with('error', 'Gagal menambahkan data: ' . $e->getMessage());
         }
     }
 
@@ -268,7 +268,7 @@ class PengirimanController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Gagal update data: '.$e->getMessage());
+                ->with('error', 'Gagal update data: ' . $e->getMessage());
         }
     }
 
@@ -284,7 +284,7 @@ class PengirimanController extends Controller
                 ->with('success', "Data pengiriman monitoring client '{$jenisLayanan}' di Ponpes '{$namaPonpes}' berhasil dihapus!");
         } catch (\Exception $e) {
             return redirect()->back()
-                ->with('error', 'Gagal menghapus data: '.$e->getMessage());
+                ->with('error', 'Gagal menghapus data: ' . $e->getMessage());
         }
     }
 
@@ -311,7 +311,7 @@ class PengirimanController extends Controller
 
         $pdf = Pdf::loadView('export.public.mclient.ponpes.indexPengiriman', $pdfData)
             ->setPaper('a4', 'landscape');
-        $filename = 'list_pengiriman_ponpes_'.Carbon::now()->translatedFormat('d_M_Y').'.pdf';
+        $filename = 'list_pengiriman_ponpes_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
 
         return $pdf->download($filename);
     }
@@ -330,7 +330,7 @@ class PengirimanController extends Controller
 
         $data = $query->orderBy('created_at', 'desc')->get();
 
-        $filename = 'List_Pengiriman_Ponpes_'.Carbon::now()->format('Y-m-d_H-i-s').'.csv';
+        $filename = 'List_Pengiriman_Ponpes_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
 
         $headers = [
             'Content-type' => 'text/csv',
@@ -340,12 +340,13 @@ class PengirimanController extends Controller
             'Expires' => '0',
         ];
 
-        $rows = [['No', 'Nama Ponpes', 'Jenis Layanan', 'Keterangan', 'Tanggal Pengiriman', 'Tanggal Sampai', 'Durasi (Hari)', 'Status', 'Pic 1', 'Pic 2', 'Dibuat Pada']];
+        $rows = [['No', 'Nama Ponpes', 'Nama Wilayah', 'Jenis Layanan', 'Keterangan', 'Tanggal Pengiriman', 'Tanggal Sampai', 'Durasi (Hari)', 'Status', 'Pic 1', 'Pic 2', 'Dibuat Pada']];
         $no = 1;
         foreach ($data as $row) {
             $rows[] = [
                 $no++,
-                $row->nama_ponpes,
+                $row->ponpes->nama_ponpes,
+                $row->ponpes->namaWilayah->nama_wilayah ?? '',
                 $row->formatted_jenis_layanan,
                 $row->keterangan,
                 $row->tanggal_pengiriman ? $row->tanggal_pengiriman->format('Y-m-d') : '',

@@ -171,8 +171,8 @@
                     @endphp
                     <tr>
                         <td>{{ $no++ }}</td>
-                        <td>{{ $d->nama_ponpes ?? '-' }}</td>
-                        <td>{{ $d->nama_wilayah ?? '-' }}</td>
+                        <td>{{ $d->ponpes->nama_ponpes ?? '-' }}</td>
+                        <td>{{ $d->ponpes->namaWilayah->nama_wilayah ?? '-' }}</td>
                         <td>{{ Str::limit($d->jenis_kendala ?? 'Belum ditentukan', 25) }}</td>
                         <td>{{ Str::limit($d->detail_kendala ?? '-', 40) }}</td>
                         <td>

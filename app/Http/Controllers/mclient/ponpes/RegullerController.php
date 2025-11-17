@@ -307,8 +307,8 @@ class RegullerController extends Controller
         foreach ($data as $row) {
             $rows[] = [
                 $no++,
-                $row->nama_ponpes,
-                $row->nama_wilayah,
+                $row->ponpes->nama_ponpes,
+                $row->ponpes->namaWilayah->nama_wilayah,
                 $row->jenis_kendala,
                 $row->detail_kendala,
                 $row->tanggal_terlapor ? $row->tanggal_terlapor->format('Y-m-d') : '',

@@ -144,6 +144,7 @@
                 <tr>
                     <th style="width: 5%;">No</th>
                     <th style="width: 17%;">Nama Ponpes</th>
+                    <th style="width: 15%;">Nama Wilayah</th>
                     <th style="width: 10%;">Jenis Layanan</th>
                     <th style="width: 17%;">Keterangan</th>
                     <th style="width: 12%;">Tanggal Terlapor</th>
@@ -168,7 +169,8 @@
                     @endphp
                     <tr>
                         <td>{{ $no++ }}</td>
-                        <td>{{ $d->nama_ponpes ?? '-' }}</td>
+                        <td>{{ $d->ponpes->nama_ponpes ?? '-' }}</td>
+                        <td>{{ $d->ponpes->namaWilayah->nama_wilayah ?? '-' }}</td>
                         <td>{{ $d->formatted_jenis_layanan ?? '-' }}</td>
                         <td>{{ Str::limit($d->keterangan ?? '-', 50) }}</td>
                         <td>

@@ -18,7 +18,7 @@ class LoginController extends Controller
     {
         // Redirect jika sudah login
         if (Auth::check()) {
-            return redirect()->route('dashboard');
+            return redirect()->route('DbUpt');
         }
 
         return view('auth.login');

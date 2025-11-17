@@ -1003,6 +1003,7 @@ textarea.form-control {
     display: block;
     text-align: center;
     transition: background-color 0.2s ease;
+    cursor: pointer;
 }
 
 .list-button:hover {

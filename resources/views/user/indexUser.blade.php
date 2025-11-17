@@ -223,10 +223,12 @@
                                             </button>
 
                                             {{-- Delete Button --}}
-                                            <button data-toggle="modal" data-target="#modal-default{{ $d->id }}"
-                                                title="Hapus">
-                                                <ion-icon name="trash-outline"></ion-icon>
-                                            </button>
+                                            @if (Auth::check() && Auth::user()->isSuperAdmin())
+                                                <button data-toggle="modal"
+                                                    data-target="#modal-default{{ $d->id }}" title="Hapus">
+                                                    <ion-icon name="trash-outline"></ion-icon>
+                                                </button>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach

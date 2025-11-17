@@ -230,11 +230,14 @@
                                                             <ion-icon name="folder-outline"></ion-icon>
                                                         </button>
 
-                                                        <button data-toggle="modal"
-                                                            data-target="#modal-default{{ $d->id }}"
-                                                            title="Hapus Data">
-                                                            <ion-icon name="trash-outline"></ion-icon>
-                                                        </button>
+                                                        @if (Auth::check() && Auth::user()->isSuperAdmin())
+                                                            {{-- DELETE BUTTON --}}
+                                                            <button data-toggle="modal"
+                                                                data-target="#modal-default{{ $d->id }}"
+                                                                title="Hapus Data">
+                                                                <ion-icon name="trash-outline"></ion-icon>
+                                                            </button>
+                                                        @endif
                                                     </div>
                                                 </td>
                                             </tr>

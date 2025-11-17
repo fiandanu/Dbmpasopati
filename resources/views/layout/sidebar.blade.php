@@ -14,9 +14,10 @@
         <!-- Main Sidebar Container -->
         <aside class="main-sidebar sidebar-white-primary elevation-4">
             <!-- Sidebar -->
-            <div class="sidebar">
+            <div class="sidebar flex flex-col h-screen overflow-hidden">
                 <!-- Sidebar user panel -->
-                <div class="d-flex justify-content-center mt-2 py-2 user-panel d-flex align-items-center">
+                <div
+                    class="d-flex justify-content-center mt-2 py-2 user-panel d-flex align-items-center flex-shrink-0 mb-3">
                     <div class="flex justify-center">
                         <img src="{{ asset('img/logo_pasopati.webp') }}" alt="Logo Pasopati" class="logo-responsive">
                     </div>
@@ -25,7 +26,8 @@
                 </div>
 
                 <!-- Sidebar Menu -->
-                <nav class="">
+                <nav
+                    class="flex-1 overflow-y-auto overflow-x-hidden pb-24 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent hover:scrollbar-thumb-gray-500">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                         data-accordion="false">
                         <!-- Data Base -->
@@ -221,15 +223,15 @@
                             </ul>
                         </li>
                     </ul>
-                    {{-- Logout Button - Fixed Bottom --}}
+                    {{-- PROFILE BUTTON - Fixed Bottom --}}
                     <div class="logout-wrapper">
                         <div class="profile-card">
                             <div class="profile-avatar">
                                 <i class="fas fa-user"></i>
                             </div>
                             <div class="profile-info">
-                                <h3>{{Auth::user()->username }}</h3>
-                                <p class="text-kategori">{{Auth::user()->nama ?? 'Guest' }}</p>
+                                <h3>{{ Auth::user()->username }}</h3>
+                                <p class="text-kategori">{{ Auth::user()->nama ?? 'Guest' }}</p>
                             </div>
                             <form method="POST" action="{{ route('logout') }}" class="profile-action">
                                 @csrf

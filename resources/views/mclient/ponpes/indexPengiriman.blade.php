@@ -329,11 +329,11 @@
                                                     {{ $d->tanggal_sampai ? \Carbon\Carbon::parse($d->tanggal_sampai)->translatedFormat('d M Y') : '-' }}
                                                 </td>
                                                 <td class="text-center">
-                                                    @if ($d->tanggal_selesai)
+                                                    @if ($d->tanggal_sampai)
                                                         <span class="Tipereguller">{{ $d->durasi_hari }} hari</span>
                                                     @else
                                                         <span class="Tipereguller durasi-realtime"
-                                                            data-created="{{ ($d->tanggal_terlapor ?? $d->created_at)->format('Y-m-d H:i:s') }}">
+                                                            data-created="{{ ($d->tanggal_pengiriman ?? $d->created_at)->format('Y-m-d H:i:s') }}">
                                                             <span class="durasi-text">Menghitung...</span>
                                                         </span>
                                                     @endif

@@ -245,30 +245,31 @@
                     </div>
                 </div>
 
-                <div class="d-flex gap-12 mb-3">
-                    <div class="gap-12 w-fit text-center">
-                        <div class="d-flex justify-content-center align-items-center gap-12">
-                            <div class="flex-column btn-searchbar column-search">
-                                <input type="date" id="search-tanggal-dari" name="search_tanggal_dari"
-                                    title="Tanggal Dari">
-                            </div>
-                            <div class="flex-column btn-searchbar column-search">
-                                <input type="date" id="search-tanggal-sampai" name="search_tanggal_sampai"
-                                    title="Tanggal Sampai">
-                            </div>
+                <div class="d-flex justify-content-between align-items-center mb-3 w-100">
 
-                            {{-- BUTTON DOWNLOAD PDF CSV --}}
-                            <button onclick="downloadCsv()"
-                                class="btn-page d-flex justify-content-center align-items-center" title="Download CSV">
-                                <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export CSV
-                            </button>
-                            <button onclick="downloadPdf()"
-                                class="btn-page d-flex justify-content-center align-items-center" title="Download PDF">
-                                <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PDF
-                            </button>
-
+                    <div class="d-flex gap-12">
+                        <div class="btn-page">
+                            <input type="date" id="search-tanggal-dari" name="search_tanggal_dari"
+                                title="Tanggal Dari">
+                        </div>
+                        <div class="btn-page">
+                            <input type="date" id="search-tanggal-sampai" name="search_tanggal_sampai"
+                                title="Tanggal Sampai">
                         </div>
                     </div>
+
+                    <div class="d-flex gap-12">
+                        {{-- BUTTON DOWNLOAD PDF CSV --}}
+                        <button onclick="downloadCsv()" class="btn-page d-flex justify-content-center align-items-center"
+                            title="Download CSV">
+                            <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export CSV
+                        </button>
+                        <button onclick="downloadPdf()" class="btn-page d-flex justify-content-center align-items-center"
+                            title="Download PDF">
+                            <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PDF
+                        </button>
+                    </div>
+
                 </div>
 
                 <div class="card">

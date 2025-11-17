@@ -230,6 +230,7 @@
                 @foreach ($data as $d)
                     <tr>
                         <td>{{ $no++ }}</td>
+                        <td>
                             {{ $d->tanggal ? \Carbon\Carbon::parse($d->tanggal)->format('d M Y') : '-' }}
                         </td>
                         <td>{{ $d->ponpes->nama_ponpes ?? '-' }}</td>
@@ -241,7 +242,6 @@
                         <td>{{ $d->jumlah_kartu_terpakai_perhari ?? '-' }}</td>
                         <td>{{ $d->card_supporting ?? '-' }}</td>
                         <td>{{ $d->pic ?? '-' }}</td>
-                        <td>
                     </tr>
                 @endforeach
             </tbody>

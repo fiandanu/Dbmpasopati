@@ -106,11 +106,14 @@
                                                         <ion-icon name="pencil-outline"></ion-icon>
                                                     </button>
 
-                                                    {{-- Delete Button --}}
-                                                    <button data-toggle="modal"
-                                                        data-target="#deleteKanwilModal{{ $k->id }}" title="Hapus">
-                                                        <ion-icon name="trash-outline"></ion-icon>
-                                                    </button>
+                                                    @if (Auth::check() && Auth::user()->isSuperAdmin())
+                                                        {{-- Delete Button --}}
+                                                        <button data-toggle="modal"
+                                                            data-target="#deleteKanwilModal{{ $k->id }}"
+                                                            title="Hapus">
+                                                            <ion-icon name="trash-outline"></ion-icon>
+                                                        </button>
+                                                    @endif
                                                 </td>
                                             </tr>
 
@@ -218,12 +221,15 @@
                                                         <ion-icon name="pencil-outline"></ion-icon>
                                                     </button>
 
-                                                    {{-- Delete Button --}}
-                                                    <button data-toggle="modal"
-                                                        data-target="#deleteNamaWilayahModal{{ $n->id }}"
-                                                        title="Hapus">
-                                                        <ion-icon name="trash-outline"></ion-icon>
-                                                    </button>
+
+                                                    @if (Auth::check() && Auth::user()->isSuperAdmin())
+                                                        {{-- Delete Button --}}
+                                                        <button data-toggle="modal"
+                                                            data-target="#deleteNamaWilayahModal{{ $n->id }}"
+                                                            title="Hapus">
+                                                            <ion-icon name="trash-outline"></ion-icon>
+                                                        </button>
+                                                    @endif
                                                 </td>
                                             </tr>
 
@@ -539,5 +545,4 @@
             }
         });
     </script>
-
 @endsection
