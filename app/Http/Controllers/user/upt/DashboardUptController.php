@@ -12,11 +12,13 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class DashboardUptController extends Controller
 {
 
-    private function getTotalVpasData() {
+    private function getTotalVpasData()
+    {
         return Upt::where('tipe', 'vpas')->count();
     }
 
-    private function getTotalRegulerData() {
+    private function getTotalRegulerData()
+    {
         return Upt::where('tipe', 'reguler')->count();
     }
 
@@ -55,6 +57,10 @@ class DashboardUptController extends Controller
         }
 
         $allData = $query->orderBy('namaupt', 'asc')->get();
+
+        // PERUBAHAN: Filter VpasReg - prioritas Reguler
+        $allData = $this->filterUniqueVpasRegPrioritasReguler($allData);
+
         $filteredData = $this->applyStatusFilter($allData, $request);
 
         if ($perPage == 'all') {
@@ -71,7 +77,9 @@ class DashboardUptController extends Controller
             ]);
         }
 
-        $totalUpt = $filteredData->count();
+        $totalVpasCount = Upt::where('tipe', 'vpas')->count();
+        $totalRegulerCount = Upt::where('tipe', 'reguler')->count();
+        $totalUpt = $totalVpasCount + $totalRegulerCount;
 
         $totalExtensionVpas = $filteredData->where('tipe', 'vpas')->sum(function ($upt) {
             return $upt->dataOpsional->jumlah_extension ?? 0;
@@ -241,21 +249,40 @@ class DashboardUptController extends Controller
             });
         }
 
-        // ===== UBAH INI: Filter tipe =====
-        if ($request->has('search_tipe') && ! empty($request->search_tipe)) {
-            $query->where('tipe', 'LIKE', '%' . $request->search_tipe . '%');
-        }
-        // ===== AKHIR PERUBAHAN =====
-
-        // ===== UBAH INI: Filter Extension Universal =====
         if ($request->has('search_extension') && ! empty($request->search_extension)) {
             $query->whereHas('dataOpsional', function ($q) use ($request) {
                 $q->where('jumlah_extension', 'LIKE', '%' . $request->search_extension . '%');
             });
         }
-        // ===== AKHIR PERUBAHAN =====
+
+        if ($request->has('search_extension') && ! empty($request->search_extension)) {
+            $query->whereHas('dataOpsional', function ($q) use ($request) {
+                $q->where('jumlah_extension', 'LIKE', '%' . $request->search_extension . '%');
+            });
+        }
 
         return $query;
+    }
+
+    private function filterUniqueVpasRegPrioritasReguler($data)
+    {
+        $grouped = [];
+
+        foreach ($data as $item) {
+            // Hilangkan suffix (VpasReg) untuk pengecekan duplikat
+            $baseNama = preg_replace('/\s*\(VpasReg\)$/', '', $item->namaupt);
+
+            if (!isset($grouped[$baseNama])) {
+                $grouped[$baseNama] = $item;
+            } else {
+                // Jika sudah ada, prioritas ke yang tipenya 'reguler'
+                if ($item->tipe === 'reguler') {
+                    $grouped[$baseNama] = $item;
+                }
+            }
+        }
+
+        return collect(array_values($grouped));
     }
 
     private function getVpasWartelStatistics()

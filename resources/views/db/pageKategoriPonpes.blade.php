@@ -144,60 +144,68 @@
                         </div>
 
                         {{-- CARD TOTAL --}}
-                        <div class="row">
-                            <div class="col-md-3 mb-2">
-                                <div class="card-total">
-                                    <div class="w-full">
-                                        <h1 class="title-medium-18">Total Data Vtren</h1>
-                                        <span class="display-medium-48">{{ number_format($getTotalVtren) }}</span>
-                                    </div>
-                                    <div class="icon-card-total">
-                                        <span class="material-symbols-outlined">
-                                            workspace_premium
-                                        </span>
-                                    </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+
+                            <div class="card-total">
+                                <div class="w-full">
+                                    <h1 class="title-medium-18">Total Data PONPES</h1>
+                                    <span class="display-medium-48">{{ number_format($totalPonpes) }}</span>
+                                </div>
+                                <div class="icon-card-total">
+                                    <span class="material-symbols-outlined">
+                                        mosque
+                                    </span>
                                 </div>
                             </div>
-                            <div class="col-md-3 mb-2">
-                                <div class="card-total">
-                                    <div class="w-full">
-                                        <h1 class="title-medium-18">Total Data Reguler</h1>
-                                        <span class="display-medium-48">{{ number_format($getTotalRegulerData) }}</span>
-                                    </div>
-                                    <div class="icon-card-total">
-                                        <span class="material-symbols-outlined">
-                                            assignment
-                                        </span>
-                                    </div>
+
+                            <div class="card-total">
+                                <div class="w-full">
+                                    <h1 class="title-medium-18">Total Data Vtren</h1>
+                                    <span class="display-medium-48">{{ number_format($getTotalVtren) }}</span>
+                                </div>
+                                <div class="icon-card-total">
+                                    <span class="material-symbols-outlined">
+                                        workspace_premium
+                                    </span>
                                 </div>
                             </div>
-                            <div class="col-md-3 mb-2">
-                                <div class="card-total">
-                                    <div class="w-full">
-                                        <h1 class="title-medium-18">Total Extension VTREN</h1>
-                                        <span class="display-medium-48">{{ number_format($totalExtensionVtren) }}</span>
-                                    </div>
-                                    <div class="icon-card-total">
-                                        <span class="material-symbols-outlined">
-                                            video_chat
-                                        </span>
-                                    </div>
+
+                            <div class="card-total">
+                                <div class="w-full">
+                                    <h1 class="title-medium-18">Total Data Reguler</h1>
+                                    <span class="display-medium-48">{{ number_format($getTotalRegulerData) }}</span>
+                                </div>
+                                <div class="icon-card-total">
+                                    <span class="material-symbols-outlined">
+                                        assignment
+                                    </span>
                                 </div>
                             </div>
-                            <div class="col-md-3 mb-2">
-                                <div class="card-total">
-                                    <div class="w-full">
-                                        <h1 class="title-medium-18">Total Extension Reguler</h1>
-                                        <span class="display-medium-48">{{ number_format($totalExtensionReguler) }}
-                                        </span>
-                                    </div>
-                                    <div class="icon-card-total">
-                                        <span class="material-symbols-outlined">
-                                            video_camera_front
-                                        </span>
-                                    </div>
+                            <div class="card-total">
+                                <div class="w-full">
+                                    <h1 class="title-medium-18">Extension VTREN</h1>
+                                    <span class="display-medium-48">{{ number_format($totalExtensionVtren) }}</span>
+                                </div>
+                                <div class="icon-card-total">
+                                    <span class="material-symbols-outlined">
+                                        video_chat
+                                    </span>
                                 </div>
                             </div>
+
+                            <div class="card-total">
+                                <div class="w-full">
+                                    <h1 class="title-medium-18">Extension Reguler</h1>
+                                    <span class="display-medium-48">{{ number_format($totalExtensionReguler) }}
+                                    </span>
+                                </div>
+                                <div class="icon-card-total">
+                                    <span class="material-symbols-outlined">
+                                        video_camera_front
+                                    </span>
+                                </div>
+                            </div>
+
                         </div>
 
                     </div>
@@ -277,19 +285,6 @@
                                     </th>
                                     <th class="text-center align-top">
                                         <div class="d-flex justify-content-center align-items-center flex-column gap-12">
-                                            <span>Tipe</span>
-                                            <div class="btn-searchbar column-search" style="padding: 0;">
-                                                <select id="search-tipe" name="search_tipe"
-                                                    style="border: none; background: transparent; width: 100%; padding: 8px; font-size: 14px;">
-                                                    <option value="">Semua</option>
-                                                    <option value="Vtren">VTREN</option>
-                                                    <option value="reguler">Reguler</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <th class="text-center align-top">
-                                        <div class="d-flex justify-content-center align-items-center flex-column gap-12">
                                             <span>Status PKS</span>
                                             <div class="btn-searchbar column-search">
                                                 <span><i class="fas fa-search"></i></span>
@@ -341,14 +336,6 @@
                                         <td>{{ $d->nama_ponpes }}</td>
                                         <td><span
                                                 class="tag tag-success">{{ $d->namaWilayah->nama_wilayah ?? '-' }}</span>
-                                        </td>
-                                        <td class="text-center">
-                                            <span
-                                                class="
-                                            @if ($d->tipe == 'reguler') Tipereguller
-                                            @elseif($d->tipe == 'vtren') Tipevpas @endif">
-                                                {{ ucfirst($d->tipe) }}
-                                            </span>
                                         </td>
                                         <td class="text-center-status">
                                             @php
@@ -402,7 +389,7 @@
                                         <td class="text-center">
                                             @if ($d->dataOpsional)
                                                 @if (isset($d->dataOpsional->status_wartel))
-                                                    @if ($d->dataOpsional->status_wartel == 'Aktif')
+                                                    @if ($d->dataOpsional->status_wartel == 1)
                                                         <span class="badge-succes">Aktif</span>
                                                     @else
                                                         <span class="badge body-small-12">Tidak Aktif</span>
@@ -441,9 +428,6 @@
                                 @endif
                                 @if (request('search_wilayah'))
                                     <input type="hidden" name="search_wilayah" value="{{ request('search_wilayah') }}">
-                                @endif
-                                @if (request('search_tipe'))
-                                    <input type="hidden" name="search_tipe" value="{{ request('search_tipe') }}">
                                 @endif
                                 @if (request('search_status_pks'))
                                     <input type="hidden" name="search_status_pks"
@@ -537,7 +521,6 @@
                 return {
                     search_namaponpes: $('#search-namaponpes').val().trim(),
                     search_wilayah: $('#search-wilayah').val().trim(),
-                    search_tipe: $('#search-tipe').val().trim(),
                     search_status_pks: $('#search-status-pks').val().trim(),
                     search_status_spp: $('#search-status-spp').val().trim(),
                     search_extension: $('#search-extension').val().trim(),
@@ -556,7 +539,6 @@
                 // Remove ALL filter parameters first
                 url.searchParams.delete('search_namaponpes');
                 url.searchParams.delete('search_wilayah');
-                url.searchParams.delete('search_tipe');
                 url.searchParams.delete('search_status_pks');
                 url.searchParams.delete('search_status_spp');
                 url.searchParams.delete('search_extension');
@@ -593,9 +575,6 @@
             window.clearAllFilters = function() {
                 $('#search-namaponpes').val('');
                 $('#search-wilayah').val('');
-                $('#search-tipe').on('change', function() {
-                    applyFilters();
-                });
                 $('#search-status-pks').val('');
                 $('#search-status-spp').val('');
                 $('#search-extension').val('');
@@ -606,7 +585,6 @@
                 let url = new URL(window.location.href);
                 url.searchParams.delete('search_namaponpes');
                 url.searchParams.delete('search_wilayah');
-                url.searchParams.delete('search_tipe');
                 url.searchParams.delete('search_status_pks');
                 url.searchParams.delete('search_status_spp');
                 url.searchParams.delete('search_extension');
@@ -624,10 +602,6 @@
                     e.preventDefault();
                     applyFilters();
                 }
-            });
-
-            $('#search-tipe').on('change', function() {
-                applyFilters();
             });
 
             // Download CSV function
@@ -714,9 +688,6 @@
             }
             if (urlParams.get('search_wilayah')) {
                 $('#search-wilayah').val(urlParams.get('search_wilayah'));
-            }
-            if (urlParams.get('search_tipe')) {
-                $('#search-tipe').val(urlParams.get('search_tipe'));
             }
             if (urlParams.get('search_status_pks')) {
                 $('#search-status-pks').val(urlParams.get('search_status_pks'));

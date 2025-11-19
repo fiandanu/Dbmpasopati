@@ -12,121 +12,125 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class DashboardPonpesController extends Controller
 {
 
-    private function getTotalVtren() {
+    private function filterUniqueVtrenRegPrioritasReguler($data)
+    {
+        $grouped = [];
+
+        foreach ($data as $item) {
+            // Hilangkan suffix (VpasReg) untuk pengecekan duplikat
+            $baseNama = preg_replace('/\s*\(VtrenReg\)$/', '', $item->nama_ponpes);
+            if (!isset($grouped[$baseNama])) {
+                $grouped[$baseNama] = $item;
+            } else {
+                // Jika sudah ada, prioritas ke yang tipenya 'reguler'
+                if ($item->tipe === 'reguler') {
+                    $grouped[$baseNama] = $item;
+                }
+            }
+        }
+
+        return collect(array_values($grouped));
+    }
+
+    private function getTotalVtren()
+    {
         return Ponpes::where('tipe', 'vtren')->count();
     }
 
-    private function getTotalRegulerData() {
+    private function getTotalRegulerData()
+    {
         return Ponpes::where('tipe', 'reguler')->count();
     }
 
     public function index(Request $request)
     {
-        try {
-            $baseQuery = Ponpes::query();
+        $baseQuery = Ponpes::query();
 
-            if ($request->filled('search_tanggal_dari')) {
-                $baseQuery->whereDate('tanggal', '>=', $request->search_tanggal_dari);
-            }
-            if ($request->filled('search_tanggal_sampai')) {
-                $baseQuery->whereDate('tanggal', '<=', $request->search_tanggal_sampai);
-            }
-
-            // UBAH INI: Panggil method tanpa parameter Request
-            $pksData = $this->getPksStatistics();
-            $sppData = $this->getSppStatistics();
-            $vtrenData = $this->getVtrenStatistics();
-            $regulerData = $this->getRegulerStatistics();
-
-            $query = Ponpes::with(['namaWilayah', 'uploadFolderPks', 'uploadFolderSpp', 'dataOpsional']);
-
-            if ($request->filled('search_tanggal_dari')) {
-                $query->whereDate('tanggal', '>=', $request->search_tanggal_dari);
-            }
-            if ($request->filled('search_tanggal_sampai')) {
-                $query->whereDate('tanggal', '<=', $request->search_tanggal_sampai);
-            }
-
-            $query = $this->applyFilters($query, $request);
-
-            $perPage = $request->get('per_page', 10);
-
-            if (!in_array($perPage, [10, 15, 20, 'all'])) {
-                $perPage = 10;
-            }
-
-            $allData = $query->orderBy('nama_ponpes', 'asc')->get();
-            $filteredData = $this->applyStatusFilter($allData, $request);
-
-            if ($perPage == 'all') {
-                $data = new \Illuminate\Pagination\LengthAwarePaginator(
-                    $filteredData,
-                    $filteredData->count(),
-                    99999,
-                    1,
-                    ['path' => $request->url(), 'query' => $request->query()]
-                );
-            } else {
-                $currentPage = \Illuminate\Pagination\Paginator::resolveCurrentPage('page');
-                $offset = ($currentPage - 1) * $perPage;
-                $itemsForCurrentPage = $filteredData->slice($offset, $perPage)->values();
-
-                $data = new \Illuminate\Pagination\LengthAwarePaginator(
-                    $itemsForCurrentPage,
-                    $filteredData->count(),
-                    $perPage,
-                    $currentPage,
-                    [
-                        'path' => $request->url(),
-                        'query' => $request->query(),
-                        'pageName' => 'page',
-                    ]
-                );
-            }
-
-            $totalPonpes = $filteredData->count();
-
-            $totalExtensionVtren = $filteredData
-                ->where('tipe', 'vtren')
-                ->sum(function ($ponpes) {
-                    return $ponpes->dataOpsional->jumlah_extension ?? 0;
-                });
-
-            $totalExtensionReguler = $filteredData
-                ->where('tipe', 'reguler')
-                ->sum(function ($ponpes) {
-                    return $ponpes->dataOpsional->jumlah_extension ?? 0;
-                });
-
-            // TAMBAH INI: Statistik wartel untuk Vtren dan Reguler
-            $pksStats = $this->getPksStatistics();
-            $sppStats = $this->getSppStatistics();
-            $VtrenWartelStats = $this->getVtrenWartelStatistics();
-            $RegulerWartelStats = $this->getRegulerWartelStatistics();
-            $getTotalVtren = $this->getTotalVtren();
-            $getTotalRegulerData = $this->getTotalRegulerData();
-
-            // UBAH INI: Tambahkan variabel baru di compact
-            return view('db.pageKategoriPonpes', compact(
-                'pksData',
-                'sppData',
-                'vtrenData',
-                'regulerData',
-                'data',
-                'totalPonpes',
-                'totalExtensionVtren',
-                'totalExtensionReguler',
-                'pksStats',
-                'sppStats',
-                'VtrenWartelStats',
-                'RegulerWartelStats',
-                'getTotalVtren',
-                'getTotalRegulerData',
-            ));
-        } catch (\Exception $e) {
-            return redirect()->route('database.DbPonpes')
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        if ($request->filled('search_tanggal_dari')) {
+            $baseQuery->whereDate('tanggal', '>=', $request->search_tanggal_dari);
         }
+        if ($request->filled('search_tanggal_sampai')) {
+            $baseQuery->whereDate('tanggal', '<=', $request->search_tanggal_sampai);
+        }
+
+        $pksData = $this->getPksStatistics();
+        $sppData = $this->getSppStatistics();
+        $vtrenData = $this->getVtrenStatistics();
+        $regulerData = $this->getRegulerStatistics();
+
+        $query = Ponpes::with(['namaWilayah', 'uploadFolderPks', 'uploadFolderSpp', 'dataOpsional']);
+
+        if ($request->filled('search_tanggal_dari')) {
+            $query->whereDate('tanggal', '>=', $request->search_tanggal_dari);
+        }
+        if ($request->filled('search_tanggal_sampai')) {
+            $query->whereDate('tanggal', '<=', $request->search_tanggal_sampai);
+        }
+
+        $query = $this->applyFilters($query, $request);
+
+        $perPage = $request->get('per_page', 10);
+
+        if (!in_array($perPage, [10, 15, 20, 'all'])) {
+            $perPage = 10;
+        }
+
+        $allData = $query->orderBy('nama_ponpes', 'asc')->get();
+
+        // PERUBAHAN: Filter VtrenReg - prioritas Reguler
+        $allData = $this->filterUniqueVtrenRegPrioritasReguler($allData);
+
+        $filteredData = $this->applyStatusFilter($allData, $request);
+
+        if ($perPage == 'all') {
+            $data = new \Illuminate\Pagination\LengthAwarePaginator($filteredData, $filteredData->count(), 99999, 1, ['path' => $request->url(), 'query' => $request->query()]);
+        } else {
+            $currentPage = \Illuminate\Pagination\Paginator::resolveCurrentPage('page');
+            $offset = ($currentPage - 1) * $perPage;
+            $itemsForCurrentPage = $filteredData->slice($offset, $perPage)->values();
+
+            $data = new \Illuminate\Pagination\LengthAwarePaginator($itemsForCurrentPage, $filteredData->count(), $perPage, $currentPage, [
+                'path' => $request->url(),
+                'query' => $request->query(),
+                'pageName' => 'page',
+            ]);
+        }
+
+        $totalVtrenCount = Ponpes::where('tipe', 'vtren')->count();
+        $totalRegulerCount = Ponpes::where('tipe', 'reguler')->count();
+        $totalPonpes = $totalVtrenCount + $totalRegulerCount;
+
+        $totalExtensionVtren = $filteredData->where('tipe', 'vtren')->sum(function ($ponpes) {
+            return $ponpes->dataOpsional->jumlah_extension ?? 0;
+        });
+
+        $totalExtensionReguler = $filteredData->where('tipe', 'reguler')->sum(function ($ponpes) {
+            return $ponpes->dataOpsional->jumlah_extension ?? 0;
+        });
+
+        $pksStats = $this->getPksStatistics();
+        $sppStats = $this->getSppStatistics();
+        $VtrenWartelStats = $this->getVtrenWartelStatistics();
+        $RegulerWartelStats = $this->getRegulerWartelStatistics();
+        $getTotalVtren = $this->getTotalVtren();
+        $getTotalRegulerData = $this->getTotalRegulerData();
+
+        return view('db.pageKategoriPonpes', compact(
+            'pksData',
+            'sppData',
+            'vtrenData',
+            'regulerData',
+            'data',
+            'totalPonpes',
+            'totalExtensionVtren',
+            'totalExtensionReguler',
+            'pksStats',
+            'sppStats',
+            'VtrenWartelStats',
+            'RegulerWartelStats',
+            'getTotalVtren',
+            'getTotalRegulerData',
+        ));
     }
 
     private function applyFilters($query, Request $request)
@@ -141,19 +145,11 @@ class DashboardPonpesController extends Controller
             });
         }
 
-        // ===== TAMBAH INI: Filter tipe =====
-        if ($request->has('search_tipe') && ! empty($request->search_tipe)) {
-            $query->where('tipe', 'LIKE', '%' . $request->search_tipe . '%');
-        }
-        // ===== AKHIR PENAMBAHAN =====
-
-        // ===== UBAH INI: Filter Extension Universal =====
         if ($request->has('search_extension') && ! empty($request->search_extension)) {
             $query->whereHas('dataOpsional', function ($q) use ($request) {
                 $q->where('jumlah_extension', 'LIKE', '%' . $request->search_extension . '%');
             });
         }
-        // ===== AKHIR PERUBAHAN =====
 
         return $query;
     }
@@ -188,9 +184,9 @@ class DashboardPonpesController extends Controller
                 $status = strtolower($d->dataOpsional->status_wartel);
 
                 if ($statusSearch === 'aktif') {
-                    return $d->dataOpsional->status_wartel === 'Aktif';
+                    return $d->dataOpsional->status_wartel == 1;
                 } elseif ($statusSearch === 'tidak aktif' || $statusSearch === 'tidak') {
-                    return $d->dataOpsional->status_wartel === 'Tidak Aktif';
+                    return $d->dataOpsional->status_wartel == 0;
                 }
 
                 return strpos($status, $statusSearch) !== false;
@@ -493,7 +489,7 @@ class DashboardPonpesController extends Controller
             }
 
             // Cek apakah status_wartel bernilai 'Aktif' (string)
-            if ($dataOpsional->status_wartel === 'Aktif') {
+            if ($dataOpsional->status_wartel === 1) {
                 $aktif++;
             } else {
                 $tidakAktif++;
@@ -507,9 +503,6 @@ class DashboardPonpesController extends Controller
         ];
     }
 
-    /**
-     * Statistik status wartel untuk tipe Reguler
-     */
     private function getRegulerWartelStatistics()
     {
         $total = Ponpes::where('tipe', 'reguler')->count();

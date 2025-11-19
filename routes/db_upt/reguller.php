@@ -3,9 +3,6 @@
 use App\Http\Controllers\user\upt\reguler\RegullerController;
 use Illuminate\Support\Facades\Route;
 
-// REGULLER
-
-// User Page BAGIAN UPT
 // AWAL DATA WAJIB NGISI NAMA UPT DAN KANWIL
 
 Route::prefix('upt')

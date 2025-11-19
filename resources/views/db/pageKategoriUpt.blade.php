@@ -143,61 +143,59 @@
                         </div>
 
                         {{-- CARD TOTAL --}}
-                        <div class="row">
-                            <div class="col-md-3 mb-2">
-                                <div class="card-total">
-                                    <div class="w-full">
-                                        <h1 class="title-medium-18">Total Data Vpas</h1>
-                                        <span class="display-medium-48">{{ number_format($totalVpasData) }}</span>
-                                    </div>
-                                    <div class="icon-card-total">
-                                        <span class="material-symbols-outlined">
-                                            workspace_premium
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3 mb-2">
-                                <div class="card-total">
-                                    <div class="w-full">
-                                        <h1 class="title-medium-18">Total Data Reguler</h1>
-                                        <span class="display-medium-48">{{ number_format($totalRegulerData) }}</span>
-                                    </div>
-                                    <div class="icon-card-total">
-                                        <span class="material-symbols-outlined">
-                                            assignment
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3 mb-2">
-                                <div class="card-total">
-                                    <div class="w-full">
-                                        <h1 class="title-medium-18">Vpas Extension</h1>
-                                        <span class="display-medium-48">{{ number_format($totalExtensionVpas) }}</span>
-                                    </div>
-                                    <div class="icon-card-total">
-                                        <span class="material-symbols-outlined">
-                                            video_chat
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3 mb-2">
-                                <div class="card-total">
-                                    <div class="w-full">
-                                        <h1 class="title-medium-18">Reguler Extension</h1>
-                                        <span class="display-medium-48">{{ number_format($totalExtensionReguler) }}</span>
-                                    </div>
-                                    <div class="icon-card-total">
-                                        <span class="material-symbols-outlined">
-                                            video_camera_front
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
 
+                            <div class="card-total">
+                                <div class="w-full">
+                                    <h1 class="title-medium-18">Total Data UPT</h1>
+                                    <span class="display-medium-48">{{ number_format($totalUpt) }}</span>
+                                </div>
+                                <div class="icon-card-total">
+                                    <span class="material-symbols-outlined">account_balance</span>
+                                </div>
+                            </div>
+
+                            <div class="card-total">
+                                <div class="w-full">
+                                    <h1 class="title-medium-18">Total Data Vpas</h1>
+                                    <span class="display-medium-48">{{ number_format($totalVpasData) }}</span>
+                                </div>
+                                <div class="icon-card-total">
+                                    <span class="material-symbols-outlined">workspace_premium</span>
+                                </div>
+                            </div>
+
+                            <div class="card-total">
+                                <div class="w-full">
+                                    <h1 class="title-medium-18">Total Data Reguler</h1>
+                                    <span class="display-medium-48">{{ number_format($totalRegulerData) }}</span>
+                                </div>
+                                <div class="icon-card-total">
+                                    <span class="material-symbols-outlined">assignment</span>
+                                </div>
+                            </div>
+
+                            <div class="card-total">
+                                <div class="w-full">
+                                    <h1 class="title-medium-18">Vpas Extension</h1>
+                                    <span class="display-medium-48">{{ number_format($totalExtensionVpas) }}</span>
+                                </div>
+                                <div class="icon-card-total">
+                                    <span class="material-symbols-outlined">video_chat</span>
+                                </div>
+                            </div>
+
+                            <div class="card-total">
+                                <div class="w-full">
+                                    <h1 class="title-medium-18">Reguler Extension</h1>
+                                    <span class="display-medium-48">{{ number_format($totalExtensionReguler) }}</span>
+                                </div>
+                                <div class="icon-card-total">
+                                    <span class="material-symbols-outlined">video_camera_front</span>
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
 
@@ -206,33 +204,34 @@
                         <div class="row mb-3 align-items-center">
                             <div class="col d-flex justify-content-between align-items-center">
                                 <h3 class="headline-medium-24">Data UPT Keseluruhan</h3>
-                                <div class="d-flex align-items-center gap-2 flex-wrap">
-                                    <div class="d-flex gap-2" id="export-buttons">
-                                        <button onclick="downloadCsv()"
-                                            class="btn-page d-flex justify-content-center align-items-center"
-                                            title="Download CSV">
-                                            <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export CSV
-                                        </button>
-                                        <button onclick="downloadPdf()"
-                                            class="btn-page d-flex justify-content-center align-items-center"
-                                            title="Download PDF">
-                                            <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PDF
-                                        </button>
-                                    </div>
-                                </div>
                             </div>
                         </div>
-                        <div class="d-flex gap-12 mb-3">
-                            <div class="gap-12 w-fit text-center">
-                                <div class="d-flex gap-12">
-                                    <div class="btn-page">
-                                        <input type="date" id="search-tanggal-dari" name="search_tanggal_dari"
-                                            title="Tanggal Dari">
-                                    </div>
-                                    <div class="btn-page">
-                                        <input type="date" id="search-tanggal-sampai" name="search_tanggal_sampai"
-                                            title="Tanggal Sampai">
-                                    </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-3 w-100">
+
+                            <div class="d-flex gap-12">
+                                <div class="btn-page">
+                                    <input type="date" id="search-tanggal-dari" name="search_tanggal_dari"
+                                        title="Tanggal Dari">
+                                </div>
+                                <div class="btn-page">
+                                    <input type="date" id="search-tanggal-sampai" name="search_tanggal_sampai"
+                                        title="Tanggal Sampai">
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-12">
+                                <div class="d-flex gap-2" id="export-buttons">
+                                    <button onclick="downloadCsv()"
+                                        class="btn-page d-flex justify-content-center align-items-center"
+                                        title="Download CSV">
+                                        <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export CSV
+                                    </button>
+                                    <button onclick="downloadPdf()"
+                                        class="btn-page d-flex justify-content-center align-items-center"
+                                        title="Download PDF">
+                                        <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PDF
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -270,19 +269,6 @@
                                             <div class="btn-searchbar column-search">
                                                 <span><i class="fas fa-search"></i></span>
                                                 <input type="text" id="search-kanwil" name="search_kanwil">
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <th class="text-center align-top">
-                                        <div class="d-flex justify-content-center align-items-center flex-column gap-12">
-                                            <span>Tipe</span>
-                                            <div class="btn-searchbar column-search" style="padding: 0;">
-                                                <select id="search-tipe" name="search_tipe"
-                                                    style="border: none; background: transparent; width: 100%; padding: 8px; font-size: 14px;">
-                                                    <option value="">Semua</option>
-                                                    <option value="vpas">VPAS</option>
-                                                    <option value="reguler">Reguler</option>
-                                                </select>
                                             </div>
                                         </div>
                                     </th>
@@ -338,13 +324,13 @@
                                         <td class="text-center">{{ $no++ }}</td>
                                         <td>{{ $d->namaupt }}</td>
                                         <td><span class="tag tag-success">{{ $d->kanwil->kanwil }}</span></td>
-                                        <td class="text-center">
+                                        {{-- <td class="text-center">
                                             <span
                                                 class="@if ($d->tipe == 'reguler') Tipereguller
                                                         @elseif($d->tipe == 'vpas') Tipevpas @endif">
                                                 {{ ucfirst($d->tipe) }}
                                             </span>
-                                        </td>
+                                        </td> --}}
                                         <td class="text-center-status">
                                             @php
                                                 $hasPdf1 =
@@ -412,7 +398,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="8" class="text-center">
+                                        <td colspan="7" class="text-center">
                                             <div class="py-4">
                                                 <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
                                                 <p class="text-muted">Tidak ada data yang ditemukan</p>
@@ -451,9 +437,6 @@
                                 @if (request('search_tanggal_sampai'))
                                     <input type="hidden" name="search_tanggal_sampai"
                                         value="{{ request('search_tanggal_sampai') }}">
-                                @endif
-                                @if (request('search_tipe'))
-                                    <input type="hidden" name="search_tipe" value="{{ request('search_tipe') }}">
                                 @endif
                                 @if (request('search_extension'))
                                     <input type="hidden" name="search_extension"
@@ -541,7 +524,6 @@
                 return {
                     search_namaupt: $('#search-namaupt').val().trim(),
                     search_kanwil: $('#search-kanwil').val().trim(),
-                    search_tipe: $('#search-tipe').val().trim(),
                     search_status_pks: $('#search-status-pks').val().trim(),
                     search_status_spp: $('#search-status-spp').val().trim(),
                     search_extension: $('#search-extension').val().trim(),
@@ -560,7 +542,6 @@
                 // Remove ALL filter parameters first
                 url.searchParams.delete('search_namaupt');
                 url.searchParams.delete('search_kanwil');
-                url.searchParams.delete('search_tipe');
                 url.searchParams.delete('search_status_pks');
                 url.searchParams.delete('search_status_spp');
                 url.searchParams.delete('search_extension');
@@ -597,9 +578,6 @@
             window.clearAllFilters = function() {
                 $('#search-namaupt').val('');
                 $('#search-kanwil').val('');
-                $('#search-tipe').on('change', function() {
-                    applyFilters();
-                });
                 $('#search-status-pks').val('');
                 $('#search-status-spp').val('');
                 $('#search-extension').val('');
@@ -610,7 +588,6 @@
                 let url = new URL(window.location.href);
                 url.searchParams.delete('search_namaupt');
                 url.searchParams.delete('search_kanwil');
-                url.searchParams.delete('search_tipe');
                 url.searchParams.delete('search_status_pks');
                 url.searchParams.delete('search_status_spp');
                 url.searchParams.delete('search_extension');
@@ -719,9 +696,6 @@
             }
             if (urlParams.get('search_kanwil')) {
                 $('#search-kanwil').val(urlParams.get('search_kanwil'));
-            }
-            if (urlParams.get('search_tipe')) {
-                $('#search-tipe').val(urlParams.get('search_tipe'));
             }
             if (urlParams.get('search_status_pks')) {
                 $('#search-status-pks').val(urlParams.get('search_status_pks'));
