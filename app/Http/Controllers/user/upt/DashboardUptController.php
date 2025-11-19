@@ -11,6 +11,16 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DashboardUptController extends Controller
 {
+
+    private function getTotalVpasData() {
+        return Upt::where('tipe', 'vpas')->count();
+    }
+
+    private function getTotalRegulerData() {
+        return Upt::where('tipe', 'reguler')->count();
+    }
+
+
     public function index(Request $request)
     {
         $baseQuery = Upt::query();
@@ -75,6 +85,8 @@ class DashboardUptController extends Controller
         $sppStats = $this->getSppStatistics();
         $VpasWartelStats = $this->getVpasWartelStatistics();
         $RegulerWartelStats = $this->getRegulerWartelStatistics();
+        $totalVpasData = $this->getTotalVpasData();
+        $totalRegulerData = $this->getTotalRegulerData();
 
         return view('db.pageKategoriUpt', compact(
             'pksData',
@@ -88,10 +100,11 @@ class DashboardUptController extends Controller
             'pksStats',
             'sppStats',
             'VpasWartelStats',
-            'RegulerWartelStats'
+            'RegulerWartelStats',
+            'totalVpasData',
+            'totalRegulerData',
         ));
     }
-
 
     // EXPORT DATA CARD TOP
     public function exportCardsPdf(Request $request)

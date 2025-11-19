@@ -11,6 +11,15 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DashboardPonpesController extends Controller
 {
+
+    private function getTotalVtren() {
+        return Ponpes::where('tipe', 'vtren')->count();
+    }
+
+    private function getTotalRegulerData() {
+        return Ponpes::where('tipe', 'reguler')->count();
+    }
+
     public function index(Request $request)
     {
         try {
@@ -94,6 +103,8 @@ class DashboardPonpesController extends Controller
             $sppStats = $this->getSppStatistics();
             $VtrenWartelStats = $this->getVtrenWartelStatistics();
             $RegulerWartelStats = $this->getRegulerWartelStatistics();
+            $getTotalVtren = $this->getTotalVtren();
+            $getTotalRegulerData = $this->getTotalRegulerData();
 
             // UBAH INI: Tambahkan variabel baru di compact
             return view('db.pageKategoriPonpes', compact(
@@ -108,7 +119,9 @@ class DashboardPonpesController extends Controller
                 'pksStats',
                 'sppStats',
                 'VtrenWartelStats',
-                'RegulerWartelStats'
+                'RegulerWartelStats',
+                'getTotalVtren',
+                'getTotalRegulerData',
             ));
         } catch (\Exception $e) {
             return redirect()->route('database.DbPonpes')

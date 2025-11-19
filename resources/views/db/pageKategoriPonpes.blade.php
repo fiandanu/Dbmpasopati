@@ -145,20 +145,33 @@
 
                         {{-- CARD TOTAL --}}
                         <div class="row">
-                            <div class="col-md-4 mb-2">
+                            <div class="col-md-3 mb-2">
                                 <div class="card-total">
                                     <div class="w-full">
-                                        <h1 class="title-medium-18">Total Data PONPES</h1>
-                                        <span class="display-medium-48">{{ number_format($totalPonpes) }}</span>
+                                        <h1 class="title-medium-18">Total Data Vtren</h1>
+                                        <span class="display-medium-48">{{ number_format($getTotalVtren) }}</span>
                                     </div>
                                     <div class="icon-card-total">
                                         <span class="material-symbols-outlined">
-                                            mosque
+                                            workspace_premium
                                         </span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4 mb-2">
+                            <div class="col-md-3 mb-2">
+                                <div class="card-total">
+                                    <div class="w-full">
+                                        <h1 class="title-medium-18">Total Data Reguler</h1>
+                                        <span class="display-medium-48">{{ number_format($getTotalRegulerData) }}</span>
+                                    </div>
+                                    <div class="icon-card-total">
+                                        <span class="material-symbols-outlined">
+                                            assignment
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-2">
                                 <div class="card-total">
                                     <div class="w-full">
                                         <h1 class="title-medium-18">Total Extension VTREN</h1>
@@ -171,7 +184,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4 mb-2">
+                            <div class="col-md-3 mb-2">
                                 <div class="card-total">
                                     <div class="w-full">
                                         <h1 class="title-medium-18">Total Extension Reguler</h1>

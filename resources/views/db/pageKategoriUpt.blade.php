@@ -144,20 +144,33 @@
 
                         {{-- CARD TOTAL --}}
                         <div class="row">
-                            <div class="col-md-4 mb-2">
+                            <div class="col-md-3 mb-2">
                                 <div class="card-total">
                                     <div class="w-full">
-                                        <h1 class="title-medium-18">Total Data UPT</h1>
-                                        <span class="display-medium-48">{{ number_format($totalUpt) }}</span>
+                                        <h1 class="title-medium-18">Total Data Vpas</h1>
+                                        <span class="display-medium-48">{{ number_format($totalVpasData) }}</span>
                                     </div>
                                     <div class="icon-card-total">
                                         <span class="material-symbols-outlined">
-                                            account_balance
+                                            workspace_premium
                                         </span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4 mb-2">
+                            <div class="col-md-3 mb-2">
+                                <div class="card-total">
+                                    <div class="w-full">
+                                        <h1 class="title-medium-18">Total Data Reguler</h1>
+                                        <span class="display-medium-48">{{ number_format($totalRegulerData) }}</span>
+                                    </div>
+                                    <div class="icon-card-total">
+                                        <span class="material-symbols-outlined">
+                                            assignment
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-2">
                                 <div class="card-total">
                                     <div class="w-full">
                                         <h1 class="title-medium-18">Vpas Extension</h1>
@@ -170,7 +183,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4 mb-2">
+                            <div class="col-md-3 mb-2">
                                 <div class="card-total">
                                     <div class="w-full">
                                         <h1 class="title-medium-18">Reguler Extension</h1>
