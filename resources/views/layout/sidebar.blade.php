@@ -144,7 +144,7 @@
                                 </span>
                                 <p>Tutorial<i class="right fas fa-angle-left"></i></p>
                             </a>
-                            <ul class="nav nav-treeview">
+                            <ul class="nav nav-treeview" style="display: block;">
                                 <li class="nav-item">
                                     <a href="{{ route('TutorialUpt') }}"
                                         class="nav-link {{ Route::is('TutorialUpt') || Route::is('tutor_vpas.ListDataSpp') || Route::is('tutor_upt.ListDataSpp') ? 'active' : '' }}">
