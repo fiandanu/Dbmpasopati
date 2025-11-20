@@ -125,6 +125,7 @@ class ListDataPonpesController extends Controller
         return $data;
     }
 
+
     // Create mock paginator for "all" option
     private function createMockPaginator($data, Request $request)
     {
@@ -173,6 +174,56 @@ class ListDataPonpesController extends Controller
         }
     }
 
+    private function groupVtrenRegData($allData)
+    {
+        $grouped = collect();
+        $processed = [];
+
+        foreach ($allData as $item) {
+            $baseNama = $this->removeVtrenRegSuffix($item->nama_ponpes);
+
+            if (in_array($baseNama, $processed)) {
+                continue;
+            }
+
+            // Cari semua data dengan nama base yang sama
+            $relatedItems = $allData->filter(function ($d) use ($baseNama) {
+                return $this->removeVtrenRegSuffix($d->nama_ponpes) === $baseNama;
+            });
+
+            if ($relatedItems->count() === 2) {
+                // Ada 2 tipe (reguler + vtren), gabungkan menjadi satu baris
+                $mergedItem = $relatedItems->first();
+
+                // Set jenis_layanan sebagai vtrenreg
+                $mergedItem->jenis_layanan = 'vtrenreg';
+                $mergedItem->combined_ids = $relatedItems->pluck('id')->toArray();
+                $mergedItem->is_combined = true;
+
+                $grouped->push($mergedItem);
+            } else {
+                // Hanya 1 tipe
+                $item->jenis_layanan = $item->tipe;
+                $item->combined_ids = [$item->id];
+                $item->is_combined = false;
+                $grouped->push($item);
+            }
+
+            $processed[] = $baseNama;
+        }
+
+        return $grouped;
+    }
+
+    private function getJenisLayanan()
+    {
+        return [
+            'vtren' => 'Vtren',
+            'reguler' => 'Reguler',
+            'vtrenreg' => 'Vtren + Reguler',
+        ];
+    }
+
 
     public function index(Request $request)
     {
@@ -194,26 +245,27 @@ class ListDataPonpesController extends Controller
         // Apply ordering
         $query->orderBy('tanggal', 'desc');
 
+        $allData = $query->get();
+        $groupedData  = $this->groupVtrenRegData($allData);
+
+        $groupedData = $this->applyStatusFilter($groupedData, $request);
+
         // Handle pagination
         if ($perPage === 'all') {
-            $data = $query->get();
-            $data = $this->applyStatusFilter(collect($data), $request);
-
             // Create a mock paginator for "all" option
-            $data = $this->createMockPaginator($data, $request);
+            $data = $this->createMockPaginator($groupedData, $request);
         } else {
-            // For paginated results, we need to get all data first, apply status filter, then paginate
-            $allData = $query->get();
-            $filteredData = $this->applyStatusFilter($allData, $request);
+            $totalItems = $groupedData->count();
+            $lastPage = (int) ceil($totalItems / $perPage);
+            $currentPage = Paginator::resolveCurrentPage('page');
 
             // Manual pagination of filtered data
-            $currentPage = Paginator::resolveCurrentPage('page');
             $offset = ($currentPage - 1) * $perPage;
-            $itemsForCurrentPage = $filteredData->slice($offset, $perPage)->values();
+            $itemsForCurrentPage = $groupedData->slice($offset, $perPage)->values();
 
             $data = new LengthAwarePaginator(
                 $itemsForCurrentPage,
-                $filteredData->count(),
+                $totalItems,
                 $perPage,
                 $currentPage,
                 [
@@ -229,8 +281,9 @@ class ListDataPonpesController extends Controller
         $vpns = Vpn::all();
 
         $datanamawilayah = NamaWilayah::all();
+        $jenisLayananOptions = $this->getJenisLayanan();
 
-        return view('user.indexPonpes', compact('data', 'providers', 'vpns', 'datanamawilayah'));
+        return view('user.indexPonpes', compact('data', 'providers', 'vpns', 'datanamawilayah', 'jenisLayananOptions'));
     }
 
     public function store(Request $request)
@@ -382,17 +435,14 @@ class ListDataPonpesController extends Controller
         $query = Ponpes::with(['dataOpsional', 'namaWilayah'])->whereIn('tipe', ['reguler', 'vtren']);
         $query = $this->applyFilters($query, $request);
 
-        // Add date sorting when date filters are applied
         if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
             $query = $query->orderBy('tanggal', 'asc');
         }
 
-        $data = $query->get();
-
-        // Apply status filter
+        $allData = $query->get();
+        $data = $this->groupVtrenRegData($allData);
         $data = $this->applyStatusFilter($data, $request);
 
-        // Additional sorting if date filter is applied
         if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
             $data = $data->sortBy('tanggal')->values();
         }
@@ -407,14 +457,18 @@ class ListDataPonpesController extends Controller
             'Expires' => '0',
         ];
 
-        $rows = [['No', 'Nama Ponpes', 'Nama Wilayah', 'Tipe', 'Tanggal Dibuat']];
+        $jenisLayanan = $this->getJenisLayanan();
+        $rows = [['No', 'Nama Ponpes', 'Nama Wilayah', 'Jenis Layanan', 'Tanggal Dibuat']]; // ← 'Tipe' jadi 'Jenis Layanan'
         $no = 1;
+
         foreach ($data as $d) {
+            $layanan = $jenisLayanan[$d->jenis_layanan] ?? $d->jenis_layanan;
+
             $rows[] = [
                 $no++,
                 $d->nama_ponpes,
-                $d->namaWilayah->nama_wilayah ?? '-', // PERBAIKAN: Gunakan relasi namaWilayah
-                ucfirst($d->tipe),
+                $d->namaWilayah->nama_wilayah ?? '-',
+                $layanan, // ← pakai $layanan, bukan ucfirst($d->tipe)
                 Carbon::parse($d->tanggal)->format('d M Y'),
             ];
         }
@@ -430,7 +484,6 @@ class ListDataPonpesController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
-    // PERBAIKAN METHOD exportListPdf (Line ~460)
     public function exportListPdf(Request $request)
     {
         $query = Ponpes::with(['dataOpsional', 'namaWilayah'])->whereIn('tipe', ['reguler', 'vtren']);
@@ -441,23 +494,26 @@ class ListDataPonpesController extends Controller
             $query = $query->orderBy('tanggal', 'asc');
         }
 
-        $data = $query->get();
-
-        // Apply status filter
+        // PERBAIKAN: Tambahkan limit 1000 untuk menghindari memory issues
+        $allData = $query->limit(1000)->get();
+        $data = $this->groupVtrenRegData($allData);
         $data = $this->applyStatusFilter($data, $request);
 
-        // Convert collection to array with nama_wilayah
+        $jenisLayanan = $this->getJenisLayanan();
+
         $dataArray = [];
         foreach ($data as $d) {
+            $layanan = $jenisLayanan[$d->jenis_layanan] ?? $d->jenis_layanan;
+
             $dataArray[] = [
                 'nama_ponpes' => $d->nama_ponpes,
-                'nama_wilayah' => $d->namaWilayah->nama_wilayah ?? '-', // PERBAIKAN: Ambil nama_wilayah
-                'tipe' => $d->tipe,
+                'nama_wilayah' => $d->namaWilayah->nama_wilayah ?? '-',
+                'jenis_layanan' => $layanan,
                 'tanggal' => $d->tanggal,
             ];
         }
 
-        // Additional sorting using correct field name
+        // Additional sorting menggunakan field tanggal yang benar
         if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
             usort($dataArray, function ($a, $b) {
                 $dateA = strtotime($a['tanggal']);
@@ -469,8 +525,11 @@ class ListDataPonpesController extends Controller
 
         $pdfData = [
             'title' => 'List Data Ponpes',
-            'data' => $dataArray,
+            'data' => $data,
+            'dataArray' => $dataArray,
+            'jenisLayanan' => $jenisLayanan,
             'generated_at' => Carbon::now()->format('d M Y H:i:s'),
+            'total_records' => count($dataArray),
         ];
 
         $pdf = Pdf::loadView('export.public.user.indexPonpes', $pdfData)

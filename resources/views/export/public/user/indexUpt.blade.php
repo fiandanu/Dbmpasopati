@@ -129,6 +129,11 @@
             color: #666;
             font-style: italic;
         }
+
+        .badge-vpasreg {
+            background-color: #ffc107;
+            color: #333;
+        }
     </style>
 </head>
 
@@ -150,7 +155,7 @@
                     <th style="width: 5%;">No</th>
                     <th style="width: 25%;">Nama UPT</th>
                     <th style="width: 15%;">Kanwil</th>
-                    <th style="width: 10%;">Tipe</th>
+                    <th style="width: 10%;">Jenis Layanan</th>
                     <th style="width: 15%;">Tanggal Dibuat</th>
                 </tr>
             </thead>
@@ -158,29 +163,24 @@
                 @php $no = 1; @endphp
                 @foreach ($data as $d)
                     @php
-                        // FIXED: Use calculated_status if available, otherwise calculate
-                        if (isset($d['calculated_status'])) {
-                            $status = $d['calculated_status'];
-                        } else {
-                            // Fallback calculation if calculated_status not available
-                            $dataOpsional = (object) ($d['db_opsional_upt'] ?? null);
-                            $filledFields = 0;
-                            if ($dataOpsional) {
-                                foreach ($optionalFields as $field) {
-                                    if (!empty($dataOpsional->$field ?? '')) {
-                                        $filledFields++;
-                                    }
-                                }
-                            }
-                        }
+                        $jenis_layanan = $d->jenis_layanan ?? $d->tipe;
+
+                        $badgeClass = match (strtolower($jenis_layanan)) {
+                            'vpas' => 'badge-vpas',
+                            'reguler' => 'badge-reguler',
+                            'vpasreg' => 'badge-warning',
+                            default => 'badge-reguler',
+                        };
+
+                        $layananText = $jenisLayanan[$jenis_layanan] ?? ucfirst($jenis_layanan);
                     @endphp
                     <tr>
                         <td>{{ $no++ }}</td>
                         <td>{{ $d->namaupt }}</td>
                         <td>{{ $d->kanwil->kanwil }}</td>
                         <td>
-                            <span class="badge badge-{{ $d->tipe == 'vpas' ? 'vpas' : 'reguler' }}">
-                                {{ ucfirst($d->tipe) }}
+                            <span class="badge {{ $badgeClass }}">
+                                {{ $layananText }}
                             </span>
                         </td>
                         <td>{{ \Carbon\Carbon::parse($d->tanggal)->format('d M Y') }}</td>

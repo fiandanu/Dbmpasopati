@@ -37,7 +37,8 @@
                         <input type="date" id="search-tanggal-dari" name="search_tanggal_dari" title="Tanggal Dari">
                     </div>
                     <div class="btn-searchbar column-search">
-                        <input type="date" id="search-tanggal-sampai" name="search_tanggal_sampai" title="Tanggal Sampai">
+                        <input type="date" id="search-tanggal-sampai" name="search_tanggal_sampai"
+                            title="Tanggal Sampai">
                     </div>
                 </div>
             </div>
@@ -206,12 +207,8 @@
                                     <tr>
                                         <td class="text-center">{{ $no++ }}</td>
                                         <td>{{ $d->nama_ponpes }}</td>
-                                        <td><span class="tag tag-success">{{ $d->namaWilayah?->nama_wilayah ?? '-' }}</span>
-                                        </td>
-                                        <td class="text-center">
-                                            <span class="@if ($d->tipe == 'reguler') Tipereguller
-                                            @elseif($d->tipe == 'vtren') Tipevpas @endif">
-                                                {{ ucfirst($d->tipe) }}</span>
+                                        <td><span
+                                                class="tag tag-success">{{ $d->namaWilayah?->nama_wilayah ?? '-' }}</span>
                                         </td>
                                         <td class="text-center">
                                             {{ \Carbon\Carbon::parse($d->tanggal)->translatedFormat('M d Y') }}
@@ -256,7 +253,8 @@
                                                     <ion-icon name="folder-outline"></ion-icon>
                                                 </button>
 
-                                                <button data-toggle="modal" data-target="#modal-default{{ $d->id }}">
+                                                <button data-toggle="modal"
+                                                    data-target="#modal-default{{ $d->id }}">
                                                     <ion-icon name="trash-outline"></ion-icon>
                                                 </button>
 
@@ -303,15 +301,16 @@
                                             <div class="modal-content">
                                                 <form
                                                     action="{{ route('DbPonpes.pks.uploadFilePDFPonpesPks', ['id' => $d->id, 'folderNumber' => 1]) }}"
-                                                    method="POST" enctype="multipart/form-data" id="uploadForm{{ $d->id }}">
+                                                    method="POST" enctype="multipart/form-data"
+                                                    id="uploadForm{{ $d->id }}">
                                                     @csrf
 
                                                     <div class="modal-header">
                                                         <label id="uploadModalLabel{{ $d->id }}">Upload PDF PKS
                                                             Ponpes
                                                         </label>
-                                                        <button type="button" class="btn-close-custom" data-dismiss="modal"
-                                                            aria-label="Close">
+                                                        <button type="button" class="btn-close-custom"
+                                                            data-dismiss="modal" aria-label="Close">
                                                             <i class="bi bi-x"></i>
                                                         </button>
                                                     </div>
@@ -319,8 +318,9 @@
                                                         <div class="form-group">
                                                             <label for="folderSelect{{ $d->id }}">Pilih
                                                                 Folder</label>
-                                                            <select class="form-control" id="folderSelect{{ $d->id }}"
-                                                                name="folder" onchange="updateFolder({{ $d->id }}, this.value)">
+                                                            <select class="form-control"
+                                                                id="folderSelect{{ $d->id }}" name="folder"
+                                                                onchange="updateFolder({{ $d->id }}, this.value)">
                                                                 @for ($i = 1; $i <= 2; $i++)
                                                                     @php
                                                                         $originalFileName = null;
@@ -355,14 +355,15 @@
                                                                 <div class="label-medium-14">
                                                                     Status dan Aksi <span
                                                                         id="currentFolder{{ $d->id }}">1</span>
-                                                                    <span id="currentFileName{{ $d->id }}" class="text-muted">
+                                                                    <span id="currentFileName{{ $d->id }}"
+                                                                        class="text-muted">
                                                                         @php
                                                                             $firstFileName = null;
                                                                             if (
                                                                                 $d->uploadFolderPks &&
                                                                                 !empty(
-                                                                                $d->uploadFolderPks->uploaded_pdf_1
-                                                                            )
+                                                                                    $d->uploadFolderPks->uploaded_pdf_1
+                                                                                )
                                                                             ) {
                                                                                 $fullName = basename(
                                                                                     $d->uploadFolderPks->uploaded_pdf_1,
@@ -401,14 +402,17 @@
                                                                                     PDF sudah tersedia untuk Folder
                                                                                     {{ $i }}
                                                                                 </div>
-                                                                                <div class="btn-group mb-3 gap-3" role="group">
+                                                                                <div class="btn-group mb-3 gap-3"
+                                                                                    role="group">
                                                                                     <a href="{{ route('DbPonpes.pks.viewpdf.ponpes', ['id' => $d->id, 'folderNumber' => $i]) }}"
-                                                                                        target="_blank" class="view-btn-pdf"
+                                                                                        target="_blank"
+                                                                                        class="view-btn-pdf"
                                                                                         title="Lihat PDF Folder {{ $i }}">
                                                                                         <i class="fas fa-eye"></i>
                                                                                         View PDF
                                                                                     </a>
-                                                                                    <button type="button" class="delete-btn-pdf"
+                                                                                    <button type="button"
+                                                                                        class="delete-btn-pdf"
                                                                                         data-toggle="modal"
                                                                                         data-target="#deletePdfModal{{ $d->id }}_{{ $i }}"
                                                                                         title="Hapus File PDF Folder {{ $i }}">
@@ -418,7 +422,8 @@
                                                                                 </div>
                                                                             @else
                                                                                 <div class="badge-prosses text-center">
-                                                                                    <i class="fas fa-exclamation-triangle"></i>
+                                                                                    <i
+                                                                                        class="fas fa-exclamation-triangle"></i>
                                                                                     Belum Upload Folder
                                                                                 </div>
                                                                             @endif
@@ -429,12 +434,15 @@
                                                         </div>
 
                                                         <div>
-                                                            <label for="uploaded_pdf{{ $d->id }}" class="btn-upload">
+                                                            <label for="uploaded_pdf{{ $d->id }}"
+                                                                class="btn-upload">
                                                                 Upload PDF
                                                             </label>
-                                                            <input type="file" id="uploaded_pdf{{ $d->id }}" name="uploaded_pdf"
-                                                                accept=".pdf" style="display: none;">
-                                                            <span id="fileNameDisplay{{ $d->id }}" class="text-muted"></span>
+                                                            <input type="file" id="uploaded_pdf{{ $d->id }}"
+                                                                name="uploaded_pdf" accept=".pdf"
+                                                                style="display: none;">
+                                                            <span id="fileNameDisplay{{ $d->id }}"
+                                                                class="text-muted"></span>
                                                             <small class="form-text text-muted">Max Upload
                                                                 10Mb</small>
                                                         </div>
@@ -462,8 +470,8 @@
                                                     <div class="modal-header">
                                                         <label id="editModalLabel{{ $d->id }}">Edit Data
                                                             PKS</label>
-                                                        <button type="button" class="btn-close-custom" data-bs-dismiss="modal"
-                                                            aria-label="Close">
+                                                        <button type="button" class="btn-close-custom"
+                                                            data-bs-dismiss="modal" aria-label="Close">
                                                             <i class="bi bi-x"></i>
                                                         </button>
                                                     </div>
@@ -487,7 +495,8 @@
                                                             <label for="tanggal_kontrak_edit_{{ $d->id }}"
                                                                 class="form-label">Tanggal Kontrak</label>
                                                             <input type="date" class="form-control"
-                                                                id="tanggal_kontrak_edit_{{ $d->id }}" name="tanggal_kontrak"
+                                                                id="tanggal_kontrak_edit_{{ $d->id }}"
+                                                                name="tanggal_kontrak"
                                                                 value="{{ $d->uploadFolderPks && $d->uploadFolderPks->tanggal_kontrak ? $d->uploadFolderPks->tanggal_kontrak->format('Y-m-d') : '' }}">
                                                         </div>
                                                         <div class="mb-3">
@@ -510,15 +519,19 @@
                                     </div>
                                     {{-- Delete PDF Modals for Each Folder --}}
                                     @for ($i = 1; $i <= 2; $i++)
-                                        <div class="modal fade" id="deletePdfModal{{ $d->id }}_{{ $i }}" tabindex="-1" role="dialog"
-                                            aria-labelledby="deletePdfModalLabel{{ $d->id }}_{{ $i }}" aria-hidden="true">
+                                        <div class="modal fade"
+                                            id="deletePdfModal{{ $d->id }}_{{ $i }}" tabindex="-1"
+                                            role="dialog"
+                                            aria-labelledby="deletePdfModalLabel{{ $d->id }}_{{ $i }}"
+                                            aria-hidden="true">
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
                                                     <div class="modal-body text-center align-items-center">
                                                         <ion-icon name="alert-circle-outline"
                                                             class="text-9xl text-[var(--yellow-04)]"></ion-icon>
                                                         <p class="headline-large-32">Anda Yakin?</p>
-                                                        <label>Apakah PDF Folder {{ $i }} dari <b>{{ $d->nama_ponpes }}</b> ingin
+                                                        <label>Apakah PDF Folder {{ $i }} dari
+                                                            <b>{{ $d->nama_ponpes }}</b> ingin
                                                             dihapus?</label>
                                                     </div>
                                                     <div class="modal-footer flex-row-reverse justify-content-between">
@@ -561,7 +574,8 @@
                             <form method="GET" class="d-flex align-items-center">
                                 <!-- Preserve all search parameters -->
                                 @if (request('search_namaponpes'))
-                                    <input type="hidden" name="search_namaponpes" value="{{ request('search_namaponpes') }}">
+                                    <input type="hidden" name="search_namaponpes"
+                                        value="{{ request('search_namaponpes') }}">
                                 @endif
                                 @if (request('search_wilayah'))
                                     <input type="hidden" name="search_wilayah" value="{{ request('search_wilayah') }}">
@@ -579,8 +593,8 @@
                                 @endif
 
                                 <div class="d-flex align-items-center">
-                                    <select name="per_page" class="form-control form-control-sm pr-2" style="width: auto;"
-                                        onchange="this.form.submit()">
+                                    <select name="per_page" class="form-control form-control-sm pr-2"
+                                        style="width: auto;" onchange="this.form.submit()">
                                         <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10
                                         </option>
                                         <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>15
@@ -687,7 +701,8 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="nama_wilayah_id" class="form-label">Nama Wilayah</label>
-                                    <input type="text" class="form-control" id="nama_wilayah" name="nama_wilayah" readonly>
+                                    <input type="text" class="form-control" id="nama_wilayah" name="nama_wilayah"
+                                        readonly>
                                 </div>
                             </div>
                         </div>
@@ -700,7 +715,8 @@
                             <div class="column">
                                 <div class="mb-3">
                                     <label for="tanggal_kontrak" class="form-label">Tanggal Kontrak</label>
-                                    <input type="date" class="form-control" id="tanggal_kontrak" name="tanggal_kontrak">
+                                    <input type="date" class="form-control" id="tanggal_kontrak"
+                                        name="tanggal_kontrak">
                                 </div>
                                 <div class="mb-3">
                                     <label for="tanggal_jatuh_tempo" class="form-label">Tanggal Jatuh Tempo</label>
@@ -728,7 +744,7 @@
 
     {{-- Search By Column JavaScript --}}
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
             // Function to get current filter values
             function getFilters() {
                 return {
@@ -742,7 +758,7 @@
             }
 
             // Function to apply filters and redirect (GLOBAL - bisa dipanggil dari tombol)
-            window.applyFilters = function () {
+            window.applyFilters = function() {
                 let filters = getFilters();
                 let url = new URL(window.location.href);
 
@@ -765,7 +781,7 @@
             };
 
             // Function to clear all search filters (GLOBAL - bisa dipanggil dari tombol Reset)
-            window.clearAllFilters = function () {
+            window.clearAllFilters = function() {
                 // Clear semua input field dulu
                 $('#search-namaponpes').val('');
                 $('#search-wilayah').val('');
@@ -787,21 +803,21 @@
             };
 
             // Bind keypress event to all search input fields (Enter masih berfungsi)
-            $('.column-search input').on('keypress', function (e) {
+            $('.column-search input').on('keypress', function(e) {
                 if (e.which === 13) { // Enter key
                     applyFilters();
                 }
             });
 
             // Clear individual column search when input is emptied
-            $('.column-search input').on('keyup', function (e) {
+            $('.column-search input').on('keyup', function(e) {
                 if (e.which === 13 && $(this).val().trim() === '') {
                     applyFilters(); // Apply filters to update URL (removing empty filter)
                 }
             });
 
             // Download functions with current filters
-            window.downloadCsv = function () {
+            window.downloadCsv = function() {
                 let filters = getFilters();
                 let form = document.createElement('form');
                 form.method = 'GET';
@@ -823,7 +839,7 @@
                 document.body.removeChild(form);
             };
 
-            window.downloadPdf = function () {
+            window.downloadPdf = function() {
                 let filters = getFilters();
                 let form = document.createElement('form');
                 form.method = 'GET';
@@ -882,13 +898,14 @@
             currentFolderSpan.textContent = folder;
 
             // Update action URL with the selected folder - PERBAIKAN PENTING!
-            form.action = "{{ route('DbPonpes.pks.uploadFilePDFPonpesPks', ['id' => ':id', 'folderNumber' => ':folder']) }}"
+            form.action =
+                "{{ route('DbPonpes.pks.uploadFilePDFPonpesPks', ['id' => ':id', 'folderNumber' => ':folder']) }}"
                 .replace(':id', id)
                 .replace(':folder', folder);
 
             // Hide all folder actions
             const allFolderActions = document.querySelectorAll(`[id^="folderActions${id}_"]`);
-            allFolderActions.forEach(function (element) {
+            allFolderActions.forEach(function(element) {
                 element.style.display = 'none';
             });
 
@@ -911,10 +928,10 @@
         }
 
         // Auto-hide alerts after 5 seconds
-        document.addEventListener('DOMContentLoaded', function () {
-            setTimeout(function () {
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
                 const alerts = document.querySelectorAll('.alert');
-                alerts.forEach(function (alert) {
+                alerts.forEach(function(alert) {
                     if (alert.classList.contains('show')) {
                         alert.classList.remove('show');
                         setTimeout(() => alert.remove(), 150);
@@ -926,10 +943,10 @@
 
     {{-- File Name Display --}}
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             // Loop melalui semua input file berdasarkan ID dinamis
-            document.querySelectorAll('input[type="file"][id^="uploaded_pdf"]').forEach(function (input) {
-                input.addEventListener('change', function () {
+            document.querySelectorAll('input[type="file"][id^="uploaded_pdf"]').forEach(function(input) {
+                input.addEventListener('change', function() {
                     const id = this.id.replace('uploaded_pdf', ''); // Ambil ID dari input
                     const fileNameDisplay = document.getElementById('fileNameDisplay' +
                         id); // Ambil elemen span
@@ -946,13 +963,13 @@
     {{-- JS Modal Add --}}
     <script>
         // Searchable Ponpes dropdown functionality
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const ponpesSearch = document.getElementById('ponpes_search');
             const ponpesDropdown = document.getElementById('ponpesDropdownMenu');
             const ponpesOptions = document.querySelectorAll('.ponpes-option');
 
             if (ponpesSearch) {
-                ponpesSearch.addEventListener('input', function () {
+                ponpesSearch.addEventListener('input', function() {
                     const searchTerm = this.value.toLowerCase();
                     let hasVisibleOption = false;
 
@@ -974,7 +991,7 @@
                 });
 
                 // Hapus event listener focus atau modifikasi agar tidak auto-open
-                ponpesSearch.addEventListener('focus', function () {
+                ponpesSearch.addEventListener('focus', function() {
                     // Hanya buka jika ada input
                     if (this.value.length > 0) {
                         const searchTerm = this.value.toLowerCase();
@@ -996,7 +1013,7 @@
             }
 
             // Tutup dropdown saat klik di luar
-            document.addEventListener('click', function (event) {
+            document.addEventListener('click', function(event) {
                 if (!event.target.closest('.dropdown')) {
                     if (ponpesDropdown) {
                         ponpesDropdown.style.display = 'none';
@@ -1032,7 +1049,7 @@
         // Clear selection when search is cleared
         const ponpesSearchInput = document.getElementById('ponpes_search');
         if (ponpesSearchInput) {
-            ponpesSearchInput.addEventListener('input', function () {
+            ponpesSearchInput.addEventListener('input', function() {
                 if (this.value === '') {
                     document.getElementById('nama_ponpes').value = '';
                     document.getElementById('nama_wilayah').value = '';
@@ -1040,7 +1057,7 @@
             });
         }
         // Reset form when modal is closed
-        $('#addModal').on('hidden.bs.modal', function () {
+        $('#addModal').on('hidden.bs.modal', function() {
             document.getElementById('ponpes_search').value = '';
             document.getElementById('nama_ponpes').value = '';
             document.getElementById('nama_wilayah').value = '';

@@ -34,26 +34,14 @@ class PksController extends Controller
 
     private function applyFilters($query, Request $request)
     {
-        // Global search
-        if ($request->has('table_search') && ! empty($request->table_search)) {
-            $searchTerm = $request->table_search;
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('nama_ponpes', 'LIKE', '%'.$searchTerm.'%')
-                    ->orWhereHas('namaWilayah', function ($q) use ($searchTerm) {
-                        $q->where('nama_wilayah', 'LIKE', '%'.$searchTerm.'%');
-                    })
-                    ->orWhere('tanggal', 'LIKE', '%'.$searchTerm.'%');
-            });
-        }
-
         // Column-specific searches
         if ($request->has('search_namaponpes') && ! empty($request->search_namaponpes)) {
-            $query->where('nama_ponpes', 'LIKE', '%'.$request->search_namaponpes.'%');
+            $query->where('nama_ponpes', 'LIKE', '%' . $request->search_namaponpes . '%');
         }
 
         if ($request->has('search_wilayah') && ! empty($request->search_wilayah)) {
             $query->whereHas('namaWilayah', function ($q) use ($request) {
-                $q->where('nama_wilayah', 'LIKE', '%'.$request->search_wilayah.'%');
+                $q->where('nama_wilayah', 'LIKE', '%' . $request->search_wilayah . '%');
             });
         }
 
@@ -146,7 +134,10 @@ class PksController extends Controller
                     ->whereNull('tanggal_jatuh_tempo');
             })
             ->orderBy('nama_ponpes')
-            ->get();
+            ->get()
+            ->unique(function ($ponpes) {
+                return preg_replace('/\s*\(VtrenReg\)$/', '', $ponpes->nama_ponpes);
+            });
 
         return view('db.ponpes.pks.indexPks', compact('data', 'ponpesList'));
     }
@@ -169,7 +160,7 @@ class PksController extends Controller
             $data = $data->sortBy('tanggal')->values();
         }
 
-        $filename = 'list_ponpes_pks_'.Carbon::now()->format('Y-m-d_H-i-s').'.csv';
+        $filename = 'list_ponpes_pks_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
 
         $headers = [
             'Content-type' => 'text/csv',
@@ -230,7 +221,7 @@ class PksController extends Controller
 
         $pdf = Pdf::loadView('export.public.db.ponpes.indexPks', $pdfData)
             ->setPaper('a4', 'landscape');
-        $filename = 'list_ponpes_pks_'.Carbon::now()->translatedFormat('d_M_Y').'.pdf';
+        $filename = 'list_ponpes_pks_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
 
         return $pdf->download($filename);
     }
@@ -246,13 +237,13 @@ class PksController extends Controller
             $ponpes = Ponpes::findOrFail($id);
             $uploadFolder = UploadFolderPonpesPks::where('data_ponpes_id', $id)->first();
 
-            $columnName = 'uploaded_pdf_'.$folderNumber;
+            $columnName = 'uploaded_pdf_' . $folderNumber;
 
             if (! $uploadFolder || empty($uploadFolder->$columnName)) {
                 return abort(404, 'File PDF belum diupload untuk folder ini.');
             }
 
-            $filePath = storage_path('app/public/'.$uploadFolder->$columnName);
+            $filePath = storage_path('app/public/' . $uploadFolder->$columnName);
 
             if (! file_exists($filePath)) {
                 return abort(404, 'File tidak ditemukan di storage.');
@@ -260,9 +251,9 @@ class PksController extends Controller
 
             return response()->file($filePath);
         } catch (\Exception $e) {
-            Log::error('Error viewing PDF: '.$e->getMessage());
+            Log::error('Error viewing PDF: ' . $e->getMessage());
 
-            return abort(500, 'Error loading PDF: '.$e->getMessage());
+            return abort(500, 'Error loading PDF: ' . $e->getMessage());
         }
     }
 
@@ -301,7 +292,7 @@ class PksController extends Controller
             );
 
             // Tentukan kolom berdasarkan folder number
-            $columnName = 'uploaded_pdf_'.$folderNumber;
+            $columnName = 'uploaded_pdf_' . $folderNumber;
 
             // Hapus file lama jika ada
             if (! empty($uploadFolder->$columnName) && Storage::disk('public')->exists($uploadFolder->$columnName)) {
@@ -311,10 +302,10 @@ class PksController extends Controller
             // Buat nama file unik
             $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
             $sanitizedName = preg_replace('/[^A-Za-z0-9\-_.]/', '_', $originalName);
-            $filename = time().'_folder'.$folderNumber.'_'.$sanitizedName.'.pdf';
+            $filename = time() . '_folder' . $folderNumber . '_' . $sanitizedName . '.pdf';
 
             // Simpan file
-            $directory = 'ponpes/pks/folder_'.$folderNumber;
+            $directory = 'ponpes/pks/folder_' . $folderNumber;
             if (! Storage::disk('public')->exists($directory)) {
                 Storage::disk('public')->makeDirectory($directory);
             }
@@ -331,13 +322,13 @@ class PksController extends Controller
 
             Log::info("PDF uploaded successfully for Ponpes PKS ID: {$id}, Folder: {$folderNumber}, Path: {$path}");
 
-            return redirect()->back()->with('success', 'PDF Folder '.$folderNumber.' berhasil di-upload!');
+            return redirect()->back()->with('success', 'PDF Folder ' . $folderNumber . ' berhasil di-upload!');
         } catch (\Illuminate\Validation\ValidationException $e) {
             return redirect()->back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
-            Log::error('Error uploading PDF PKS: '.$e->getMessage());
+            Log::error('Error uploading PDF PKS: ' . $e->getMessage());
 
-            return redirect()->back()->with('error', 'Gagal upload file: '.$e->getMessage());
+            return redirect()->back()->with('error', 'Gagal upload file: ' . $e->getMessage());
         }
     }
 
@@ -352,7 +343,7 @@ class PksController extends Controller
             $ponpes = Ponpes::findOrFail($id);
             $uploadFolder = UploadFolderPonpesPks::where('data_ponpes_id', $id)->first();
 
-            $columnName = 'uploaded_pdf_'.$folderNumber;
+            $columnName = 'uploaded_pdf_' . $folderNumber;
 
             if (! $uploadFolder || empty($uploadFolder->$columnName)) {
                 return redirect()->back()->with('error', 'File PDF belum di-upload untuk folder ini.');
@@ -370,11 +361,11 @@ class PksController extends Controller
 
             Log::info("PDF deleted successfully for Ponpes PKS ID: {$id}, Folder: {$folderNumber}");
 
-            return redirect()->back()->with('success', 'File PDF Folder '.$folderNumber.' berhasil dihapus');
+            return redirect()->back()->with('success', 'File PDF Folder ' . $folderNumber . ' berhasil dihapus');
         } catch (\Exception $e) {
-            Log::error('Error deleting PDF PKS: '.$e->getMessage());
+            Log::error('Error deleting PDF PKS: ' . $e->getMessage());
 
-            return redirect()->back()->with('error', 'Gagal menghapus file: '.$e->getMessage());
+            return redirect()->back()->with('error', 'Gagal menghapus file: ' . $e->getMessage());
         }
     }
 
@@ -403,9 +394,9 @@ class PksController extends Controller
 
             return redirect()->back()->with('success', 'Data PKS berhasil diupdate');
         } catch (\Exception $e) {
-            Log::error('Error updating PKS: '.$e->getMessage());
+            Log::error('Error updating PKS: ' . $e->getMessage());
 
-            return redirect()->back()->with('error', 'Gagal mengupdate data: '.$e->getMessage());
+            return redirect()->back()->with('error', 'Gagal mengupdate data: ' . $e->getMessage());
         }
     }
 
@@ -439,9 +430,9 @@ class PksController extends Controller
 
             return redirect()->back()->with('success', 'Data PKS berhasil ditambahkan');
         } catch (\Exception $e) {
-            Log::error('Error creating PKS: '.$e->getMessage());
+            Log::error('Error creating PKS: ' . $e->getMessage());
 
-            return redirect()->back()->with('error', 'Gagal menambahkan data: '.$e->getMessage())->withInput();
+            return redirect()->back()->with('error', 'Gagal menambahkan data: ' . $e->getMessage())->withInput();
         }
     }
 
@@ -469,9 +460,9 @@ class PksController extends Controller
 
             return redirect()->back()->with('success', 'Data PKS berhasil dihapus');
         } catch (\Exception $e) {
-            Log::error('Error deleting Ponpes PKS: '.$e->getMessage());
+            Log::error('Error deleting Ponpes PKS: ' . $e->getMessage());
 
-            return redirect()->back()->with('error', 'Gagal menghapus data: '.$e->getMessage());
+            return redirect()->back()->with('error', 'Gagal menghapus data: ' . $e->getMessage());
         }
     }
 }

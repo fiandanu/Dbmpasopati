@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title }}</title>
+
     <style>
         @page {
             size: A4 landscape;
@@ -130,6 +131,7 @@
             font-style: italic;
         }
     </style>
+
 </head>
 
 <body>
@@ -157,13 +159,23 @@
             <tbody>
                 @php $no = 1; @endphp
                 @foreach ($data as $d)
+                    @php
+                        $jenis_layanan = $d->jenis_layanan ?? $d->tipe;
+
+                        $badgeClass = match (strtolower($jenis_layanan)) {
+                            'vtren' => 'badge-vtren',
+                            'reguler' => 'badge-reguler',
+                            'vtrenreg' => 'badge-warning',
+                        };
+                        $layananText = $jenisLayanan[$jenis_layanan] ?? ucfirst($jenis_layanan);
+                    @endphp
                     <tr>
                         <td>{{ $no++ }}</td>
                         <td>{{ $d['nama_ponpes'] }}</td>
                         <td>{{ $d['nama_wilayah'] }}</td>
                         <td>
-                            <span class="badge badge-{{ $d['tipe'] == 'vtren' ? 'vtren' : 'reguler' }}">
-                                {{ ucfirst($d['tipe']) }}
+                            <span class="badge {{ $badgeClass }}">
+                                {{ $layananText }}
                             </span>
                         </td>
                         <td>{{ \Carbon\Carbon::parse($d['tanggal'])->format('d M Y') }}</td>

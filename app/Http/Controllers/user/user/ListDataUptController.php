@@ -158,6 +158,15 @@ class ListDataUptController extends Controller
         }
     }
 
+    private function getJenisLayanan()
+    {
+        return [
+            'vpas' => 'VPAS',
+            'reguler' => 'Reguler',
+            'vpasreg' => 'VPAS + Reguler',
+        ];
+    }
+
     public function UserPage(Request $request)
     {
         // Get UPT data with reguler and vpas types, include relationships
@@ -172,39 +181,37 @@ class ListDataUptController extends Controller
 
         // Validate per_page
         if (! in_array($perPage, [10, 15, 20, 'all'])) {
-            $perPage = 10; // Changed from 20 to 10 as default
+            $perPage = 10;
         }
 
         // Apply ordering
         $query->orderBy('tanggal', 'desc');
 
+        // MODIFIKASI: Group data by namaUpt base untuk menggabungkan VpasReg
+        $allData = $query->get();
+        $groupedData = $this->groupVpasRegData($allData);
+
+        // Apply status filter
+        $groupedData = $this->applyStatusFilter(collect($groupedData), $request);
+
         // Handle pagination
-        // Manual pagination yang lebih aman
         if ($perPage === 'all') {
-            $data = $query->get();
-            $data = $this->applyStatusFilter(collect($data), $request);
-            $data = $this->createMockPaginator($data, $request);
+            $data = $this->createMockPaginator($groupedData, $request);
         } else {
-            $allData = $query->get();
-            $filteredData = $this->applyStatusFilter($allData, $request);
-
-            // Hitung total pages berdasarkan filtered data
-            $totalItems = $filteredData->count();
+            $totalItems = $groupedData->count();
             $lastPage = (int) ceil($totalItems / $perPage);
-
             $currentPage = Paginator::resolveCurrentPage('page');
 
-            // PERBAIKAN: Validasi current page tidak melebihi last page
             if ($currentPage > $lastPage && $lastPage > 0) {
                 $currentPage = $lastPage;
             }
 
             $offset = ($currentPage - 1) * $perPage;
-            $itemsForCurrentPage = $filteredData->slice($offset, $perPage)->values();
+            $itemsForCurrentPage = $groupedData->slice($offset, $perPage)->values();
 
             $data = new LengthAwarePaginator(
                 $itemsForCurrentPage,
-                $totalItems, // Gunakan total filtered items
+                $totalItems,
                 $perPage,
                 $currentPage,
                 [
@@ -215,14 +222,55 @@ class ListDataUptController extends Controller
             );
         }
 
-        // Get providers and VPN data for the modals
         $providers = Provider::all();
         $vpns = Vpn::all();
-
         $datakanwil = Kanwil::orderBy('kanwil')->limit(100)->get();
+        $jenisLayananOptions = $this->getJenisLayanan();
 
-        return view('user.indexUser', compact('data', 'providers', 'vpns', 'datakanwil'));
+        return view('user.indexUser', compact('data', 'providers', 'vpns', 'datakanwil', 'jenisLayananOptions'));
     }
+
+    private function groupVpasRegData($allData)
+    {
+        $grouped = collect();
+        $processed = [];
+
+        foreach ($allData as $item) {
+            $baseNama = $this->removeVpasRegSuffix($item->namaupt);
+
+            if (in_array($baseNama, $processed)) {
+                continue;
+            }
+
+            // Cari semua data dengan nama base yang sama
+            $relatedItems = $allData->filter(function ($d) use ($baseNama) {
+                return $this->removeVpasRegSuffix($d->namaupt) === $baseNama;
+            });
+
+            if ($relatedItems->count() === 2) {
+                // Ada 2 tipe (reguler + vpas), gabungkan menjadi satu baris
+                $mergedItem = $relatedItems->first();
+
+                // Set jenis_layanan sebagai vpasreg
+                $mergedItem->jenis_layanan = 'vpasreg';
+                $mergedItem->combined_ids = $relatedItems->pluck('id')->toArray();
+                $mergedItem->is_combined = true;
+
+                $grouped->push($mergedItem);
+            } else {
+                // Hanya 1 tipe
+                $item->jenis_layanan = $item->tipe;
+                $item->combined_ids = [$item->id];
+                $item->is_combined = false;
+                $grouped->push($item);
+            }
+
+            $processed[] = $baseNama;
+        }
+
+        return $grouped;
+    }
+
 
     public function UserPageStore(Request $request)
     {
@@ -373,19 +421,16 @@ class ListDataUptController extends Controller
         $query = Upt::with('dataOpsional')->whereIn('tipe', ['reguler', 'vpas']);
         $query = $this->applyFilters($query, $request);
 
-        // FIXED: Add date sorting when date filters are applied
         if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
             $query = $query->orderBy('tanggal', 'asc');
         }
 
-        $data = $query->get();
-
-        // Apply status filter
+        $allData = $query->get();
+        $data = $this->groupVpasRegData($allData);
         $data = $this->applyStatusFilter($data, $request);
 
-        // FIXED: Additional sorting if date filter is applied
         if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
-            $data = $data->sortBy('tanggal')->values(); // Re-sort collection by tanggal
+            $data = $data->sortBy('tanggal')->values();
         }
 
         $filename = 'list_upt_reguler_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
@@ -398,15 +443,19 @@ class ListDataUptController extends Controller
             'Expires' => '0',
         ];
 
-        $rows = [['No', 'Nama UPT', 'Kanwil', 'Tipe', 'Tanggal Dibuat', 'Status Update']];
+        $jenisLayanan = $this->getJenisLayanan();
+        $rows = [['No', 'Nama UPT', 'Kanwil', 'Jenis Layanan', 'Tanggal Dibuat', 'Status Update']];
         $no = 1;
+
         foreach ($data as $d) {
             $status = $this->calculateStatus($d->dataOpsional);
+            $layanan = $jenisLayanan[$d->jenis_layanan] ?? $d->jenis_layanan;
+
             $rows[] = [
                 $no++,
                 $d->namaupt,
                 $d->kanwil->kanwil ?? '-',
-                ucfirst($d->tipe),
+                $layanan,
                 Carbon::parse($d->tanggal)->format('d M Y'),
                 $status,
             ];
@@ -428,19 +477,20 @@ class ListDataUptController extends Controller
         $query = Upt::with('dataOpsional')->whereIn('tipe', ['reguler', 'vpas']);
         $query = $this->applyFilters($query, $request);
 
-        // FIXED: Add date sorting when date filters are applied - using correct field 'tanggal'
         if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
-            $query = $query->orderBy('tanggal', 'asc'); // Changed from 'created_at' to 'tanggal'
+            $query = $query->orderBy('tanggal', 'asc');
         }
 
-        $data = $query->get();
-
-        // Apply status filter
+        $allData = $query->get();
+        $data = $this->groupVpasRegData($allData);
         $data = $this->applyStatusFilter($data, $request);
+
+        $jenisLayanan = $this->getJenisLayanan();
 
         $pdfData = [
             'title' => 'List Data UPT',
             'data' => $data,
+            'jenisLayanan' => $jenisLayanan,
             'optionalFields' => $this->optionalFields,
             'generated_at' => Carbon::now()->format('d M Y H:i:s'),
         ];
@@ -451,4 +501,5 @@ class ListDataUptController extends Controller
 
         return $pdf->download($filename);
     }
+    
 }

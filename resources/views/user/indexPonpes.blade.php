@@ -205,10 +205,16 @@
                                         <td><span class="tag tag-success">{{ $d->namaWilayah->nama_wilayah ?? '-' }}</span>
                                         </td>
                                         <td class="text-center">
-                                            <span
-                                                class="@if ($d->tipe == 'reguler') Tipereguller @elseif($d->tipe == 'vtren') Tipevpas @endif">
-                                                {{ ucfirst($d->tipe) }}
-                                            </span>
+                                            @php 
+                                                $layananClass = match (strtolower($d->jenis_layanan ?? '')) {
+                                                    'vtren' => 'Tipevpas',
+                                                    'reguler' => 'Tipereguller',
+                                                    'vtrenreg' => 'badge-prosses',
+                                                    default => '',
+                                                };
+                                                $layananText = $jenisLayananOptions[$d->jenis_layanan] ?? ucfirst($d->jenis_layanan ?? '');
+                                            @endphp
+                                            <span class="{{ $layananClass }}">{{ $layananText }}</span>
                                         </td>
                                         <td class="text-center">
                                             {{ \Carbon\Carbon::parse($d->tanggal)->translatedFormat('d M Y') }}

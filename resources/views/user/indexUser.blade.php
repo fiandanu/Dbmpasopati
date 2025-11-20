@@ -186,7 +186,6 @@
                             </thead>
                             <tbody>
                                 @php
-                                    // Ubah dari $no = 1; menjadi:
                                     if (request('per_page') == 'all') {
                                         $no = 1;
                                     } else {
@@ -205,11 +204,17 @@
                                         </td>
                                         <td><span class="tag tag-success">{{ $d->kanwil->kanwil ?? '-' }}</span></td>
                                         <td class="text-center">
-                                            <span
-                                                class="
-                                                        @if ($d->tipe == 'reguler') Tipereguller
-                                                        @elseif($d->tipe == 'vpas') Tipevpas @endif">
-                                                {{ ucfirst($d->tipe) }}
+                                            @php 
+                                                $layananClass = match (strtolower($d->jenis_layanan ?? '')) {
+                                                    'vpas' => 'Tipevpas',
+                                                    'reguler' => 'Tipereguller',
+                                                    'vpasreg' => 'badge-prosses',
+                                                    default => '',
+                                                };
+                                                $layananText = $jenisLayananOptions[$d->jenis_layanan] ?? ucfirst($d->jenis_layanan ?? '-');
+                                            @endphp
+                                            <span class="{{  $layananClass }}">
+                                                {{ $layananText }}
                                             </span>
                                         </td>
                                         <td class="text-center">
