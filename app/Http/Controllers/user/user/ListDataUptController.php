@@ -69,34 +69,18 @@ class ListDataUptController extends Controller
 
     private function applyFilters($query, Request $request)
     {
-        // Global search
-        if ($request->has('table_search') && ! empty($request->table_search)) {
-            $searchTerm = $request->table_search;
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('namaupt', 'LIKE', '%'.$searchTerm.'%')
-                    ->orWhereHas('kanwil', function ($q) use ($searchTerm) {
-                        $q->where('nama', 'LIKE', '%'.$searchTerm.'%');
-                    })
-                    ->orWhere('tanggal', 'LIKE', '%'.$searchTerm.'%')
-                    ->orWhereHas('dataOpsional', function ($subQuery) use ($searchTerm) {
-                        $subQuery->where('pic_upt', 'LIKE', '%'.$searchTerm.'%')
-                            ->orWhere('alamat', 'LIKE', '%'.$searchTerm.'%')
-                            ->orWhere('provider_internet', 'LIKE', '%'.$searchTerm.'%');
-                    });
-            });
-        }
 
         // Column-specific searches
         if ($request->has('search_namaupt') && ! empty($request->search_namaupt)) {
-            $query->where('namaupt', 'LIKE', '%'.$request->search_namaupt.'%');
+            $query->where('namaupt', 'LIKE', '%' . $request->search_namaupt . '%');
         }
         if ($request->has('search_kanwil') && ! empty($request->search_kanwil)) {
             $query->whereHas('kanwil', function ($q) use ($request) {
-                $q->where('kanwil', 'LIKE', '%'.$request->search_kanwil.'%');
+                $q->where('kanwil', 'LIKE', '%' . $request->search_kanwil . '%');
             });
         }
         if ($request->has('search_tipe') && ! empty($request->search_tipe)) {
-            $query->where('tipe', 'LIKE', '%'.$request->search_tipe.'%');
+            $query->where('tipe', 'LIKE', '%' . $request->search_tipe . '%');
         }
 
         // Date range filtering
@@ -154,7 +138,7 @@ class ListDataUptController extends Controller
         // Cari semua data dengan nama UPT base yang sama (dengan atau tanpa suffix)
         $relatedData = Upt::where(function ($query) use ($namaUptBase) {
             $query->where('namaupt', $namaUptBase)
-                ->orWhere('namaupt', $namaUptBase.' (VpasReg)');
+                ->orWhere('namaupt', $namaUptBase . ' (VpasReg)');
         })->get();
 
         // Jika hanya tersisa 1 data, hapus suffix (VpasReg)
@@ -168,7 +152,7 @@ class ListDataUptController extends Controller
         elseif ($relatedData->count() == 2) {
             foreach ($relatedData as $data) {
                 if (! str_contains($data->namaupt, '(VpasReg)')) {
-                    $data->update(['namaupt' => $namaUptBase.' (VpasReg)']);
+                    $data->update(['namaupt' => $namaUptBase . ' (VpasReg)']);
                 }
             }
         }
@@ -195,25 +179,32 @@ class ListDataUptController extends Controller
         $query->orderBy('tanggal', 'desc');
 
         // Handle pagination
+        // Manual pagination yang lebih aman
         if ($perPage === 'all') {
             $data = $query->get();
             $data = $this->applyStatusFilter(collect($data), $request);
-
-            // Create a mock paginator for "all" option
             $data = $this->createMockPaginator($data, $request);
         } else {
-            // For paginated results, we need to get all data first, apply status filter, then paginate
             $allData = $query->get();
             $filteredData = $this->applyStatusFilter($allData, $request);
 
-            // Manual pagination of filtered data
+            // Hitung total pages berdasarkan filtered data
+            $totalItems = $filteredData->count();
+            $lastPage = (int) ceil($totalItems / $perPage);
+
             $currentPage = Paginator::resolveCurrentPage('page');
+
+            // PERBAIKAN: Validasi current page tidak melebihi last page
+            if ($currentPage > $lastPage && $lastPage > 0) {
+                $currentPage = $lastPage;
+            }
+
             $offset = ($currentPage - 1) * $perPage;
             $itemsForCurrentPage = $filteredData->slice($offset, $perPage)->values();
 
             $data = new LengthAwarePaginator(
                 $itemsForCurrentPage,
-                $filteredData->count(),
+                $totalItems, // Gunakan total filtered items
                 $perPage,
                 $currentPage,
                 [
@@ -269,7 +260,7 @@ class ListDataUptController extends Controller
         // Tentukan nama UPT berdasarkan jumlah tipe yang dipilih
         $namaUpt = $cleanNamaUpt;
         if (count($selectedTypes) == 2 && in_array('reguler', $selectedTypes) && in_array('vpas', $selectedTypes)) {
-            $namaUpt = $cleanNamaUpt.' (VpasReg)';
+            $namaUpt = $cleanNamaUpt . ' (VpasReg)';
         }
 
         // Validasi manual untuk kombinasi nama UPT + tipe
@@ -301,7 +292,7 @@ class ListDataUptController extends Controller
 
         // Berikan pesan berdasarkan hasil
         if (count($createdRecords) > 0) {
-            $message = 'Data UPT berhasil ditambahkan untuk tipe: '.implode(', ', $createdRecords);
+            $message = 'Data UPT berhasil ditambahkan untuk tipe: ' . implode(', ', $createdRecords);
 
             return redirect()->route('User.UserPage')->with('success', $message);
         } else {
@@ -397,7 +388,7 @@ class ListDataUptController extends Controller
             $data = $data->sortBy('tanggal')->values(); // Re-sort collection by tanggal
         }
 
-        $filename = 'list_upt_reguler_'.Carbon::now()->format('Y-m-d_H-i-s').'.csv';
+        $filename = 'list_upt_reguler_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
 
         $headers = [
             'Content-type' => 'text/csv',
@@ -456,7 +447,7 @@ class ListDataUptController extends Controller
 
         $pdf = Pdf::loadView('export.public.user.indexUpt', $pdfData)
             ->setPaper('a4', 'landscape');
-        $filename = 'list_upt_reguler_'.Carbon::now()->translatedFormat('d_M_Y').'.pdf';
+        $filename = 'list_upt_reguler_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
 
         return $pdf->download($filename);
     }

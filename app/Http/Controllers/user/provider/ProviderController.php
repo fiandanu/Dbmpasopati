@@ -13,14 +13,54 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ProviderController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $dataprovider = Provider::all();
-        $datavpn = Vpn::all();
+        $perPage = $request->get('per_page', 10);
 
-        return view('user.indexProvider', compact('dataprovider', 'datavpn'));
+        if (! in_array($perPage, [10, 15, 20, 'all'])) {
+            $perPage = 10;
+        }
+
+        // Pagination untuk Provider
+        if ($perPage === 'all') {
+            $dataprovider = Provider::orderBy('nama_provider', 'asc')->get();
+            $dataprovider = new \Illuminate\Pagination\LengthAwarePaginator(
+                $dataprovider,
+                $dataprovider->count(),
+                $dataprovider->count(),
+                1,
+                [
+                    'path' => $request->url(),
+                    'query' => $request->query(),
+                    'pageName' => 'provider_page',
+                ]
+            );
+        } else {
+            $dataprovider = Provider::orderBy('nama_provider', 'asc')
+                ->paginate($perPage, ['*'], 'provider_page');
+        }
+
+        // Pagination untuk VPN
+        if ($perPage === 'all') {
+            $datavpn = Vpn::orderBy('jenis_vpn', 'asc')->get();
+            $datavpn = new \Illuminate\Pagination\LengthAwarePaginator(
+                $datavpn,
+                $datavpn->count(),
+                $datavpn->count(),
+                1,
+                [
+                    'path' => $request->url(),
+                    'query' => $request->query(),
+                    'pageName' => 'vpn_page',
+                ]
+            );
+        } else {
+            $datavpn = Vpn::orderBy('jenis_vpn', 'asc')
+                ->paginate($perPage, ['*'], 'vpn_page');
+        }
+
+        return view('user.indexProvider', compact('dataprovider', 'datavpn', 'perPage'));
     }
-
     public function ProviderPageStore(Request $request)
     {
         $validator = Validator::make(
@@ -83,7 +123,7 @@ class ProviderController extends Controller
         $query = Provider::query();
         $data = $query->orderBy('nama_provider', 'asc')->get();
 
-        $filename = 'list_provider_'.Carbon::now()->translatedFormat('d_M_Y').'.csv';
+        $filename = 'list_provider_' . Carbon::now()->translatedFormat('d_M_Y') . '.csv';
 
         $headers = [
             'Content-type' => 'text/csv',
@@ -124,7 +164,7 @@ class ProviderController extends Controller
 
         $pdf = Pdf::loadView('export.public.user.provider', $pdfData)
             ->setPaper('a4', 'landscape');
-        $filename = 'list_provider_'.Carbon::now()->translatedFormat('d_M_Y').'.pdf';
+        $filename = 'list_provider_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
 
         return $pdf->download($filename);
     }
