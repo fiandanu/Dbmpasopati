@@ -115,26 +115,17 @@
                 <div class="row">
                     <div class="col-12">
 
+                        <!-- Bagian TANGGAL -->
                         <div class="d-flex gap-12">
-                            <div class="gap-12 w-fit text-center">
-                                <h3>Tanggal</h3>
-                                <div class="d-flex justify-content-center align-items-center gap-12">
-                                    <div class="flex-column btn-searchbar column-search">
-                                        <label for="search-tanggal-dari"
-                                            style="display: block; margin-bottom: 4px; font-size: 14px;">Awal</label>
-                                        <input type="date" id="search-tanggal-dari" name="search_tanggal_dari"
-                                            title="Tanggal Dari">
-                                    </div>
-                                    <div class="flex-column btn-searchbar column-search">
-                                        <label for="search-tanggal-sampai"
-                                            style="display: block; margin-bottom: 4px; font-size: 14px;">Akhir</label>
-                                        <input type="date" id="search-tanggal-sampai" name="search_tanggal_sampai"
-                                            title="Tanggal Sampai">
-                                    </div>
-                                </div>
+                            <div class="btn-page">
+                                <input type="date" id="search-tanggal-dari" name="search_tanggal_dari"
+                                    title="Tanggal Dari">
+                            </div>
+                            <div class="btn-page">
+                                <input type="date" id="search-tanggal-sampai" name="search_tanggal_sampai"
+                                    title="Tanggal Sampai">
                             </div>
                         </div>
-
 
                         <div class="row mt-3 mb-3">
                             <!-- Row 1 -->
@@ -240,9 +231,6 @@
                                                         </button>
                                                     </div>
                                                 </div>
-                                            </th>
-                                            <th class="text-center align-top">
-                                                <span>Tanggal</span>
                                             </th>
                                             <th class="align-top">
                                                 <div class="d-flex flex-column gap-12">

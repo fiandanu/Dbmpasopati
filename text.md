@@ -120,8 +120,12 @@ DATA YANG NGAMBIL DARI SERVER ITU UPT DAN PONPES YAITU DARI NAMA UPT DAN KANWIL 
 📝 CATATAN REVISI
 =============================================================
 
-- list data UPT VPASREG itu dijadiin 1 aja di datamanajemen
+- DI PKS SPP Database, Tipenya dihilangin aja 
 
+- list data UPT VPASREG itu dijadiin 1 aja di datamanajemen
+- Halaman Komplain Upt Ponpes Dan Reguler namanya diubah menjadi komplain upt bukan keluhan
+- Monitoring Server Di Disable Dulu aja
+- logo reguller diganti menjadi call
 
 - HALAMAN DATA MANAJEMEN TAMBAHIN SEARCH BY TANGGAL
 - DI TUTORIAL UPT DAN PONPES COUNTNYA DIUBAT MENGIKUTI DATA YANG ADA

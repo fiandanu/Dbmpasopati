@@ -201,7 +201,7 @@
                                 </div>
                                 <div class="icon-card-total">
                                     <span class="material-symbols-outlined">
-                                        video_camera_front
+                                        Call
                                     </span>
                                 </div>
                             </div>

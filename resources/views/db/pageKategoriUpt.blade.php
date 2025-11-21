@@ -191,7 +191,7 @@
                                     <span class="display-medium-48">{{ number_format($totalExtensionReguler) }}</span>
                                 </div>
                                 <div class="icon-card-total">
-                                    <span class="material-symbols-outlined">video_camera_front</span>
+                                    <span class="material-symbols-outlined">Call</span>
                                 </div>
                             </div>
 
