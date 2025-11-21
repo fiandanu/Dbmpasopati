@@ -15,6 +15,18 @@
                         </div>
 
                         <div class="d-flex align-items-center gap-2 flex-wrap">
+
+                            <div class="d-flex gap-12">
+                                <div class="btn-page">
+                                    <input type="date" id="search-tanggal-dari" name="search_tanggal_dari"
+                                        title="Tanggal Dari">
+                                </div>
+                                <div class="btn-page">
+                                    <input type="date" id="search-tanggal-sampai" name="search_tanggal_sampai"
+                                        title="Tanggal Sampai">
+                                </div>
+                            </div>
+
                             <!-- Export Buttons -->
                             <div class="d-flex gap-2" id="export-buttons">
                                 {{-- Button Export CSV --}}
@@ -116,25 +128,6 @@
                 <!-- /.row -->
                 <div class="row">
                     <div class="col-12">
-                        <div class="d-flex gap-12">
-                            <div class="gap-12 w-fit text-center">
-                                <h3>tanggal</h3>
-                                <div class="d-flex justify-content-center align-items-center gap-12">
-                                    <div class="flex-column btn-searchbar column-search">
-                                        <label for="search-tanggal-dari"
-                                            style="display: block; margin-bottom: 4px; font-size: 14px;">Awal</label>
-                                        <input type="date" id="search-tanggal-dari" name="search_tanggal_dari"
-                                            title="Tanggal Dari">
-                                    </div>
-                                    <div class="flex-column btn-searchbar column-search">
-                                        <label for="search-tanggal-sampai"
-                                            style="display: block; margin-bottom: 4px; font-size: 14px;">Akhir</label>
-                                        <input type="date" id="search-tanggal-sampai" name="search_tanggal_sampai"
-                                            title="Tanggal Sampai">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
 
                         <div class="row mt-3 mb-3">
                             <!-- Row 1 -->

@@ -1258,3 +1258,8 @@ body {
     
 }
 
+.disabled-menu {
+    pointer-events: none;   /* tidak bisa diklik */
+    opacity: 0.5;           /* tampak nonaktif */
+}
+

@@ -15,6 +15,19 @@
                         </div>
 
                         <div class="d-flex align-items-center gap-2 flex-wrap">
+
+                            <!-- Bagian TANGGAL -->
+                            <div class="d-flex gap-12">
+                                <div class="btn-page">
+                                    <input type="date" id="search-tanggal-dari" name="search_tanggal_dari"
+                                        title="Tanggal Dari">
+                                </div>
+                                <div class="btn-page">
+                                    <input type="date" id="search-tanggal-sampai" name="search_tanggal_sampai"
+                                        title="Tanggal Sampai">
+                                </div>
+                            </div>
+
                             <!-- Export Buttons -->
                             <div class="d-flex gap-2" id="export-buttons">
                                 {{-- Button Export CSV --}}
@@ -114,18 +127,6 @@
                 <!-- /.row -->
                 <div class="row">
                     <div class="col-12">
-
-                        <!-- Bagian TANGGAL -->
-                        <div class="d-flex gap-12">
-                            <div class="btn-page">
-                                <input type="date" id="search-tanggal-dari" name="search_tanggal_dari"
-                                    title="Tanggal Dari">
-                            </div>
-                            <div class="btn-page">
-                                <input type="date" id="search-tanggal-sampai" name="search_tanggal_sampai"
-                                    title="Tanggal Sampai">
-                            </div>
-                        </div>
 
                         <div class="row mt-3 mb-3">
                             <!-- Row 1 -->
@@ -231,6 +232,9 @@
                                                         </button>
                                                     </div>
                                                 </div>
+                                            </th>
+                                            <th class="text-center align-top">
+                                                <span>Tanggal</span>
                                             </th>
                                             <th class="align-top">
                                                 <div class="d-flex flex-column gap-12">
@@ -510,7 +514,6 @@
                                                                 @endforeach
                                                             </div>
                                                         </div>
-                                                        <!-- INI YANG PENTING: Kirim ID bukan nama -->
                                                         <input type="hidden" id="data_upt_id" name="data_upt_id"
                                                             required>
                                                         <small class="form-text text-muted">Ketik untuk mencari UPT atau
@@ -589,20 +592,6 @@
                                                 </div>
                                                 <div class="column">
                                                     <div class="mb-3">
-                                                        <label for="card_supporting" class="form-label">Card
-                                                            Supporting</label>
-                                                        <select class="form-control" id="card_supporting"
-                                                            name="card_supporting">
-                                                            <option value="">-- Pilih Card Supporting --</option>
-                                                            @foreach ($cardSupportingList as $cardSupporting)
-                                                                <option value="{{ $cardSupporting }}">
-                                                                    {{ $cardSupporting }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="column">
-                                                    <div class="mb-3">
                                                         <label for="jumlah_kartu_terpakai_perhari"
                                                             class="form-label">Jumlah Kartu Terpakai Per Hari</label>
                                                         <input type="text" class="form-control"
@@ -617,6 +606,20 @@
                                             <div class="mb-4">
                                                 <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
                                                     <label>PIC & Tanggal</label>
+                                                </div>
+                                                <div class="column">
+                                                    <div class="mb-3">
+                                                        <label for="card_supporting" class="form-label">Card
+                                                            Supporting</label>
+                                                        <select class="form-control" id="card_supporting"
+                                                            name="card_supporting">
+                                                            <option value="">-- Pilih Card Supporting --</option>
+                                                            @foreach ($cardSupportingList as $cardSupporting)
+                                                                <option value="{{ $cardSupporting }}">
+                                                                    {{ $cardSupporting }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
                                                 </div>
                                                 <div class="column">
                                                     <div class="mb-3">

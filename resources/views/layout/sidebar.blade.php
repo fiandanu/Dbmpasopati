@@ -57,7 +57,7 @@
 
                         <!-- Monitoring Server -->
                         <li
-                            class="nav-item {{ Route::is('GrafikServer') || Route::is('MonitoringUpt') || Route::is('MonitoringPonpes') ? 'menu-open' : '' }}">
+                            class="nav-item disabled-menu {{ Route::is('GrafikServer') || Route::is('MonitoringUpt') || Route::is('MonitoringPonpes') ? 'menu-open' : '' }}">
                             <a href="#" class="nav-link">
                                 <span class="material-symbols-outlined">
                                     shield
@@ -137,14 +137,14 @@
 
                         <!-- Tutorial -->
                         <li
-                            class="nav-item {{ Route::is('TutorialUpt') || Route::is('tutor_ponpes_reguller.TutorialPonpes') || Route::is('tutorial_server') || Route::is('tutorial_mikrotik') || Route::is('tutor_vpas.ListDataSpp') || Route::is('tutor_upt.ListDataSpp') || Route::is('tutorial_ponpes_vtren') || Route::is('tutorial_ponpes_reguller') ? 'menu-open' : '' }}">
+                            class="nav-item {{ Route::is('TutorialUpt') || Route::is('tutor_ponpes_reguller.TutorialPonpes') || Route::is('tutorial_server') || Route::is('tutorial_mikrotik') || Route::is('tutor_vpas.ListDataSpp') || Route::is('tutor_upt.ListDataSpp') || Route::is('tutorial_ponpes_vtren.ListDataSpp') || Route::is('tutorial_ponpes_reguller') || Route::is('server_page.ListDataSpp') || Route::is('mikrotik_page.ListDataSpp') || Route::is('tutor_ponpes_vtren.ListDataSpp') || Route::is('tutor_ponpes_reguller.ListDataSpp') ? 'menu-open' : '' }}">
                             <a href="#" class="nav-link">
                                 <span class="material-symbols-outlined">
                                     lightbulb_2
                                 </span>
                                 <p>Tutorial<i class="right fas fa-angle-left"></i></p>
                             </a>
-                            <ul class="nav nav-treeview" style="display: block;">
+                            <ul class="nav nav-treeview">
                                 <li class="nav-item">
                                     <a href="{{ route('TutorialUpt') }}"
                                         class="nav-link {{ Route::is('TutorialUpt') || Route::is('tutor_vpas.ListDataSpp') || Route::is('tutor_upt.ListDataSpp') ? 'active' : '' }}">
