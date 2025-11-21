@@ -11,7 +11,7 @@
                             <button class="btn-pushmenu" data-widget="pushmenu" role="button">
                                 <i class="fas fa-bars"></i>
                             </button>
-                            <h1 class="headline-large-32 mb-0">Keluhan VPAS</h1>
+                            <h1 class="headline-large-32 mb-0">Komplain VPAS</h1>
                         </div>
 
                         <div class="d-flex align-items-center gap-2 flex-wrap">
@@ -378,7 +378,7 @@
                                                             <ion-icon name="alert-circle-outline"
                                                                 class="text-9xl text-[var(--yellow-04)]"></ion-icon>
                                                             <p class="headline-large-32">Anda Yakin?</p>
-                                                            <label>Apakah Data Keluhan <b> {{ $d->upt->namaupt }} </b>
+                                                            <label>Apakah Data Komplain <b> {{ $d->upt->namaupt }} </b>
                                                                 ingin
                                                                 dihapus?</label>
                                                         </div>

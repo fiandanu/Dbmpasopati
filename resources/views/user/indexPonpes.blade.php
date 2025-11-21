@@ -15,19 +15,6 @@
                         </div>
 
                         <div class="d-flex align-items-center gap-2 flex-wrap">
-                            <!-- Export Buttons -->
-                            <div class="d-flex gap-2" id="export-buttons">
-                                <button onclick="downloadCsv()"
-                                    class="btn-page d-flex justify-content-center align-items-center" title="Download CSV">
-                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export CSV
-                                </button>
-                                <button onclick="downloadPdf()"
-                                    class="btn-page d-flex justify-content-center align-items-center" title="Download PDF">
-                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PDF
-                                </button>
-                            </div>
-
-                            <!-- Add Data Button -->
                             <button class="btn-purple" data-bs-toggle="modal" data-bs-target="#addModal">
                                 <i class="fa fa-plus me-1"></i> Add Data
                             </button>
@@ -114,18 +101,26 @@
         <section class="content">
             <div class="container-fluid">
 
-                <div class="d-flex gap-12">
-                    <div class="gap-12 w-fit">
-                        <div class="d-flex justify-content-center align-items-center gap-12">
-                            <div class="btn-searchbar column-search">
-                                <input type="date" id="search-tanggal-dari" name="search_tanggal_dari"
-                                    title="Tanggal Dari">
-                            </div>
-                            <div class="btn-searchbar column-search">
-                                <input type="date" id="search-tanggal-sampai" name="search_tanggal_sampai"
-                                    title="Tanggal Sampai">
-                            </div>
+                <div class="d-flex justify-content-between align-items-center gap-12 mb-3">
+                    <div class="d-flex justify-content-center align-items-center gap-12">
+                        <div class="btn-searchbar column-search">
+                            <input type="date" id="search-tanggal-dari" name="search_tanggal_dari" title="Tanggal Dari">
                         </div>
+                        <div class="btn-searchbar column-search">
+                            <input type="date" id="search-tanggal-sampai" name="search_tanggal_sampai"
+                                title="Tanggal Sampai">
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2" id="export-buttons">
+                        <button onclick="downloadCsv()" class="btn-page d-flex justify-content-center align-items-center"
+                            title="Download CSV">
+                            <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export CSV
+                        </button>
+                        <button onclick="downloadPdf()" class="btn-page d-flex justify-content-center align-items-center"
+                            title="Download PDF">
+                            <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PDF
+                        </button>
                     </div>
                 </div>
 
@@ -205,14 +200,16 @@
                                         <td><span class="tag tag-success">{{ $d->namaWilayah->nama_wilayah ?? '-' }}</span>
                                         </td>
                                         <td class="text-center">
-                                            @php 
+                                            @php
                                                 $layananClass = match (strtolower($d->jenis_layanan ?? '')) {
                                                     'vtren' => 'Tipevpas',
                                                     'reguler' => 'Tipereguller',
                                                     'vtrenreg' => 'badge-prosses',
                                                     default => '',
                                                 };
-                                                $layananText = $jenisLayananOptions[$d->jenis_layanan] ?? ucfirst($d->jenis_layanan ?? '');
+                                                $layananText =
+                                                    $jenisLayananOptions[$d->jenis_layanan] ??
+                                                    ucfirst($d->jenis_layanan ?? '');
                                             @endphp
                                             <span class="{{ $layananClass }}">{{ $layananText }}</span>
                                         </td>
