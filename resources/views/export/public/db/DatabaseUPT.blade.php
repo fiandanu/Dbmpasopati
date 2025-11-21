@@ -157,7 +157,6 @@
                 <th style="width: 3%;">No</th>
                 <th style="width: 22%;">Nama UPT</th>
                 <th style="width: 12%;">Kanwil</th>
-                <th style="width: 8%;">Tipe</th>
                 <th style="width: 13%;">Status PKS</th>
                 <th style="width: 13%;">Status SPP</th>
                 <th style="width: 10%;">Extension</th>
@@ -172,11 +171,6 @@
                     <td>{{ $d->namaupt }}</td>
                     <td>
                         <span>{{ $d->kanwil->kanwil }}</span>
-                    </td>
-                    <td>
-                        <span class="badge badge-{{ $d->tipe == 'vpas' ? 'vpas' : 'reguler' }}">
-                            {{ ucfirst($d->tipe) }}
-                        </span>
                     </td>
                     <td>
                         @php

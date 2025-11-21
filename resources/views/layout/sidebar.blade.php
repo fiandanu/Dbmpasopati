@@ -99,13 +99,13 @@
                                 <li class="nav-item">
                                     <a href="{{ route('GrafikClient') }}"
                                         class="nav-link {{ Route::is('GrafikClient') ? 'active' : '' }}">
-                                        <p>Grafik UPT</p>
+                                        <p>Grafik Monitoring UPT</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="{{ route('GrafikPonpes') }}"
                                         class="nav-link {{ Route::is('GrafikPonpes') ? 'active' : '' }}">
-                                        <p>Grafik Ponpes</p>
+                                        <p>Grafik Monitoring Ponpes</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">

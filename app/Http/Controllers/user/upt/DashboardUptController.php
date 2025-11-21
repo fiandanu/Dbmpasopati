@@ -167,74 +167,6 @@ class DashboardUptController extends Controller
         return $pdf->download($filename);
     }
 
-    // EXPORT CSV DAN PDF DATA UPT BOTTOM
-    public function exportCsv(Request $request): StreamedResponse
-    {
-        $query = Upt::with(['kanwil', 'uploadFolderPks', 'uploadFolderSpp', 'dataOpsional']);
-
-        $query = $this->applyFilters($query, $request);
-        $data = $query->orderBy('namaupt', 'asc')->get();
-        $data = $this->applyStatusFilter($data, $request);
-
-        $filename = 'dashboard_upt_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
-
-        $headers = [
-            'Content-type' => 'text/csv',
-            'Content-Disposition' => "attachment; filename=$filename",
-            'Pragma' => 'no-cache',
-            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
-            'Expires' => '0',
-        ];
-
-        // Header CSV dengan kolom Tipe
-        $rows = [['No', 'Nama UPT', 'Kanwil', 'Tipe', 'Status PKS', 'Status SPP', 'Extension', 'Status Wartel']];
-
-        $no = 1;
-        foreach ($data as $d) {
-            $extension = $d->dataOpsional ? $d->dataOpsional->jumlah_extension ?? '-' : '-';
-            $statusWartel = $d->dataOpsional && isset($d->dataOpsional->status_wartel) ? ($d->dataOpsional->status_wartel == 1 ? 'Aktif' : 'Tidak Aktif') : '-';
-
-            $rows[] = [$no++, $d->namaupt, $d->kanwil->kanwil, ucfirst($d->tipe), $this->calculatePksStatus($d->uploadFolderPks), $this->calculateSppStatus($d->uploadFolderSpp), $extension, $statusWartel];
-        }
-
-        $callback = function () use ($rows) {
-            $file = fopen('php://output', 'w');
-            foreach ($rows as $row) {
-                fputcsv($file, $row);
-            }
-            fclose($file);
-        };
-
-        return response()->stream($callback, 200, $headers);
-    }
-
-    public function exportPdf(Request $request)
-    {
-        $query = Upt::with(['kanwil', 'uploadFolderPks', 'uploadFolderSpp', 'dataOpsional']);
-
-        $query = $this->applyFilters($query, $request);
-        $data = $query->orderBy('namaupt', 'asc')->get();
-        $data = $this->applyStatusFilter($data, $request);
-
-        $data = $data->map(function ($item) {
-            $item->pks_status = $this->calculatePksStatus($item->uploadFolderPks);
-            $item->spp_status = $this->calculateSppStatus($item->uploadFolderSpp);
-
-            return $item;
-        });
-
-        $pdfData = [
-            'title' => 'Dashboard Database UPT',
-            'data' => $data,
-            'generated_at' => Carbon::now()->format('d M Y H:i:s'),
-        ];
-
-        $pdf = Pdf::loadView('export.public.db.DatabaseUPT', $pdfData)
-            ->setPaper('a4', 'landscape');
-        $filename = 'dashboard_upt_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
-
-        return $pdf->download($filename);
-    }
 
     // FILTER BY KOLOM
     private function applyFilters($query, Request $request)
@@ -259,6 +191,14 @@ class DashboardUptController extends Controller
             $query->whereHas('dataOpsional', function ($q) use ($request) {
                 $q->where('jumlah_extension', 'LIKE', '%' . $request->search_extension . '%');
             });
+        }
+
+        if ($request->filled('search_tanggal_dari')) {
+            $query->whereDate('tanggal', '>=', $request->search_tanggal_dari);
+        }
+
+        if ($request->filled('search_tanggal_sampai')) {
+            $query->whereDate('tanggal', '<=', $request->search_tanggal_sampai);
         }
 
         return $query;
@@ -577,5 +517,159 @@ class DashboardUptController extends Controller
             'belum_update' => $belumUpdate,
             'sudah_update' => $sudahUpdate,
         ];
+    }
+
+    private function removeVpasRegSuffix($namaUpt)
+    {
+        return preg_replace('/\s*\(VpasReg\)$/', '', $namaUpt);
+    }
+
+    private function getJenisLayanan()
+    {
+        return [
+            'vpas' => 'Vpas',
+            'reguler' => 'Reguler',
+            'vpasreg' => 'Vpas + Reguler',
+        ];
+    }
+
+    private function groupVpasRegData($allData)
+    {
+        $grouped = collect();
+        $processed = [];
+
+        foreach ($allData as $item) {
+            $baseNama = $this->removeVpasRegSuffix($item->namaupt);
+
+            if (in_array($baseNama, $processed)) {
+                continue;
+            }
+
+            // Cari semua data dengan nama base yang sama
+            $relatedItems = $allData->filter(function ($d) use ($baseNama) {
+                return $this->removeVpasRegSuffix($d->namaupt) === $baseNama;
+            });
+
+            if ($relatedItems->count() === 2) {
+                // Ada 2 tipe (reguler + vpas), gabungkan menjadi satu baris
+                $mergedItem = $relatedItems->first();
+                $mergedItem->jenis_layanan = 'vpasreg';
+                $mergedItem->combined_ids = $relatedItems->pluck('id')->toArray();
+                $mergedItem->is_combined = true;
+                $grouped->push($mergedItem);
+            } else {
+                // Hanya 1 tipe
+                $item->jenis_layanan = $item->tipe;
+                $item->combined_ids = [$item->id];
+                $item->is_combined = false;
+                $grouped->push($item);
+            }
+
+            $processed[] = $baseNama;
+        }
+
+        return $grouped;
+    }
+
+
+    // EXPORT CSV DAN PDF DATA UPT BOTTOM
+    public function exportCsv(Request $request): StreamedResponse
+    {
+        $query = Upt::with(['kanwil', 'uploadFolderPks', 'uploadFolderSpp', 'dataOpsional']);
+
+        $query = $this->applyFilters($query, $request);
+
+        // UBAH INI: Get all data dulu
+        $allData = $query->orderBy('namaupt', 'asc')->get();
+
+        // TAMBAHKAN INI: Group VpasReg data
+        $groupedData = $this->groupVpasRegData($allData);
+
+        // UBAH INI: Apply status filter ke grouped data
+        $data = $this->applyStatusFilter($groupedData, $request);
+
+        $filename = 'dashboard_upt_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
+
+        $headers = [
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=$filename",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
+        ];
+
+        // UBAH INI: Header dengan Jenis Layanan
+        $rows = [['No', 'Nama UPT', 'Kanwil', 'Jenis Layanan', 'Status PKS', 'Status SPP', 'Extension', 'Status Wartel']];
+
+        // TAMBAHKAN INI
+        $jenisLayanan = $this->getJenisLayanan();
+
+        $no = 1;
+        foreach ($data as $d) {
+            $extension = $d->dataOpsional ? $d->dataOpsional->jumlah_extension ?? '-' : '-';
+            $statusWartel = $d->dataOpsional && isset($d->dataOpsional->status_wartel)
+                ? ($d->dataOpsional->status_wartel == 1 ? 'Aktif' : 'Tidak Aktif')
+                : '-';
+
+            // UBAH INI: Ganti kolom Tipe jadi Jenis Layanan
+            $layanan = $jenisLayanan[$d->jenis_layanan] ?? ucfirst($d->jenis_layanan);
+
+            $rows[] = [
+                $no++,
+                $d->namaupt,
+                $d->kanwil->kanwil,
+                $layanan,  // UBAH INI
+                $this->calculatePksStatus($d->uploadFolderPks),
+                $this->calculateSppStatus($d->uploadFolderSpp),
+                $extension,
+                $statusWartel
+            ];
+        }
+
+        $callback = function () use ($rows) {
+            $file = fopen('php://output', 'w');
+            foreach ($rows as $row) {
+                fputcsv($file, $row);
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    public function exportPdf(Request $request)
+    {
+        $query = Upt::with(['kanwil', 'uploadFolderPks', 'uploadFolderSpp', 'dataOpsional']);
+
+        $query = $this->applyFilters($query, $request);
+
+        $allData = $query->orderBy('namaupt', 'asc')->get();
+
+        $groupedData = $this->groupVpasRegData($allData);
+
+        $data = $this->applyStatusFilter($groupedData, $request);
+
+
+        $data = $data->map(function ($item) {
+            $item->pks_status = $this->calculatePksStatus($item->uploadFolderPks);
+            $item->spp_status = $this->calculateSppStatus($item->uploadFolderSpp);
+
+            return $item;
+        });
+
+        $jenisLayanan = $this->getJenisLayanan();
+
+        $pdfData = [
+            'title' => 'Dashboard Database UPT',
+            'data' => $data,
+            'jenisLayanan' => $jenisLayanan,
+            'generated_at' => Carbon::now()->format('d M Y H:i:s'),
+        ];
+
+        $pdf = Pdf::loadView('export.public.db.DatabaseUPT', $pdfData)
+            ->setPaper('a4', 'landscape');
+        $filename = 'dashboard_upt_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
+
+        return $pdf->download($filename);
     }
 }

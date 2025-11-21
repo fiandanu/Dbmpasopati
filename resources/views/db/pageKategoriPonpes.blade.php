@@ -207,17 +207,30 @@
                             </div>
 
                         </div>
-
                     </div>
                 </div>
 
                 <section class="content">
                     <div class="container-fluid">
-                        <div class="row mb-3 align-items-center">
-                            <div class="col d-flex justify-content-between align-items-center">
-                                <h3 class="headline-medium-24">Data Ponpes Keseluruhan</h3>
-                                <div class="d-flex align-items-center gap-2 flex-wrap">
-                                    <div class="d-flex gap-2" id="export-buttons">
+
+                        <div class="col d-flex justify-content-between align-items-center">
+                            <h3 class="headline-medium-24">Data Ponpes Keseluruhan</h3>
+
+                            <div class="d-flex gap-12">
+                                <div class="d-flex justify-content-center align-items-center gap-12">
+                                    <div class="btn-page">
+                                        <input type="date" id="search-tanggal-dari" name="search_tanggal_dari"
+                                            title="Tanggal Dari">
+                                    </div>
+                                    <div class="btn-page">
+                                        <input type="date" id="search-tanggal-sampai" name="search_tanggal_sampai"
+                                            title="Tanggal Sampai">
+                                    </div>
+                                </div>
+
+
+                                <div class="gap-12" id="export-buttons">
+                                    <div class="d-flex justify-content-center align-items-center gap-12">
                                         <button onclick="downloadCsv()"
                                             class="btn-page d-flex justify-content-center align-items-center"
                                             title="Download CSV">
@@ -231,21 +244,11 @@
                                     </div>
                                 </div>
                             </div>
+
                         </div>
                         <div class="d-flex gap-12 mb-3">
-                            <div class="gap-12 w-fit text-center">
-                                <div class="d-flex justify-content-center align-items-center gap-12">
-                                    <div class="btn-page">
-                                        <input type="date" id="search-tanggal-dari" name="search_tanggal_dari"
-                                            title="Tanggal Dari">
-                                    </div>
-                                    <div class="btn-page">
-                                        <input type="date" id="search-tanggal-sampai" name="search_tanggal_sampai"
-                                            title="Tanggal Sampai">
-                                    </div>
-                                </div>
-                            </div>
                         </div>
+
                     </div>
                 </section>
 

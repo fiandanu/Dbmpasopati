@@ -610,21 +610,6 @@
                                                             placeholder="Auto calculated" readonly>
                                                     </div>
                                                 </div>
-                                                <div class="column">
-                                                    <div class="mb-3">
-                                                        <label for="card_supporting" class="form-label">Card
-                                                            Supporting</label>
-                                                        <select class="form-control" id="card_supporting"
-                                                            name="card_supporting">
-                                                            <option value="">-- Pilih Card Supporting --</option>
-                                                            @foreach ($cardSupportingList as $cardSupporting)
-                                                                <option value="{{ $cardSupporting }}">
-                                                                    {{ $cardSupporting }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                </div>
                                             </div>
 
                                             <!-- PIC & Tanggal Section -->
@@ -640,6 +625,21 @@
                                                             @foreach ($picList as $pic)
                                                                 <option value="{{ $pic->nama_pic }}">
                                                                     {{ $pic->nama_pic }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="column">
+                                                    <div class="mb-3">
+                                                        <label for="card_supporting" class="form-label">Card
+                                                            Supporting</label>
+                                                        <select class="form-control" id="card_supporting"
+                                                            name="card_supporting">
+                                                            <option value="">-- Pilih Card Supporting --</option>
+                                                            @foreach ($cardSupportingList as $cardSupporting)
+                                                                <option value="{{ $cardSupporting }}">
+                                                                    {{ $cardSupporting }}
                                                                 </option>
                                                             @endforeach
                                                         </select>
@@ -804,33 +804,6 @@
                                                                 placeholder="Auto calculated" readonly>
                                                         </div>
                                                     </div>
-                                                    <div class="column">
-                                                        <div class="mb-3">
-                                                            <label for="card_supporting{{ $d->id }}"
-                                                                class="form-label">Card
-                                                                Supporting</label>
-                                                            <select class="form-control"
-                                                                id="card_supporting{{ $d->id }}"
-                                                                name="card_supporting">
-                                                                <option value="">-- Pilih Card Supporting --
-                                                                </option>
-                                                                @foreach ($cardSupportingList as $cardSupporting)
-                                                                    <option value="{{ $cardSupporting }}"
-                                                                        {{ $d->card_supporting == $cardSupporting ? 'selected' : '' }}>
-                                                                        {{ $cardSupporting }}
-                                                                    </option>
-                                                                @endforeach
-                                                                @php
-                                                                    $existingCardSupportings = $cardSupportingList->toArray();
-                                                                @endphp
-                                                                @if ($d->card_supporting && !in_array($d->card_supporting, $existingCardSupportings))
-                                                                    <option value="{{ $d->card_supporting }}" selected>
-                                                                        {{ $d->card_supporting }} (Custom)
-                                                                    </option>
-                                                                @endif
-                                                            </select>
-                                                        </div>
-                                                    </div>
                                                 </div>
 
                                                 <!-- PIC & Tanggal Section -->
@@ -865,6 +838,35 @@
                                                             </select>
                                                         </div>
                                                     </div>
+
+                                                    <div class="column">
+                                                        <div class="mb-3">
+                                                            <label for="card_supporting{{ $d->id }}"
+                                                                class="form-label">Card
+                                                                Supporting</label>
+                                                            <select class="form-control"
+                                                                id="card_supporting{{ $d->id }}"
+                                                                name="card_supporting">
+                                                                <option value="">-- Pilih Card Supporting --
+                                                                </option>
+                                                                @foreach ($cardSupportingList as $cardSupporting)
+                                                                    <option value="{{ $cardSupporting }}"
+                                                                        {{ $d->card_supporting == $cardSupporting ? 'selected' : '' }}>
+                                                                        {{ $cardSupporting }}
+                                                                    </option>
+                                                                @endforeach
+                                                                @php
+                                                                    $existingCardSupportings = $cardSupportingList->toArray();
+                                                                @endphp
+                                                                @if ($d->card_supporting && !in_array($d->card_supporting, $existingCardSupportings))
+                                                                    <option value="{{ $d->card_supporting }}" selected>
+                                                                        {{ $d->card_supporting }} (Custom)
+                                                                    </option>
+                                                                @endif
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
                                                     <div class="column">
                                                         <div class="mb-3">
                                                             <label for="tanggal{{ $d->id }}"

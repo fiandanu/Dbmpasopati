@@ -161,16 +161,6 @@
                                             </div>
                                         </div>
                                     </th>
-                                    <th class="align-top">
-                                        <div class="d-flex flex-column gap-12">
-                                            <span>Tipe</span>
-                                            <div class="btn-searchbar column-search">
-                                                <span>
-                                                    <i class="fas fa-search"></i>
-                                                </span>
-                                                <input type="text" id="search-tipe" name="search_tipe">
-                                            </div>
-                                        </div>
                                     <th class="text-center align-top">
                                         <span>Tanggal Dibuat</span>
                                     </th>
