@@ -109,11 +109,6 @@
             color: white;
         }
 
-        .badge-vtren {
-            background-color: #6f42c1;
-            color: white;
-        }
-
         .badge-reguler {
             background-color: #17a2b8;
             color: white;
@@ -156,7 +151,6 @@
                 <th style="width: 3%;">No</th>
                 <th style="width: 22%;">Nama PONPES</th>
                 <th style="width: 12%;">Nama Wilayah</th>
-                <th style="width: 8%;">Tipe</th>
                 <th style="width: 13%;">Status PKS</th>
                 <th style="width: 13%;">Status SPP</th>
                 <th style="width: 10%;">Extension</th>
@@ -171,11 +165,6 @@
                     <td>{{ $d->nama_ponpes }}</td>
                     <td>
                         <span>{{ $d->namaWilayah->nama_wilayah }}</span>
-                    </td>
-                    <td>
-                        <span class="badge badge-{{ $d->tipe == 'vtren' ? 'vtren' : 'reguler' }}">
-                            {{ ucfirst($d->tipe) }}
-                        </span>
                     </td>
                     <td>
                         @php

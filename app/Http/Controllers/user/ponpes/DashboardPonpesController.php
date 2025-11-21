@@ -237,97 +237,105 @@ class DashboardPonpesController extends Controller
         }
     }
 
-    public function exportCsv(Request $request): StreamedResponse
-    {
-        $query = Ponpes::with(['namaWilayah', 'uploadFolderPks', 'uploadFolderSpp', 'dataOpsional']);
+public function exportCsv(Request $request): StreamedResponse
+{
+    $query = Ponpes::with(['namaWilayah', 'uploadFolderPks', 'uploadFolderSpp', 'dataOpsional']);
 
-        if ($request->filled('search_tanggal_dari')) {
-            $query->whereDate('tanggal', '>=', $request->search_tanggal_dari);
-        }
-        if ($request->filled('search_tanggal_sampai')) {
-            $query->whereDate('tanggal', '<=', $request->search_tanggal_sampai);
-        }
-
-        $query = $this->applyFilters($query, $request);
-        $data = $query->orderBy('nama_ponpes', 'asc')->get();
-        $data = $this->applyStatusFilter($data, $request);
-
-        $filename = 'dashboard_ponpes_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
-
-        $headers = [
-            'Content-type' => 'text/csv',
-            'Content-Disposition' => "attachment; filename=$filename",
-            'Pragma' => 'no-cache',
-            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
-            'Expires' => '0',
-        ];
-
-        // Header CSV dengan kolom Tipe
-        $rows = [['No', 'Nama Ponpes', 'Nama Wilayah', 'Tipe', 'Status PKS', 'Status SPP', 'Extension', 'Status Wartel']];
-
-        $no = 1;
-        foreach ($data as $d) {
-            $extension = ($d->dataOpsional) ? ($d->dataOpsional->jumlah_extension ?? '-') : '-';
-            $statusWartel = ($d->dataOpsional && isset($d->dataOpsional->status_wartel)) ?
-                $d->dataOpsional->status_wartel : '-';
-
-            $rows[] = [
-                $no++,
-                $d->nama_ponpes,
-                $d->namaWilayah->nama_wilayah ?? '-',
-                ucfirst($d->tipe),
-                $this->calculatePksStatus($d->uploadFolderPks),
-                $this->calculateSppStatus($d->uploadFolderSpp),
-                $extension,
-                $statusWartel,
-            ];
-        }
-
-        $callback = function () use ($rows) {
-            $file = fopen('php://output', 'w');
-            foreach ($rows as $row) {
-                fputcsv($file, $row);
-            }
-            fclose($file);
-        };
-
-        return response()->stream($callback, 200, $headers);
+    if ($request->filled('search_tanggal_dari')) {
+        $query->whereDate('tanggal', '>=', $request->search_tanggal_dari);
+    }
+    if ($request->filled('search_tanggal_sampai')) {
+        $query->whereDate('tanggal', '<=', $request->search_tanggal_sampai);
     }
 
-    public function exportPdf(Request $request)
-    {
-        $query = Ponpes::with(['namaWilayah', 'uploadFolderPks', 'uploadFolderSpp', 'dataOpsional']);
+    $query = $this->applyFilters($query, $request);
 
-        if ($request->filled('search_tanggal_dari')) {
-            $query->whereDate('tanggal', '>=', $request->search_tanggal_dari);
-        }
-        if ($request->filled('search_tanggal_sampai')) {
-            $query->whereDate('tanggal', '<=', $request->search_tanggal_sampai);
-        }
+    // TAMBAH: Get all data dan filter VtrenReg
+    $allData = $query->orderBy('nama_ponpes', 'asc')->get();
+    $allData = $this->filterUniqueVtrenRegPrioritasReguler($allData);
+    $data = $this->applyStatusFilter($allData, $request);
 
-        $query = $this->applyFilters($query, $request);
-        $data = $query->orderBy('nama_ponpes', 'asc')->get();
-        $data = $this->applyStatusFilter($data, $request);
+    $filename = 'dashboard_ponpes_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
 
-        $data = $data->map(function ($item) {
-            $item->pks_status = $this->calculatePksStatus($item->uploadFolderPks);
-            $item->spp_status = $this->calculateSppStatus($item->uploadFolderSpp);
+    $headers = [
+        'Content-type' => 'text/csv',
+        'Content-Disposition' => "attachment; filename=$filename",
+        'Pragma' => 'no-cache',
+        'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+        'Expires' => '0',
+    ];
 
-            return $item;
-        });
+    // UBAH: Header CSV tanpa kolom Tipe
+    $rows = [['No', 'Nama Ponpes', 'Nama Wilayah', 'Status PKS', 'Status SPP', 'Extension', 'Status Wartel']];
 
-        $pdfData = [
-            'title' => 'Dashboard Database PONPES',
-            'data' => $data,
-            'generated_at' => Carbon::now()->format('d M Y H:i:s'),
+    $no = 1;
+    foreach ($data as $d) {
+        $extension = ($d->dataOpsional) ? ($d->dataOpsional->jumlah_extension ?? '-') : '-';
+
+        // UBAH: Format status wartel seperti di UPT (Aktif/Tidak Aktif)
+        $statusWartel = ($d->dataOpsional && isset($d->dataOpsional->status_wartel)) ?
+            ($d->dataOpsional->status_wartel == 1 ? 'Aktif' : 'Tidak Aktif') : '-';
+
+        // UBAH: Hapus kolom Tipe
+        $rows[] = [
+            $no++,
+            $d->nama_ponpes,
+            $d->namaWilayah->nama_wilayah ?? '-',
+            $this->calculatePksStatus($d->uploadFolderPks),
+            $this->calculateSppStatus($d->uploadFolderSpp),
+            $extension,
+            $statusWartel,
         ];
-
-        $pdf = Pdf::loadView('export.public.db.DatabasePonpes', $pdfData)
-            ->setPaper('a4', 'landscape');
-        $filename = 'dashboard_ponpes_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
-
-        return $pdf->download($filename);
     }
+
+    $callback = function () use ($rows) {
+        $file = fopen('php://output', 'w');
+        foreach ($rows as $row) {
+            fputcsv($file, $row);
+        }
+        fclose($file);
+    };
+
+    return response()->stream($callback, 200, $headers);
+}
+
+public function exportPdf(Request $request)
+{
+    $query = Ponpes::with(['namaWilayah', 'uploadFolderPks', 'uploadFolderSpp', 'dataOpsional']);
+
+    if ($request->filled('search_tanggal_dari')) {
+        $query->whereDate('tanggal', '>=', $request->search_tanggal_dari);
+    }
+    if ($request->filled('search_tanggal_sampai')) {
+        $query->whereDate('tanggal', '<=', $request->search_tanggal_sampai);
+    }
+
+    $query = $this->applyFilters($query, $request);
+
+    // TAMBAH: Get all data dan filter VtrenReg
+    $allData = $query->orderBy('nama_ponpes', 'asc')->get();
+    $allData = $this->filterUniqueVtrenRegPrioritasReguler($allData);
+    $data = $this->applyStatusFilter($allData, $request);
+
+    $data = $data->map(function ($item) {
+        $item->pks_status = $this->calculatePksStatus($item->uploadFolderPks);
+        $item->spp_status = $this->calculateSppStatus($item->uploadFolderSpp);
+
+        return $item;
+    });
+
+    $pdfData = [
+        'title' => 'Dashboard Database PONPES',
+        'data' => $data,
+        'generated_at' => Carbon::now()->format('d M Y H:i:s'),
+    ];
+
+    $pdf = Pdf::loadView('export.public.db.DatabasePonpes', $pdfData)
+        ->setPaper('a4', 'landscape');
+    $filename = 'dashboard_ponpes_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
+
+    return $pdf->download($filename);
+}
 
     private function getPksStatistics()
     {
