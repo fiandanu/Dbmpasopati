@@ -13,8 +13,63 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
+
 class SppController extends Controller
 {
+    private function getJenisLayanan()
+    {
+        return [
+            'vtren' => 'VTREN',
+            'reguler' => 'Reguler',
+            'vtrenreg' => 'VTREN + Reguler',
+        ];
+    }
+
+    private function removeVpasRegSuffix($namaPonpes)
+    {
+        return preg_replace('/\s*\(VtrenReg\)$/', '', $namaPonpes);
+    }
+
+    private function groupVpasRegData($allData)
+    {
+        $grouped = collect();
+        $processed = [];
+
+        foreach ($allData as $item) {
+            $baseNama = $this->removeVpasRegSuffix($item->nama_ponpes);
+
+            if (in_array($baseNama, $processed)) {
+                continue;
+            }
+
+            // Cari semua data dengan nama base yang sama
+            $relatedItems = $allData->filter(function ($d) use ($baseNama) {
+                return $this->removeVpasRegSuffix($d->nama_ponpes) === $baseNama;
+            });
+
+            if ($relatedItems->count() === 2) {
+                // Ada 2 tipe (reguler + vtren), gabungkan menjadi satu baris
+                $mergedItem = $relatedItems->first();
+
+                // Set jenis_layanan sebagai vtrenreg
+                $mergedItem->jenis_layanan = 'vtrenreg';
+                $mergedItem->combined_ids = $relatedItems->pluck('id')->toArray();
+                $mergedItem->is_combined = true;
+
+                $grouped->push($mergedItem);
+            } else {
+                // Hanya 1 tipe
+                $item->jenis_layanan = $item->tipe;
+                $item->combined_ids = [$item->id];
+                $item->is_combined = false;
+                $grouped->push($item);
+            }
+
+            $processed[] = $baseNama;
+        }
+
+        return $grouped;
+    }
     private function calculateStatus($uploadFolder)
     {
         if (! $uploadFolder) {
@@ -84,153 +139,155 @@ class SppController extends Controller
         return $data;
     }
 
-    public function ListDataSpp(Request $request)
-    {
-        // PERBAIKAN: Gunakan uploadFolderSpp
-        $query = Ponpes::with(['uploadFolderSpp', 'namaWilayah'])
-            ->whereHas('uploadFolderSpp');
+public function ListDataSpp(Request $request)
+{
+    $query = Ponpes::with(['uploadFolderSpp', 'namaWilayah'])
+        ->whereHas('uploadFolderSpp');
 
-        // Apply database filters
-        $query = $this->applyFilters($query, $request);
+    // Apply database filters
+    $query = $this->applyFilters($query, $request);
 
-        // Get per_page from request, default 10
-        $perPage = $request->get('per_page', 10);
+    // Get per_page from request, default 10
+    $perPage = $request->get('per_page', 10);
 
-        // Validate per_page
-        if (! in_array($perPage, [10, 15, 20, 'all'])) {
-            $perPage = 10;
-        }
-
-        // Handle pagination
-        if ($perPage == 'all') {
-            $data = $query->orderBy('tanggal', 'desc')->get();
-
-            // Apply status filter to collection
-            $data = $this->applyPdfStatusFilter(collect($data), $request);
-
-            // Create a mock paginator for "all" option
-            $data = new \Illuminate\Pagination\LengthAwarePaginator(
-                $data,
-                $data->count(),
-                99999,
-                1,
-                ['path' => $request->url(), 'query' => $request->query()]
-            );
-        } else {
-            // For paginated results
-            $allData = $query->orderBy('tanggal', 'desc')->get();
-            $filteredData = $this->applyPdfStatusFilter($allData, $request);
-
-            // Manual pagination of filtered data
-            $currentPage = \Illuminate\Pagination\Paginator::resolveCurrentPage('page');
-            $offset = ($currentPage - 1) * $perPage;
-            $itemsForCurrentPage = $filteredData->slice($offset, $perPage)->values();
-
-            $data = new \Illuminate\Pagination\LengthAwarePaginator(
-                $itemsForCurrentPage,
-                $filteredData->count(),
-                $perPage,
-                $currentPage,
-                [
-                    'path' => $request->url(),
-                    'query' => $request->query(),
-                    'pageName' => 'page',
-                ]
-            );
-        }
-
-        $ponpesList = Ponpes::with('namaWilayah')
-            ->whereDoesntHave('uploadFolderSpp')
-            ->orderBy('nama_ponpes')
-            ->get();
-
-        $providers = Provider::all();
-
-        return view('db.ponpes.spp.indexSpp', compact('data', 'providers', 'ponpesList'));
+    // Validate per_page
+    if (! in_array($perPage, [10, 15, 20, 'all'])) {
+        $perPage = 10;
     }
 
-    public function exportListCsv(Request $request): StreamedResponse
-    {
-        $query = Ponpes::with(['uploadFolderSpp', 'namaWilayah'])->whereIn('tipe', ['vtren', 'reguler'])->whereHas('uploadFolderSpp');
-        $query = $this->applyFilters($query, $request);
+    // Handle pagination
+    if ($perPage == 'all') {
+        $data = $query->orderBy('tanggal', 'desc')->get();
+        $data = $this->groupVpasRegData($data);
+        $data = $this->applyPdfStatusFilter(collect($data), $request);
 
-        if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
-            $query = $query->orderBy('tanggal', 'asc');
-        }
+        $data = new \Illuminate\Pagination\LengthAwarePaginator(
+            $data,
+            $data->count(),
+            99999,
+            1,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+    } else {
+        $allData = $query->orderBy('tanggal', 'desc')->get();
+        $allData = $this->groupVpasRegData($allData);
+        $filteredData = $this->applyPdfStatusFilter($allData, $request);
 
-        $data = $query->get();
-        $data = $this->applyPdfStatusFilter($data, $request);
+        $currentPage = \Illuminate\Pagination\Paginator::resolveCurrentPage('page');
+        $offset = ($currentPage - 1) * $perPage;
+        $itemsForCurrentPage = $filteredData->slice($offset, $perPage)->values();
 
-        if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
-            $data = $data->sortBy('tanggal')->values();
-        }
-
-        $filename = 'list_ponpes_spp_'.Carbon::now()->format('Y-m-d_H-i-s').'.csv';
-
-        $headers = [
-            'Content-type' => 'text/csv',
-            'Content-Disposition' => "attachment; filename=$filename",
-            'Pragma' => 'no-cache',
-            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
-            'Expires' => '0',
-        ];
-
-        $rows = [['No', 'Nama Ponpes', 'Nama Wilayah', 'Tipe', 'Tanggal Dibuat', 'Status Upload PDF']];
-        $no = 1;
-        foreach ($data as $d) {
-            // PERBAIKAN: Gunakan uploadFolderSpp
-            $status = $this->calculateStatus($d->uploadFolderSpp);
-            $rows[] = [
-                $no++,
-                $d->nama_ponpes,
-                $d->namaWilayah->nama_wilayah ?? '-',
-                ucfirst($d->tipe ?? '-'),
-                $d->tanggal ? Carbon::parse($d->tanggal)->format('d M Y') : '-',
-                $status,
-            ];
-        }
-
-        $callback = function () use ($rows) {
-            $file = fopen('php://output', 'w');
-            foreach ($rows as $row) {
-                fputcsv($file, $row);
-            }
-            fclose($file);
-        };
-
-        return response()->stream($callback, 200, $headers);
+        $data = new \Illuminate\Pagination\LengthAwarePaginator(
+            $itemsForCurrentPage,
+            $filteredData->count(),
+            $perPage,
+            $currentPage,
+            [
+                'path' => $request->url(),
+                'query' => $request->query(),
+                'pageName' => 'page',
+            ]
+        );
     }
 
-    public function exportListPdf(Request $request)
-    {
-        $query = Ponpes::with('uploadFolderSpp', 'namaWilayah')->whereIn('tipe', ['vtren', 'reguler'])->whereHas('uploadFolderSpp');
-        $query = $this->applyFilters($query, $request);
-
-        if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
-            $query = $query->orderBy('tanggal', 'asc');
-        }
-
-        $data = $query->get();
-        $data = $this->applyPdfStatusFilter($data, $request);
-
-        $data->transform(function ($ponpes) {
-            $ponpes->calculated_status = $this->calculateStatus($ponpes->uploadFolderSpp);
-
-            return $ponpes;
+    $ponpesList = Ponpes::with('namaWilayah')
+        ->whereDoesntHave('uploadFolderSpp')
+        ->orderBy('nama_ponpes')
+        ->get()
+        ->unique(function ($item) {
+            return preg_replace('/\s*\(VtrenReg\)$/', '', $item->nama_ponpes);
         });
 
-        $pdfData = [
-            'title' => 'List Data Ponpes SPP',
-            'data' => $data,
-            'generated_at' => Carbon::now()->format('d M Y H:i:s'),
-        ];
+    $providers = Provider::all();
+    $jenisLayananOptions = $this->getJenisLayanan();
 
-        $pdf = Pdf::loadView('export.public.db.ponpes.indexSpp', $pdfData)
-            ->setPaper('a4', 'landscape');
-        $filename = 'list_ponpes_spp_'.Carbon::now()->translatedFormat('d_M_Y').'.pdf';
+    return view('db.ponpes.spp.indexSpp', compact('data', 'providers', 'ponpesList', 'jenisLayananOptions'));
+}
 
-        return $pdf->download($filename);
+public function exportListCsv(Request $request): StreamedResponse
+{
+    $query = Ponpes::with(['uploadFolderSpp', 'namaWilayah'])->whereIn('tipe', ['vtren', 'reguler'])->whereHas('uploadFolderSpp');
+    $query = $this->applyFilters($query, $request);
+
+    if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
+        $query = $query->orderBy('tanggal', 'asc');
     }
+
+    $allData = $query->get();
+    $data = $this->groupVpasRegData($allData);
+    $data = $this->applyPdfStatusFilter($data, $request);
+
+    if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
+        $data = $data->sortBy('tanggal')->values();
+    }
+
+    $filename = 'list_ponpes_spp_'.Carbon::now()->format('Y-m-d_H-i-s').'.csv';
+
+    $headers = [
+        'Content-type' => 'text/csv',
+        'Content-Disposition' => "attachment; filename=$filename",
+        'Pragma' => 'no-cache',
+        'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+        'Expires' => '0',
+    ];
+
+    $jenisLayanan = $this->getJenisLayanan();
+    $rows = [['No', 'Nama Ponpes', 'Nama Wilayah', 'Jenis Layanan', 'Tanggal Dibuat', 'Status Upload PDF']];
+    $no = 1;
+
+    foreach ($data as $d) {
+        $status = $this->calculateStatus($d->uploadFolderSpp);
+        $layanan = $jenisLayanan[$d->jenis_layanan] ?? ucfirst($d->jenis_layanan ?? '-');
+
+        $rows[] = [
+            $no++,
+            $d->nama_ponpes,
+            $d->namaWilayah->nama_wilayah ?? '-',
+            $layanan,
+            $d->tanggal ? Carbon::parse($d->tanggal)->format('d M Y') : '-',
+            $status,
+        ];
+    }
+
+    $callback = function () use ($rows) {
+        $file = fopen('php://output', 'w');
+        foreach ($rows as $row) {
+            fputcsv($file, $row);
+        }
+        fclose($file);
+    };
+
+    return response()->stream($callback, 200, $headers);
+}
+
+public function exportListPdf(Request $request)
+{
+    $query = Ponpes::with('uploadFolderSpp', 'namaWilayah')->whereIn('tipe', ['vtren', 'reguler'])->whereHas('uploadFolderSpp');
+    $query = $this->applyFilters($query, $request);
+
+    if ($request->filled('search_tanggal_dari') || $request->filled('search_tanggal_sampai')) {
+        $query = $query->orderBy('tanggal', 'asc');
+    }
+
+    $allData = $query->get();
+    $data = $this->groupVpasRegData($allData);
+    $data = $this->applyPdfStatusFilter($data, $request);
+
+    $jenisLayanan = $this->getJenisLayanan();
+
+    $pdfData = [
+        'title' => 'List Data Ponpes SPP',
+        'data' => $data,
+        'jenisLayanan' => $jenisLayanan,
+        'generated_at' => Carbon::now()->format('d M Y H:i:s'),
+    ];
+
+    $pdf = Pdf::loadView('export.public.db.ponpes.indexSpp', $pdfData)
+        ->setPaper('a4', 'landscape');
+    $filename = 'list_ponpes_spp_'.Carbon::now()->translatedFormat('d_M_Y').'.pdf';
+
+    return $pdf->download($filename);
+}
 
     public function DatabasePageDestroy($id)
     {
@@ -366,37 +423,60 @@ class SppController extends Controller
         }
     }
 
-    public function store(Request $request)
-    {
-        try {
-            $request->validate([
-                'nama_ponpes' => 'required',
-            ], [
-                'nama_ponpes.required' => 'Nama Ponpes harus diisi.',
-            ]);
+public function store(Request $request)
+{
+    try {
+        $request->validate([
+            'nama_ponpes' => 'required',
+        ], [
+            'nama_ponpes.required' => 'Nama Ponpes harus diisi.',
+        ]);
 
-            // Cari Ponpes berdasarkan nama_ponpes saja (nama sudah unik)
-            $ponpes = Ponpes::where('nama_ponpes', $request->nama_ponpes)->first();
+        // Cari SEMUA data Ponpes dengan nama yang sama (bisa reguler, vtren, atau keduanya)
+        $ponpesData = Ponpes::where('nama_ponpes', $request->nama_ponpes)->get();
 
-            if (! $ponpes) {
-                return redirect()->back()
-                    ->with('error', 'Data Ponpes tidak ditemukan')
-                    ->withInput();
-            }
-
-            // Create UploadFolder untuk menandai data sudah ditambahkan ke SPP
-            UploadFolderPonpesSpp::firstOrCreate(
-                ['data_ponpes_id' => $ponpes->id],
-                ['data_ponpes_id' => $ponpes->id]
-            );
-
-            return redirect()->back()->with('success', 'Data SPP berhasil ditambahkan');
-        } catch (\Exception $e) {
-            Log::error('Error creating SPP: '.$e->getMessage());
-
-            return redirect()->back()->with('error', 'Gagal menambahkan data: '.$e->getMessage())->withInput();
+        if ($ponpesData->isEmpty()) {
+            return redirect()->back()
+                ->with('error', 'Data Ponpes tidak ditemukan')
+                ->withInput();
         }
+
+        $createdCount = 0;
+        $alreadyExistsCount = 0;
+
+        // Loop untuk setiap data Ponpes yang ditemukan (bisa 1 atau 2)
+        foreach ($ponpesData as $ponpes) {
+            // Cek apakah sudah ada di SPP
+            $exists = UploadFolderPonpesSpp::where('data_ponpes_id', $ponpes->id)->exists();
+
+            if (!$exists) {
+                // Create UploadFolder untuk menandai data sudah ditambahkan ke SPP
+                UploadFolderPonpesSpp::create([
+                    'data_ponpes_id' => $ponpes->id
+                ]);
+                $createdCount++;
+            } else {
+                $alreadyExistsCount++;
+            }
+        }
+
+        if ($createdCount > 0 && $alreadyExistsCount == 0) {
+            return redirect()->back()
+                ->with('success', 'Data SPP berhasil ditambahkan untuk ' . $createdCount . ' tipe layanan');
+        } elseif ($createdCount > 0 && $alreadyExistsCount > 0) {
+            return redirect()->back()
+                ->with('success', 'Data SPP berhasil ditambahkan untuk ' . $createdCount . ' tipe layanan. ' . $alreadyExistsCount . ' tipe sudah ada sebelumnya.');
+        } else {
+            return redirect()->back()
+                ->with('error', 'Data SPP sudah ada untuk semua tipe layanan Ponpes ini');
+        }
+
+    } catch (\Exception $e) {
+        Log::error('Error creating SPP: '.$e->getMessage());
+
+        return redirect()->back()->with('error', 'Gagal menambahkan data: '.$e->getMessage())->withInput();
     }
+}
 
     public function deleteFilePDF($id, $folder)
     {
