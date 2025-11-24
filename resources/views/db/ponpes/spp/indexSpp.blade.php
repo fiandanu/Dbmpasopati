@@ -252,14 +252,21 @@
                                         </td>
                                         <td class="text-center">
                                             <div class="btn-group" role="group">
+
+                                                {{-- EDIT BUTTON --}}
                                                 <button data-toggle="modal" data-target="#uploadModal{{ $d->id }}"
                                                     title="Upload PDF">
                                                     <ion-icon name="folder-outline"></ion-icon>
                                                 </button>
-                                                <button data-toggle="modal" data-target="#deleteModal{{ $d->id }}"
-                                                    title="Hapus Data">
-                                                    <ion-icon name="trash-outline"></ion-icon>
-                                                </button>
+
+                                                {{-- DELETE BUTTON --}}
+                                                @if ((Auth::check() && Auth::user()->isMarketing()) || Auth::user()->isSuperAdmin())
+                                                    <button data-toggle="modal"
+                                                        data-target="#deleteModal{{ $d->id }}" title="Hapus Data">
+                                                        <ion-icon name="trash-outline"></ion-icon>
+                                                    </button>
+                                                @endif
+
                                             </div>
                                         </td>
                                     </tr>

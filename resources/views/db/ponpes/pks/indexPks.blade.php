@@ -244,7 +244,7 @@
                                                 </button>
 
                                                 {{-- DELETE BUTTON --}}
-                                                @if (Auth::check() && Auth::user()->isMarketing())
+                                                @if (Auth::check() && Auth::user()->isMarketing() || Auth::user()->isSuperAdmin())
                                                     <button data-toggle="modal"
                                                         data-target="#modal-default{{ $d->id }}">
                                                         <ion-icon name="trash-outline"></ion-icon>

@@ -233,7 +233,7 @@
                                                     <ion-icon name="folder-outline"></ion-icon>
                                                 </button>
 
-                                                @if (Auth::check() && Auth::user()->isMarketing())
+                                                @if (Auth::check() && Auth::user()->isMarketing() || Auth::user()->isSuperAdmin())
                                                     {{-- Delete Button --}}
                                                     <button data-toggle="modal"
                                                         data-target="#modal-default{{ $d->id }}" title="Hapus">

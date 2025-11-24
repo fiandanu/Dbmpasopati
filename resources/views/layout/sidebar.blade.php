@@ -55,9 +55,10 @@
                             </ul>
                         </li>
 
+
                         <!-- Monitoring Server -->
                         <li
-                            class="nav-item disabled-menu {{ Route::is('GrafikServer') || Route::is('MonitoringUpt') || Route::is('MonitoringPonpes') ? 'menu-open' : '' }}">
+                            class="nav-item disabled-menu{{ Route::is('GrafikServer') || Route::is('MonitoringUpt') || Route::is('MonitoringPonpes') ? 'menu-open' : '' }}">
                             <a href="#" class="nav-link">
                                 <span class="material-symbols-outlined">
                                     shield
