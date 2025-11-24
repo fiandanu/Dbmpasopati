@@ -445,7 +445,6 @@ class PksController extends Controller
     {
         try {
 
-            // PERBAIKAN: Gunakan UploadFolderUptPks
             $uploadFolder = UploadFolderUptPks::where('data_upt_id', $id)->first();
 
             if ($uploadFolder) {

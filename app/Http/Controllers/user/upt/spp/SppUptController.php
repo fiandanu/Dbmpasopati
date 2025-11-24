@@ -8,6 +8,7 @@ use App\Models\user\upt\Upt;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -15,6 +16,78 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class SppUptController extends Controller
 {
+
+    private function getJenisLayanan()
+    {
+        return [
+            'vpas' => 'VPAS',
+            'reguler' => 'Reguler',
+            'vpasreg' => 'VPAS + Reguler',
+        ];
+    }
+
+    private function createMockPaginator($data, Request $request)
+    {
+        return new LengthAwarePaginator(
+            $data,
+            $data->count(),
+            $data->count(),
+            1,
+            [
+                'path' => $request->url(),
+                'query' => $request->query(),
+                'pageName' => 'page',
+            ]
+        );
+    }
+
+    private function groupVpasRegData($allData)
+    {
+        $grouped = collect();
+        $processed = [];
+
+        foreach ($allData as $item) {
+            $baseNama = $this->removeVpasRegSuffix($item->namaupt);
+
+            if (in_array($baseNama, $processed)) {
+                continue;
+            }
+
+            // Cari semua data dengan nama base yang sama
+            $relatedItems = $allData->filter(function ($d) use ($baseNama) {
+                return $this->removeVpasRegSuffix($d->namaupt) === $baseNama;
+            });
+
+            if ($relatedItems->count() === 2) {
+                // Ada 2 tipe (reguler + vpas), gabungkan menjadi satu baris
+                $mergedItem = $relatedItems->first();
+
+                // Set jenis_layanan sebagai vpasreg
+                $mergedItem->jenis_layanan = 'vpasreg';
+                $mergedItem->combined_ids = $relatedItems->pluck('id')->toArray();
+                $mergedItem->is_combined = true;
+
+                $grouped->push($mergedItem);
+            } else {
+                // Hanya 1 tipe
+                $item->jenis_layanan = $item->tipe;
+                $item->combined_ids = [$item->id];
+                $item->is_combined = false;
+                $grouped->push($item);
+            }
+
+            $processed[] = $baseNama;
+        }
+
+        return $grouped;
+    }
+    // MISSING METHOD: Remove VpasReg suffix from UPT name
+
+    private function removeVpasRegSuffix($namaUpt)
+    {
+        return preg_replace('/\s*\(VpasReg\)$/', '', $namaUpt);
+    }
+
     private function calculatePdfStatus($uploadFolder)
     {
         if (! $uploadFolder) {
@@ -25,7 +98,7 @@ class SppUptController extends Controller
         $totalFolders = 10;
 
         for ($i = 1; $i <= 10; $i++) {
-            $column = 'pdf_folder_'.$i;
+            $column = 'pdf_folder_' . $i;
             if (! empty($uploadFolder->$column)) {
                 $uploadedFolders++;
             }
@@ -44,15 +117,15 @@ class SppUptController extends Controller
     {
         // Column-specific searches
         if ($request->has('search_namaupt') && ! empty($request->search_namaupt)) {
-            $query->where('namaupt', 'LIKE', '%'.$request->search_namaupt.'%');
+            $query->where('namaupt', 'LIKE', '%' . $request->search_namaupt . '%');
         }
         if ($request->has('search_kanwil') && ! empty($request->search_kanwil)) {
             $query->whereHas('kanwil', function ($q) use ($request) {
-                $q->where('kanwil', 'LIKE', '%'.$request->search_kanwil.'%');
+                $q->where('kanwil', 'LIKE', '%' . $request->search_kanwil . '%');
             });
         }
         if ($request->has('search_tipe') && ! empty($request->search_tipe)) {
-            $query->where('tipe', 'LIKE', '%'.$request->search_tipe.'%');
+            $query->where('tipe', 'LIKE', '%' . $request->search_tipe . '%');
         }
 
         // Date range filtering
@@ -84,7 +157,7 @@ class SppUptController extends Controller
 
     public function ListDataSpp(Request $request)
     {
-        // PERBAIKAN: Gunakan uploadFolderSpp
+        // Gunakan uploadFolderSpp
         $query = Upt::with('uploadFolderSpp', 'kanwil')->whereHas('uploadFolderSpp');
 
         // Apply database filters
@@ -101,11 +174,9 @@ class SppUptController extends Controller
         // Handle pagination
         if ($perPage == 'all') {
             $data = $query->orderBy('tanggal', 'desc')->get();
-
-            // Apply status filter to collection
+            $data = $this->groupVpasRegData($data); // TAMBAHKAN INI
             $data = $this->applyPdfStatusFilter(collect($data), $request);
 
-            // Create a mock paginator for "all" option
             $data = new \Illuminate\Pagination\LengthAwarePaginator(
                 $data,
                 $data->count(),
@@ -114,11 +185,10 @@ class SppUptController extends Controller
                 ['path' => $request->url(), 'query' => $request->query()]
             );
         } else {
-            // For paginated results, we need to get all data first, apply status filter, then paginate
             $allData = $query->orderBy('tanggal', 'desc')->get();
+            $allData = $this->groupVpasRegData($allData); // TAMBAHKAN INI
             $filteredData = $this->applyPdfStatusFilter($allData, $request);
 
-            // Manual pagination of filtered data
             $currentPage = \Illuminate\Pagination\Paginator::resolveCurrentPage('page');
             $offset = ($currentPage - 1) * $perPage;
             $itemsForCurrentPage = $filteredData->slice($offset, $perPage)->values();
@@ -174,10 +244,10 @@ class SppUptController extends Controller
             return redirect()->back()
                 ->with('success', 'Data SPP berhasil ditambahkan');
         } catch (\Exception $e) {
-            Log::error('Error creating SPP: '.$e->getMessage());
+            Log::error('Error creating SPP: ' . $e->getMessage());
 
             return redirect()->back()
-                ->with('error', 'Gagal menambahkan data: '.$e->getMessage())
+                ->with('error', 'Gagal menambahkan data: ' . $e->getMessage())
                 ->withInput();
         }
     }
@@ -190,7 +260,7 @@ class SppUptController extends Controller
             if ($uploadFolder) {
                 // Hapus semua file PDF yang terkait
                 for ($i = 1; $i <= 10; $i++) {
-                    $column = 'pdf_folder_'.$i;
+                    $column = 'pdf_folder_' . $i;
                     if (! empty($uploadFolder->$column) && Storage::disk('public')->exists($uploadFolder->$column)) {
                         Storage::disk('public')->delete($uploadFolder->$column);
                     }
@@ -203,9 +273,9 @@ class SppUptController extends Controller
             // $dataupt->delete();
             return redirect()->back()->with('success', 'Data berhasil dihapus');
         } catch (\Exception $e) {
-            Log::error('Error deleting UPT: '.$e->getMessage());
+            Log::error('Error deleting UPT: ' . $e->getMessage());
 
-            return redirect()->back()->with('error', 'Gagal menghapus data: '.$e->getMessage());
+            return redirect()->back()->with('error', 'Gagal menghapus data: ' . $e->getMessage());
         }
     }
 
@@ -224,14 +294,14 @@ class SppUptController extends Controller
                 return abort(404, 'Data upload folder tidak ditemukan.');
             }
 
-            $column = 'pdf_folder_'.$folder;
+            $column = 'pdf_folder_' . $folder;
 
             // Cek apakah file ada dan path tidak kosong
             if (empty($uploadFolder->$column)) {
-                return abort(404, 'File PDF belum diupload untuk folder '.$folder.'.');
+                return abort(404, 'File PDF belum diupload untuk folder ' . $folder . '.');
             }
 
-            $filePath = storage_path('app/public/'.$uploadFolder->$column);
+            $filePath = storage_path('app/public/' . $uploadFolder->$column);
 
             if (! file_exists($filePath)) {
                 return abort(404, 'File tidak ditemukan di storage.');
@@ -239,9 +309,9 @@ class SppUptController extends Controller
 
             return response()->file($filePath);
         } catch (\Exception $e) {
-            Log::error('Error viewing PDF: '.$e->getMessage());
+            Log::error('Error viewing PDF: ' . $e->getMessage());
 
-            return abort(500, 'Error loading PDF: '.$e->getMessage());
+            return abort(500, 'Error loading PDF: ' . $e->getMessage());
         }
     }
 
@@ -283,7 +353,7 @@ class SppUptController extends Controller
             );
 
             // Hapus file lama jika ada
-            $column = 'pdf_folder_'.$folder;
+            $column = 'pdf_folder_' . $folder;
             if (! empty($uploadFolder->$column) && Storage::disk('public')->exists($uploadFolder->$column)) {
                 Storage::disk('public')->delete($uploadFolder->$column);
             }
@@ -292,10 +362,10 @@ class SppUptController extends Controller
             $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
             $sanitizedName = preg_replace('/[^A-Za-z0-9\-_.]/', '_', $originalName);
             // $filename = time() . '_' . $sanitizedName . '.pdf';
-            $filename = time().'_'.Str::random(8).'_'.$sanitizedName.'.pdf';
+            $filename = time() . '_' . Str::random(8) . '_' . $sanitizedName . '.pdf';
 
             // Pastikan direktori ada - gunakan tipe UPT untuk folder
-            $directory = 'upt/'.$upt->tipe.'/folder_'.$folder;
+            $directory = 'upt/' . $upt->tipe . '/folder_' . $folder;
             if (! Storage::disk('public')->exists($directory)) {
                 Storage::disk('public')->makeDirectory($directory);
             }
@@ -313,13 +383,13 @@ class SppUptController extends Controller
 
             Log::info("PDF uploaded successfully for UPT ID: {$id}, Folder: {$folder}, Path: {$path}");
 
-            return redirect()->back()->with('success', 'PDF '.$originalFileName.' berhasil di-upload ke folder '.$folder.'!');
+            return redirect()->back()->with('success', 'PDF ' . $originalFileName . ' berhasil di-upload ke folder ' . $folder . '!');
         } catch (\Illuminate\Validation\ValidationException $e) {
             return redirect()->back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
-            Log::error('Error uploading PDF: '.$e->getMessage());
+            Log::error('Error uploading PDF: ' . $e->getMessage());
 
-            return redirect()->back()->with('error', 'Gagal upload file: '.$e->getMessage());
+            return redirect()->back()->with('error', 'Gagal upload file: ' . $e->getMessage());
         }
     }
 
@@ -339,10 +409,10 @@ class SppUptController extends Controller
                 return redirect()->back()->with('error', 'Data upload folder tidak ditemukan.');
             }
 
-            $column = 'pdf_folder_'.$folder;
+            $column = 'pdf_folder_' . $folder;
 
             if (empty($uploadFolder->$column)) {
-                return redirect()->back()->with('error', 'File PDF belum di-upload di folder '.$folder.'.');
+                return redirect()->back()->with('error', 'File PDF belum di-upload di folder ' . $folder . '.');
             }
 
             if (Storage::disk('public')->exists($uploadFolder->$column)) {
@@ -352,11 +422,11 @@ class SppUptController extends Controller
             $uploadFolder->$column = null;
             $uploadFolder->save();
 
-            return redirect()->back()->with('success', 'File PDF di folder '.$folder.' berhasil dihapus');
+            return redirect()->back()->with('success', 'File PDF di folder ' . $folder . ' berhasil dihapus');
         } catch (\Exception $e) {
-            Log::error('Error deleting PDF: '.$e->getMessage());
+            Log::error('Error deleting PDF: ' . $e->getMessage());
 
-            return redirect()->back()->with('error', 'Gagal menghapus file: '.$e->getMessage());
+            return redirect()->back()->with('error', 'Gagal menghapus file: ' . $e->getMessage());
         }
     }
 
@@ -382,7 +452,7 @@ class SppUptController extends Controller
             $data = $data->sortBy('tanggal')->values();
         }
 
-        $filename = 'list_upt_vpas_reguler_'.Carbon::now()->format('Y-m-d_H-i-s').'.csv';
+        $filename = 'list_upt_vpas_reguler_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
 
         $headers = [
             'Content-type' => 'text/csv',
@@ -439,7 +509,7 @@ class SppUptController extends Controller
             if ($totalFiles === 0) {
                 $item->calculated_status = 'Belum Upload';
             } elseif ($totalFiles < 10) {
-                $item->calculated_status = 'Upload Sebagian ('.$totalFiles.'/10)';
+                $item->calculated_status = 'Upload Sebagian (' . $totalFiles . '/10)';
             } else {
                 $item->calculated_status = 'Upload Lengkap';
             }
@@ -458,7 +528,7 @@ class SppUptController extends Controller
 
         $pdf = Pdf::loadView('export.public.db.upt.indexSpp', $pdfData)
             ->setPaper('a4', 'landscape');
-        $filename = 'list_upt_vpas_reguler_'.Carbon::now()->translatedFormat('d_M_Y').'.pdf';
+        $filename = 'list_upt_vpas_reguler_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
 
         return $pdf->download($filename);
     }

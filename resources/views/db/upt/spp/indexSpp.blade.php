@@ -206,10 +206,23 @@
                                         <td>{{ $d->namaupt }}</td>
                                         <td><span class="tag tag-success">{{ $d->kanwil->kanwil }}</span></td>
                                         <td class="text-center">
-                                            <span
-                                                class="@if ($d->tipe == 'reguler') Tipereguller
-                                                @elseif($d->tipe == 'vpas') Tipevpas @endif">
-                                                {{ ucfirst($d->tipe) }}
+                                            @php
+                                                $layananClass = match (strtolower($d->jenis_layanan ?? '')) {
+                                                    'vpas' => 'Tipevpas',
+                                                    'reguler' => 'Tipereguller',
+                                                    'vpasreg' => 'badge-prosses',
+                                                    default => '',
+                                                };
+                                                $layananText =
+                                                    $jenisLayananOptions[$d->jenis_layanan] ??
+                                                    ucfirst($d->jenis_layanan ?? '-');
+                                            @endphp
+                                            <span class="{{ $layananClass }}">
+                                                @if (strtolower($d->jenis_layanan) === 'vpasreg')
+                                                    VPAS + Reguler
+                                                @else
+                                                    {{ $layananText }}
+                                                @endif
                                             </span>
                                         </td>
                                         <td class="text-center">
