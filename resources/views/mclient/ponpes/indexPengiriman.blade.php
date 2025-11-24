@@ -362,12 +362,16 @@
                                                         </button>
                                                     </a>
 
-                                                    <a data-toggle="modal"
-                                                        data-target="#modal-default{{ $d->id }}" title="Hapus">
-                                                        <button>
-                                                            <ion-icon name="trash-outline"></ion-icon>
-                                                        </button>
-                                                    </a>
+                                                    {{-- DELETE BUTTON --}}
+                                                    @if (Auth::check() && Auth::user()->isSuperAdmin())
+                                                        <a data-toggle="modal"
+                                                            data-target="#modal-default{{ $d->id }}"
+                                                            title="Hapus">
+                                                            <button>
+                                                                <ion-icon name="trash-outline"></ion-icon>
+                                                            </button>
+                                                        </a>
+                                                    @endif
                                                 </td>
                                             </tr>
 

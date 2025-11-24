@@ -26,21 +26,6 @@ class SppUptController extends Controller
         ];
     }
 
-    private function createMockPaginator($data, Request $request)
-    {
-        return new LengthAwarePaginator(
-            $data,
-            $data->count(),
-            $data->count(),
-            1,
-            [
-                'path' => $request->url(),
-                'query' => $request->query(),
-                'pageName' => 'page',
-            ]
-        );
-    }
-
     private function groupVpasRegData($allData)
     {
         $grouped = collect();

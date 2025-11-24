@@ -232,11 +232,14 @@
                                                     title="Upload PDF">
                                                     <ion-icon name="folder-outline"></ion-icon>
                                                 </button>
-                                                {{-- Delete Button --}}
-                                                <button data-toggle="modal"
-                                                    data-target="#modal-default{{ $d->id }}" title="Hapus">
-                                                    <ion-icon name="trash-outline"></ion-icon>
-                                                </button>
+
+                                                @if (Auth::check() && Auth::user()->isMarketing())
+                                                    {{-- Delete Button --}}
+                                                    <button data-toggle="modal"
+                                                        data-target="#modal-default{{ $d->id }}" title="Hapus">
+                                                        <ion-icon name="trash-outline"></ion-icon>
+                                                    </button>
+                                                @endif
                                             </div>
                                         </td>
                                     </tr>
@@ -497,7 +500,7 @@
                                             </div>
                                         </div>
                                     @endfor
-                                    
+
                                 @empty
                                     <tr>
                                         <td colspan="7" class="text-center">

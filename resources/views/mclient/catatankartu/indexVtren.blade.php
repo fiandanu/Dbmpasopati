@@ -408,14 +408,16 @@
                                                         </button>
                                                     </a>
 
-                                                    {{-- Delete Button --}}
-                                                    <a data-bs-toggle="modal"
-                                                        data-bs-target="#modal-default{{ $d->id }}"
-                                                        class="">
-                                                        <button>
-                                                            <ion-icon name="trash-outline"></ion-icon>
-                                                        </button>
-                                                    </a>
+                                                    {{-- DELETE BUTTON --}}
+                                                    @if (Auth::check() && Auth::user()->isSuperAdmin())
+                                                        <a data-bs-toggle="modal"
+                                                            data-bs-target="#modal-default{{ $d->id }}"
+                                                            class="">
+                                                            <button>
+                                                                <ion-icon name="trash-outline"></ion-icon>
+                                                            </button>
+                                                        </a>
+                                                    @endif
                                                 </td>
                                             </tr>
 

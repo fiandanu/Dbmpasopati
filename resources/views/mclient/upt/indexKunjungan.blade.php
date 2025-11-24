@@ -358,6 +358,8 @@
                                                 <td class="text-center">{{ $d->pic_1 ?? '-' }}</td>
                                                 <td class="text-center">{{ $d->pic_2 ?? '-' }}</td>
                                                 <td class="text-center">
+
+                                                    {{-- EDIT MODAL --}}
                                                     <a href="#editModal{{ $d->id }}" data-bs-toggle="modal"
                                                         data-bs-target="#editModal{{ $d->id }}">
                                                         <button>
@@ -365,12 +367,15 @@
                                                         </button>
                                                     </a>
 
-                                                    <a data-toggle="modal"
-                                                        data-target="#modal-default{{ $d->id }}">
-                                                        <button>
-                                                            <ion-icon name="trash-outline"></ion-icon>
-                                                        </button>
-                                                    </a>
+                                                    {{-- DELETE MODAL --}}
+                                                    @if (Auth::check() && Auth::user()->isSuperAdmin())
+                                                        <a data-toggle="modal"
+                                                            data-target="#modal-default{{ $d->id }}">
+                                                            <button>
+                                                                <ion-icon name="trash-outline"></ion-icon>
+                                                            </button>
+                                                        </a>
+                                                    @endif
                                                 </td>
                                             </tr>
 

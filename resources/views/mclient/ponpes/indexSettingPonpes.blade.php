@@ -356,6 +356,8 @@
                                                 <td class="text-center">{{ $d->pic_1 ?? '-' }}</td>
                                                 <td class="text-center">{{ $d->pic_2 ?? '-' }}</td>
                                                 <td class="text-center">
+
+                                                    {{-- EDIT BUTTON --}}
                                                     <a href="#editModal{{ $d->id }}" data-bs-toggle="modal"
                                                         data-bs-target="#editModal{{ $d->id }}" title="Edit">
                                                         <button>
@@ -363,12 +365,16 @@
                                                         </button>
                                                     </a>
 
-                                                    <a data-toggle="modal"
-                                                        data-target="#modal-default{{ $d->id }}" title="Hapus">
-                                                        <button>
-                                                            <ion-icon name="trash-outline"></ion-icon>
-                                                        </button>
-                                                    </a>
+                                                    {{-- DELETE BUTTON --}}
+                                                    @if (Auth::check() && Auth::user()->isSuperAdmin())
+                                                        <a data-toggle="modal"
+                                                            data-target="#modal-default{{ $d->id }}"
+                                                            title="Hapus">
+                                                            <button>
+                                                                <ion-icon name="trash-outline"></ion-icon>
+                                                            </button>
+                                                        </a>
+                                                    @endif
                                                 </td>
                                             </tr>
 

@@ -366,13 +366,17 @@
                                                         </button>
                                                     </a>
 
-                                                    {{-- Delete Button --}}
-                                                    <a data-toggle="modal"
-                                                        data-target="#modal-default{{ $d->id }}" class="">
-                                                        <button>
-                                                            <ion-icon name="trash-outline"></ion-icon>
-                                                        </button>
-                                                    </a>
+                                                    @if (Auth::check() && Auth::user()->isSuperAdmin())
+                                                        {{-- DELETE BUTTON --}}
+                                                        <a data-toggle="modal"
+                                                            data-target="#modal-default{{ $d->id }}"
+                                                            class="">
+                                                            <button>
+                                                                <ion-icon name="trash-outline"></ion-icon>
+                                                            </button>
+                                                        </a>
+                                                    @endif
+
                                                 </td>
                                             </tr>
 
@@ -384,7 +388,8 @@
                                                             <ion-icon name="alert-circle-outline"
                                                                 class="text-9xl text-[var(--yellow-04)]"></ion-icon>
                                                             <p class="headline-large-32">Anda Yakin?</p>
-                                                            <label>Apakah Data Komplain <b> {{ $d->nama_ponpes }} </b> ingin
+                                                            <label>Apakah Data Komplain <b> {{ $d->nama_ponpes }} </b>
+                                                                ingin
                                                                 dihapus?</label>
                                                         </div>
                                                         <div class="modal-footer flex-row-reverse justify-content-between">

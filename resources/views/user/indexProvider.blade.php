@@ -236,8 +236,8 @@
                             @endif
                         </div>
 
-
                     </div>
+
                     <!-- Tabel VPN -->
                     <div class="col-md-6">
                         <div class="d-flex mb-3 justify-end">
@@ -318,6 +318,57 @@
                                 </table>
                             </div>
                         </div>
+
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="btn-datakolom">
+                                    <form method="GET" class="d-flex align-items-center">
+                                        <div class="d-flex align-items-center">
+                                            <select name="per_page" class="form-control form-control-sm pr-2"
+                                                style="width: auto;" onchange="this.form.submit()">
+                                                <option value="10"
+                                                    {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10</option>
+                                                <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>
+                                                    15</option>
+                                                <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>
+                                                    20</option>
+                                                <option value="all"
+                                                    {{ request('per_page') == 'all' ? 'selected' : '' }}>Semua</option>
+                                            </select>
+                                            <span>Rows</span>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <!-- Pagination Navigation -->
+                            @if (request('per_page') != 'all' && $datavpn->lastPage() > 1)
+                                <div class="pagination-controls d-flex align-items-center gap-12">
+                                    @if ($datavpn->onFirstPage())
+                                        <button class="btn-page" disabled>&laquo; Previous</button>
+                                    @else
+                                        <button class="btn-datakolom w-auto p-3">
+                                            <a href="{{ $datavpn->appends(request()->query())->previousPageUrl() }}">&laquo;
+                                                Previous</a>
+                                        </button>
+                                    @endif
+
+                                    <span id="page-info">Page {{ $datavpn->currentPage() }} of
+                                        {{ $datavpn->lastPage() }}</span>
+
+                                    @if ($datavpn->hasMorePages())
+                                        <button class="btn-datakolom w-auto p-3">
+                                            <a href="{{ $datavpn->appends(request()->query())->nextPageUrl() }}">Next
+                                                &raquo;</a>
+                                        </button>
+                                    @else
+                                        <button class="btn-page" disabled>Next &raquo;</button>
+                                    @endif
+                                </div>
+                            @endif
+                        </div>
+
                     </div>
                 </div>
 

@@ -363,12 +363,15 @@
                                                         </button>
                                                     </a>
 
-                                                    <a data-toggle="modal"
-                                                        data-target="#modal-default{{ $d->id }}">
-                                                        <button>
-                                                            <ion-icon name="trash-outline"></ion-icon>
-                                                        </button>
-                                                    </a>
+                                                    @if (Auth::check() && Auth::user()->isSuperAdmin())
+                                                        <a data-toggle="modal"
+                                                            data-target="#modal-default{{ $d->id }}">
+                                                            <button>
+                                                                <ion-icon name="trash-outline"></ion-icon>
+                                                            </button>
+                                                        </a>
+                                                    @endif
+
                                                 </td>
                                             </tr>
 
