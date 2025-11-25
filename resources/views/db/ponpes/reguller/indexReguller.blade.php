@@ -14,6 +14,18 @@
                         </div>
 
                         <div class="d-flex align-items-center gap-2 flex-wrap">
+
+                            {{-- TANGGAL BUTTON --}}
+                            <div class="d-flex justify-start align-items-center gap-12">
+                                <div class="btn-page">
+                                    <input type="date" id="search-tanggal-dari" name="search_tanggal_dari"
+                                        title="Tanggal Dari">
+                                </div>
+                                <div class="btn-page">
+                                    <input type="date" id="search-tanggal-sampai" name="search_tanggal_sampai"
+                                        title="Tanggal Sampai">
+                                </div>
+                            </div>
                             <!-- Export Buttons -->
                             <div class="d-flex gap-2" id="export-buttons">
                                 <button onclick="downloadCsv()"
@@ -27,15 +39,6 @@
                                 </button>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div class="d-flex justify-start align-items-center gap-12 mb-2">
-                    <div class="btn-searchbar column-search">
-                        <input type="date" id="search-tanggal-dari" name="search_tanggal_dari" title="Tanggal Dari">
-                    </div>
-                    <div class="btn-searchbar column-search">
-                        <input type="date" id="search-tanggal-sampai" name="search_tanggal_sampai"
-                            title="Tanggal Sampai">
                     </div>
                 </div>
             </div>
@@ -191,7 +194,9 @@
                                     <tr>
                                         <td class="text-center">{{ $no++ }}</td>
                                         <td>{{ $d->nama_ponpes }}</td>
-                                        <td><span class="tag tag-success">{{ $d->namaWilayah?->nama_wilayah ?? '-' }}</span></td>
+                                        <td><span
+                                                class="tag tag-success">{{ $d->namaWilayah?->nama_wilayah ?? '-' }}</span>
+                                        </td>
                                         {{-- <td class="text-center">
                                             <span class="Tipereguller">{{ ucfirst($d->tipe) }}</span>
                                         </td> --}}

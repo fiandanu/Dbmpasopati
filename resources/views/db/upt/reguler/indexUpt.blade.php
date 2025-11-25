@@ -14,6 +14,19 @@
                         </div>
 
                         <div class="d-flex align-items-center gap-2 flex-wrap">
+
+                            {{-- TANGGAL BUTTON --}}
+                            <div class="d-flex justify-start align-items-center gap-12">
+                                <div class="btn-page">
+                                    <input type="date" id="search-tanggal-dari" name="search_tanggal_dari"
+                                        title="Tanggal Awal">
+                                </div>
+                                <div class="btn-page">
+                                    <input type="date" id="search-tanggal-sampai" name="search_tanggal_sampai"
+                                        title="Tanggal Akhir">
+                                </div>
+                            </div>
+
                             <!-- Export Buttons -->
                             <div class="d-flex gap-2" id="export-buttons">
                                 <button onclick="downloadCsv()"
@@ -26,18 +39,6 @@
                                     <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PDF
                                 </button>
                             </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="gap-12 text-center w-fit">
-                    <h3>Tanggal</h3>
-                    <div class="d-flex justify-start align-items-center gap-12 mb-2">
-                        <div class="btn-searchbar column-search">
-                            <input type="date" id="search-tanggal-dari" name="search_tanggal_dari" title="Tanggal Awal">
-                        </div>
-                        <div class="btn-searchbar column-search">
-                            <input type="date" id="search-tanggal-sampai" name="search_tanggal_sampai"
-                                title="Tanggal Akhir">
                         </div>
                     </div>
                 </div>
@@ -586,8 +587,7 @@
                         <div class="btn-datakolom">
                             <form method="GET" class="d-flex align-items-center">
                                 @if (request('search_namaupt'))
-                                    <input type="hidden" name="search_namaupt"
-                                        value="{{ request('search_namaupt') }}">
+                                    <input type="hidden" name="search_namaupt" value="{{ request('search_namaupt') }}">
                                 @endif
                                 @if (request('search_kanwil'))
                                     <input type="hidden" name="search_kanwil" value="{{ request('search_kanwil') }}">

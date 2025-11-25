@@ -263,13 +263,10 @@
         <!-- TABLE SECTION -->
         <section class="content">
             <div class="container-fluid">
-                <div class="row mb-3 align-items-center">
+                <div class="row mb-3 align-items-center gap-12">
                     <div class="col d-flex justify-content-between align-items-center">
                         <h3 class="headline-medium-24">Data Monitoring Client Keseluruhan</h3>
                     </div>
-                </div>
-
-                <div class="d-flex justify-content-between align-items-center mb-3 w-100">
 
                     <!-- Bagian TANGGAL -->
                     <div class="d-flex gap-12">

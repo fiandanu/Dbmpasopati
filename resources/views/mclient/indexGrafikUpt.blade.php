@@ -130,141 +130,129 @@
                     </div>
                 </div>
 
-                <!-- Modern Summary Cards -->
-                <div class="row mt-4" id="summary-cards">
-                    <div class="col-md-2 mb-3">
-                        <div class="card text-center"
-                            style="border: 1px solid #e5e7eb; border-radius: 8px; transition: box-shadow 0.3s;">
-                            <div class="card-body py-3">
-                                <i class="fas fa-id-card mb-2" style="color: #6b7280; font-size: 1.8rem;"></i>
-                                <h6 class="text-muted mb-2" style="font-size: 0.8rem; font-weight: 500;">Kartu Baru</h6>
-                                <h3 id="total-kartu-baru"
-                                    style="color: #111827; font-weight: 700; margin: 0; font-size: 1.5rem;">-</h3>
-                            </div>
+                <!-- Modern Summary Cards - Row 1 -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-3" id="summary-cards">
+
+                    <div class="card-total">
+                        <div class="w-full">
+                            <h1 class="title-medium-18">Kartu Baru</h1>
+                            <span class="display-medium-48" id="total-kartu-baru">-</span>
+                        </div>
+                        <div class="icon-card-total">
+                            <span class="material-symbols-outlined">id_card</span>
                         </div>
                     </div>
-                    <div class="col-md-2 mb-3">
-                        <div class="card text-center"
-                            style="border: 1px solid #e5e7eb; border-radius: 8px; transition: box-shadow 0.3s;">
-                            <div class="card-body py-3">
-                                <i class="fas fa-recycle mb-2" style="color: #6b7280; font-size: 1.8rem;"></i>
-                                <h6 class="text-muted mb-2" style="font-size: 0.8rem; font-weight: 500;">Kartu Bekas</h6>
-                                <h3 id="total-kartu-bekas"
-                                    style="color: #111827; font-weight: 700; margin: 0; font-size: 1.5rem;">-</h3>
-                            </div>
+
+                    <div class="card-total">
+                        <div class="w-full">
+                            <h1 class="title-medium-18">Kartu Bekas</h1>
+                            <span class="display-medium-48" id="total-kartu-bekas">-</span>
+                        </div>
+                        <div class="icon-card-total">
+                            <span class="material-symbols-outlined">recycling</span>
                         </div>
                     </div>
-                    <div class="col-md-2 mb-3">
-                        <div class="card text-center"
-                            style="border: 1px solid #e5e7eb; border-radius: 8px; transition: box-shadow 0.3s;">
-                            <div class="card-body py-3">
-                                <i class="fas fa-sim-card mb-2" style="color: #6b7280; font-size: 1.8rem;"></i>
-                                <h6 class="text-muted mb-2" style="font-size: 0.8rem; font-weight: 500;">Kartu GOIP</h6>
-                                <h3 id="total-kartu-goip"
-                                    style="color: #111827; font-weight: 700; margin: 0; font-size: 1.5rem;">-</h3>
-                            </div>
+
+                    <div class="card-total">
+                        <div class="w-full">
+                            <h1 class="title-medium-18">Kartu GOIP</h1>
+                            <span class="display-medium-48" id="total-kartu-goip">-</span>
+                        </div>
+                        <div class="icon-card-total">
+                            <span class="material-symbols-outlined">sim_card</span>
                         </div>
                     </div>
-                    <div class="col-md-2 mb-3">
-                        <div class="card text-center"
-                            style="border: 1px solid #e5e7eb; border-radius: 8px; transition: box-shadow 0.3s;">
-                            <div class="card-body py-3">
-                                <i class="fas fa-exclamation-triangle mb-2"
-                                    style="color: #6b7280; font-size: 1.8rem;"></i>
-                                <h6 class="text-muted mb-2" style="font-size: 0.8rem; font-weight: 500;">Belum Register
-                                </h6>
-                                <h3 id="total-kartu-belum-register"
-                                    style="color: #111827; font-weight: 700; margin: 0; font-size: 1.5rem;">-</h3>
-                            </div>
+
+                </div>
+
+                <!-- Modern Summary Cards - Row 2 -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-3" id="summary-cards-row2">
+
+                    <div class="card-total">
+                        <div class="w-full">
+                            <h1 class="title-medium-18">Belum Register</h1>
+                            <span class="display-medium-48" id="total-kartu-belum-register">-</span>
+                        </div>
+                        <div class="icon-card-total">
+                            <span class="material-symbols-outlined">warning</span>
                         </div>
                     </div>
-                    <div class="col-md-2 mb-3">
-                        <div class="card text-center"
-                            style="border: 1px solid #e5e7eb; border-radius: 8px; transition: box-shadow 0.3s;">
-                            <div class="card-body py-3">
-                                <i class="fab fa-whatsapp mb-2" style="color: #6b7280; font-size: 1.8rem;"></i>
-                                <h6 class="text-muted mb-2" style="font-size: 0.8rem; font-weight: 500;">WA Terpakai</h6>
-                                <h3 id="total-wa-terpakai"
-                                    style="color: #111827; font-weight: 700; margin: 0; font-size: 1.5rem;">-</h3>
-                            </div>
+
+                    <div class="card-total">
+                        <div class="w-full">
+                            <h1 class="title-medium-18">WA Terpakai</h1>
+                            <span class="display-medium-48" id="total-wa-terpakai">-</span>
+                        </div>
+                        <div class="icon-card-total">
+                            <span class="material-symbols-outlined">mail</span>
                         </div>
                     </div>
-                    <div class="col-md-2 mb-3">
-                        <div class="card text-center"
-                            style="border: 1px solid #e5e7eb; border-radius: 8px; transition: box-shadow 0.3s;">
-                            <div class="card-body py-3">
-                                <i class="fas fa-layer-group mb-2" style="color: #6b7280; font-size: 1.8rem;"></i>
-                                <h6 class="text-muted mb-2" style="font-size: 0.8rem; font-weight: 500;">Total Keseluruhan
-                                </h6>
-                                <h3 id="total-keseluruhan"
-                                    style="color: #111827; font-weight: 700; margin: 0; font-size: 1.5rem;">-</h3>
-                            </div>
+
+                    <div class="card-total">
+                        <div class="w-full">
+                            <h1 class="title-medium-18">Total Keseluruhan</h1>
+                            <span class="display-medium-48" id="total-keseluruhan">-</span>
+                        </div>
+                        <div class="icon-card-total">
+                            <span class="material-symbols-outlined">stack</span>
                         </div>
                     </div>
+
                 </div>
 
                 <!-- Summary Cards - Kendala -->
-                <div class="row mt-4" id="kendala-summary-cards" style="display: none;">
-                    <div class="col-md-2 offset-md-1 mb-3">
-                        <div class="card text-center"
-                            style="border: 1px solid #e5e7eb; border-radius: 8px; transition: box-shadow 0.3s;">
-                            <div class="card-body py-3">
-                                <i class="fas fa-check-circle mb-2" style="color: #6b7280; font-size: 1.8rem;"></i>
-                                <h6 class="text-muted mb-2" style="font-size: 0.8rem; font-weight: 500;">Status Selesai
-                                </h6>
-                                <h3 id="kendala-selesai"
-                                    style="color: #111827; font-weight: 700; margin: 0; font-size: 1.5rem;">-</h3>
-                            </div>
+                <div class="gird gird-cols-1 md:grid-cols-3 gap-12 mb-3" id="kendala-summary-cards" style="display: none;">
+
+                    <div class="card-total">
+                        <div class="w-full">
+                            <h1 class="title-medium-18">Status Selesai</h1>
+                            <span class="display-medium-48" id="kendala-selesai">-</span>
+                        </div>
+                        <div class="icon-card-total">
+                            <span class="material-symbols-outlined">check_circle</span>
                         </div>
                     </div>
-                    <div class="col-md-2 mb-3">
-                        <div class="card text-center"
-                            style="border: 1px solid #e5e7eb; border-radius: 8px; transition: box-shadow 0.3s;">
-                            <div class="card-body py-3">
-                                <i class="fas fa-spinner mb-2" style="color: #6b7280; font-size: 1.8rem;"></i>
-                                <h6 class="text-muted mb-2" style="font-size: 0.8rem; font-weight: 500;">Status Proses
-                                </h6>
-                                <h3 id="kendala-proses"
-                                    style="color: #111827; font-weight: 700; margin: 0; font-size: 1.5rem;">-</h3>
-                            </div>
+
+                    <div class="card-total">
+                        <div class="w-full">
+                            <h1 class="title-medium-18">Status Proses</h1>
+                            <span class="display-medium-48" id="kendala-proses">-</span>
+                        </div>
+                        <div class="icon-card-total">
+                            <span class="material-symbols-outlined">autorenew</span>
                         </div>
                     </div>
-                    <div class="col-md-2 mb-3">
-                        <div class="card text-center"
-                            style="border: 1px solid #e5e7eb; border-radius: 8px; transition: box-shadow 0.3s;">
-                            <div class="card-body py-3">
-                                <i class="fas fa-pause-circle mb-2" style="color: #6b7280; font-size: 1.8rem;"></i>
-                                <h6 class="text-muted mb-2" style="font-size: 0.8rem; font-weight: 500;">Status Pending
-                                </h6>
-                                <h3 id="kendala-pending"
-                                    style="color: #111827; font-weight: 700; margin: 0; font-size: 1.5rem;">-</h3>
-                            </div>
+
+                    <div class="card-total">
+                        <div class="w-full">
+                            <h1 class="title-medium-18">Status Pending</h1>
+                            <span class="display-medium-48" id="kendala-pending">-</span>
+                        </div>
+                        <div class="icon-card-total">
+                            <span class="material-symbols-outlined">pause_circle</span>
                         </div>
                     </div>
-                    <div class="col-md-2 mb-3">
-                        <div class="card text-center"
-                            style="border: 1px solid #e5e7eb; border-radius: 8px; transition: box-shadow 0.3s;">
-                            <div class="card-body py-3">
-                                <i class="fas fa-clock mb-2" style="color: #6b7280; font-size: 1.8rem;"></i>
-                                <h6 class="text-muted mb-2" style="font-size: 0.8rem; font-weight: 500;">Status Terjadwal
-                                </h6>
-                                <h3 id="kendala-terjadwal"
-                                    style="color: #111827; font-weight: 700; margin: 0; font-size: 1.5rem;">-</h3>
-                            </div>
+
+                    <div class="card-total">
+                        <div class="w-full">
+                            <h1 class="title-medium-18">Status Terjadwal</h1>
+                            <span class="display-medium-48" id="kendala-terjadwal">-</span>
+                        </div>
+                        <div class="icon-card-total">
+                            <span class="material-symbols-outlined">schedule</span>
                         </div>
                     </div>
-                    <div class="col-md-2 mb-3">
-                        <div class="card text-center"
-                            style="border: 1px solid #e5e7eb; border-radius: 8px; transition: box-shadow 0.3s;">
-                            <div class="card-body py-3">
-                                <i class="fas fa-list mb-2" style="color: #6b7280; font-size: 1.8rem;"></i>
-                                <h6 class="text-muted mb-2" style="font-size: 0.8rem; font-weight: 500;">Total Kendala
-                                </h6>
-                                <h3 id="kendala-total"
-                                    style="color: #111827; font-weight: 700; margin: 0; font-size: 1.5rem;">-</h3>
-                            </div>
+
+                    <div class="card-total">
+                        <div class="w-full">
+                            <h1 class="title-medium-18">Total Kendala</h1>
+                            <span class="display-medium-48" id="kendala-total">-</span>
+                        </div>
+                        <div class="icon-card-total">
+                            <span class="material-symbols-outlined">list</span>
                         </div>
                     </div>
+
                 </div>
 
             </div>
@@ -294,7 +282,7 @@
     </style>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
-    
+
     <script>
         let allCardsChart = null;
         let totalMonthlyChart = null;
@@ -860,7 +848,6 @@
             }
         }
 
-        // Ganti fungsi loadChartData() di indexGrafikUpt.blade.php
         function loadChartData() {
             const chartType = document.getElementById('chart-type').value;
             const dateRange = getDateRange();
@@ -869,6 +856,8 @@
             if (window.isLoadingChart) return;
 
             window.isLoadingChart = true;
+
+            const showKendalaCards = chartType === 'vpas-kendala' || chartType === 'reguler-kendala';
 
             // Hide/Show chart sections
             document.getElementById('all-cards-chart-section').style.display = chartType === 'all-cards' ? 'block' : 'none';
@@ -879,8 +868,8 @@
             document.getElementById('reguler-kendala-chart-section').style.display = chartType === 'reguler-kendala' ?
                 'block' : 'none';
 
-            const showKendalaCards = chartType === 'vpas-kendala' || chartType === 'reguler-kendala';
-            document.getElementById('summary-cards').style.display = showKendalaCards ? 'none' : 'flex';
+            document.getElementById('summary-cards').style.display = showKendalaCards ? 'none' : 'grid';
+            document.getElementById('summary-cards-row2').style.display = showKendalaCards ? 'none' : 'grid';
             document.getElementById('kendala-summary-cards').style.display = showKendalaCards ? 'flex' : 'none';
 
             updateChartTitle(chartType);

@@ -239,14 +239,12 @@
         <!-- TABLE SECTION -->
         <section class="content">
             <div class="container-fluid">
-                <div class="row mb-3 align-items-center">
+                <div class="row mb-3 align-items-center gap-12">
                     <div class="col d-flex justify-content-between align-items-center">
                         <h3 class="headline-medium-24">Data Monitoring Client Keseluruhan</h3>
                     </div>
-                </div>
 
-                <div class="d-flex justify-content-between align-items-center mb-3 w-100">
-
+                    {{-- TANGGAL BUTTON --}}
                     <div class="d-flex gap-12">
                         <div class="btn-page">
                             <input type="date" id="search-tanggal-dari" name="search_tanggal_dari"
@@ -269,8 +267,9 @@
                             <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PDF
                         </button>
                     </div>
-
                 </div>
+
+
 
                 <div class="card">
                     <div class="card-body table-responsive p-0">

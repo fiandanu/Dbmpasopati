@@ -14,6 +14,19 @@
                         </div>
 
                         <div class="d-flex align-items-center gap-2 flex-wrap">
+
+                            {{-- TANGGAL BUTTON --}}
+                            <div class="d-flex justify-start align-items-center gap-12">
+                                <div class="btn-page">
+                                    <input type="date" id="search-tanggal-dari" name="search_tanggal_dari"
+                                        title="Tanggal Dari">
+                                </div>
+                                <div class="btn-page">
+                                    <input type="date" id="search-tanggal-sampai" name="search_tanggal_sampai"
+                                        title="Tanggal Sampai">
+                                </div>
+                            </div>
+
                             <!-- Export Buttons -->
                             <div class="d-flex gap-2" id="export-buttons">
                                 <button onclick="downloadCsv()"
@@ -30,15 +43,6 @@
                             </div>
 
                         </div>
-                    </div>
-                </div>
-                <div class="d-flex justify-start align-items-center gap-12 mb-2">
-                    <div class="btn-searchbar column-search">
-                        <input type="date" id="search-tanggal-dari" name="search_tanggal_dari" title="Tanggal Dari">
-                    </div>
-                    <div class="btn-searchbar column-search">
-                        <input type="date" id="search-tanggal-sampai" name="search_tanggal_sampai"
-                            title="Tanggal Sampai">
                     </div>
                 </div>
             </div>
@@ -244,7 +248,7 @@
                                                 </button>
 
                                                 {{-- DELETE BUTTON --}}
-                                                @if (Auth::check() && Auth::user()->isMarketing() || Auth::user()->isSuperAdmin())
+                                                @if ((Auth::check() && Auth::user()->isMarketing()) || Auth::user()->isSuperAdmin())
                                                     <button data-toggle="modal"
                                                         data-target="#modal-default{{ $d->id }}">
                                                         <ion-icon name="trash-outline"></ion-icon>
