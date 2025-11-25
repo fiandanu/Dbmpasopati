@@ -145,6 +145,117 @@
             --purple-10: #0c0821;
         }
 
+        .display-large-64 {
+            font-family: var(--font-primary);
+            font-weight: var(--weight-regular);
+            font-size: var(--display-large-size);
+            line-height: var(--display-large-line-height);
+        }
+
+        .display-medium-48 {
+            font-family: var(--font-primary);
+            font-weight: var(--weight-semi-bold);
+            font-size: var(--display-medium-size);
+            line-height: var(--display-medium-line-height);
+        }
+
+        .display-small-40 {
+            font-family: var(--font-primary);
+            font-weight: var(--weight-regular);
+            font-size: var(--display-small-size);
+            line-height: var(--display-small-line-height);
+        }
+
+        .headline-large-32 {
+            font-family: var(--font-primary);
+            font-weight: var(--weight-semi-bold);
+            font-size: var(--headline-large-size);
+            line-height: var(--headline-large-line-height);
+        }
+
+        .headline-medium-24 {
+            font-family: var(--font-primary);
+            font-weight: var(--weight-semi-bold);
+            font-size: var(--headline-medium-size);
+            line-height: var(--headline-medium-line-height);
+        }
+
+        .headline-small-20 {
+            font-family: var(--font-primary);
+            font-weight: var(--weight-semi-bold);
+            font-size: var(--headline-small-size);
+            line-height: var(--headline-small-line-height);
+        }
+
+        .title-large-20 {
+            font-family: var(--font-primary);
+            font-weight: var(--weight-medium);
+            font-size: var(--title-large-size);
+            line-height: var(--title-large-line-height);
+            letter-spacing: var(--title-large-letter-spacing);
+        }
+
+        .title-medium-18 {
+            font-family: var(--font-primary);
+            font-weight: var(--weight-bold);
+            font-size: var(--title-medium-size);
+            line-height: var(--title-medium-line-height);
+            letter-spacing: var(--title-medium-letter-spacing);
+        }
+
+        .title-small-16 {
+            font-family: var(--font-primary);
+            font-weight: var(--weight-bold);
+            font-size: var(--title-small-size);
+            line-height: var(--title-small-line-height);
+            letter-spacing: var(--title-small-letter-spacing);
+        }
+
+        .label-large-16 {
+            font-family: var(--font-primary);
+            font-weight: var(--weight-medium);
+            font-size: var(--label-large-size);
+            line-height: var(--label-large-line-height);
+            letter-spacing: var(--label-large-letter-spacing);
+        }
+
+        .label-medium-14 {
+            font-family: var(--font-primary);
+            font-weight: var(--weight-medium);
+            font-size: var(--label-medium-size);
+            line-height: var(--label-medium-line-height);
+            letter-spacing: var(--label-medium-letter-spacing);
+        }
+
+        .label-small-12 {
+            font-family: var(--font-primary);
+            font-weight: var(--weight-medium);
+            font-size: var(--label-small-size);
+            line-height: var(--label-small-line-height);
+            letter-spacing: var(--label-small-letter-spacing);
+        }
+
+        .body-small-12 {
+            font-family: var(--font-secondary);
+            font-weight: var(--weight-regular);
+            font-size: var(--body-small-size);
+            line-height: var(--body-small-line-height);
+        }
+
+        .body-medium-14 {
+            font-family: var(--font-secondary);
+            font-weight: var(--weight-regular);
+            font-size: var(--body-medium-size);
+            line-height: var(--body-medium-line-height);
+        }
+
+        .body-large-16 {
+            font-family: var(--font-secondary);
+            font-weight: var(--weight-regular);
+            font-size: var(--body-large-size);
+            line-height: var(--body-large-line-height);
+        }
+
         /* Font Poppins Classes */
         .poppins-thin {
             font-family: var(--font-primary);
@@ -366,29 +477,31 @@
             <div class="flex justify-center">
                 <img src="{{ asset('img/logo_Iwartelsus.webp') }}" alt="Logo Pasopati" class="logo-responsive">
             </div>
-            <p>Silahkan Masuk Ke Panel Admin</p>
+            <p class="mt-3 label-medium-14">Silahkan Masuk Ke Panel Admin</p>
         </div>
         <form method="POST" action="{{ route('login.post') }}">
             @csrf
             <div class="mb-4 input-group">
                 <div class="relative">
-                    <input type="text" class="w-full" name="username" id="username" placeholder="Username" required>
+                    <input type="text" class="w-full label-medium-14" name="username" id="username"
+                        placeholder="Username" required>
                     <span class="absolute inset-y-0 right-0 flex items-center pr-3">
                     </span>
                 </div>
             </div>
             <div class="mb-6 input-group">
                 <div class="relative">
-                    <input type="password" class="w-full" name="password" id="password" placeholder="Password"
-                        required>
+                    <input type="password" class="w-full label-medium-14" name="password" id="password"
+                        placeholder="Password" required>
                     <span class="absolute inset-y-0 right-0 flex items-center pr-3">
                     </span>
                 </div>
             </div>
-            <button type="submit" class="btn-purple title-medium-18">
+            <button type="submit" class="btn-purple label-medium-14">
                 Log In
             </button>
         </form>
+
         @if ($errors->any())
             <div class="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
                 <p>{{ $errors->first() }}</p>
@@ -400,6 +513,12 @@
                 <p>{{ session('error') }}</p>
             </div>
         @endif
+
+        <div class="mt-3 pt-6 border-t border-gray-200 text-center">
+            <p class="text-xs text-gray-300 opacity-50">
+                © 2025 IWartelsus — All Rights Reserved • v1.0.0
+            </p>
+        </div>
     </div>
 
     <script>
