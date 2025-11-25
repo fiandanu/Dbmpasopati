@@ -364,7 +364,7 @@
     <div class="login-box w-full max-w-md p-8">
         <div class="text-center mb-6">
             <div class="flex justify-center">
-                <img src="{{ asset('img/logo_pasopati.webp') }}" alt="Logo Pasopati" class="logo-responsive">
+                <img src="{{ asset('img/logo_Iwartelsus.webp') }}" alt="Logo Pasopati" class="logo-responsive">
             </div>
             <p>Silahkan Masuk Ke Panel Admin</p>
         </div>

@@ -19,7 +19,7 @@
                 <div
                     class="d-flex justify-content-center mt-2 py-2 user-panel d-flex align-items-center flex-shrink-0 mb-3">
                     <div class="flex justify-center">
-                        <img src="{{ asset('img/logo_pasopati.webp') }}" alt="Logo Pasopati" class="logo-responsive">
+                        <img src="{{ asset('img/logo_Iwartelsus.webp') }}" alt="Logo Pasopati" class="logo-responsive">
                     </div>
                     <div class="d-flex justify-content-center">
                     </div>
