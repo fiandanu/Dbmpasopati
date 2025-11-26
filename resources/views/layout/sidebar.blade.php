@@ -175,7 +175,7 @@
 
                         <!-- User -->
                         <li
-                            class="nav-item {{ Route::is('UserRole.user-role.index') || Route::is('User.UserPage') || Route::is('UserPonpes.ponpes.index') || Route::is('provider.DataProvider') || Route::is('kendala.DataKendala') || Route::is('kanwil.DataKanwil') ? 'menu-open' : '' }}">
+                            class="nav-item {{ Route::is('UserRole.user-role.index') || Route::is('User.UserPage') || Route::is('UserPonpes.ponpes.index') || Route::is('provider.DataProvider') || Route::is('kendalapic.index') || Route::is('kanwil.DataKanwil') ? 'menu-open' : '' }}">
                             <a href="#" class="nav-link">
                                 <span class="material-symbols-outlined">
                                     person
@@ -202,8 +202,8 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{{ route('kendala.DataKendala') }}"
-                                        class="nav-link {{ Route::is('kendala.DataKendala') ? 'active' : '' }}">
+                                    <a href="{{ route('kendalapic.index') }}"
+                                        class="nav-link {{ Route::is('kendalapic.index') ? 'active' : '' }}">
                                         <p>Data Kendala/PIC</p>
                                     </a>
                                 </li>

@@ -71,8 +71,7 @@ class RouteServiceProvider extends ServiceProvider
                 require base_path('routes/provider/vpn.php');
 
                 // route Kendala Dan PIC
-                require base_path('routes/kendalapic/kendala.php');
-                require base_path('routes/kendalapic/pic.php');
+                require base_path('routes/kendalapic/kendalapic.php');
 
                 // Route User
                 require base_path('routes/user/upt.php');

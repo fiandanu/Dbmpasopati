@@ -65,8 +65,10 @@
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
+
                 <!-- Single Add Button -->
                 <div class="row">
+                    
                     <!-- Tabel Provider -->
                     <div class="col-md-6">
                         <div class="d-flex mb-3 justify-end">
@@ -83,6 +85,7 @@
                                     <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PDF
                                 </button>
                             </div>
+
                         </div>
                         <div class="card">
                             <div class="card-body table-responsive p-0">

@@ -92,7 +92,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($datakendala as $k)
+                                        @foreach ($dataKendala as $k)
                                             <tr>
                                                 <td>{{ $k->jenis_kendala }}</td>
                                                 <td class="text-center">
@@ -129,7 +129,7 @@
                                                         <div class="modal-footer flex-row-reverse justify-content-between">
                                                             <button type="button" class="btn-cancel-modal"
                                                                 data-dismiss="modal">Cancel</button>
-                                                            <form action="{{ route('kendala.KendalaPageDestroy', $k->id) }}"
+                                                            <form action="{{ route('kendalapic.kendala.destroy', $k->id) }}"
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
@@ -143,7 +143,7 @@
                                             <div class="modal fade" id="editKendalaModal{{ $k->id }}" tabindex="-1"
                                                 aria-labelledby="editKendalaModalLabel" aria-hidden="true">
                                                 <form id="editKendalaForm"
-                                                    action="{{ route('kendala.KendalaPageUpdate', ['id' => $k->id]) }}"
+                                                    action="{{ route('kendalapic.kendala.update', ['id' => $k->id]) }}"
                                                     method="POST">
                                                     @csrf
                                                     @method('PUT')
@@ -179,6 +179,57 @@
                                     </tbody>
                                 </table>
                             </div>
+                        </div>
+                        {{-- - PAGINATION KENDALA --}}
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="btn-datakolom">
+                                    <form method="GET" class="d-flex align-items-center">
+                                        <div class="d-flex align-items-center">
+                                            <select name="per_page" class="form-control form-control-sm pr-2"
+                                                style="width: auto;" onchange="this.form.submit()">
+                                                <option value="10"
+                                                    {{ request('per_page', 10) == 10 ? 'selected' : '' }}>
+                                                    10</option>
+                                                <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>
+                                                    15</option>
+                                                <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>
+                                                    20</option>
+                                                <option value="all"
+                                                    {{ request('per_page') == 'all' ? 'selected' : '' }}>
+                                                    Semua</option>
+                                            </select>
+                                            <span>Rows</span>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <!-- Pagination Navigation -->
+                            @if (request('per_page') != 'all' && $dataKendala->lastPage() > 1)
+                                <div class="pagination-controls d-flex align-items-center gap-12">
+                                    @if ($dataKendala->onFirstPage())
+                                        <button class="btn-page" disabled>&laquo; Previous</button>
+                                    @else
+                                        <button class="btn-datakolom w-auto p-3">
+                                            <a href="{{ $dataKendala->appends(request()->query())->previousPageUrl() }}">&laquo;
+                                                Previous</a>
+                                        </button>
+                                    @endif
+
+                                    <span id="page-info">Page {{ $dataKendala->currentPage() }} of
+                                        {{ $dataKendala->lastPage() }}</span>
+
+                                    @if ($dataKendala->hasMorePages())
+                                        <button class="btn-datakolom w-auto p-3">
+                                            <a href="{{ $dataKendala->appends(request()->query())->nextPageUrl() }}">Next
+                                                &raquo;</a>
+                                        </button>
+                                    @else
+                                        <button class="btn-page" disabled>Next &raquo;</button>
+                                    @endif
+                                </div>
+                            @endif
                         </div>
                     </div>
                     <!-- Tabel PIC -->
@@ -244,7 +295,7 @@
                                                         <div class="modal-footer flex-row-reverse justify-content-between">
                                                             <button type="button" class="btn-cancel-modal"
                                                                 data-dismiss="modal">Cancel</button>
-                                                            <form action="{{ route('pic.PicPageDestroy', $p->id) }}"
+                                                            <form action="{{ route('kendalapic.pic.destroy', $p->id) }}"
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
@@ -258,7 +309,7 @@
                                             <div class="modal fade" id="editPicModal{{ $p->id }}" tabindex="-1"
                                                 aria-labelledby="editPicModalLabel" aria-hidden="true">
                                                 <form id="editPicForm"
-                                                    action="{{ route('pic.PicPageUpdate', ['id' => $p->id]) }}"
+                                                    action="{{ route('kendalapic.pic.update', ['id' => $p->id]) }}"
                                                     method="POST">
                                                     @csrf
                                                     @method('PUT')
@@ -294,6 +345,58 @@
                                 </table>
                             </div>
                         </div>
+
+                        <!-- PAGINATION PROVIDER -->
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="btn-datakolom">
+                                    <form method="GET" class="d-flex align-items-center">
+                                        <div class="d-flex align-items-center">
+                                            <select name="per_page" class="form-control form-control-sm pr-2"
+                                                style="width: auto;" onchange="this.form.submit()">
+                                                <option value="10"
+                                                    {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10</option>
+                                                <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>
+                                                    15</option>
+                                                <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>
+                                                    20</option>
+                                                <option value="all"
+                                                    {{ request('per_page') == 'all' ? 'selected' : '' }}>Semua</option>
+                                            </select>
+                                            <span>Rows</span>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <!-- Pagination Navigation -->
+                            @if (request('per_page') != 'all' && $datapic->lastPage() > 1)
+                                <div class="pagination-controls d-flex align-items-center gap-12">
+                                    @if ($datapic->onFirstPage())
+                                        <button class="btn-page" disabled>&laquo; Previous</button>
+                                    @else
+                                        <button class="btn-datakolom w-auto p-3">
+                                            <a href="{{ $datapic->appends(request()->query())->previousPageUrl() }}">&laquo;
+                                                Previous</a>
+                                        </button>
+                                    @endif
+
+                                    <span id="page-info">Page {{ $datapic->currentPage() }} of
+                                        {{ $datapic->lastPage() }}</span>
+
+                                    @if ($datapic->hasMorePages())
+                                        <button class="btn-datakolom w-auto p-3">
+                                            <a href="{{ $datapic->appends(request()->query())->nextPageUrl() }}">Next
+                                                &raquo;</a>
+                                        </button>
+                                    @else
+                                        <button class="btn-page" disabled>Next &raquo;</button>
+                                    @endif
+                                </div>
+                            @endif
+                        </div>
+
+
                     </div>
                 </div>
 
@@ -419,7 +522,7 @@
 
                     form = document.createElement('form');
                     form.method = 'POST';
-                    form.action = '{{ route('kendala.KendalaPageStore') }}';
+                    form.action = '{{ route('kendalapic.kendala.store') }}';
 
                     // Add CSRF token
                     const csrfInput = document.createElement('input');
@@ -447,7 +550,7 @@
 
                     form = document.createElement('form');
                     form.method = 'POST';
-                    form.action = '{{ route('pic.PicPageStore') }}';
+                    form.action = '{{ route('kendalapic.pic.store') }}';
 
                     // Add CSRF token
                     const csrfInput = document.createElement('input');
@@ -487,7 +590,7 @@
             window.downloadKendalaCsv = function() {
                 let form = document.createElement('form');
                 form.method = 'GET';
-                form.action = '{{ route('kendala.export.kendala.list.csv') }}';
+                form.action = '{{ route('kendalapic.kendala.export.csv') }}';
                 form.target = '_blank';
                 document.body.appendChild(form);
                 form.submit();
@@ -497,7 +600,7 @@
             window.downloadKendalaPdf = function() {
                 let form = document.createElement('form');
                 form.method = 'GET';
-                form.action = '{{ route('kendala.export.kendala.list.pdf') }}';
+                form.action = '{{ route('kendalapic.kendala.export.pdf') }}';
                 form.target = '_blank';
                 document.body.appendChild(form);
                 form.submit();
@@ -508,7 +611,7 @@
             window.downloadPicCsv = function() {
                 let form = document.createElement('form');
                 form.method = 'GET';
-                form.action = '{{ route('pic.export.pic.list.csv') }}';
+                form.action = '{{ route('kendalapic.pic.export.csv') }}';
                 form.target = '_blank';
                 document.body.appendChild(form);
                 form.submit();
@@ -518,7 +621,7 @@
             window.downloadPicPdf = function() {
                 let form = document.createElement('form');
                 form.method = 'GET';
-                form.action = '{{ route('pic.export.pic.list.pdf') }}';
+                form.action = '{{ route('kendalapic.pic.export.pdf') }}';
                 form.target = '_blank';
                 document.body.appendChild(form);
                 form.submit();
