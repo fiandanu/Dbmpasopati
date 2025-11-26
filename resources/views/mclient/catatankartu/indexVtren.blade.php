@@ -256,8 +256,8 @@
                                                         <span>
                                                             <i class="fas fa-search"></i>
                                                         </span>
-                                                        <input type="text" id="search-nama-ponpes"
-                                                            name="search_nama_ponpes" placeholder="Search">
+                                                        <input type="text" id="search-nama-wilayah"
+                                                            name="search_nama_wilayah" placeholder="Search">
                                                     </div>
                                                 </div>
                                             </th>
@@ -899,6 +899,12 @@
                                     <input type="hidden" name="search_nama_ponpes"
                                         value="{{ request('search_nama_ponpes') }}">
                                 @endif
+
+                                @if (request('search_nama_wilayah'))
+                                    <input type="hidden" name="search_nama_wilayah"
+                                        value="{{ request('search_nama_wilayah') }}">
+                                @endif
+
                                 @if (request('search_kartu_baru'))
                                     <input type="hidden" name="search_kartu_baru"
                                         value="{{ request('search_kartu_baru') }}">
@@ -1197,6 +1203,7 @@
             function getFilters() {
                 return {
                     search_nama_ponpes: $('#search-nama-ponpes').val().trim(),
+                    search_nama_wilayah: $('#search-nama-wilayah').val().trim(),
                     search_kartu_baru: $('#search-kartu-baru').val().trim(),
                     search_kartu_bekas: $('#search-kartu-bekas').val().trim(),
                     search_kartu_goip: $('#search-kartu-goip').val().trim(),
@@ -1218,6 +1225,7 @@
 
                 // Remove existing filter parameters
                 url.searchParams.delete('search_nama_ponpes');
+                url.searchParams.delete('search_nama_wilayah');
                 url.searchParams.delete('search_kartu_baru');
                 url.searchParams.delete('search_kartu_bekas');
                 url.searchParams.delete('search_kartu_goip');
@@ -1244,6 +1252,7 @@
             window.clearAllFilters = function() {
                 // Clear semua input field dulu
                 $('#search-nama-ponpes').val('');
+                $('#search-nama-wilayah').val('');
                 $('#search-kartu-baru').val('');
                 $('#search-kartu-bekas').val('');
                 $('#search-kartu-goip').val('');
@@ -1259,6 +1268,7 @@
 
                 // Remove all search parameters
                 url.searchParams.delete('search_nama_ponpes');
+                url.searchParams.delete('search_nama_wilayah');
                 url.searchParams.delete('search_kartu_baru');
                 url.searchParams.delete('search_kartu_bekas');
                 url.searchParams.delete('search_kartu_goip');
@@ -1337,6 +1347,9 @@
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('search_nama_ponpes')) {
                 $('#search-nama-ponpes').val(urlParams.get('search_nama_ponpes'));
+            }
+            if (urlParams.get('search_nama_wilayah')) {
+                $('#search-nama-wilayah').val(urlParams.get('search_nama_wilayah'));
             }
             if (urlParams.get('search_kartu_baru')) {
                 $('#search-kartu-baru').val(urlParams.get('search_kartu_baru'));

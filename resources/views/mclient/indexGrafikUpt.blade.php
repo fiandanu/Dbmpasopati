@@ -874,7 +874,6 @@
 
             updateChartTitle(chartType);
 
-            // PERBAIKAN: Gunakan route yang benar berdasarkan chart type
             let url;
             if (chartType === 'vpas-kendala') {
                 url =
@@ -883,7 +882,6 @@
                 url =
                     `{{ route('GrafikClient.regullerData') }}?type=${dateRange.type}&start_date=${dateRange.startDate}&end_date=${dateRange.endDate}`;
             } else {
-                // PERBAIKAN: Untuk all-cards dan total-monthly, gunakan route data
                 url =
                     `{{ route('GrafikClient.data') }}?type=${dateRange.type}&start_date=${dateRange.startDate}&end_date=${dateRange.endDate}`;
             }

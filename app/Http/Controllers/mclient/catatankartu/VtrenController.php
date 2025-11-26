@@ -18,11 +18,10 @@ class VtrenController extends Controller
     {
         $query = Vtren::with(['ponpes.namaWilayah']);
 
-        // Apply filter
         $query = $this->applyFilters($query, $request);
 
-        // Calculate totals from ALL filtered data (before pagination)
         $allFilteredData = $query->get();
+        
         $totals = [
             'kartu_baru' => $allFilteredData->sum(function ($item) {
                 return intval($item->spam_vtren_kartu_baru ?? 0);
@@ -40,7 +39,11 @@ class VtrenController extends Controller
                 return intval($item->whatsapp_telah_terpakai ?? 0);
             }),
             'kartu_terpakai_perhari' => $allFilteredData->sum(function ($item) {
-                return intval($item->jumlah_kartu_terpakai_perhari ?? 0);
+                return intval($item->spam_vtren_kartu_baru ?? 0) +
+                    intval($item->spam_vtren_kartu_bekas ?? 0) +
+                    intval($item->spam_vtren_kartu_goip ?? 0) +
+                    intval($item->kartu_belum_teregister ?? 0) +
+                    intval($item->whatsapp_telah_terpakai ?? 0);
             }),
         ];
 
@@ -86,8 +89,17 @@ class VtrenController extends Controller
     {
         // Column-specific searches
         if ($request->has('search_nama_ponpes') && ! empty($request->search_nama_ponpes)) {
-            $query->where('nama_ponpes', 'LIKE', '%' . $request->search_nama_ponpes . '%');
+            $query->whereHas('ponpes', function ($q) use ($request) {
+                $q->where('nama_ponpes', 'LIKE', '%' . $request->search_nama_ponpes . '%');
+            });
         }
+
+        if ($request->has('search_nama_wilayah') && ! empty($request->search_nama_wilayah)) {
+            $query->whereHas('ponpes.namaWilayah', function ($q) use ($request) {
+                $q->where('nama_wilayah', 'LIKE', '%' . $request->search_nama_wilayah . '%');
+            });
+        }
+
         if ($request->has('search_kartu_baru') && ! empty($request->search_kartu_baru)) {
             $query->where('spam_vtren_kartu_baru', 'LIKE', '%' . $request->search_kartu_baru . '%');
         }

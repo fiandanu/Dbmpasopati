@@ -15,7 +15,6 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class CatatanController extends Controller
 {
 
-    // dihapus dan di ketik lagi catatan modelnya di controller
     public function ListDataMclientCatatanVpas(Request $request)
     {
         $query = Catatan::with(['upt.kanwil']);
@@ -23,26 +22,30 @@ class CatatanController extends Controller
         // Apply filter
         $query = $this->applyFilters($query, $request);
 
-        // Calculate totals from ALL filtered data (before pagination)
         $allFilteredData = $query->get();
+
         $totals = [
             'kartu_baru' => $allFilteredData->sum(function ($item) {
-                return intval($item->spam_vpas_kartu_baru ?? '0');
+                return intval($item->spam_vpas_kartu_baru ?? 0);
             }),
             'kartu_bekas' => $allFilteredData->sum(function ($item) {
-                return intval($item->spam_vpas_kartu_bekas ?? '0');
+                return intval($item->spam_vpas_kartu_bekas ?? 0);
             }),
             'kartu_goip' => $allFilteredData->sum(function ($item) {
-                return intval($item->spam_vpas_kartu_goip ?? '0');
+                return intval($item->spam_vpas_kartu_goip ?? 0);
             }),
             'kartu_belum_register' => $allFilteredData->sum(function ($item) {
-                return intval($item->kartu_belum_teregister ?? '0');
+                return intval($item->kartu_belum_teregister ?? 0);
             }),
             'whatsapp_terpakai' => $allFilteredData->sum(function ($item) {
-                return intval($item->whatsapp_telah_terpakai ?? '0');
+                return intval($item->whatsapp_telah_terpakai ?? 0);
             }),
             'kartu_terpakai_perhari' => $allFilteredData->sum(function ($item) {
-                return intval($item->jumlah_kartu_terpakai_perhari ?? '0');
+                return intval($item->spam_vpas_kartu_baru ?? 0) +
+                    intval($item->spam_vpas_kartu_bekas ?? 0) +
+                    intval($item->spam_vpas_kartu_goip ?? 0) +
+                    intval($item->kartu_belum_teregister ?? 0) +
+                    intval($item->whatsapp_telah_terpakai ?? 0);
             }),
         ];
 
@@ -132,8 +135,6 @@ class CatatanController extends Controller
 
     public function MclientCatatanStoreVpas(Request $request)
     {
-        // dd($request->all());
-
         $validator = Validator::make(
             $request->all(),
             [
