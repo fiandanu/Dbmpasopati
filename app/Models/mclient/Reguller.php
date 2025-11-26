@@ -56,7 +56,7 @@ class Reguller extends Model
         return $this->belongsTo(Upt::class, 'data_upt_id');
     }
 
-    
+
     public function getFormattedTanggalTerlaporAttribute()
     {
         return $this->tanggal_terlapor ? $this->tanggal_terlapor->format('Y-m-d') : null;

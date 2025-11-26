@@ -111,8 +111,8 @@ class Vpas extends Model
     public function scopeSearch($query, $term)
     {
         return $query->where(function ($q) use ($term) {
-            $q->where('nama_upt', 'LIKE', "%{$term}%") 
-                ->orWhere('kanwil', 'LIKE', "%{$term}%") 
+            $q->where('nama_upt', 'LIKE', "%{$term}%")
+                ->orWhere('kanwil', 'LIKE', "%{$term}%")
                 ->orWhere('jenis_kendala', 'LIKE', "%{$term}%")
                 ->orWhere('status', 'LIKE', "%{$term}%")
                 ->orWhere('pic_1', 'LIKE', "%{$term}%")

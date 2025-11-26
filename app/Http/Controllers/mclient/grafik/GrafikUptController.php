@@ -34,7 +34,6 @@ class GrafikUptController extends Controller
         }
     }
 
-    // TAMBAHAN: Method untuk data VPAS
     public function getVpasData(Request $request)
     {
         $type = $request->get('type', 'daily');
@@ -52,7 +51,6 @@ class GrafikUptController extends Controller
         }
     }
 
-    // TAMBAHAN: Method untuk data Reguler
     public function getRegullerData(Request $request)
     {
         $type = $request->get('type', 'daily');
@@ -76,10 +74,9 @@ class GrafikUptController extends Controller
         $chartType = $request->get('chart_type', 'all-cards');
         $startDate = $request->get('start_date');
         $endDate = $request->get('end_date');
-        $chartImage = $request->get('chart_image'); // Base64 image dari chart
+        $chartImage = $request->get('chart_image');
 
         try {
-            // Get data based on chart type
             if ($chartType === 'vpas-kendala') {
                 $data = $type === 'daily'
                     ? $this->getVpasDailyData($startDate, $endDate)
@@ -102,12 +99,10 @@ class GrafikUptController extends Controller
                 'type' => $type,
                 'startDate' => $startDate,
                 'endDate' => $endDate,
-                'chartImage' => $chartImage, // Kirim image ke view
+                'chartImage' => $chartImage,
             ]);
 
-            // Set paper size and orientation
             $pdf->setPaper('A4', 'landscape');
-
             $filename = 'grafik_'.$chartType.'_'.date('Y-m-d_His').'.pdf';
 
             return $pdf->download($filename);
@@ -174,19 +169,19 @@ class GrafikUptController extends Controller
                 [
                     'label' => 'Kartu Baru',
                     'data' => $kartuBaru,
-                    'borderColor' => 'rgb(59, 130, 246)', // Biru
+                    'borderColor' => 'rgb(59, 130, 246)',
                     'backgroundColor' => 'rgba(59, 130, 246, 0.1)',
                 ],
                 [
                     'label' => 'Kartu Bekas',
                     'data' => $kartuBekas,
-                    'borderColor' => 'rgb(34, 197, 94)', // Hijau
+                    'borderColor' => 'rgb(34, 197, 94)',
                     'backgroundColor' => 'rgba(34, 197, 94, 0.1)',
                 ],
                 [
                     'label' => 'Kartu GOIP',
                     'data' => $kartuGoip,
-                    'borderColor' => 'rgb(168, 85, 247)', // Ungu (CHANGED)
+                    'borderColor' => 'rgb(168, 85, 247)',
                     'backgroundColor' => 'rgba(168, 85, 247, 0.1)',
                 ],
                 [
@@ -285,59 +280,55 @@ class GrafikUptController extends Controller
         ]);
     }
 
-    // TAMBAHAN: VPAS Daily Data
     private function getVpasDailyData($startDate = null, $endDate = null)
     {
-        if (! $startDate) {
-            $startDate = Carbon::now()->subDays(6)->format('Y-m-d');
+        if (!$startDate) {
+            // 7 hari terakhir = hari ini + 6 hari sebelumnya
+            $startDate = Carbon::now()->subDays(6)->startOfDay()->format('Y-m-d');
         }
-        if (! $endDate) {
-            $endDate = Carbon::now()->format('Y-m-d');
+        if (!$endDate) {
+            // Pastikan endDate adalah akhir hari ini
+            $endDate = Carbon::now()->endOfDay()->format('Y-m-d');
         }
 
-        $data = Vpas::whereBetween('tanggal_terlapor', [$startDate, $endDate])
-            ->orderBy('tanggal_terlapor', 'asc')
-            ->get()
-            ->groupBy(function ($item) {
-                return $item->tanggal_terlapor->format('Y-m-d');
-            });
-
-        // PERBAIKAN: Gunakan relasi kendala
-        $jenisKendalaList = Vpas::with('kendala')
+        // Ambil semua data VPAS dalam rentang tanggal dengan eager loading
+        // PENTING: Gunakan whereDate agar tanggal exact match tanpa mempedulikan waktu
+        $allVpasData = Vpas::with('kendala')
+            ->whereDate('tanggal_terlapor', '>=', $startDate)
+            ->whereDate('tanggal_terlapor', '<=', $endDate)
             ->whereNotNull('kendala_id')
-            ->whereBetween('tanggal_terlapor', [$startDate, $endDate])
-            ->get()
-            ->pluck('kendala.jenis_kendala', 'kendala_id')
-            ->unique()
-            ->filter()
-            ->toArray();
+            ->orderBy('tanggal_terlapor', 'asc')
+            ->get();
 
+        // Ambil SEMUA jenis kendala yang ADA di database (bukan hanya yang ada di range tanggal)
+        $allKendalaTypes = \App\Models\user\kendala\Kendala::orderBy('jenis_kendala')->get();
+
+        // Buat mapping kendala_id => jenis_kendala
+        $kendalaMapping = [];
+        foreach ($allKendalaTypes as $kendala) {
+            $kendalaMapping[$kendala->id] = $kendala->jenis_kendala;
+        }
+
+        // Generate semua tanggal dalam rentang
         $dates = [];
-        $kendalaData = [];
+        $start = Carbon::parse($startDate)->startOfDay();
+        $end = Carbon::parse($endDate)->endOfDay();
+        $allDates = [];
 
-        foreach ($jenisKendalaList as $jenis) {
-            $kendalaData[$jenis] = [];
+        $current = $start->copy();
+        while ($current->lte($end)) {
+            $dateKey = $current->format('Y-m-d');
+            $allDates[] = $dateKey;
+            $dates[] = $current->format('d M');
+            $current->addDay();
         }
 
-        $start = Carbon::parse($startDate);
-        $end = Carbon::parse($endDate);
+        // Group data by date
+        $dataByDate = $allVpasData->groupBy(function ($item) {
+            return $item->tanggal_terlapor->format('Y-m-d');
+        });
 
-        while ($start->lte($end)) {
-            $dateKey = $start->format('Y-m-d');
-            $dates[] = $start->format('d M');
-
-            foreach ($jenisKendalaList as $kendalaId => $jenis) {
-                if (isset($data[$dateKey])) {
-                    $count = $data[$dateKey]->where('kendala_id', $kendalaId)->count();
-                    $kendalaData[$jenis][] = $count;
-                } else {
-                    $kendalaData[$jenis][] = 0;
-                }
-            }
-
-            $start->addDay();
-        }
-
+        // Prepare datasets for each kendala type
         $datasets = [];
         $colors = [
             'rgb(59, 130, 246)',
@@ -353,10 +344,22 @@ class GrafikUptController extends Controller
         ];
 
         $colorIndex = 0;
-        foreach ($kendalaData as $jenis => $dataPoints) {
+        foreach ($kendalaMapping as $kendalaId => $jenisKendala) {
+            $dataPoints = [];
+
+            // Untuk setiap tanggal, hitung jumlah kendala jenis ini
+            foreach ($allDates as $dateKey) {
+                if (isset($dataByDate[$dateKey])) {
+                    $count = $dataByDate[$dateKey]->where('kendala_id', $kendalaId)->count();
+                    $dataPoints[] = $count;
+                } else {
+                    $dataPoints[] = 0;
+                }
+            }
+
             $color = $colors[$colorIndex % count($colors)];
             $datasets[] = [
-                'label' => $jenis ?: 'Tidak ada jenis',
+                'label' => $jenisKendala,
                 'data' => $dataPoints,
                 'borderColor' => $color,
                 'backgroundColor' => str_replace('rgb', 'rgba', str_replace(')', ', 0.1)', $color)),
@@ -364,7 +367,9 @@ class GrafikUptController extends Controller
             $colorIndex++;
         }
 
-        $statusCounts = Vpas::whereBetween('tanggal_terlapor', [$startDate, $endDate])
+        // Calculate status summary
+        $statusCounts = Vpas::whereDate('tanggal_terlapor', '>=', $startDate)
+            ->whereDate('tanggal_terlapor', '<=', $endDate)
             ->selectRaw('status, COUNT(*) as count')
             ->groupBy('status')
             ->pluck('count', 'status')
@@ -383,62 +388,51 @@ class GrafikUptController extends Controller
         ]);
     }
 
-    // TAMBAHAN: VPAS Monthly Data
     private function getVpasMonthlyData($startDate = null, $endDate = null)
     {
-        if (! $startDate) {
+        if (!$startDate) {
             $startDate = Carbon::now()->subMonths(11)->startOfMonth()->format('Y-m-d');
         } else {
             $startDate = Carbon::parse($startDate)->startOfMonth()->format('Y-m-d');
         }
 
-        if (! $endDate) {
+        if (!$endDate) {
             $endDate = Carbon::now()->endOfMonth()->format('Y-m-d');
         } else {
             $endDate = Carbon::parse($endDate)->endOfMonth()->format('Y-m-d');
         }
 
-        $data = Vpas::whereBetween('tanggal_terlapor', [$startDate, $endDate])
+        $allVpasData = Vpas::with('kendala')
+            ->whereDate('tanggal_terlapor', '>=', $startDate)
+            ->whereDate('tanggal_terlapor', '<=', $endDate)
+            ->whereNotNull('kendala_id')
             ->orderBy('tanggal_terlapor', 'asc')
-            ->get()
-            ->groupBy(function ($item) {
-                return $item->tanggal_terlapor->format('Y-m');
-            });
+            ->get();
 
-    $jenisKendalaList = Vpas::with('kendala')
-        ->whereNotNull('kendala_id')
-        ->whereBetween('tanggal_terlapor', [$startDate, $endDate])
-        ->get()
-        ->pluck('kendala.jenis_kendala', 'kendala_id')
-        ->unique()
-        ->filter()
-        ->toArray();
+        // Ambil SEMUA jenis kendala dari database
+        $allKendalaTypes = \App\Models\user\kendala\Kendala::orderBy('jenis_kendala')->get();
 
-        $months = [];
-        $kendalaData = [];
-
-        foreach ($jenisKendalaList as $jenis) {
-            $kendalaData[$jenis] = [];
+        $kendalaMapping = [];
+        foreach ($allKendalaTypes as $kendala) {
+            $kendalaMapping[$kendala->id] = $kendala->jenis_kendala;
         }
 
+        // Generate all months in range
+        $months = [];
         $start = Carbon::parse($startDate)->startOfMonth();
         $end = Carbon::parse($endDate)->endOfMonth();
+        $allMonths = [];
 
         while ($start->lte($end)) {
             $monthKey = $start->format('Y-m');
+            $allMonths[] = $monthKey;
             $months[] = $start->format('M Y');
-
-            foreach ($jenisKendalaList as $jenis) {
-                if (isset($data[$monthKey])) {
-                    $count = $data[$monthKey]->where('jenis_kendala', $jenis)->count();
-                    $kendalaData[$jenis][] = $count;
-                } else {
-                    $kendalaData[$jenis][] = 0;
-                }
-            }
-
             $start->addMonth();
         }
+
+        $dataByMonth = $allVpasData->groupBy(function ($item) {
+            return $item->tanggal_terlapor->format('Y-m');
+        });
 
         $datasets = [];
         $colors = [
@@ -455,10 +449,21 @@ class GrafikUptController extends Controller
         ];
 
         $colorIndex = 0;
-        foreach ($kendalaData as $jenis => $dataPoints) {
+        foreach ($kendalaMapping as $kendalaId => $jenisKendala) {
+            $dataPoints = [];
+
+            foreach ($allMonths as $monthKey) {
+                if (isset($dataByMonth[$monthKey])) {
+                    $count = $dataByMonth[$monthKey]->where('kendala_id', $kendalaId)->count();
+                    $dataPoints[] = $count;
+                } else {
+                    $dataPoints[] = 0;
+                }
+            }
+
             $color = $colors[$colorIndex % count($colors)];
             $datasets[] = [
-                'label' => $jenis ?: 'Tidak ada jenis',
+                'label' => $jenisKendala,
                 'data' => $dataPoints,
                 'borderColor' => $color,
                 'backgroundColor' => str_replace('rgb', 'rgba', str_replace(')', ', 0.1)', $color)),
@@ -466,7 +471,8 @@ class GrafikUptController extends Controller
             $colorIndex++;
         }
 
-        $statusCounts = Vpas::whereBetween('tanggal_terlapor', [$startDate, $endDate])
+        $statusCounts = Vpas::whereDate('tanggal_terlapor', '>=', $startDate)
+            ->whereDate('tanggal_terlapor', '<=', $endDate)
             ->selectRaw('status, COUNT(*) as count')
             ->groupBy('status')
             ->pluck('count', 'status')
@@ -485,57 +491,48 @@ class GrafikUptController extends Controller
         ]);
     }
 
-    // TAMBAHAN: Reguler Daily Data
     private function getRegullerDailyData($startDate = null, $endDate = null)
     {
-        if (! $startDate) {
-            $startDate = Carbon::now()->subDays(6)->format('Y-m-d');
+        if (!$startDate) {
+            // 7 hari terakhir = hari ini + 6 hari sebelumnya
+            $startDate = Carbon::now()->subDays(6)->startOfDay()->format('Y-m-d');
         }
-        if (! $endDate) {
-            $endDate = Carbon::now()->format('Y-m-d');
+        if (!$endDate) {
+            // Pastikan endDate adalah akhir hari ini
+            $endDate = Carbon::now()->endOfDay()->format('Y-m-d');
         }
 
-        $data = Reguller::whereBetween('tanggal_terlapor', [$startDate, $endDate])
+        $allRegullerData = Reguller::with('kendala')
+            ->whereDate('tanggal_terlapor', '>=', $startDate)
+            ->whereDate('tanggal_terlapor', '<=', $endDate)
+            ->whereNotNull('kendala_id')
             ->orderBy('tanggal_terlapor', 'asc')
-            ->get()
-            ->groupBy(function ($item) {
-                return $item->tanggal_terlapor->format('Y-m-d');
-            });
+            ->get();
 
-    $jenisKendalaList = Reguller::with('kendala')
-        ->whereNotNull('kendala_id')
-        ->whereBetween('tanggal_terlapor', [$startDate, $endDate])
-        ->get()
-        ->pluck('kendala.jenis_kendala', 'kendala_id')
-        ->unique()
-        ->filter()
-        ->toArray();
+        // Ambil SEMUA jenis kendala dari database
+        $allKendalaTypes = \App\Models\user\kendala\Kendala::orderBy('jenis_kendala')->get();
+
+        $kendalaMapping = [];
+        foreach ($allKendalaTypes as $kendala) {
+            $kendalaMapping[$kendala->id] = $kendala->jenis_kendala;
+        }
 
         $dates = [];
-        $kendalaData = [];
+        $start = Carbon::parse($startDate)->startOfDay();
+        $end = Carbon::parse($endDate)->endOfDay();
+        $allDates = [];
 
-        foreach ($jenisKendalaList as $jenis) {
-            $kendalaData[$jenis] = [];
+        $current = $start->copy();
+        while ($current->lte($end)) {
+            $dateKey = $current->format('Y-m-d');
+            $allDates[] = $dateKey;
+            $dates[] = $current->format('d M');
+            $current->addDay();
         }
 
-        $start = Carbon::parse($startDate);
-        $end = Carbon::parse($endDate);
-
-        while ($start->lte($end)) {
-            $dateKey = $start->format('Y-m-d');
-            $dates[] = $start->format('d M');
-
-            foreach ($jenisKendalaList as $jenis) {
-                if (isset($data[$dateKey])) {
-                    $count = $data[$dateKey]->where('jenis_kendala', $jenis)->count();
-                    $kendalaData[$jenis][] = $count;
-                } else {
-                    $kendalaData[$jenis][] = 0;
-                }
-            }
-
-            $start->addDay();
-        }
+        $dataByDate = $allRegullerData->groupBy(function ($item) {
+            return $item->tanggal_terlapor->format('Y-m-d');
+        });
 
         $datasets = [];
         $colors = [
@@ -552,10 +549,21 @@ class GrafikUptController extends Controller
         ];
 
         $colorIndex = 0;
-        foreach ($kendalaData as $jenis => $dataPoints) {
+        foreach ($kendalaMapping as $kendalaId => $jenisKendala) {
+            $dataPoints = [];
+
+            foreach ($allDates as $dateKey) {
+                if (isset($dataByDate[$dateKey])) {
+                    $count = $dataByDate[$dateKey]->where('kendala_id', $kendalaId)->count();
+                    $dataPoints[] = $count;
+                } else {
+                    $dataPoints[] = 0;
+                }
+            }
+
             $color = $colors[$colorIndex % count($colors)];
             $datasets[] = [
-                'label' => $jenis ?: 'Tidak ada jenis',
+                'label' => $jenisKendala,
                 'data' => $dataPoints,
                 'borderColor' => $color,
                 'backgroundColor' => str_replace('rgb', 'rgba', str_replace(')', ', 0.1)', $color)),
@@ -563,7 +571,8 @@ class GrafikUptController extends Controller
             $colorIndex++;
         }
 
-        $statusCounts = Reguller::whereBetween('tanggal_terlapor', [$startDate, $endDate])
+        $statusCounts = Reguller::whereDate('tanggal_terlapor', '>=', $startDate)
+            ->whereDate('tanggal_terlapor', '<=', $endDate)
             ->selectRaw('status, COUNT(*) as count')
             ->groupBy('status')
             ->pluck('count', 'status')
@@ -582,61 +591,50 @@ class GrafikUptController extends Controller
         ]);
     }
 
-    // TAMBAHAN: Reguler Monthly Data
     private function getRegullerMonthlyData($startDate = null, $endDate = null)
     {
-        if (! $startDate) {
+        if (!$startDate) {
             $startDate = Carbon::now()->subMonths(11)->startOfMonth()->format('Y-m-d');
         } else {
             $startDate = Carbon::parse($startDate)->startOfMonth()->format('Y-m-d');
         }
 
-        if (! $endDate) {
+        if (!$endDate) {
             $endDate = Carbon::now()->endOfMonth()->format('Y-m-d');
         } else {
             $endDate = Carbon::parse($endDate)->endOfMonth()->format('Y-m-d');
         }
 
-        $data = Reguller::whereBetween('tanggal_terlapor', [$startDate, $endDate])
+        $allRegullerData = Reguller::with('kendala')
+            ->whereDate('tanggal_terlapor', '>=', $startDate)
+            ->whereDate('tanggal_terlapor', '<=', $endDate)
+            ->whereNotNull('kendala_id')
             ->orderBy('tanggal_terlapor', 'asc')
-            ->get()
-            ->groupBy(function ($item) {
-                return $item->tanggal_terlapor->format('Y-m');
-            });
-            
-    $jenisKendalaList = Reguller::with('kendala')
-        ->whereNotNull('kendala_id')
-        ->whereBetween('tanggal_terlapor', [$startDate, $endDate])
-        ->get()
-        ->pluck('kendala.jenis_kendala', 'kendala_id')
-        ->unique()
-        ->filter()
-        ->toArray();
-        $months = [];
-        $kendalaData = [];
+            ->get();
 
-        foreach ($jenisKendalaList as $jenis) {
-            $kendalaData[$jenis] = [];
+        // Ambil SEMUA jenis kendala dari database
+        $allKendalaTypes = \App\Models\user\kendala\Kendala::orderBy('jenis_kendala')->get();
+
+        $kendalaMapping = [];
+        foreach ($allKendalaTypes as $kendala) {
+            $kendalaMapping[$kendala->id] = $kendala->jenis_kendala;
         }
 
+        $months = [];
         $start = Carbon::parse($startDate)->startOfMonth();
         $end = Carbon::parse($endDate)->endOfMonth();
+        $allMonths = [];
 
         while ($start->lte($end)) {
             $monthKey = $start->format('Y-m');
+            $allMonths[] = $monthKey;
             $months[] = $start->format('M Y');
-
-            foreach ($jenisKendalaList as $jenis) {
-                if (isset($data[$monthKey])) {
-                    $count = $data[$monthKey]->where('jenis_kendala', $jenis)->count();
-                    $kendalaData[$jenis][] = $count;
-                } else {
-                    $kendalaData[$jenis][] = 0;
-                }
-            }
-
             $start->addMonth();
         }
+
+        $dataByMonth = $allRegullerData->groupBy(function ($item) {
+            return $item->tanggal_terlapor->format('Y-m');
+        });
 
         $datasets = [];
         $colors = [
@@ -645,7 +643,7 @@ class GrafikUptController extends Controller
             'rgb(234, 179, 8)',
             'rgb(239, 68, 68)',
             'rgb(147, 51, 234)',
-            'rgb(14, 165, 233)',
+            'rgb(14, 165, 133)',
             'rgb(236, 72, 153)',
             'rgb(249, 115, 22)',
             'rgb(20, 184, 166)',
@@ -653,10 +651,21 @@ class GrafikUptController extends Controller
         ];
 
         $colorIndex = 0;
-        foreach ($kendalaData as $jenis => $dataPoints) {
+        foreach ($kendalaMapping as $kendalaId => $jenisKendala) {
+            $dataPoints = [];
+
+            foreach ($allMonths as $monthKey) {
+                if (isset($dataByMonth[$monthKey])) {
+                    $count = $dataByMonth[$monthKey]->where('kendala_id', $kendalaId)->count();
+                    $dataPoints[] = $count;
+                } else {
+                    $dataPoints[] = 0;
+                }
+            }
+
             $color = $colors[$colorIndex % count($colors)];
             $datasets[] = [
-                'label' => $jenis ?: 'Tidak ada jenis',
+                'label' => $jenisKendala,
                 'data' => $dataPoints,
                 'borderColor' => $color,
                 'backgroundColor' => str_replace('rgb', 'rgba', str_replace(')', ', 0.1)', $color)),
@@ -664,7 +673,8 @@ class GrafikUptController extends Controller
             $colorIndex++;
         }
 
-        $statusCounts = Reguller::whereBetween('tanggal_terlapor', [$startDate, $endDate])
+        $statusCounts = Reguller::whereDate('tanggal_terlapor', '>=', $startDate)
+            ->whereDate('tanggal_terlapor', '<=', $endDate)
             ->selectRaw('status, COUNT(*) as count')
             ->groupBy('status')
             ->pluck('count', 'status')
