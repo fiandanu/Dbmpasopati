@@ -78,7 +78,6 @@ class CatatanController extends Controller
         $uptList = Upt::with('kanwil')
             ->where('tipe', 'vpas')
             ->orderBy('namaupt')
-            ->limit(10)
             ->get();
 
         return view('mclient.catatankartu.catatan', compact('data', 'picList', 'cardSupportingList', 'uptList', 'totals'));
