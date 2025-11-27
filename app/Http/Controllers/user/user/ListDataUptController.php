@@ -271,7 +271,6 @@ class ListDataUptController extends Controller
         return $grouped;
     }
 
-
     public function UserPageStore(Request $request)
     {
         // Validasi input

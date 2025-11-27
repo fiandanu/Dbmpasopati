@@ -108,24 +108,12 @@ DataOpsionalPonpesFactory.php PonpesFactory.php Upt
 DataOpsionalUptFactory.php providers user
 mclient tutorial UserFactory.php
 
-NAMA UPT SEBELUMYA KECIL
-
-- upt menjadi Upt
-
-HALAMAN GRAFIK UPT DAN PONPES DIBUAT CETAK PDF
-
 DATA YANG NGAMBIL DARI SERVER ITU UPT DAN PONPES YAITU DARI NAMA UPT DAN KANWIL DAN NAMA WILAYAH
 
 =============================================================
 📝 CATATAN REVISI
 =============================================================
 
-- DI PKS SPP Database, Tipenya dihilangin aja 
-
-- list data UPT VPASREG itu dijadiin 1 aja di datamanajemen
-- Halaman Komplain Upt Ponpes Dan Reguler namanya diubah menjadi komplain upt bukan keluhan
-- Monitoring Server Di Disable Dulu aja
-- logo reguller diganti menjadi call
 
 - HALAMAN DATA MANAJEMEN TAMBAHIN SEARCH BY TANGGAL
 - DI TUTORIAL UPT DAN PONPES COUNTNYA DIUBAT MENGIKUTI DATA YANG ADA
@@ -177,6 +165,27 @@ yang bisa membuat user dan role itu hanya super admin
 =============================================================
 ✅ REVISI SELESAI
 =============================================================
+
+-- 11/27/2025
+
+menambahkan Jumlah UPT Dan Ponpes di halaman Data Manajemen  
+Dan Validasi juga benerin kalau memilih nama UPT yang sama 
+
+Di halaman Komplain UPT ditambahkan grafik kunjugan upt dan pengiriman alat upt
+berdasarkan
+
+ - munculkan Upt kunjungan dan pengiriman alat yang sering di kunjungi saja minimal 10 upt 
+ - bisa dicari berdasarkan tanggal
+ - di catatan kartu vpas 
+
+
+
+
+
+
+
+
+
 
 -- Check Ulang
 11/14/2025
