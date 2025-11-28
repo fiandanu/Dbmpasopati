@@ -99,7 +99,6 @@ class DashboardUptController extends Controller
                 'id' => $item->id,
                 'nama_upt' => $item->upt->namaupt ?? '-',
                 'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
                 'jenis_layanan' => 'Komplain Reguler',
                 'jenis_kendala' => $item->jenis_kendala ?? 'Belum ditentukan',
                 'status' => $item->status ?? 'Belum ditentukan',
@@ -114,7 +113,6 @@ class DashboardUptController extends Controller
                 'id' => $item->id,
                 'nama_upt' => $item->upt->namaupt ?? '-',
                 'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
                 'jenis_layanan' => 'Komplain Vpas',
                 'jenis_kendala' => $item->jenis_kendala ?? 'Belum ditentukan',
                 'status' => $item->status ?? 'Belum ditentukan',
@@ -129,7 +127,6 @@ class DashboardUptController extends Controller
                 'id' => $item->id,
                 'nama_upt' => $item->upt->namaupt ?? '-',
                 'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
                 'jenis_layanan' => 'Kunjungan upt',
                 'jenis_kendala' => $item->keterangan ?? 'Monitoring rutin',
                 'status' => $item->status ?? 'Belum ditentukan',
@@ -144,7 +141,6 @@ class DashboardUptController extends Controller
                 'id' => $item->id,
                 'nama_upt' => $item->upt->namaupt ?? '-',
                 'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
                 'jenis_layanan' => 'Pengiriman Alat',
                 'jenis_kendala' => $item->keterangan ?? 'Pengiriman alat',
                 'status' => $item->status ?? 'Belum ditentukan',
@@ -159,7 +155,6 @@ class DashboardUptController extends Controller
                 'id' => $item->id,
                 'nama_upt' => $item->upt->namaupt ?? '-',
                 'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
                 'jenis_layanan' => 'Setting Alat',
                 'jenis_kendala' => $item->keterangan ?? 'Setting alat',
                 'status' => $item->status ?? 'Belum ditentukan',
@@ -491,7 +486,6 @@ class DashboardUptController extends Controller
             return [
                 'nama_upt' => $item->upt->namaupt ?? '-',
                 'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
                 'jenis_layanan' => 'Keluhan Reguler',
                 'jenis_kendala' => $item->jenis_kendala ?? 'Belum ditentukan',
                 'status' => $item->status ?? 'Belum ditentukan',
@@ -502,7 +496,6 @@ class DashboardUptController extends Controller
             return [
                 'nama_upt' => $item->upt->namaupt ?? '-',
                 'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
                 'jenis_layanan' => 'Keluhan Vpas',
                 'jenis_kendala' => $item->jenis_kendala ?? 'Belum ditentukan',
                 'status' => $item->status ?? 'Belum ditentukan',
@@ -513,7 +506,6 @@ class DashboardUptController extends Controller
             return [
                 'nama_upt' => $item->upt->namaupt ?? '-',
                 'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
                 'jenis_layanan' => 'Kunjungan',
                 'jenis_kendala' => $item->keterangan ?? 'Monitoring rutin',
                 'status' => $item->status ?? 'Belum ditentukan',
@@ -524,7 +516,6 @@ class DashboardUptController extends Controller
             return [
                 'nama_upt' => $item->upt->namaupt ?? '-',
                 'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
                 'jenis_layanan' => 'Pengiriman Alat',
                 'jenis_kendala' => $item->keterangan ?? 'Pengiriman alat',
                 'status' => $item->status ?? 'Belum ditentukan',
@@ -535,7 +526,6 @@ class DashboardUptController extends Controller
             return [
                 'nama_upt' => $item->upt->namaupt ?? '-',
                 'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
                 'jenis_layanan' => 'Setting Alat',
                 'jenis_kendala' => $item->keterangan ?? 'Setting alat',
                 'status' => $item->status ?? 'Belum ditentukan',
@@ -562,7 +552,7 @@ class DashboardUptController extends Controller
             'Expires' => '0',
         ];
 
-        $rows = [['No', 'Nama UPT', 'Kanwil', 'Tipe', 'Jenis Layanan', 'Jenis Kendala', 'Status']];
+        $rows = [['No', 'Nama UPT', 'Kanwil', 'Menu', 'Jenis Kendala', 'Status']];
         $no = 1;
 
         foreach ($allData as $row) {
@@ -570,7 +560,6 @@ class DashboardUptController extends Controller
                 $no++,
                 $row['nama_upt'],
                 $row['kanwil'],
-                ucfirst($row['tipe']),
                 $row['jenis_layanan'],
                 $row['jenis_kendala'],
                 ucfirst($row['status']),
@@ -595,7 +584,6 @@ class DashboardUptController extends Controller
             return [
                 'nama_upt' => $item->upt->namaupt ?? '-',
                 'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
                 'jenis_layanan' => 'Komplain Reguler',
                 'jenis_kendala' => $item->jenis_kendala ?? 'Belum ditentukan',
                 'status' => $item->status ?? 'Belum ditentukan',
@@ -606,7 +594,6 @@ class DashboardUptController extends Controller
             return [
                 'nama_upt' => $item->upt->namaupt ?? '-',
                 'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
                 'jenis_layanan' => 'Komplain Vpas',
                 'jenis_kendala' => $item->jenis_kendala ?? 'Belum ditentukan',
                 'status' => $item->status ?? 'Belum ditentukan',
@@ -617,7 +604,6 @@ class DashboardUptController extends Controller
             return [
                 'nama_upt' => $item->upt->namaupt ?? '-',
                 'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
                 'jenis_layanan' => 'Kunjungan',
                 'jenis_kendala' => $item->keterangan ?? 'Monitoring rutin',
                 'status' => $item->status ?? 'Belum ditentukan',
@@ -628,7 +614,6 @@ class DashboardUptController extends Controller
             return [
                 'nama_upt' => $item->upt->namaupt ?? '-',
                 'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
                 'jenis_layanan' => 'Pengiriman Alat',
                 'jenis_kendala' => $item->keterangan ?? 'Pengiriman alat',
                 'status' => $item->status ?? 'Belum ditentukan',
@@ -639,7 +624,6 @@ class DashboardUptController extends Controller
             return [
                 'nama_upt' => $item->upt->namaupt ?? '-',
                 'kanwil' => $item->upt->kanwil->kanwil ?? '-',
-                'tipe' => $item->upt->tipe ?? '-',
                 'jenis_layanan' => 'Setting Alat',
                 'jenis_kendala' => $item->keterangan ?? 'Setting alat',
                 'status' => $item->status ?? 'Belum ditentukan',

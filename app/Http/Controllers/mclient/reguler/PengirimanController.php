@@ -18,28 +18,40 @@ class PengirimanController extends Controller
         // column-specific search
         if ($request->has('search_nama_upt') && ! empty($request->search_nama_upt)) {
             $query->whereHas('upt', function ($q) use ($request) {
-                $q->where('namaupt', 'LIKE', '%'.$request->search_nama_upt.'%');
+                $q->where('namaupt', 'LIKE', '%' . $request->search_nama_upt . '%');
             });
         }
 
         if ($request->has('search_kanwil') && ! empty($request->search_kanwil)) {
             $query->whereHas('upt.kanwil', function ($q) use ($request) {
-                $q->where('kanwil', 'LIKE', '%'.$request->search_kanwil.'%');
+                $q->where('kanwil', 'LIKE', '%' . $request->search_kanwil . '%');
             });
         }
 
         if ($request->has('search_jenis_layanan') && ! empty($request->search_jenis_layanan)) {
-            $query->where('jenis_layanan', 'LIKE', '%'.$request->search_jenis_layanan.'%');
+            $searchTerm = strtolower($request->search_jenis_layanan);
+
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('jenis_layanan', 'LIKE', '%' . $searchTerm . '%');
+
+                if (str_contains($searchTerm, 'vpas') && str_contains($searchTerm, 'reg')) {
+                    $q->orWhere('jenis_layanan', 'vpasreg');
+                } elseif (str_contains($searchTerm, 'vpas')) {
+                    $q->orWhere('jenis_layanan', 'vpas');
+                } elseif (str_contains($searchTerm, 'reguler') || str_contains($searchTerm, 'reg')) {
+                    $q->orWhere('jenis_layanan', 'reguler');
+                }
+            });
         }
 
         if ($request->has('search_keterangan') && ! empty($request->search_keterangan)) {
-            $query->where('keterangan', 'LIKE', '%'.$request->search_keterangan.'%');
+            $query->where('keterangan', 'LIKE', '%' . $request->search_keterangan . '%');
         }
         if ($request->has('search_status') && ! empty($request->search_status)) {
             $searchStatus = strtolower($request->search_status);
 
             $query->where(function ($q) use ($searchStatus) {
-                $q->where('status', 'LIKE', '%'.$searchStatus.'%');
+                $q->where('status', 'LIKE', '%' . $searchStatus . '%');
 
                 // Jika mencari "belum" atau "ditentukan", include yang NULL/empty
                 if (str_contains($searchStatus, 'belum') || str_contains($searchStatus, 'ditentukan')) {
@@ -49,10 +61,10 @@ class PengirimanController extends Controller
             });
         }
         if ($request->has('search_pic_1') && ! empty($request->search_pic_1)) {
-            $query->where('pic_1', 'LIKE', '%'.$request->search_pic_1.'%');
+            $query->where('pic_1', 'LIKE', '%' . $request->search_pic_1 . '%');
         }
         if ($request->has('search_pic_2') && ! empty($request->search_pic_2)) {
-            $query->where('pic_2', 'LIKE', '%'.$request->search_pic_2.'%');
+            $query->where('pic_2', 'LIKE', '%' . $request->search_pic_2 . '%');
         }
 
         // Date range filtering - PERBAIKAN DI SINI
@@ -103,7 +115,7 @@ class PengirimanController extends Controller
 
         $pdf = Pdf::loadView('export.public.mclient.upt.indexPengirimanAlat', $pdfData)
             ->setPaper('a4', 'landscape');
-        $filename = 'list_pengiriman_alat_upt_'.Carbon::now()->translatedFormat('d_M_Y').'.pdf';
+        $filename = 'list_pengiriman_alat_upt_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
 
         return $pdf->download($filename);
     }
@@ -122,7 +134,7 @@ class PengirimanController extends Controller
 
         $data = $query->orderBy('created_at', 'desc')->get();
 
-        $filename = 'List_Pengiriman_Alat_Upt_'.Carbon::now()->format('Y-m-d_H-i-s').'.csv';
+        $filename = 'List_Pengiriman_Alat_Upt_' . Carbon::now()->format('Y-m-d_H-i-s') . '.csv';
 
         $headers = [
             'Content-type' => 'text/csv',
@@ -164,19 +176,13 @@ class PengirimanController extends Controller
     public function ListDataMclientPengirimanUpt(Request $request)
     {
         $query = Pengiriman::with(['upt.kanwil']);
-
-        // Apply filters
         $query = $this->applyFilters($query, $request);
 
-        // Get per_page from request, default 10
         $perPage = $request->get('per_page', 10);
-
-        // Validate per_page
         if (! in_array($perPage, [10, 15, 20, 'all'])) {
             $perPage = 10;
         }
 
-        // Handle pagination
         if ($perPage == 'all') {
             $data = $query->orderBy('created_at', 'desc')->get();
             // Create a mock paginator for "all" option
@@ -194,39 +200,40 @@ class PengirimanController extends Controller
         $picList = Pic::orderBy('nama_pic')->get();
 
         // Get UPT list based on jenis layanan
-        $uptListVpas = Upt::with('kanwil')
-            ->where('tipe', 'vpas')
+        $allUpts = Upt::with('kanwil')
+            ->whereIn('tipe', ['vpas', 'reguler'])
             ->orderBy('namaupt')
-            ->get()
-            ->map(function ($upt) {
-                return [
-                    'namaupt' => $upt->namaupt,
-                    'kanwil' => $upt->kanwil->kanwil ?? '-',
-                ];
-            });
+            ->get();
 
-        $uptListReguler = Upt::with('kanwil')
-            ->where('tipe', 'reguler')
-            ->orderBy('namaupt')
-            ->get()
-            ->map(function ($upt) {
-                return [
-                    'namaupt' => $upt->namaupt,
-                    'kanwil' => $upt->kanwil->kanwil ?? '-',
-                ];
-            });
+        // Group UPT berdasarkan nama base (tanpa suffix VpasReg)
+        $uptListGrouped = $allUpts->groupBy(function ($upt) {
+            return preg_replace('/\s*\(VpasReg\)$/', '', $upt->namaupt);
+        })->map(function ($group) {
+            $baseNama = preg_replace('/\s*\(VpasReg\)$/', '', $group->first()->namaupt);
+            $tipes = $group->pluck('tipe')->unique()->values();
 
-        // Combine both lists for vpasreg
-        $uptListAll = $uptListVpas->merge($uptListReguler)->unique('namaupt')->sortBy('namaupt');
+            // Tentukan jenis layanan
+            if ($tipes->count() == 2) {
+                $jenisLayanan = 'vpasreg';
+            } else {
+                $jenisLayanan = $tipes->first();
+            }
+
+            return [
+                'namaupt' => $baseNama,
+                'kanwil' => $group->first()->kanwil->kanwil ?? '-',
+                'jenis_layanan' => $jenisLayanan,
+                'tipes' => $tipes->toArray()
+            ];
+        })->sortBy('namaupt')->values();
+
 
         $jenisLayananOptions = $this->getJenisLayanan();
 
         return view('mclient.upt.indexPengiriman', compact(
             'data',
             'picList',
-            'uptListVpas',
-            'uptListReguler',
-            'uptListAll',
+            'uptListGrouped',
             'jenisLayananOptions'
         ));
     }
@@ -236,7 +243,7 @@ class PengirimanController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'nama_upt' => 'required|string|exists:data_upt,namaupt',
+                'nama_upt' => 'required|string',
                 'jenis_layanan' => 'required|string|in:vpas,reguler,vpasreg',
                 'keterangan' => 'nullable|string',
                 'tanggal_pengiriman' => 'nullable|date',
@@ -272,28 +279,50 @@ class PengirimanController extends Controller
         }
 
         try {
-            // Cari data_upt_id berdasarkan nama_upt
-            $upt = Upt::where('namaupt', $request->nama_upt)->first();
+            $namaUptSearch = $request->nama_upt;
 
-            if (! $upt) {
-                return redirect()->back()
-                    ->withInput()
-                    ->with('error', 'UPT tidak ditemukan.');
+            if ($request->jenis_layanan === 'vpasreg') {
+                $upt = Upt::where('namaupt', $namaUptSearch . ' (VpasReg)')
+                    ->where('tipe', 'vpas')
+                    ->first();
+
+                if (!$upt) {
+                    $upt = Upt::where('namaupt', $namaUptSearch)
+                        ->where('tipe', 'vpas')
+                        ->first();
+                }
+            } else {
+                $upt = Upt::where('namaupt', $namaUptSearch . ' (VpasReg) ')
+                    ->where('tipe', $request->jenis_layanan)
+                    ->first();
+
+                if (!$upt) {
+                    $upt = Upt::where('namaupt', $namaUptSearch)
+                        ->where('tipe', $request->jenis_layanan)
+                        ->first();
+                }
             }
 
-            $data = $request->except('nama_upt'); // Hapus nama_upt dari request
-            $data['data_upt_id'] = $upt->id;
+            if (!$upt) {
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'Data UPT tidak ditemukan untuk jenis layanan.');
+            }
 
-            if ($request->tanggal_pengiriman) {
-                if ($request->tanggal_sampai) {
-                    $tanggalSampai = Carbon::parse($request->tanggal_sampai);
+            $data = $request->all();
+            $data['data_upt_id'] = $upt->id;
+            unset($data['nama_upt']);
+
+            if ($request->tanggal_selesai) {
+                if ($request->tanggal_terlapor) {
+                    $tanggalTerlapor = Carbon::parse($request->tanggal_terlapor);
                 } else {
-                    $tanggalSampai = Carbon::now();
-                    $data['tanggal_sampai'] = $tanggalSampai;
+                    $tanggalTerlapor = Carbon::now();
+                    $data['tanggal_terlapor'] = $tanggalTerlapor;
                 }
 
-                $tanggalSampai = Carbon::parse($request->tanggal_sampai);
-                $data['durasi_hari'] = $tanggalSampai->diffInDays(Carbon::parse($request->tanggal_pengiriman));
+                $tanggalSelesai = Carbon::parse($request->tanggal_selesai);
+                $data['durasi_hari'] = $tanggalTerlapor->diffInDays($tanggalSelesai);
             } else {
                 $data['durasi_hari'] = null;
             }
@@ -304,7 +333,7 @@ class PengirimanController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Gagal menambahkan data: '.$e->getMessage());
+                ->with('error', 'Gagal menambahkan data: ' . $e->getMessage());
         }
     }
 
@@ -313,7 +342,7 @@ class PengirimanController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'nama_upt' => 'required|string|exists:data_upt,namaupt',
+                'nama_upt' => 'required|string',
                 'jenis_layanan' => 'required|string|in:vpas,reguler,vpasreg',
                 'keterangan' => 'nullable|string',
                 'tanggal_pengiriman' => 'nullable|date',
@@ -361,10 +390,9 @@ class PengirimanController extends Controller
                     ->with('error', 'UPT tidak ditemukan.');
             }
 
-            $updateData = $request->except('nama_upt'); // Hapus nama_upt
-            $updateData['data_upt_id'] = $upt->id; // ✅ Simpan sebagai foreign key
+            $updateData = $request->except('nama_upt');
+            $updateData['data_upt_id'] = $upt->id;
 
-            // Kalkulasi durasi_hari jika tanggal_sampai diisi
             if ($request->tanggal_sampai) {
                 if ($request->tanggal_pengiriman) {
                     $tanggalPengiriman = Carbon::parse($request->tanggal_pengiriman);
@@ -384,7 +412,7 @@ class PengirimanController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Gagal update data: '.$e->getMessage());
+                ->with('error', 'Gagal update data: ' . $e->getMessage());
         }
     }
 
@@ -400,7 +428,7 @@ class PengirimanController extends Controller
                 ->with('success', "Data pengiriman alat monitoring client '{$jenisLayanan}' di UPT '{$namaUpt}' berhasil dihapus!");
         } catch (\Exception $e) {
             return redirect()->back()
-                ->with('error', 'Gagal menghapus data: '.$e->getMessage());
+                ->with('error', 'Gagal menghapus data: ' . $e->getMessage());
         }
     }
 }

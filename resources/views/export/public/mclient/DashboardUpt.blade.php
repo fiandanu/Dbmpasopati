@@ -142,7 +142,6 @@
                 <th style="width: 12%;">Kanwil</th>
                 <th style="width: 25%;">Jenis Kendala/Keterangan</th>
                 <th style="width: 13%;">Menu</th>
-                <th style="width: 10%;">Tipe</th>
                 <th style="width: 10%;">Status</th>
             </tr>
         </thead>
@@ -155,11 +154,6 @@
                     <td>{{ $item['kanwil'] }}</td>
                     <td>{{ Str::limit($item['jenis_kendala'], 40) }}</td>
                     <td class="text-center">{{ $item['jenis_layanan'] }}</td>
-                    <td class="text-center">
-                        <span class="badge @if ($item['tipe'] == 'vpas') badge-vpas @else badge-reguler @endif">
-                            {{ ucfirst($item['tipe']) }}
-                        </span>
-                    </td>
                     <td class="text-center">
                         @php
                             $statusClass = 'badge-secondary';

@@ -25,12 +25,24 @@ class SettingPonpesController extends Controller
             'search_nama_ponpes' => fn($q, $v) => $q->whereHas('ponpes.namaWilayah', fn($qq) => $qq->where('nama_ponpes', 'LIKE', "%{$v}%")),
             'search_nama_wilayah' => fn($q, $v) => $q->whereHas('ponpes.namaWilayah', fn($qq) => $qq->where('nama_wilayah', 'LIKE', "%{$v}%")),
 
-            // === Status (khusus: include NULL / empty) ===
+            'search_jenis_layanan' => function ($q, $v) {
+                $searchTerm = strtolower($v);
+                $q->where(function ($qq) use ($searchTerm) {
+                    $qq->where('jenis_layanan', 'LIKE', "%{$searchTerm}%");
+                    if (str_contains($searchTerm, 'vtren') && str_contains($searchTerm, 'reg')) {
+                        $qq->orWhere('jenis_layanan', 'vtrenreg');
+                    } elseif (str_contains($searchTerm, 'vtren')) {
+                        $qq->orWhere('jenis_layanan', 'vtren');
+                    } elseif (str_contains($searchTerm, 'reguler') || str_contains($searchTerm, 'reg')) {
+                        $qq->orWhere('jenis_layanan', 'reguler');
+                    }
+                });
+            },
+
             'search_status' => function ($q, $v) {
                 $v = strtolower($v);
                 $q->where(function ($qq) use ($v) {
                     $qq->where('status', 'LIKE', "%{$v}%");
-
                     if (str_contains($v, 'belum') || str_contains($v, 'ditentukan')) {
                         $qq->orWhereNull('status')
                             ->orWhere('status', '');
@@ -48,7 +60,6 @@ class SettingPonpesController extends Controller
         ];
 
         foreach ($filters as $key => $callback) {
-            // gunakan `filled()` agar nilai kosong string tidak dianggap valid
             if ($request->filled($key)) {
                 $callback($query, $request->input($key));
             }
@@ -68,23 +79,10 @@ class SettingPonpesController extends Controller
 
     public function ListDataMclientPonpesSetting(Request $request)
     {
-        // $query = SettingPonpes::with('ponpes.namaWilayah');
-        $query = SettingPonpes::with([
-            'ponpes.namaWilayah' => function ($query) {
-                $query->select('id', 'nama_wilayah'); // Hanya ambil field needed
-            },
-            'ponpes' => function ($query) {
-                $query->select('id', 'nama_ponpes', 'nama_wilayah_id');
-            },
-        ]);
-
-        // Apply filters
+        $query = SettingPonpes::with('ponpes.namaWilayah');
         $query = $this->applyFilters($query, $request);
 
-        // Get per_page from request, default 10
         $perPage = $request->get('per_page', 10);
-
-        // Validate per_page
         if (! in_array($perPage, [10, 15, 20, 'all'])) {
             $perPage = 10;
         }
@@ -107,27 +105,38 @@ class SettingPonpesController extends Controller
         $picList = Pic::orderBy('nama_pic')->get();
 
         // Get Ponpes list based on jenis layanan
-        $ponpesListVtren = Ponpes::with('namaWilayah')
-            ->where('tipe', 'vtren')
+        $allPonpes = Ponpes::with('namaWilayah')
+            ->whereIn('tipe', ['vtren', 'reguler'])
             ->orderBy('nama_ponpes')
             ->get();
 
-        $ponpesListReguler = Ponpes::with('namaWilayah')
-            ->where('tipe', 'reguler')
-            ->orderBy('nama_ponpes')
-            ->get();
+        $ponpesListGrouped = $allPonpes->groupBy(function ($ponpes) {
+            return preg_replace('/\s*\(VtrenReg\)$/', '', $ponpes->nama_ponpes);
+        })->map(function ($group) {
+            $baseNama = preg_replace('/\s*\(VtrenReg\)$/', '', $group->first()->nama_ponpes);
+            $tipes = $group->pluck('tipe')->unique()->values();
 
-        // Combine both lists for vtrenreg
-        $ponpesListAll = $ponpesListVtren->merge($ponpesListReguler)->unique('id')->sortBy('nama_ponpes');
+            // Tentukan jenis layanan
+            if ($tipes->count() == 2) {
+                $jenisLayanan = 'vtrenreg';
+            } else {
+                $jenisLayanan = $tipes->first();
+            }
+
+            return [
+                'nama_ponpes' => $baseNama,
+                'nama_wilayah' => $group->first()->namaWilayah->nama_wilayah ?? '-',
+                'jenis_layanan' => $jenisLayanan,
+                'tipes' => $tipes->toArray()
+            ];
+        })->sortBy('nama_ponpes')->values();
 
         $jenisLayananOptions = $this->getJenisLayanan();
 
         return view('mclient.ponpes.indexSettingPonpes', compact(
             'data',
             'picList',
-            'ponpesListVtren',
-            'ponpesListReguler',
-            'ponpesListAll',
+            'ponpesListGrouped',
             'jenisLayananOptions'
         ));
     }
@@ -173,18 +182,51 @@ class SettingPonpesController extends Controller
         }
 
         try {
-            $data = $request->all();
+            $namaPonpesSearch = $request->nama_ponpes;
 
-            $data['data_ponpes_id'] = $request->nama_ponpes;
+            if ($request->jenis_layanan === 'vtrenreg') {
+                $ponpes = Ponpes::where('nama_ponpes', $namaPonpesSearch . ' (VtrenReg) ')
+                    ->where('tipe', 'vtren')
+                    ->first();
+
+                if (!$ponpes) {
+                    $ponpes = Ponpes::where('nama_ponpes', $namaPonpesSearch)
+                        ->where('tipe', 'vtren')
+                        ->first();
+                }
+            } else {
+                $ponpes = Ponpes::where('nama_ponpes', $namaPonpesSearch . ' (VtrenReg) ')
+                    ->where('tipe', $request->jenis_layanan)
+                    ->first();
+
+                if (!$ponpes) {
+                    $ponpes = Ponpes::where('nama_ponpes', $namaPonpesSearch)
+                        ->where('tipe', $request->jenis_layanan)
+                        ->first();
+                }
+            }
+
+            if (!$ponpes) {
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'Data Ponpes tidak ditemukan untuk jenis layanan.');
+            }
+
+            $data = $request->all();
+            $data['data_ponpes_id'] = $ponpes->id;
             unset($data['nama_ponpes']);
 
-            // Hitung durasi HANYA jika tanggal_selesai ada
-            if ($request->tanggal_selesai && $request->tanggal_terlapor) {
-                $tanggalTerlapor = Carbon::parse($request->tanggal_terlapor);
+            if ($request->tanggal_selesai) {
+                if ($request->tanggal_terlapor) {
+                    $tanggalTerlapor = Carbon::parse($request->tanggal_terlapor);
+                } else {
+                    $tanggalTerlapor = Carbon::now();
+                    $data['tanggal_terlapor'] = $tanggalTerlapor;
+                }
+
                 $tanggalSelesai = Carbon::parse($request->tanggal_selesai);
                 $data['durasi_hari'] = $tanggalTerlapor->diffInDays($tanggalSelesai);
             } else {
-                // Jika belum ada tanggal_selesai, set null (akan dihitung dinamis)
                 $data['durasi_hari'] = null;
             }
 
@@ -203,7 +245,7 @@ class SettingPonpesController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'nama_ponpes' => 'required|string|exists:data_ponpes,id',
+                'nama_ponpes' => 'required|string',
                 'jenis_layanan' => 'required|string|in:vtren,reguler,vtrenreg',
                 'keterangan' => 'nullable|string',
                 'tanggal_terlapor' => 'nullable|date',
@@ -241,20 +283,21 @@ class SettingPonpesController extends Controller
 
         try {
             $data = SettingPonpes::findOrFail($id);
-            $updateData = $request->all();
+            $ponpes = Ponpes::where('nama_ponpes', $request->nama_ponpes)->first();
 
-            // Update ID ponpes
-            $updateData['data_ponpes_id'] = $request->nama_ponpes;
-            unset($updateData['nama_ponpes']);
+            if (! $ponpes) {
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'Data Ponpes tidak ditemukan.');
+            }
 
-            // Hitung dan simpan durasi HANYA jika tanggal_selesai baru ditentukan
-            if ($request->tanggal_selesai && $request->tanggal_terlapor) {
+            $updateData = $request->except('nama_ponpes');
+            $updateData['data_ponpes_id'] = $ponpes->id;
+
+            if ($request->tanggal_terlapor && $request->tanggal_selesai) {
                 $tanggalTerlapor = Carbon::parse($request->tanggal_terlapor);
                 $tanggalSelesai = Carbon::parse($request->tanggal_selesai);
                 $updateData['durasi_hari'] = $tanggalTerlapor->diffInDays($tanggalSelesai);
-            } elseif ($request->has('tanggal_selesai') && empty($request->tanggal_selesai)) {
-                // Jika tanggal_selesai dihapus, set durasi ke null
-                $updateData['durasi_hari'] = null;
             }
 
             $data->update($updateData);

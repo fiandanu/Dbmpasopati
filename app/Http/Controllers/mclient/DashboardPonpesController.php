@@ -32,24 +32,10 @@ class DashboardPonpesController extends Controller
             });
         }
 
-        // Filter by tipe
-        if ($request->has('search_tipe') && !empty($request->search_tipe)) {
-            $collection = $collection->filter(function ($item) use ($request) {
-                return stripos($item['tipe'], $request->search_tipe) !== false;
-            });
-        }
-
         // Filter by jenis_layanan
         if ($request->has('search_jenis_layanan') && !empty($request->search_jenis_layanan)) {
             $collection = $collection->filter(function ($item) use ($request) {
                 return stripos($item['jenis_layanan'], $request->search_jenis_layanan) !== false;
-            });
-        }
-
-        // Filter by jenis_kendala
-        if ($request->has('search_jenis_kendala') && !empty($request->search_jenis_kendala)) {
-            $collection = $collection->filter(function ($item) use ($request) {
-                return stripos($item['jenis_kendala'], $request->search_jenis_kendala) !== false;
             });
         }
 
@@ -99,7 +85,6 @@ class DashboardPonpesController extends Controller
                 'id' => $item->id,
                 'nama_ponpes' => $item->ponpes->nama_ponpes ?? '-',
                 'nama_wilayah' => $item->ponpes->namaWilayah->nama_wilayah ?? '-',
-                'tipe' => $item->ponpes->tipe ?? '-',
                 'jenis_layanan' => 'Komplain Reguler',
                 'jenis_kendala' => $item->jenis_kendala ?? 'Belum ditentukan',
                 'status' => $item->status ?? 'Belum ditentukan',
@@ -114,7 +99,6 @@ class DashboardPonpesController extends Controller
                 'id' => $item->id,
                 'nama_ponpes' => $item->ponpes->nama_ponpes ?? '-',
                 'nama_wilayah' => $item->ponpes->namaWilayah->nama_wilayah ?? '-',
-                'tipe' => $item->ponpes->tipe ?? '-',
                 'jenis_layanan' => 'Komplain Vtren',
                 'jenis_kendala' => $item->jenis_kendala ?? 'Belum ditentukan',
                 'status' => $item->status ?? 'Belum ditentukan',
@@ -129,7 +113,6 @@ class DashboardPonpesController extends Controller
                 'id' => $item->id,
                 'nama_ponpes' => $item->ponpes->nama_ponpes ?? '-',
                 'nama_wilayah' => $item->ponpes->namaWilayah->nama_wilayah ?? '-',
-                'tipe' => $item->ponpes->tipe ?? '-',
                 'jenis_layanan' => 'Kunjungan Ponpes',
                 'jenis_kendala' => $item->keterangan ?? 'Monitoring rutin',
                 'status' => $item->status ?? 'Belum ditentukan',
@@ -144,7 +127,6 @@ class DashboardPonpesController extends Controller
                 'id' => $item->id,
                 'nama_ponpes' => $item->ponpes->nama_ponpes ?? '-',
                 'nama_wilayah' => $item->ponpes->namaWilayah->nama_wilayah ?? '-',
-                'tipe' => $item->ponpes->tipe ?? '-',
                 'jenis_layanan' => 'Pengiriman Alat',
                 'jenis_kendala' => $item->keterangan ?? 'Pengiriman alat',
                 'status' => $item->status ?? 'Belum ditentukan',
@@ -159,7 +141,6 @@ class DashboardPonpesController extends Controller
                 'id' => $item->id,
                 'nama_ponpes' => $item->ponpes->nama_ponpes ?? '-',
                 'nama_wilayah' => $item->ponpes->namaWilayah->nama_wilayah ?? '-',
-                'tipe' => $item->ponpes->tipe ?? '-',
                 'jenis_layanan' => 'Setting Alat',
                 'jenis_kendala' => $item->keterangan ?? 'Setting alat',
                 'status' => $item->status ?? 'Belum ditentukan',
@@ -490,7 +471,6 @@ class DashboardPonpesController extends Controller
             return [
                 'nama_ponpes' => $item->ponpes->nama_ponpes ?? '-',
                 'nama_wilayah' => $item->ponpes->namaWilayah->nama_wilayah ?? '-',
-                'tipe' => $item->ponpes->tipe ?? '-',
                 'jenis_layanan' => 'Komplain Reguler',
                 'jenis_kendala' => $item->jenis_kendala ?? 'Belum ditentukan',
                 'status' => $item->status ?? 'Belum ditentukan',
@@ -501,7 +481,6 @@ class DashboardPonpesController extends Controller
             return [
                 'nama_ponpes' => $item->ponpes->nama_ponpes ?? '-',
                 'nama_wilayah' => $item->ponpes->namaWilayah->nama_wilayah ?? '-',
-                'tipe' => $item->ponpes->tipe ?? '-',
                 'jenis_layanan' => 'Komplain VTREN',
                 'jenis_kendala' => $item->jenis_kendala ?? 'Belum ditentukan',
                 'status' => $item->status ?? 'Belum ditentukan',
@@ -512,7 +491,6 @@ class DashboardPonpesController extends Controller
             return [
                 'nama_ponpes' => $item->ponpes->nama_ponpes ?? '-',
                 'nama_wilayah' => $item->ponpes->namaWilayah->nama_wilayah ?? '-',
-                'tipe' => $item->ponpes->tipe ?? '-',
                 'jenis_layanan' => 'Kunjungan',
                 'jenis_kendala' => $item->keterangan ?? 'Monitoring rutin',
                 'status' => $item->status ?? 'Belum ditentukan',
@@ -523,7 +501,6 @@ class DashboardPonpesController extends Controller
             return [
                 'nama_ponpes' => $item->ponpes->nama_ponpes ?? '-',
                 'nama_wilayah' => $item->ponpes->namaWilayah->nama_wilayah ?? '-',
-                'tipe' => $item->ponpes->tipe ?? '-',
                 'jenis_layanan' => 'Pengiriman Alat',
                 'jenis_kendala' => $item->keterangan ?? 'Pengiriman alat',
                 'status' => $item->status ?? 'Belum ditentukan',
@@ -534,7 +511,6 @@ class DashboardPonpesController extends Controller
             return [
                 'nama_ponpes' => $item->ponpes->nama_ponpes ?? '-',
                 'nama_wilayah' => $item->ponpes->namaWilayah->nama_wilayah ?? '-',
-                'tipe' => $item->ponpes->tipe ?? '-',
                 'jenis_layanan' => 'Setting Alat',
                 'jenis_kendala' => $item->keterangan ?? 'Setting alat',
                 'status' => $item->status ?? 'Belum ditentukan',
@@ -561,7 +537,7 @@ class DashboardPonpesController extends Controller
             'Expires' => '0',
         ];
 
-        $rows = [['No', 'Nama Ponpes', 'Wilayah', 'Tipe', 'Menu', 'Jenis Kendala', 'Status']];
+        $rows = [['No', 'Nama Ponpes', 'Wilayah', 'Menu', 'Jenis Kendala', 'Status']];
         $no = 1;
 
         foreach ($allData as $row) {
@@ -569,7 +545,6 @@ class DashboardPonpesController extends Controller
                 $no++,
                 $row['nama_ponpes'],
                 $row['nama_wilayah'],
-                ucfirst($row['tipe']),
                 $row['jenis_layanan'],
                 $row['jenis_kendala'],
                 ucfirst($row['status']),
@@ -594,7 +569,6 @@ class DashboardPonpesController extends Controller
             return [
                 'nama_ponpes' => $item->ponpes->nama_ponpes ?? '-',
                 'nama_wilayah' => $item->ponpes->namaWilayah->nama_wilayah ?? '-',
-                'tipe' => $item->ponpes->tipe ?? '-',
                 'jenis_layanan' => 'Komplain Reguler',
                 'jenis_kendala' => $item->jenis_kendala ?? 'Belum ditentukan',
                 'status' => $item->status ?? 'Belum ditentukan',
@@ -605,7 +579,6 @@ class DashboardPonpesController extends Controller
             return [
                 'nama_ponpes' => $item->ponpes->nama_ponpes ?? '-',
                 'nama_wilayah' => $item->ponpes->namaWilayah->nama_wilayah ?? '-',
-                'tipe' => $item->ponpes->tipe ?? '-',
                 'jenis_layanan' => 'Komplain VTREN',
                 'jenis_kendala' => $item->jenis_kendala ?? 'Belum ditentukan',
                 'status' => $item->status ?? 'Belum ditentukan',
@@ -616,7 +589,6 @@ class DashboardPonpesController extends Controller
             return [
                 'nama_ponpes' => $item->ponpes->nama_ponpes ?? '-',
                 'nama_wilayah' => $item->ponpes->namaWilayah->nama_wilayah ?? '-',
-                'tipe' => $item->ponpes->tipe ?? '-',
                 'jenis_layanan' => 'Kunjungan',
                 'jenis_kendala' => $item->keterangan ?? 'Monitoring rutin',
                 'status' => $item->status ?? 'Belum ditentukan',
@@ -627,7 +599,6 @@ class DashboardPonpesController extends Controller
             return [
                 'nama_ponpes' => $item->ponpes->nama_ponpes ?? '-',
                 'nama_wilayah' => $item->ponpes->namaWilayah->nama_wilayah ?? '-',
-                'tipe' => $item->ponpes->tipe ?? '-',
                 'jenis_layanan' => 'Pengiriman Alat',
                 'jenis_kendala' => $item->keterangan ?? 'Pengiriman alat',
                 'status' => $item->status ?? 'Belum ditentukan',
@@ -638,7 +609,6 @@ class DashboardPonpesController extends Controller
             return [
                 'nama_ponpes' => $item->ponpes->nama_ponpes ?? '-',
                 'nama_wilayah' => $item->ponpes->namaWilayah->nama_wilayah ?? '-',
-                'tipe' => $item->ponpes->tipe ?? '-',
                 'jenis_layanan' => 'Setting Alat',
                 'jenis_kendala' => $item->keterangan ?? 'Setting alat',
                 'status' => $item->status ?? 'Belum ditentukan',

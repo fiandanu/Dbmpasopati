@@ -436,48 +436,44 @@
 
                                         <div class="modal-body">
 
-                                            <!-- Jenis Layanan & Ponpes -->
+                                            <!-- Jenis Layanan & PONPES -->
                                             <div class="mb-4">
                                                 <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
-                                                    <label class="fw-bold">Informasi Ponpes</label>
+                                                    <label class="fw-bold">Informasi PONPES</label>
                                                 </div>
 
+                                                <!-- PONPES SELECTION DULU -->
                                                 <div class="mb-3">
-                                                    <label for="jenis_layanan">Jenis Layanan <span
-                                                            class="text-danger">*</span></label>
-                                                    <select class="form-control" id="jenis_layanan" name="jenis_layanan"
-                                                        required onchange="updatePonpesOptions()">
-                                                        <option value="">-- Pilih Jenis Layanan --</option>
-                                                        @foreach ($jenisLayananOptions as $key => $value)
-                                                            <option value="{{ $key }}">{{ $value }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-
-                                                <div class="mb-3">
-                                                    <label for="nama_ponpes">Nama Ponpes <span
+                                                    <label for="nama_ponpes">Nama PONPES <span
                                                             class="text-danger">*</span></label>
                                                     <div class="dropdown">
                                                         <div class="input-group">
-                                                            <input type="text" class="form-control" id="ponpes_search"
-                                                                placeholder="Pilih jenis layanan dulu..."
-                                                                autocomplete="off" disabled>
+                                                            <input type="text" class="form-control" id="ponpes-search"
+                                                                placeholder="Cari dan pilih PONPES..." autocomplete="off">
                                                             <div class="input-group-append">
                                                                 <button type="button" class="btn btn-outline-secondary"
-                                                                    onclick="togglePonpesDropdown()" disabled
-                                                                    id="dropdown-btn">
+                                                                    onclick="toggleUptDropdown()" id="dropdown-btn">
                                                                     <i class="fas fa-chevron-down"></i>
                                                                 </button>
                                                             </div>
                                                         </div>
-                                                        <div class="dropdown-menu w-100" id="ponpesDropdownMenu"
+                                                        <div class="dropdown-menu w-100" id="uptDropdownMenu"
                                                             style="max-height: 200px; overflow-y: auto; display: none;">
                                                         </div>
                                                     </div>
                                                     <input type="hidden" id="nama_ponpes" name="nama_ponpes" required>
-                                                    <small class="form-text text-muted">Pilih jenis layanan terlebih
-                                                        dahulu</small>
+                                                    <input type="hidden" id="jenis_layanan" name="jenis_layanan"
+                                                        required>
+                                                    <small class="form-text text-muted">Pilih PONPES, jenis layanan akan
+                                                        terdeteksi otomatis</small>
+                                                </div>
+
+                                                <!-- JENIS LAYANAN (READ-ONLY, AUTO-FILLED) -->
+                                                <div class="mb-3">
+                                                    <label for="jenis-layanan-display">Jenis Layanan <span
+                                                            class="text-danger">*</span></label>
+                                                    <input type="text" class="form-control" id="jenis-layanan-display"
+                                                        readonly placeholder="Akan terisi otomatis setelah memilih UPT">
                                                 </div>
                                             </div>
 
@@ -605,37 +601,26 @@
                                                     </div>
 
                                                     <div class="mb-3">
-                                                        <label for="jenis_layanan_edit_{{ $d->id }}">Jenis Layanan
-                                                            <span class="text-danger">*</span></label>
-                                                        <select class="form-control text-muted"
-                                                            id="jenis_layanan_edit_{{ $d->id }}"
-                                                            name="jenis_layanan_display"
-                                                            onchange="updatePonpesOptionsEdit({{ $d->id }})"
-                                                            disabled>
-                                                            <option value="">-- Pilih Jenis Layanan --</option>
-                                                            @foreach ($jenisLayananOptions as $key => $value)
-                                                                <option value="{{ $key }}"
-                                                                    {{ $d->jenis_layanan == $key ? 'selected' : '' }}>
-                                                                    {{ $value }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                        <!-- Hidden input untuk mengirim nilai jenis_layanan -->
+                                                        <label for="jenis_layanan_display_{{ $d->id }}">Jenis
+                                                            Layanan</label>
+                                                        <input type="text" class="form-control text-muted"
+                                                            id="jenis_layanan_display_{{ $d->id }}"
+                                                            value="{{ $jenisLayananOptions[$d->jenis_layanan] ?? $d->jenis_layanan }}"
+                                                            readonly>
                                                         <input type="hidden" name="jenis_layanan"
                                                             value="{{ $d->jenis_layanan }}">
                                                     </div>
 
+                                                    <!-- Nama PONPES (Display Only) -->
                                                     <div class="mb-3">
-                                                        <label for="nama_ponpes_edit_{{ $d->id }}">Nama Ponpes
-                                                            <span class="text-danger">*</span></label>
-                                                        <select class="form-control text-muted"
-                                                            id="nama_ponpes_edit_{{ $d->id }}"
-                                                            name="nama_ponpes_display" disabled>
-                                                            <option value="">-- Pilih Ponpes --</option>
-                                                        </select>
-                                                        <!-- Hidden input untuk mengirim nilai nama_ponpes -->
+                                                        <label for="nama_ponpes_display_{{ $d->id }}">Nama
+                                                            PONPES</label>
+                                                        <input type="text" class="form-control text-muted"
+                                                            id="nama_ponpes_display_{{ $d->id }}"
+                                                            value="{{ $d->ponpes->nama_ponpes ?? '' }} - {{ $d->ponpes->namaWilayah->nama_wilayah ?? '' }}"
+                                                            readonly>
                                                         <input type="hidden" name="nama_ponpes"
-                                                            value="{{ $d->data_ponpes_id }}">
+                                                            value="{{ $d->ponpes->nama_ponpes ?? '' }}">
                                                     </div>
                                                 </div>
 
@@ -973,150 +958,30 @@
     </script>
 
 
-    {{-- DROPDOWN UNTUK ADD MODAL DAN EDIT MODAL --}}
+    {{-- JS PONPES List dengan jenis layanan --}}
     <script>
-        // Ponpes Lists for different service types
-        const ponpesListVtren = @json($ponpesListVtren);
-        const ponpesListReguler = @json($ponpesListReguler);
-        const ponpesListAll = @json($ponpesListAll);
+        // UPT List dengan jenis layanan
+        const uptListGrouped = @json($ponpesListGrouped);
+        const jenisLayananLabels = {
+            'vtren': 'Vtren',
+            'reguler': 'Reguler',
+            'vtrenreg': 'Vtren + Reguler'
+        };
 
-        // JS ADD MODAL
-        function updatePonpesOptions() {
-            const jenisLayanan = document.getElementById('jenis_layanan').value;
-            const ponpesSearch = document.getElementById('ponpes_search');
-            const ponpesDropdown = document.getElementById('ponpesDropdownMenu');
-            const namaPonpesInput = document.getElementById('nama_ponpes');
-            const dropdownBtn = document.getElementById('dropdown-btn');
-
-            // Clear previous selections
-            namaPonpesInput.value = '';
-            ponpesSearch.value = '';
-            ponpesDropdown.innerHTML = '';
-
-            if (jenisLayanan === '') {
-                ponpesSearch.disabled = true;
-                dropdownBtn.disabled = true;
-                ponpesSearch.placeholder = 'Pilih jenis layanan dulu...';
-                return;
-            }
-
-            // Enable Ponpes search
-            ponpesSearch.disabled = false;
-            dropdownBtn.disabled = false;
-            ponpesSearch.placeholder = 'Cari Ponpes...';
-
-            // Determine which Ponpes list to use
-            let ponpesList = [];
-            switch (jenisLayanan) {
-                case 'vtren':
-                    ponpesList = ponpesListVtren;
-                    break;
-                case 'reguler':
-                    ponpesList = ponpesListReguler;
-                    break;
-                case 'vtrenreg':
-                    ponpesList = ponpesListAll;
-                    break;
-            }
-
-            // Populate dropdown
-            ponpesList.forEach(ponpes => {
-                const option = document.createElement('a');
-                option.className = 'dropdown-item ponpes-option';
-                option.href = '#';
-                option.textContent =
-                    `${ponpes.nama_ponpes} - ${ponpes.nama_wilayah?.nama_wilayah || 'Wilayah tidak tersedia'}`;
-                option.setAttribute('data-value', ponpes.id);
-                option.setAttribute('data-nama-wilayah', ponpes.nama_wilayah?.nama_wilayah || '');
-                option.onclick = function() {
-                    selectPonpes(ponpes.id, ponpes.nama_ponpes, ponpes.nama_wilayah?.nama_wilayah);
-                };
-                ponpesDropdown.appendChild(option);
-            });
-        }
-
-        // JS UNTUK EDIT MODAL
-        function updatePonpesOptionsEdit(id) {
-            const jenisLayanan = document.getElementById(`jenis_layanan_edit_${id}`).value;
-            const namaPonpesSelect = document.getElementById(`nama_ponpes_edit_${id}`);
-
-            // Clear previous options
-            namaPonpesSelect.innerHTML = '<option value="">-- Pilih Ponpes --</option>';
-
-            if (jenisLayanan === '') {
-                return;
-            }
-
-            // Determine which Ponpes list to use
-            let ponpesList = [];
-            switch (jenisLayanan) {
-                case 'vtren':
-                    ponpesList = ponpesListVtren;
-                    break;
-                case 'reguler':
-                    ponpesList = ponpesListReguler;
-                    break;
-                case 'vtrenreg':
-                    ponpesList = ponpesListAll;
-                    break;
-            }
-
-            // Populate select options
-            ponpesList.forEach(ponpes => {
-                const option = document.createElement('option');
-                option.value = ponpes.id; // UBAH: gunakan ID
-                option.textContent = ponpes.nama_ponpes;
-                option.setAttribute('data-nama-wilayah', ponpes.nama_wilayah);
-                namaPonpesSelect.appendChild(option);
-            });
-        }
-
-        // Select Ponpes option
-        function selectPonpes(ponpesId, namaPonpes, namaWilayah) {
-            document.getElementById('ponpes_search').value = namaPonpes; // Tampilkan nama
-            document.getElementById('nama_ponpes').value = ponpesId; // Simpan ID
-            document.getElementById('ponpesDropdownMenu').style.display = 'none';
-        }
-
-        // Toggle dropdown visibility
-        function togglePonpesDropdown() {
-            const ponpesDropdown = document.getElementById('ponpesDropdownMenu');
-            const ponpesOptions = ponpesDropdown.querySelectorAll('.ponpes-option');
-
-            if (ponpesDropdown.style.display === 'none' || ponpesDropdown.style.display === '') {
-                ponpesOptions.forEach(option => {
-                    option.style.display = 'block';
-                });
-                ponpesDropdown.style.display = 'block';
-            } else {
-                ponpesDropdown.style.display = 'none';
-            }
-        }
-
-        // Initialize edit modals on page load
+        // POPULATE DROPDOWN SAAT HALAMAN LOAD
         document.addEventListener('DOMContentLoaded', function() {
-            @foreach ($data as $d)
-                updatePonpesOptionsEdit({{ $d->id }});
-                const currentPonpesId{{ $d->id }} =
-                    '{{ $d->data_ponpes_id }}'; // UBAH: gunakan data_ponpes_id
-                const selectElement{{ $d->id }} = document.getElementById(
-                    'nama_ponpes_edit_{{ $d->id }}');
-                if (selectElement{{ $d->id }} && currentPonpesId{{ $d->id }}) {
-                    selectElement{{ $d->id }}.value = currentPonpesId{{ $d->id }};
-                }
-            @endforeach
+            populateUptDropdown();
 
-            // Searchable Ponpes dropdown functionality
-            const ponpesSearch = document.getElementById('ponpes_search');
-            const ponpesDropdown = document.getElementById('ponpesDropdownMenu');
+            // Setup search functionality
+            const uptSearch = document.getElementById('ponpes-search');
+            const uptDropdown = document.getElementById('uptDropdownMenu');
 
-            // Filter Ponpes options based on search input
-            ponpesSearch.addEventListener('input', function() {
+            uptSearch.addEventListener('input', function() {
                 const searchTerm = this.value.toLowerCase();
-                const ponpesOptions = ponpesDropdown.querySelectorAll('.ponpes-option');
+                const uptOptions = uptDropdown.querySelectorAll('.upt-option');
                 let hasVisibleOption = false;
 
-                ponpesOptions.forEach(option => {
+                uptOptions.forEach(option => {
                     const text = option.textContent.toLowerCase();
                     if (text.includes(searchTerm)) {
                         option.style.display = 'block';
@@ -1127,31 +992,28 @@
                 });
 
                 if (searchTerm.length > 0 && hasVisibleOption) {
-                    ponpesDropdown.style.display = 'block';
+                    uptDropdown.style.display = 'block';
                 } else if (searchTerm.length === 0) {
-                    ponpesDropdown.style.display = 'none';
+                    uptDropdown.style.display = 'none';
                 }
             });
 
-            // Show options when clicking on search input
-            ponpesSearch.addEventListener('focus', function() {
-                if (this.value.length > 0 && !this.disabled) {
+            uptSearch.addEventListener('focus', function() {
+                if (this.value.length > 0) {
                     const searchTerm = this.value.toLowerCase();
-                    const ponpesOptions = ponpesDropdown.querySelectorAll('.ponpes-option');
+                    const uptOptions = uptDropdown.querySelectorAll('.upt-option');
                     let hasVisibleOption = false;
 
-                    ponpesOptions.forEach(option => {
+                    uptOptions.forEach(option => {
                         const text = option.textContent.toLowerCase();
                         if (text.includes(searchTerm)) {
                             option.style.display = 'block';
                             hasVisibleOption = true;
-                        } else {
-                            option.style.display = 'none';
                         }
                     });
 
                     if (hasVisibleOption) {
-                        ponpesDropdown.style.display = 'block';
+                        uptDropdown.style.display = 'block';
                     }
                 }
             });
@@ -1159,27 +1021,73 @@
             // Hide dropdown when clicking outside
             document.addEventListener('click', function(event) {
                 if (!event.target.closest('.dropdown')) {
-                    ponpesDropdown.style.display = 'none';
+                    uptDropdown.style.display = 'none';
                 }
             });
 
-            // Clear Ponpes selection when search is cleared
-            ponpesSearch.addEventListener('input', function() {
+            // Clear selection when search is cleared
+            uptSearch.addEventListener('input', function() {
                 if (this.value === '') {
                     document.getElementById('nama_ponpes').value = '';
+                    document.getElementById('jenis_layanan').value = '';
+                    document.getElementById('jenis-layanan-display').value = '';
                 }
             });
         });
 
+        // Populate UPT dropdown dengan semua UPT
+        function populateUptDropdown() {
+            const uptDropdown = document.getElementById('uptDropdownMenu');
+            uptDropdown.innerHTML = '';
+
+            uptListGrouped.forEach(upt => {
+                const option = document.createElement('a');
+                option.className = 'dropdown-item upt-option';
+                option.href = '#';
+                option.textContent =
+                    `${upt.nama_ponpes} - ${upt.nama_wilayah} (${jenisLayananLabels[upt.jenis_layanan]})`;
+                option.setAttribute('data-nama-ponpes', upt.nama_ponpes);
+                option.setAttribute('data-jenis', upt.jenis_layanan);
+                option.setAttribute('data-kanwil', upt.nama_wilayah);
+                option.onclick = function(e) {
+                    e.preventDefault();
+                    selectPonpes(upt.nama_ponpes, upt.jenis_layanan, upt.nama_wilayah);
+                };
+                uptDropdown.appendChild(option);
+            });
+        }
+
+        // Select UPT dan auto-fill jenis layanan
+        function selectPonpes(namaPonpes, jenisLayanan, nama_wilayah) {
+            document.getElementById('ponpes-search').value = `${namaPonpes} - ${nama_wilayah}`;
+            document.getElementById('nama_ponpes').value = namaPonpes;
+            document.getElementById('jenis_layanan').value = jenisLayanan;
+            document.getElementById('jenis-layanan-display').value = jenisLayananLabels[jenisLayanan];
+            document.getElementById('uptDropdownMenu').style.display = 'none';
+        }
+
+        // Toggle dropdown
+        function toggleUptDropdown() {
+            const uptDropdown = document.getElementById('uptDropdownMenu');
+            const uptOptions = uptDropdown.querySelectorAll('.upt-option');
+
+            if (uptDropdown.style.display === 'none' || uptDropdown.style.display === '') {
+                uptOptions.forEach(option => {
+                    option.style.display = 'block';
+                });
+                uptDropdown.style.display = 'block';
+            } else {
+                uptDropdown.style.display = 'none';
+            }
+        }
+
         // Reset form when modal is closed
         $('#addModal').on('hidden.bs.modal', function() {
-            document.getElementById('jenis_layanan').value = '';
-            document.getElementById('ponpes_search').value = '';
+            document.getElementById('ponpes-search').value = '';
             document.getElementById('nama_ponpes').value = '';
-            document.getElementById('ponpesDropdownMenu').style.display = 'none';
-            document.getElementById('ponpes_search').disabled = true;
-            document.getElementById('dropdown-btn').disabled = true;
-            document.getElementById('ponpes_search').placeholder = 'Pilih jenis layanan dulu...';
+            document.getElementById('jenis_layanan').value = '';
+            document.getElementById('jenis-layanan-display').value = '';
+            document.getElementById('uptDropdownMenu').style.display = 'none';
         });
     </script>
 

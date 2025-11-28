@@ -15,6 +15,13 @@
 
                         <div class="d-flex align-items-center gap-2 flex-wrap">
 
+                            <div class="btn-page">
+                                <div class="d-flex justify-center gap-12 align-items-center">
+                                    <h1 class="title-small-16 mb-0">Total Data</h1>
+                                    <span class="title-small-16 mb-0">{{ number_format($totalDataUpt ?? 0) }}</span>
+                                </div>
+                            </div>
+
                             <div class="d-flex justify-content-center align-items-center gap-12">
                                 <div class="btn-page">
                                     <input type="date" id="search-tanggal-dari" name="search_tanggal_dari"
@@ -104,6 +111,23 @@
             </div>
         @endif
 
+        @if (session('warning'))
+            <div class="alert alert-warning alert-dismissible fade show border-0 shadow-sm mx-4" role="alert">
+                <div class="d-flex">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-exclamation-triangle text-warning"></i>
+                    </div>
+                    <div class="flex-grow-1 ml-3">
+                        <div class="alert-heading h5 mb-2">Peringatan!</div>
+                        <div class="small">{{ session('warning') }}</div>
+                    </div>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
+        @endif
+
         @if (session('error'))
             <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm mx-4" role="alert">
                 <div class="d-flex">
@@ -134,7 +158,7 @@
                                     <th class=" text-center align-top">
                                         <div class="d-flex flex-column gap-12">
                                             <span>No</span>
-                                            <div class="d-flex align-items-center gap-2">
+                                            <div class="d-flex justify-center align-items-center gap-2">
                                                 <button type="button" class="btn-purple w-auto" onclick="applyFilters()"
                                                     title="Cari Semua Filter">
                                                     <i class="fas fa-search"></i> Cari
@@ -737,6 +761,27 @@
             } else {
                 $("#export-buttons").hide();
             }
+        });
+    </script>
+
+
+    {{-- Auto-hide alerts after 3 seconds --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert');
+
+            alerts.forEach(function(alert) {
+                setTimeout(function() {
+                    // Fade out animation
+                    alert.style.transition = 'opacity 0.5s ease';
+                    alert.style.opacity = '0';
+
+                    // Remove from DOM after fade out
+                    setTimeout(function() {
+                        alert.remove();
+                    }, 500);
+                }, 3000); // 3 seconds
+            });
         });
     </script>
 

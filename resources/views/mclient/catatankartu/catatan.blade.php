@@ -1120,8 +1120,6 @@
             }
         }
 
-
-
         // ========== JAVASCRIPT UNTUK EDIT MODAL ==========
         window.updateKanwilEdit = function(uptId, recordId) {
 
@@ -1184,7 +1182,6 @@
             document.getElementById('addForm').reset();
         });
     </script>
-
 
     {{-- Search and Filter JavaScript --}}
     <script>

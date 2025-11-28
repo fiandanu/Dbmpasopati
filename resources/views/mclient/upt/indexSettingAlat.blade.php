@@ -435,31 +435,17 @@
                                                     <label class="fw-bold">Informasi UPT</label>
                                                 </div>
 
-                                                <div class="mb-3">
-                                                    <label for="jenis_layanan">Jenis Layanan <span
-                                                            class="text-danger">*</span></label>
-                                                    <select class="form-control" id="jenis_layanan" name="jenis_layanan"
-                                                        required onchange="updateUptOptions()">
-                                                        <option value="">-- Pilih Jenis Layanan --</option>
-                                                        @foreach ($jenisLayananOptions as $key => $value)
-                                                            <option value="{{ $key }}">{{ $value }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-
+                                                <!-- UPT SELECTION DULU -->
                                                 <div class="mb-3">
                                                     <label for="nama_upt">Nama UPT <span
                                                             class="text-danger">*</span></label>
                                                     <div class="dropdown">
                                                         <div class="input-group">
                                                             <input type="text" class="form-control" id="upt_search"
-                                                                placeholder="Pilih jenis layanan dulu..."
-                                                                autocomplete="off" disabled>
+                                                                placeholder="Cari dan pilih UPT..." autocomplete="off">
                                                             <div class="input-group-append">
                                                                 <button type="button" class="btn btn-outline-secondary"
-                                                                    onclick="toggleUptDropdown()" disabled
-                                                                    id="dropdown-btn">
+                                                                    onclick="toggleUptDropdown()" id="dropdown-btn">
                                                                     <i class="fas fa-chevron-down"></i>
                                                                 </button>
                                                             </div>
@@ -469,8 +455,18 @@
                                                         </div>
                                                     </div>
                                                     <input type="hidden" id="nama_upt" name="nama_upt" required>
-                                                    <small class="form-text text-muted">Pilih jenis layanan terlebih
-                                                        dahulu</small>
+                                                    <input type="hidden" id="jenis_layanan" name="jenis_layanan"
+                                                        required>
+                                                    <small class="form-text text-muted">Pilih UPT, jenis layanan akan
+                                                        terdeteksi otomatis</small>
+                                                </div>
+
+                                                <!-- JENIS LAYANAN (READ-ONLY, AUTO-FILLED) -->
+                                                <div class="mb-3">
+                                                    <label for="jenis_layanan_display">Jenis Layanan <span
+                                                            class="text-danger">*</span></label>
+                                                    <input type="text" class="form-control" id="jenis_layanan_display"
+                                                        readonly placeholder="Akan terisi otomatis setelah memilih UPT">
                                                 </div>
                                             </div>
 
@@ -593,38 +589,26 @@
                                                     </div>
 
                                                     <div class="mb-3">
-                                                        <label for="jenis_layanan_edit_{{ $d->id }}">Jenis Layanan
-                                                            <span class="text-danger">*</span></label>
-                                                        <select class="form-control text-muted"
-                                                            id="jenis_layanan_edit_{{ $d->id }}"
-                                                            name="jenis_layanan_display"
-                                                            onchange="updateUptOptionsEdit({{ $d->id }})" disabled>
-                                                            <option value="">-- Pilih Jenis Layanan --</option>
-                                                            @foreach ($jenisLayananOptions as $key => $value)
-                                                                <option value="{{ $key }}"
-                                                                    {{ $d->jenis_layanan == $key ? 'selected' : '' }}>
-                                                                    {{ $value }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                        <!-- Hidden input untuk mengirim nilai jenis_layanan -->
+                                                        <label for="jenis_layanan_display_{{ $d->id }}">Jenis
+                                                            Layanan</label>
+                                                        <input type="text" class="form-control text-muted"
+                                                            id="jenis_layanan_display_{{ $d->id }}"
+                                                            value="{{ $jenisLayananOptions[$d->jenis_layanan] ?? $d->jenis_layanan }}"
+                                                            readonly>
                                                         <input type="hidden" name="jenis_layanan"
                                                             value="{{ $d->jenis_layanan }}">
                                                     </div>
 
+                                                    <!-- Nama UPT (Display Only) -->
                                                     <div class="mb-3">
-                                                        <label for="nama_upt_edit_{{ $d->id }}">Nama UPT <span
-                                                                class="text-danger">*</span></label>
-                                                        <select class="form-control text-muted"
-                                                            id="nama_upt_edit_{{ $d->id }}"
-                                                            name="nama_upt_display" disabled>
-                                                            <option value="">-- Pilih UPT --</option>
-                                                        </select>
-                                                        <!-- Hidden input untuk mengirim nilai nama_upt -->
+                                                        <label for="nama_upt_display_{{ $d->id }}">Nama UPT</label>
+                                                        <input type="text" class="form-control text-muted"
+                                                            id="nama_upt_display_{{ $d->id }}"
+                                                            value="{{ $d->upt->namaupt ?? '' }} - {{ $d->upt->kanwil->kanwil ?? '' }}"
+                                                            readonly>
                                                         <input type="hidden" name="nama_upt"
                                                             value="{{ $d->upt->namaupt ?? '' }}">
                                                     </div>
-
                                                 </div>
 
                                                 <!-- Detail Setting Alat -->
@@ -955,145 +939,24 @@
         });
     </script>
 
-    {{-- DROPDOWN UNTUK ADD MODAL --}}
+    {{-- JS UPT List dengan jenis layanan --}}
     <script>
-        // UPT Lists for different service types
-        const uptListVpas = @json($uptListVpas);
-        const uptListReguler = @json($uptListReguler);
-        const uptListAll = @json($uptListAll);
+        // UPT List dengan jenis layanan
+        const uptListGrouped = @json($uptListGrouped);
+        const jenisLayananLabels = {
+            'vpas': 'VPAS',
+            'reguler': 'Reguler',
+            'vpasreg': 'VPAS + Reguler'
+        };
 
-        // JS UNTUK ADD MODAL
-        function updateUptOptions() {
-            const jenisLayanan = document.getElementById('jenis_layanan').value;
-            const uptSearch = document.getElementById('upt_search');
-            const uptDropdown = document.getElementById('uptDropdownMenu');
-            const namaUptInput = document.getElementById('nama_upt');
-            const dropdownBtn = document.getElementById('dropdown-btn');
-
-            // Clear previous selections
-            namaUptInput.value = '';
-            uptSearch.value = '';
-            uptDropdown.innerHTML = '';
-
-            if (jenisLayanan === '') {
-                uptSearch.disabled = true;
-                dropdownBtn.disabled = true;
-                uptSearch.placeholder = 'Pilih jenis layanan dulu...';
-                return;
-            }
-
-            // Enable UPT search
-            uptSearch.disabled = false;
-            dropdownBtn.disabled = false;
-            uptSearch.placeholder = 'Cari UPT...';
-
-            // Determine which UPT list to use
-            let uptList = [];
-            switch (jenisLayanan) {
-                case 'vpas':
-                    uptList = uptListVpas;
-                    break;
-                case 'reguler':
-                    uptList = uptListReguler;
-                    break;
-                case 'vpasreg':
-                    uptList = uptListAll;
-                    break;
-            }
-
-            // Populate dropdown
-            uptList.forEach(upt => {
-                const option = document.createElement('a');
-                option.className = 'dropdown-item upt-option';
-                option.href = '#';
-                option.textContent = `${upt.namaupt} - ${upt.kanwil}`;
-                option.setAttribute('data-value', upt.namaupt);
-                option.setAttribute('data-kanwil', upt.kanwil);
-                option.onclick = function() {
-                    selectUpt(upt.namaupt, upt.kanwil);
-                };
-                uptDropdown.appendChild(option);
-            });
-        }
-
-
-        // JS UNTUK EDIT MODAL
-        function updateUptOptionsEdit(id) {
-            const jenisLayanan = document.getElementById(`jenis_layanan_edit_${id}`).value;
-            const namaUptSelect = document.getElementById(`nama_upt_edit_${id}`);
-
-            // Clear previous options
-            namaUptSelect.innerHTML = '<option value="">-- Pilih UPT --</option>';
-
-            if (jenisLayanan === '') {
-                return;
-            }
-
-            // Determine which UPT list to use
-            let uptList = [];
-            switch (jenisLayanan) {
-                case 'vpas':
-                    uptList = uptListVpas;
-                    break;
-                case 'reguler':
-                    uptList = uptListReguler;
-                    break;
-                case 'vpasreg':
-                    uptList = uptListAll;
-                    break;
-            }
-
-            // Populate select options
-            uptList.forEach(upt => {
-                const option = document.createElement('option');
-                option.value = upt.namaupt;
-                option.textContent = upt.namaupt;
-                option.setAttribute('data-kanwil', upt.kanwil);
-                namaUptSelect.appendChild(option);
-            });
-        }
-
-
-        // Select UPT option
-        function selectUpt(namaUpt, kanwil) {
-            document.getElementById('upt_search').value = namaUpt;
-            document.getElementById('nama_upt').value = namaUpt;
-            document.getElementById('uptDropdownMenu').style.display = 'none';
-        }
-
-        // Toggle dropdown visibility
-        function toggleUptDropdown() {
-            const uptDropdown = document.getElementById('uptDropdownMenu');
-            const uptOptions = uptDropdown.querySelectorAll('.upt-option');
-
-            if (uptDropdown.style.display === 'none' || uptDropdown.style.display === '') {
-                uptOptions.forEach(option => {
-                    option.style.display = 'block';
-                });
-                uptDropdown.style.display = 'block';
-            } else {
-                uptDropdown.style.display = 'none';
-            }
-        }
-
-        // Initialize edit modals on page load
+        // POPULATE DROPDOWN SAAT HALAMAN LOAD
         document.addEventListener('DOMContentLoaded', function() {
-            @foreach ($data as $d)
-                updateUptOptionsEdit({{ $d->id }});
-                // Set current value
-                const currentUpt{{ $d->id }} = '{{ $d->upt->namaupt ?? '' }}';
-                const selectElement{{ $d->id }} = document.getElementById(
-                    'nama_upt_edit_{{ $d->id }}');
-                if (selectElement{{ $d->id }} && currentUpt{{ $d->id }}) {
-                    selectElement{{ $d->id }}.value = currentUpt{{ $d->id }};
-                }
-            @endforeach
+            populateUptDropdown();
 
-            // Searchable UPT dropdown functionality
+            // Setup search functionality
             const uptSearch = document.getElementById('upt_search');
             const uptDropdown = document.getElementById('uptDropdownMenu');
 
-            // Filter UPT options based on search input
             uptSearch.addEventListener('input', function() {
                 const searchTerm = this.value.toLowerCase();
                 const uptOptions = uptDropdown.querySelectorAll('.upt-option');
@@ -1116,9 +979,8 @@
                 }
             });
 
-            // Show options when clicking on search input
             uptSearch.addEventListener('focus', function() {
-                if (this.value.length > 0 && !this.disabled) {
+                if (this.value.length > 0) {
                     const searchTerm = this.value.toLowerCase();
                     const uptOptions = uptDropdown.querySelectorAll('.upt-option');
                     let hasVisibleOption = false;
@@ -1128,8 +990,6 @@
                         if (text.includes(searchTerm)) {
                             option.style.display = 'block';
                             hasVisibleOption = true;
-                        } else {
-                            option.style.display = 'none';
                         }
                     });
 
@@ -1146,23 +1006,68 @@
                 }
             });
 
-            // Clear UPT selection when search is cleared
+            // Clear selection when search is cleared
             uptSearch.addEventListener('input', function() {
                 if (this.value === '') {
                     document.getElementById('nama_upt').value = '';
+                    document.getElementById('jenis_layanan').value = '';
+                    document.getElementById('jenis_layanan_display').value = '';
                 }
             });
         });
 
+        // Populate UPT dropdown dengan semua UPT
+        function populateUptDropdown() {
+            const uptDropdown = document.getElementById('uptDropdownMenu');
+            uptDropdown.innerHTML = '';
+
+            uptListGrouped.forEach(upt => {
+                const option = document.createElement('a');
+                option.className = 'dropdown-item upt-option';
+                option.href = '#';
+                option.textContent = `${upt.namaupt} - ${upt.kanwil} (${jenisLayananLabels[upt.jenis_layanan]})`;
+                option.setAttribute('data-namaupt', upt.namaupt);
+                option.setAttribute('data-jenis', upt.jenis_layanan);
+                option.setAttribute('data-kanwil', upt.kanwil);
+                option.onclick = function(e) {
+                    e.preventDefault();
+                    selectUpt(upt.namaupt, upt.jenis_layanan, upt.kanwil);
+                };
+                uptDropdown.appendChild(option);
+            });
+        }
+
+        // Select UPT dan auto-fill jenis layanan
+        function selectUpt(namaUpt, jenisLayanan, kanwil) {
+            document.getElementById('upt_search').value = `${namaUpt} - ${kanwil}`;
+            document.getElementById('nama_upt').value = namaUpt;
+            document.getElementById('jenis_layanan').value = jenisLayanan;
+            document.getElementById('jenis_layanan_display').value = jenisLayananLabels[jenisLayanan];
+            document.getElementById('uptDropdownMenu').style.display = 'none';
+        }
+
+        // Toggle dropdown
+        function toggleUptDropdown() {
+            const uptDropdown = document.getElementById('uptDropdownMenu');
+            const uptOptions = uptDropdown.querySelectorAll('.upt-option');
+
+            if (uptDropdown.style.display === 'none' || uptDropdown.style.display === '') {
+                uptOptions.forEach(option => {
+                    option.style.display = 'block';
+                });
+                uptDropdown.style.display = 'block';
+            } else {
+                uptDropdown.style.display = 'none';
+            }
+        }
+
         // Reset form when modal is closed
         $('#addModal').on('hidden.bs.modal', function() {
-            document.getElementById('jenis_layanan').value = '';
             document.getElementById('upt_search').value = '';
             document.getElementById('nama_upt').value = '';
+            document.getElementById('jenis_layanan').value = '';
+            document.getElementById('jenis_layanan_display').value = '';
             document.getElementById('uptDropdownMenu').style.display = 'none';
-            document.getElementById('upt_search').disabled = true;
-            document.getElementById('dropdown-btn').disabled = true;
-            document.getElementById('upt_search').placeholder = 'Pilih jenis layanan dulu...';
         });
     </script>
 

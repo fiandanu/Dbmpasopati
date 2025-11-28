@@ -952,9 +952,9 @@
         // UPT List dengan jenis layanan
         const uptListGrouped = @json($uptListGrouped);
         const jenisLayananLabels = {
-            'vpas': 'VPAS',
+            'vpas': 'Vpas',
             'reguler': 'Reguler',
-            'vpasreg': 'VPAS + Reguler'
+            'vpasreg': 'Vpas + Reguler'
         };
 
         // POPULATE DROPDOWN SAAT HALAMAN LOAD

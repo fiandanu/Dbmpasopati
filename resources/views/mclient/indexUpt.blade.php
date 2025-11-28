@@ -2,34 +2,32 @@
 @section('content')
     <div class="content-wrapper">
 
-        <section class="content">
-            <div class="container-fluid">
-                <div class="row py-3 align-items-center">
-                    <div class="col d-flex justify-content-between align-items-center">
-                        <!-- Left navbar links -->
-                        <div class="d-flex justify-center align-items-center gap-12">
-                            <button class="btn-pushmenu" data-widget="pushmenu" role="button">
-                                <i class="fas fa-bars"></i>
-                            </button>
-                            <h1 class="headline-large-32 mb-0">Komplain UPT</h1>
-                        </div>
-
-                        {{-- BUTTON DOWNLOAD PDF CSV TOP --}}
-                        <div class="d-flex gap-3">
-                            <button onclick="downloadCsvTop()"
-                                class="btn-page d-flex justify-content-center align-items-center" title="Download CSV">
-                                <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export CSV
-                            </button>
-                            <button onclick="downloadPdfTop()"
-                                class="btn-page d-flex justify-content-center align-items-center" title="Download PDF">
-                                <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PDF
-                            </button>
-                        </div>
-
+        <div class="container-fluid">
+            <div class="row py-3 align-items-center">
+                <div class="col d-flex justify-content-between align-items-center">
+                    <!-- Left navbar links -->
+                    <div class="d-flex justify-center align-items-center gap-12">
+                        <button class="btn-pushmenu" data-widget="pushmenu" role="button">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <h1 class="headline-large-32 mb-0">Komplain UPT</h1>
                     </div>
+
+                    {{-- BUTTON DOWNLOAD PDF CSV TOP --}}
+                    <div class="d-flex gap-3">
+                        <button onclick="downloadCsvTop()" class="btn-page d-flex justify-content-center align-items-center"
+                            title="Download CSV">
+                            <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export CSV
+                        </button>
+                        <button onclick="downloadPdfTop()" class="btn-page d-flex justify-content-center align-items-center"
+                            title="Download PDF">
+                            <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PDF
+                        </button>
+                    </div>
+
                 </div>
             </div>
-        </section>
+        </div>
 
         <div class="content">
             <div class="container-fluid">
@@ -263,13 +261,11 @@
         <!-- TABLE SECTION -->
         <section class="content">
             <div class="container-fluid">
-                <div class="row mb-3 align-items-center gap-12">
-                    <div class="col d-flex justify-content-between align-items-center">
-                        <h3 class="headline-medium-24">Data Monitoring Client Keseluruhan</h3>
-                    </div>
+                <div class="col d-flex justify-content-between align-items-center">
+                    <h3 class="headline-medium-24">Data Monitoring Client Keseluruhan</h3>
 
                     <!-- Bagian TANGGAL -->
-                    <div class="d-flex gap-12">
+                    <div class="d-flex gap-12 mb-3">
                         <div class="btn-page">
                             <input type="date" id="search-tanggal-dari" name="search_tanggal_dari"
                                 title="Tanggal Dari">
@@ -278,10 +274,8 @@
                             <input type="date" id="search-tanggal-sampai" name="search_tanggal_sampai"
                                 title="Tanggal Sampai">
                         </div>
-                    </div>
 
-                    <!-- Bagian BUTTON DOWNLOAD (di kanan) -->
-                    <div class="d-flex gap-12">
+                        <!-- Bagian BUTTON DOWNLOAD (di kanan) -->
                         <button onclick="downloadCsv()" class="btn-page d-flex justify-content-center align-items-center"
                             title="Download CSV">
                             <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export CSV
@@ -357,18 +351,6 @@
                                     </th>
                                     <th class="text-center align-top">
                                         <div class="d-flex justify-content-center align-items-center flex-column gap-12">
-                                            <span>Tipe</span>
-                                            <div class="btn-searchbar column-search">
-                                                <select id="search-tipe" name="search_tipe">
-                                                    <option value="">Semua</option>
-                                                    <option value="vpas">Vpas</option>
-                                                    <option value="reguler">Reguler</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <th class="text-center align-top">
-                                        <div class="d-flex justify-content-center align-items-center flex-column gap-12">
                                             <span>Status</span>
                                             <div class="btn-searchbar column-search">
                                                 <select id="search-status" name="search_status">
@@ -412,12 +394,12 @@
                                                 {{ $d['jenis_layanan'] }}
                                             </span>
                                         </td>
-                                        <td class="text-center">
+                                        {{-- <td class="text-center">
                                             <span
                                                 class="@if ($d['tipe'] == 'reguler') Tipereguller @elseif($d['tipe'] == 'vpas') Tipevpas @endif">
                                                 {{ ucfirst($d['tipe']) }}
                                             </span>
-                                        </td>
+                                        </td> --}}
                                         <td class="text-center">
                                             @php
                                                 $statusClass = match (strtolower($d['status'] ?? '')) {
@@ -459,9 +441,6 @@
                                 @endif
                                 @if (request('search_kanwil'))
                                     <input type="hidden" name="search_kanwil" value="{{ request('search_kanwil') }}">
-                                @endif
-                                @if (request('search_tipe'))
-                                    <input type="hidden" name="search_tipe" value="{{ request('search_tipe') }}">
                                 @endif
                                 @if (request('search_jenis_layanan'))
                                     <input type="hidden" name="search_jenis_layanan"
@@ -539,6 +518,8 @@
 
     </div>
 
+
+
     {{-- jQuery Library --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
         integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
@@ -552,7 +533,6 @@
                 return {
                     search_nama_upt: $('#search-nama-upt').val().trim(),
                     search_kanwil: $('#search-kanwil').val().trim(),
-                    search_tipe: $('#search-tipe').val().trim(),
                     search_jenis_layanan: $('#search-jenis-layanan').val().trim(),
                     search_jenis_kendala: $('#search-jenis-kendala').val().trim(),
                     search_status: $('#search-status').val().trim(),
@@ -570,7 +550,6 @@
                 // Remove ALL filter parameters first
                 url.searchParams.delete('search_nama_upt');
                 url.searchParams.delete('search_kanwil');
-                url.searchParams.delete('search_tipe');
                 url.searchParams.delete('search_jenis_layanan');
                 url.searchParams.delete('search_jenis_kendala');
                 url.searchParams.delete('search_status');
@@ -606,7 +585,6 @@
             window.clearAllFilters = function() {
                 $('#search-nama-upt').val('');
                 $('#search-kanwil').val('');
-                $('#search-tipe').val('');
                 $('#search-jenis-layanan').val('');
                 $('#search-jenis-kendala').val('');
                 $('#search-status').val('');
@@ -616,7 +594,6 @@
                 let url = new URL(window.location.href);
                 url.searchParams.delete('search_nama_upt');
                 url.searchParams.delete('search_kanwil');
-                url.searchParams.delete('search_tipe');
                 url.searchParams.delete('search_jenis_layanan');
                 url.searchParams.delete('search_jenis_kendala');
                 url.searchParams.delete('search_status');
@@ -707,9 +684,6 @@
             }
             if (urlParams.get('search_kanwil')) {
                 $('#search-kanwil').val(urlParams.get('search_kanwil'));
-            }
-            if (urlParams.get('search_tipe')) {
-                $('#search-tipe').val(urlParams.get('search_tipe'));
             }
             if (urlParams.get('search_jenis_layanan')) {
                 $('#search-jenis-layanan').val(urlParams.get('search_jenis_layanan'));

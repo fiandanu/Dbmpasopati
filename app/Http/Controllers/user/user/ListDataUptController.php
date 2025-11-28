@@ -194,6 +194,8 @@ class ListDataUptController extends Controller
         // Apply status filter
         $groupedData = $this->applyStatusFilter(collect($groupedData), $request);
 
+        $totalDataUpt = $groupedData->count();
+
         // Handle pagination
         if ($perPage === 'all') {
             $data = $this->createMockPaginator($groupedData, $request);
@@ -227,7 +229,7 @@ class ListDataUptController extends Controller
         $datakanwil = Kanwil::orderBy('kanwil')->limit(100)->get();
         $jenisLayananOptions = $this->getJenisLayanan();
 
-        return view('user.indexUser', compact('data', 'providers', 'vpns', 'datakanwil', 'jenisLayananOptions'));
+        return view('user.indexUser', compact('data', 'providers', 'vpns', 'datakanwil', 'jenisLayananOptions', 'totalDataUpt'));
     }
 
     private function groupVpasRegData($allData)
@@ -319,7 +321,7 @@ class ListDataUptController extends Controller
             if ($existingRecord) {
                 return redirect()->back()
                     ->withInput()
-                    ->with('error', "Data UPT '{$namaUpt}' dengan tipe '{$tipeValue}' sudah ada!");
+                    ->with('warning', "Data UPT '{$namaUpt}' dengan tipe '{$tipeValue}' sudah ada!");
             }
         }
 
@@ -500,5 +502,4 @@ class ListDataUptController extends Controller
 
         return $pdf->download($filename);
     }
-    
 }

@@ -239,13 +239,11 @@
         <!-- TABLE SECTION -->
         <section class="content">
             <div class="container-fluid">
-                <div class="row mb-3 align-items-center gap-12">
-                    <div class="col d-flex justify-content-between align-items-center">
-                        <h3 class="headline-medium-24">Data Monitoring Client Keseluruhan</h3>
-                    </div>
+                <div class="col d-flex justify-content-between align-items-center">
+                    <h3 class="headline-medium-24">Data Monitoring Client Keseluruhan</h3>
 
                     {{-- TANGGAL BUTTON --}}
-                    <div class="d-flex gap-12">
+                    <div class="d-flex gap-12 mb-3">
                         <div class="btn-page">
                             <input type="date" id="search-tanggal-dari" name="search_tanggal_dari"
                                 title="Tanggal Dari">
@@ -254,9 +252,7 @@
                             <input type="date" id="search-tanggal-sampai" name="search_tanggal_sampai"
                                 title="Tanggal Sampai">
                         </div>
-                    </div>
 
-                    <div class="d-flex gap-12">
                         {{-- BUTTON DOWNLOAD PDF CSV --}}
                         <button onclick="downloadCsv()" class="btn-page d-flex justify-content-center align-items-center"
                             title="Download CSV">
@@ -333,18 +329,6 @@
                                     </th>
                                     <th class="text-center align-top">
                                         <div class="d-flex justify-content-center align-items-center flex-column gap-12">
-                                            <span>Tipe</span>
-                                            <div class="btn-searchbar column-search">
-                                                <select id="search-tipe" name="search_tipe">
-                                                    <option value="">Semua</option>
-                                                    <option value="vtren">VTREN</option>
-                                                    <option value="reguler">Reguler</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <th class="text-center align-top">
-                                        <div class="d-flex justify-content-center align-items-center flex-column gap-12">
                                             <span>Status</span>
                                             <div class="btn-searchbar column-search">
                                                 <select id="search-status" name="search_status">
@@ -389,12 +373,6 @@
                                             </span>
                                         </td>
                                         <td class="text-center">
-                                            <span
-                                                class="@if ($d['tipe'] == 'reguler') Tipereguller @elseif($d['tipe'] == 'vtren') Tipevpas @endif">
-                                                {{ ucfirst($d['tipe']) }}
-                                            </span>
-                                        </td>
-                                        <td class="text-center">
                                             @php
                                                 $statusClass = match (strtolower($d['status'] ?? '')) {
                                                     'selesai' => 'badge-succes',
@@ -436,9 +414,6 @@
                                 @if (request('search_nama_wilayah'))
                                     <input type="hidden" name="search_nama_wilayah"
                                         value="{{ request('search_nama_wilayah') }}">
-                                @endif
-                                @if (request('search_tipe'))
-                                    <input type="hidden" name="search_tipe" value="{{ request('search_tipe') }}">
                                 @endif
                                 @if (request('search_jenis_layanan'))
                                     <input type="hidden" name="search_jenis_layanan"
@@ -529,7 +504,6 @@
                 return {
                     search_nama_ponpes: $('#search-nama-ponpes').val().trim(),
                     search_nama_wilayah: $('#search-nama-wilayah').val().trim(),
-                    search_tipe: $('#search-tipe').val().trim(),
                     search_jenis_layanan: $('#search-jenis-layanan').val().trim(),
                     search_jenis_kendala: $('#search-jenis-kendala').val().trim(),
                     search_status: $('#search-status').val().trim(),
@@ -547,7 +521,6 @@
                 // Remove ALL filter parameters first
                 url.searchParams.delete('search_nama_ponpes');
                 url.searchParams.delete('search_nama_wilayah');
-                url.searchParams.delete('search_tipe');
                 url.searchParams.delete('search_jenis_layanan');
                 url.searchParams.delete('search_jenis_kendala');
                 url.searchParams.delete('search_status');
@@ -583,7 +556,6 @@
             window.clearAllFilters = function() {
                 $('#search-nama-ponpes').val('');
                 $('#search-nama-wilayah').val('');
-                $('#search-tipe').val('');
                 $('#search-jenis-layanan').val('');
                 $('#search-jenis-kendala').val('');
                 $('#search-status').val('');
@@ -593,7 +565,6 @@
                 let url = new URL(window.location.href);
                 url.searchParams.delete('search_nama_ponpes');
                 url.searchParams.delete('search_nama_wilayah');
-                url.searchParams.delete('search_tipe');
                 url.searchParams.delete('search_jenis_layanan');
                 url.searchParams.delete('search_jenis_kendala');
                 url.searchParams.delete('search_status');
@@ -683,9 +654,6 @@
             }
             if (urlParams.get('search_nama_wilayah')) {
                 $('#search-nama-wilayah').val(urlParams.get('search_nama_wilayah'));
-            }
-            if (urlParams.get('search_tipe')) {
-                $('#search-tipe').val(urlParams.get('search_tipe'));
             }
             if (urlParams.get('search_jenis_layanan')) {
                 $('#search-jenis-layanan').val(urlParams.get('search_jenis_layanan'));

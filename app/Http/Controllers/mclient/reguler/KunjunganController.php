@@ -33,7 +33,6 @@ class KunjunganController extends Controller
             $query->where('detail_kendala', 'LIKE', '%' . $request->search_detail_kendala . '%');
         }
 
-        // SESUDAH:
         if ($request->has('search_jenis_layanan') && ! empty($request->search_jenis_layanan)) {
             $searchTerm = strtolower($request->search_jenis_layanan);
 
@@ -98,9 +97,9 @@ class KunjunganController extends Controller
     private function getJenisLayanan()
     {
         return [
-            'vpas' => 'VPAS',
+            'vpas' => 'Vpas',
             'reguler' => 'Reguler',
-            'vpasreg' => 'VPAS + Reguler',
+            'vpasreg' => 'Vpas + Reguler',
         ];
     }
 
@@ -129,13 +128,11 @@ class KunjunganController extends Controller
 
         $picList = Pic::orderBy('nama_pic')->get();
 
-        // MODIFIKASI: Ambil semua UPT dengan informasi jenis layanan
         $allUpts = Upt::with('kanwil')
             ->whereIn('tipe', ['vpas', 'reguler'])
             ->orderBy('namaupt')
             ->get();
 
-        // Group UPT berdasarkan nama base (tanpa suffix VpasReg)
         $uptListGrouped = $allUpts->groupBy(function ($upt) {
             return preg_replace('/\s*\(VpasReg\)$/', '', $upt->namaupt);
         })->map(function ($group) {
@@ -186,7 +183,7 @@ class KunjunganController extends Controller
                 'nama_upt.required' => 'Nama UPT harus diisi.',
                 'nama_upt.exists' => 'Nama UPT tidak ditemukan.',
                 'jenis_layanan.required' => 'Jenis layanan harus dipilih.',
-                'jenis_layanan.in' => 'Jenis layanan harus salah satu dari: VPAS, Reguler, atau VPAS + Reguler.',
+                'jenis_layanan.in' => 'Jenis layanan harus salah satu dari: VPAS, Reguler, atau Vpas + Reguler.',
                 'keterangan.string' => 'Keterangan harus berupa teks.',
                 'jadwal.date' => 'Format jadwal harus valid.',
                 'tanggal_selesai.date' => 'Format tanggal selesai harus valid.',
@@ -288,7 +285,7 @@ class KunjunganController extends Controller
                 'kanwil.string' => 'Kanwil harus berupa teks.',
                 'kanwil.max' => 'Kanwil tidak boleh lebih dari 255 karakter.',
                 'jenis_layanan.required' => 'Jenis layanan harus dipilih.',
-                'jenis_layanan.in' => 'Jenis layanan harus salah satu dari: VPAS, Reguler, atau VPAS + Reguler.',
+                'jenis_layanan.in' => 'Jenis layanan harus salah satu dari: VPAS, Reguler, atau Vpas + Reguler.',
                 'keterangan.string' => 'Keterangan harus berupa teks.',
                 'jadwal.date' => 'Format jadwal harus valid.',
                 'tanggal_selesai.date' => 'Format tanggal selesai harus valid.',

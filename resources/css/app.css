@@ -1027,8 +1027,6 @@ body {
 .alert-warning {
     background-color: var(--yellow-01);
     color: var(--yellow-08);
-    border: 1px solid var(--yellow-07) !important;
-    border-radius: 3.125rem;
 }
 
 .profile-card {
@@ -1240,8 +1238,6 @@ body {
     width: 11.1rem;
 }
 
-
-/* Responsive untuk sidebar collapse */
 .sidebar-collapse .logout-wrapper {
     width: 70px;
     padding: 10px;
@@ -1259,7 +1255,12 @@ body {
 }
 
 .disabled-menu {
-    pointer-events: none;   /* tidak bisa diklik */
-    opacity: 0.5;           /* tampak nonaktif */
+    pointer-events: none;  
+    opacity: 0.5;
 }
+
+
+
+
+
 

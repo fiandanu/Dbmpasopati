@@ -250,6 +250,8 @@ class ListDataPonpesController extends Controller
 
         $groupedData = $this->applyStatusFilter($groupedData, $request);
 
+        $totalDataPonpes = $groupedData->count();
+
         // Handle pagination
         if ($perPage === 'all') {
             // Create a mock paginator for "all" option
@@ -283,7 +285,17 @@ class ListDataPonpesController extends Controller
         $datanamawilayah = NamaWilayah::all();
         $jenisLayananOptions = $this->getJenisLayanan();
 
-        return view('user.indexPonpes', compact('data', 'providers', 'vpns', 'datanamawilayah', 'jenisLayananOptions'));
+        return view(
+            'user.indexPonpes',
+            compact(
+                'data',
+                'providers',
+                'vpns',
+                'datanamawilayah',
+                'jenisLayananOptions',
+                'totalDataPonpes'
+            )
+        );
     }
 
     public function store(Request $request)
@@ -334,7 +346,7 @@ class ListDataPonpesController extends Controller
             if ($existingRecord) {
                 return redirect()->back()
                     ->withInput()
-                    ->with('error', "Data Ponpes '{$namaPonpes}' dengan tipe '{$tipeValue}' sudah ada!");
+                    ->with('warning', "Data Ponpes '{$namaPonpes}' dengan tipe '{$tipeValue}' sudah ada!");
             }
         }
 
