@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Laporan Grafik Monitoring Client</title>
+    <title>Laporan Grafik Jenis Kendala {{ $kendalaType ?? '' }}</title>
     <style>
         * {
             margin: 0;
@@ -236,7 +236,7 @@
     <!-- Halaman Pertama: Header sampai Chart -->
     <div class="first-page">
         <div class="header">
-            <h2>LAPORAN GRAFIK MONITORING CLIENT</h2>
+            <h2>LAPORAN GRAFIK JENIS KENDALA {{ strtoupper($kendalaType ?? '') }}</h2>
             <p class="period">
                 <strong>Periode:</strong> {{ date('d/m/Y', strtotime($startDate)) }} -
                 {{ date('d/m/Y', strtotime($endDate)) }}
@@ -246,16 +246,7 @@
 
         <div style="text-align: center;">
             <div class="info">
-                <strong>Tipe Grafik:</strong>
-                @if ($chartType === 'all-cards')
-                    Semua Data Kartu
-                @elseif($chartType === 'total-monthly')
-                    Total Kartu Per Bulan
-                @elseif($chartType === 'vpas-kendala')
-                    Jenis Kendala VPAS
-                @elseif($chartType === 'reguler-kendala')
-                    Jenis Kendala Reguler
-                @endif
+                <strong>Tipe Grafik:</strong> Jenis Kendala {{ $kendalaType ?? '' }}
                 <span class="info-divider">|</span>
                 <strong>Tampilan:</strong> {{ $type === 'daily' ? 'Harian' : 'Bulanan' }}
             </div>
@@ -266,56 +257,26 @@
                 <h3>Ringkasan Data</h3>
                 <div class="summary-grid">
                     <div class="summary-row">
-                        @if ($chartType === 'vpas-kendala' || $chartType === 'reguler-kendala')
-                            <div class="summary-item">
-                                <strong>Selesai</strong>
-                                <div class="value">{{ number_format($data['summaryData']['selesai']) }}</div>
-                            </div>
-                            <div class="summary-item">
-                                <strong>Proses</strong>
-                                <div class="value">{{ number_format($data['summaryData']['proses']) }}</div>
-                            </div>
-                            <div class="summary-item">
-                                <strong>Pending</strong>
-                                <div class="value">{{ number_format($data['summaryData']['pending']) }}</div>
-                            </div>
-                            <div class="summary-item">
-                                <strong>Terjadwal</strong>
-                                <div class="value">{{ number_format($data['summaryData']['terjadwal']) }}</div>
-                            </div>
-                            <div class="summary-item">
-                                <strong>Total</strong>
-                                <div class="value">{{ number_format($data['summaryData']['total']) }}</div>
-                            </div>
-                        @else
-                            <div class="summary-item">
-                                <strong>Kartu Baru</strong>
-                                <div class="value">{{ number_format($data['summaryData']['kartuBaru'] ?? 0) }}</div>
-                            </div>
-                            <div class="summary-item">
-                                <strong>Kartu Bekas</strong>
-                                <div class="value">{{ number_format($data['summaryData']['kartuBekas'] ?? 0) }}</div>
-                            </div>
-                            <div class="summary-item">
-                                <strong>Kartu GOIP</strong>
-                                <div class="value">{{ number_format($data['summaryData']['kartuGoip'] ?? 0) }}</div>
-                            </div>
-                            <div class="summary-item">
-                                <strong>Belum Register</strong>
-                                <div class="value">
-                                    {{ number_format($data['summaryData']['kartuBelumRegister'] ?? 0) }}</div>
-                            </div>
-                            <div class="summary-item">
-                                <strong>WA Terpakai</strong>
-                                <div class="value">{{ number_format($data['summaryData']['whatsappTerpakai'] ?? 0) }}
-                                </div>
-                            </div>
-                            <div class="summary-item">
-                                <strong>Total</strong>
-                                <div class="value">{{ number_format(($data['summaryData']['kartuBaru'] ?? 0) + ($data['summaryData']['kartuBekas'] ?? 0) + ($data['summaryData']['kartuGoip'] ?? 0) + ($data['summaryData']['kartuBelumRegister'] ?? 0) + ($data['summaryData']['whatsappTerpakai'] ?? 0)) }}
-                                </div>
-                            </div>
-                        @endif
+                        <div class="summary-item">
+                            <strong>Selesai</strong>
+                            <div class="value">{{ number_format($data['summaryData']['selesai']) }}</div>
+                        </div>
+                        <div class="summary-item">
+                            <strong>Proses</strong>
+                            <div class="value">{{ number_format($data['summaryData']['proses']) }}</div>
+                        </div>
+                        <div class="summary-item">
+                            <strong>Pending</strong>
+                            <div class="value">{{ number_format($data['summaryData']['pending']) }}</div>
+                        </div>
+                        <div class="summary-item">
+                            <strong>Terjadwal</strong>
+                            <div class="value">{{ number_format($data['summaryData']['terjadwal']) }}</div>
+                        </div>
+                        <div class="summary-item">
+                            <strong>Total</strong>
+                            <div class="value">{{ number_format($data['summaryData']['total']) }}</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -334,7 +295,7 @@
         <table>
             <thead>
                 <tr>
-                    <th style="width: 12%;">{{ $type === 'daily' ? 'Tanggal' : 'Bulan' }}</th>
+                    <th style="width: 15%;">{{ $type === 'daily' ? 'Tanggal' : 'Bulan' }}</th>
                     @foreach ($data['datasets'] as $dataset)
                         <th>{{ $dataset['label'] }}</th>
                     @endforeach

@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\mclient\catatankartu\Catatan;
 use App\Models\mclient\Reguller;
 use App\Models\mclient\Vpas;
+use App\Models\mclient\Kunjungan;
+use App\Models\mclient\Pengiriman;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -68,6 +70,40 @@ class GrafikUptController extends Controller
         }
     }
 
+    public function getKunjunganData(Request $request)
+    {
+        $type = $request->get('type', 'daily');
+        $startDate = $request->get('start_date');
+        $endDate = $request->get('end_date');
+
+        try {
+            if ($type === 'daily') {
+                return $this->getKunjunganDailyData($startDate, $endDate);
+            } else {
+                return $this->getKunjunganMonthlyData($startDate, $endDate);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function getPengirimanData(Request $request)
+    {
+        $type = $request->get('type', 'daily');
+        $startDate = $request->get('start_date');
+        $endDate = $request->get('end_date');
+
+        try {
+            if ($type === 'daily') {
+                return $this->getPengirimanDailyData($startDate, $endDate);
+            } else {
+                return $this->getPengirimanMonthlyData($startDate, $endDate);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
     public function exportPdf(Request $request)
     {
         $type = $request->get('type', 'daily');
@@ -77,29 +113,51 @@ class GrafikUptController extends Controller
         $chartImage = $request->get('chart_image');
 
         try {
+            // Determine which data to fetch based on chart type
             if ($chartType === 'vpas-kendala') {
                 $data = $type === 'daily'
                     ? $this->getVpasDailyData($startDate, $endDate)
                     : $this->getVpasMonthlyData($startDate, $endDate);
+                $viewPath = 'export.public.mclient.grafikupt.indexKendala';
+                $kendalaType = 'VPAS';
             } elseif ($chartType === 'reguler-kendala') {
                 $data = $type === 'daily'
                     ? $this->getRegullerDailyData($startDate, $endDate)
                     : $this->getRegullerMonthlyData($startDate, $endDate);
+                $viewPath = 'export.public.mclient.grafikupt.indexKendala';
+                $kendalaType = 'Reguler';
+            } elseif ($chartType === 'kunjungan-upt') {
+                $data = $type === 'daily'
+                    ? $this->getKunjunganDailyData($startDate, $endDate)
+                    : $this->getKunjunganMonthlyData($startDate, $endDate);
+                $viewPath = 'export.public.mclient.grafikupt.indexKunjungan';
+            } elseif ($chartType === 'pengiriman-upt') {
+                $data = $type === 'daily'
+                    ? $this->getPengirimanDailyData($startDate, $endDate)
+                    : $this->getPengirimanMonthlyData($startDate, $endDate);
+                $viewPath = 'export.public.mclient.grafikupt.indexPengiriman';
+            } elseif ($chartType === 'total-monthly') {
+                $data = $type === 'daily'
+                    ? $this->getDailyData($startDate, $endDate)
+                    : $this->getMonthlyData($startDate, $endDate);
+                $viewPath = 'export.public.mclient.grafikupt.indexTotal';
             } else {
                 $data = $type === 'daily'
                     ? $this->getDailyData($startDate, $endDate)
                     : $this->getMonthlyData($startDate, $endDate);
+                $viewPath = 'export.public.mclient.upt.indexGrafikUpt';
             }
 
             $responseData = json_decode($data->getContent(), true);
 
-            $pdf = Pdf::loadView('export.public.mclient.upt.indexGrafikUpt', [
+            $pdf = Pdf::loadView($viewPath, [
                 'data' => $responseData,
                 'chartType' => $chartType,
                 'type' => $type,
                 'startDate' => $startDate,
                 'endDate' => $endDate,
                 'chartImage' => $chartImage,
+                'kendalaType' => $kendalaType ?? null,
             ]);
 
             $pdf->setPaper('A4', 'landscape');
@@ -163,50 +221,64 @@ class GrafikUptController extends Controller
             $start->addDay();
         }
 
-        return response()->json([
-            'labels' => $dates,
-            'datasets' => [
-                [
-                    'label' => 'Kartu Baru',
-                    'data' => $kartuBaru,
-                    'borderColor' => 'rgb(59, 130, 246)',
-                    'backgroundColor' => 'rgba(59, 130, 246, 0.1)',
-                ],
-                [
-                    'label' => 'Kartu Bekas',
-                    'data' => $kartuBekas,
-                    'borderColor' => 'rgb(34, 197, 94)',
-                    'backgroundColor' => 'rgba(34, 197, 94, 0.1)',
-                ],
-                [
-                    'label' => 'Kartu GOIP',
-                    'data' => $kartuGoip,
-                    'borderColor' => 'rgb(168, 85, 247)',
-                    'backgroundColor' => 'rgba(168, 85, 247, 0.1)',
-                ],
-                [
-                    'label' => 'Kartu Belum Register',
-                    'data' => $kartuBelumRegister,
-                    'borderColor' => 'rgb(234, 179, 8)',
-                    'backgroundColor' => 'rgba(234, 179, 8, 0.1)',
-                ],
-                [
-                    'label' => 'WhatsApp Terpakai',
-                    'data' => $whatsappTerpakai,
-                    'borderColor' => 'rgb(239, 68, 68)',
-                    'backgroundColor' => 'rgba(239, 68, 68, 0.1)',
-                ],
+    // Hitung summary data
+    $totalKartuBaru = array_sum($kartuBaru);
+    $totalKartuBekas = array_sum($kartuBekas);
+    $totalKartuGoip = array_sum($kartuGoip);
+    $totalKartuBelumRegister = array_sum($kartuBelumRegister);
+    $totalWhatsappTerpakai = array_sum($whatsappTerpakai);
+
+    return response()->json([
+        'labels' => $dates,
+        'datasets' => [
+            [
+                'label' => 'Kartu Baru',
+                'data' => $kartuBaru,
+                'borderColor' => 'rgb(59, 130, 246)',
+                'backgroundColor' => 'rgba(59, 130, 246, 0.1)',
             ],
-            'totalPerHari' => $totalPerHari,
-            'totalDataset' => [
-                [
-                    'label' => 'Total Kartu Terpakai',
-                    'data' => $totalPerHari,
-                    'borderColor' => 'rgb(147, 51, 234)',
-                    'backgroundColor' => 'rgba(147, 51, 234, 0.1)',
-                ],
+            [
+                'label' => 'Kartu Bekas',
+                'data' => $kartuBekas,
+                'borderColor' => 'rgb(34, 197, 94)',
+                'backgroundColor' => 'rgba(34, 197, 94, 0.1)',
             ],
-        ]);
+            [
+                'label' => 'Kartu GOIP',
+                'data' => $kartuGoip,
+                'borderColor' => 'rgb(168, 85, 247)',
+                'backgroundColor' => 'rgba(168, 85, 247, 0.1)',
+            ],
+            [
+                'label' => 'Kartu Belum Register',
+                'data' => $kartuBelumRegister,
+                'borderColor' => 'rgb(234, 179, 8)',
+                'backgroundColor' => 'rgba(234, 179, 8, 0.1)',
+            ],
+            [
+                'label' => 'WhatsApp Terpakai',
+                'data' => $whatsappTerpakai,
+                'borderColor' => 'rgb(239, 68, 68)',
+                'backgroundColor' => 'rgba(239, 68, 68, 0.1)',
+            ],
+        ],
+        'totalPerHari' => $totalPerHari,
+        'totalDataset' => [
+            [
+                'label' => 'Total Kartu Terpakai',
+                'data' => $totalPerHari,
+                'borderColor' => 'rgb(147, 51, 234)',
+                'backgroundColor' => 'rgba(147, 51, 234, 0.1)',
+            ],
+        ],
+        'summaryData' => [
+            'kartuBaru' => $totalKartuBaru,
+            'kartuBekas' => $totalKartuBekas,
+            'kartuGoip' => $totalKartuGoip,
+            'kartuBelumRegister' => $totalKartuBelumRegister,
+            'whatsappTerpakai' => $totalWhatsappTerpakai,
+        ],
+    ]);
     }
 
     private function getMonthlyData($startDate = null, $endDate = null)
@@ -591,6 +663,135 @@ class GrafikUptController extends Controller
         ]);
     }
 
+    private function getKunjunganDailyData($startDate = null, $endDate = null)
+    {
+        if (!$startDate) {
+            $startDate = Carbon::now()->subDays(6)->startOfDay()->format('Y-m-d');
+        }
+        if (!$endDate) {
+            $endDate = Carbon::now()->endOfDay()->format('Y-m-d');
+        }
+
+        // Ambil data kunjungan berdasarkan created_at (kapan data dibuat)
+        $kunjunganData = Kunjungan::with('upt')
+            ->whereDate('created_at', '>=', $startDate)
+            ->whereDate('created_at', '<=', $endDate)
+            ->get();
+
+        // Group by nama UPT (bukan ID) dan hitung jumlah kunjungan
+        $uptCounts = $kunjunganData->groupBy(function($item) {
+                // Hilangkan suffix (VpasReg) untuk grouping
+                $namaUpt = $item->upt->namaupt ?? 'Unknown';
+                return preg_replace('/\s*\(VpasReg\)$/', '', $namaUpt);
+            })
+            ->map(function ($group) {
+                $namaUpt = $group->first()->upt->namaupt ?? 'Unknown';
+                $namaUpt = preg_replace('/\s*\(VpasReg\)$/', '', $namaUpt);
+                return [
+                    'nama_upt' => $namaUpt,
+                    'count' => $group->count()
+                ];
+            })
+            ->sortByDesc('count')
+            ->take(10) // Ambil top 10
+            ->values();
+
+        $labels = $uptCounts->pluck('nama_upt')->toArray();
+        $data = $uptCounts->pluck('count')->toArray();
+
+        // Calculate summary statistics
+        $totalKunjungan = $kunjunganData->count();
+        $topUpt = $uptCounts->first()['nama_upt'] ?? '-';
+        $averageKunjungan = $uptCounts->isNotEmpty() ? $uptCounts->avg('count') : 0;
+
+        // 🔥 TAMBAHAN: Hitung status
+        $statusCounts = $kunjunganData->groupBy('status')
+            ->map(function ($group) {
+                return $group->count();
+            })
+            ->toArray();
+
+        return response()->json([
+            'labels' => $labels,
+            'data' => $data,
+            'summaryData' => [
+                'total' => $totalKunjungan,
+                'topUpt' => $topUpt,
+                'average' => round($averageKunjungan, 1),
+                'selesai' => $statusCounts['selesai'] ?? 0,      // 🔥 BARU
+                'proses' => $statusCounts['proses'] ?? 0,        // 🔥 BARU
+                'pending' => $statusCounts['pending'] ?? 0,      // 🔥 BARU
+                'terjadwal' => $statusCounts['terjadwal'] ?? 0,  // 🔥 BARU
+            ],
+        ]);
+    }
+
+    private function getPengirimanDailyData($startDate = null, $endDate = null)
+    {
+        if (!$startDate) {
+            $startDate = Carbon::now()->subDays(6)->startOfDay()->format('Y-m-d');
+        }
+        if (!$endDate) {
+            $endDate = Carbon::now()->endOfDay()->format('Y-m-d');
+        }
+
+        // ✅ PERBAIKAN: Gunakan strategi yang sama dengan Kunjungan
+        $pengirimanData = Pengiriman::with('upt.kanwil')
+            ->whereNotNull('data_upt_id') // 🔥 Filter data tanpa UPT
+            ->whereDate('created_at', '>=', $startDate)
+            ->whereDate('created_at', '<=', $endDate)
+            ->get();
+
+        // ✅ PERBAIKAN: Filter NULL sebelum grouping
+        $uptCounts = $pengirimanData
+            ->filter(function($item) {
+                return $item->upt !== null; // Pastikan relasi UPT ada
+            })
+            ->groupBy(function($item) {
+                $namaUpt = $item->upt->namaupt;
+                return preg_replace('/\s*\(VpasReg\)$/', '', $namaUpt);
+            })
+            ->map(function ($group) {
+                $namaUpt = $group->first()->upt->namaupt;
+                $namaUpt = preg_replace('/\s*\(VpasReg\)$/', '', $namaUpt);
+                return [
+                    'nama_upt' => $namaUpt,
+                    'count' => $group->count()
+                ];
+            })
+            ->sortByDesc('count')
+            ->take(10)
+            ->values();
+
+        $labels = $uptCounts->pluck('nama_upt')->toArray();
+        $data = $uptCounts->pluck('count')->toArray();
+
+        // Calculate summary statistics
+        $totalPengiriman = $pengirimanData->count();
+        $topUpt = $uptCounts->first()['nama_upt'] ?? '-';
+        $averagePengiriman = $uptCounts->isNotEmpty() ? $uptCounts->avg('count') : 0;
+
+        // ✅ PERBAIKAN: Hitung status dari data yang sudah difilter
+        $statusCounts = $pengirimanData->groupBy('status')
+            ->map(function ($group) {
+                return $group->count();
+            })
+            ->toArray();
+
+        return response()->json([
+            'labels' => $labels,
+            'data' => $data,
+            'summaryData' => [
+                'total' => $totalPengiriman,
+                'topUpt' => $topUpt,
+                'selesai' => $statusCounts['selesai'] ?? 0,
+                'proses' => $statusCounts['proses'] ?? 0,
+                'pending' => $statusCounts['pending'] ?? 0,
+                'terjadwal' => $statusCounts['terjadwal'] ?? 0,
+            ],
+        ]);
+    }
+
     private function getRegullerMonthlyData($startDate = null, $endDate = null)
     {
         if (!$startDate) {
@@ -689,6 +890,145 @@ class GrafikUptController extends Controller
                 'pending' => $statusCounts['pending'] ?? 0,
                 'terjadwal' => $statusCounts['terjadwal'] ?? 0,
                 'total' => array_sum($statusCounts),
+            ],
+        ]);
+    }
+
+    private function getKunjunganMonthlyData($startDate = null, $endDate = null)
+    {
+        if (!$startDate) {
+            $startDate = Carbon::now()->subMonths(11)->startOfMonth()->format('Y-m-d');
+        } else {
+            $startDate = Carbon::parse($startDate)->startOfMonth()->format('Y-m-d');
+        }
+
+        if (!$endDate) {
+            $endDate = Carbon::now()->endOfMonth()->format('Y-m-d');
+        } else {
+            $endDate = Carbon::parse($endDate)->endOfMonth()->format('Y-m-d');
+        }
+
+        // Ambil data kunjungan berdasarkan created_at (kapan data dibuat)
+        $kunjunganData = Kunjungan::with('upt')
+            ->whereDate('created_at', '>=', $startDate)
+            ->whereDate('created_at', '<=', $endDate)
+            ->get();
+
+        // Group by nama UPT (bukan ID) dan hitung jumlah kunjungan
+        $uptCounts = $kunjunganData->groupBy(function($item) {
+                // Hilangkan suffix (VpasReg) untuk grouping
+                $namaUpt = $item->upt->namaupt ?? 'Unknown';
+                return preg_replace('/\s*\(VpasReg\)$/', '', $namaUpt);
+            })
+            ->map(function ($group) {
+                $namaUpt = $group->first()->upt->namaupt ?? 'Unknown';
+                $namaUpt = preg_replace('/\s*\(VpasReg\)$/', '', $namaUpt);
+                return [
+                    'nama_upt' => $namaUpt,
+                    'count' => $group->count()
+                ];
+            })
+            ->sortByDesc('count')
+            ->take(10) // Ambil top 10
+            ->values();
+
+        $labels = $uptCounts->pluck('nama_upt')->toArray();
+        $data = $uptCounts->pluck('count')->toArray();
+
+        // Calculate summary statistics
+        $totalKunjungan = $kunjunganData->count();
+        $topUpt = $uptCounts->first()['nama_upt'] ?? '-';
+        $averageKunjungan = $uptCounts->isNotEmpty() ? $uptCounts->avg('count') : 0;
+
+        // 🔥 TAMBAHAN: Hitung status
+        $statusCounts = $kunjunganData->groupBy('status')
+            ->map(function ($group) {
+                return $group->count();
+            })
+            ->toArray();
+
+        return response()->json([
+            'labels' => $labels,
+            'data' => $data,
+            'summaryData' => [
+                'total' => $totalKunjungan,
+                'topUpt' => $topUpt,
+                'selesai' => $statusCounts['selesai'] ?? 0,      // 🔥 BARU
+                'proses' => $statusCounts['proses'] ?? 0,        // 🔥 BARU
+                'pending' => $statusCounts['pending'] ?? 0,      // 🔥 BARU
+                'terjadwal' => $statusCounts['terjadwal'] ?? 0,  // 🔥 BARU
+            ],
+        ]);
+    }
+
+    private function getPengirimanMonthlyData($startDate = null, $endDate = null)
+    {
+        if (!$startDate) {
+            $startDate = Carbon::now()->subMonths(11)->startOfMonth()->format('Y-m-d');
+        } else {
+            $startDate = Carbon::parse($startDate)->startOfMonth()->format('Y-m-d');
+        }
+
+        if (!$endDate) {
+            $endDate = Carbon::now()->endOfMonth()->format('Y-m-d');
+        } else {
+            $endDate = Carbon::parse($endDate)->endOfMonth()->format('Y-m-d');
+        }
+
+        // ✅ PERBAIKAN: Gunakan strategi yang sama dengan Kunjungan
+        $pengirimanData = Pengiriman::with('upt.kanwil')
+            ->whereNotNull('data_upt_id')
+            ->whereDate('created_at', '>=', $startDate)
+            ->whereDate('created_at', '<=', $endDate)
+            ->get();
+
+        // ✅ PERBAIKAN: Filter NULL sebelum grouping
+        $uptCounts = $pengirimanData
+            ->filter(function($item) {
+                return $item->upt !== null;
+            })
+            ->groupBy(function($item) {
+                $namaUpt = $item->upt->namaupt;
+                return preg_replace('/\s*\(VpasReg\)$/', '', $namaUpt);
+            })
+            ->map(function ($group) {
+                $namaUpt = $group->first()->upt->namaupt;
+                $namaUpt = preg_replace('/\s*\(VpasReg\)$/', '', $namaUpt);
+                return [
+                    'nama_upt' => $namaUpt,
+                    'count' => $group->count()
+                ];
+            })
+            ->sortByDesc('count')
+            ->take(10)
+            ->values();
+
+        $labels = $uptCounts->pluck('nama_upt')->toArray();
+        $data = $uptCounts->pluck('count')->toArray();
+
+        // Calculate summary statistics
+        $totalPengiriman = $pengirimanData->count();
+        $topUpt = $uptCounts->first()['nama_upt'] ?? '-';
+        $averagePengiriman = $uptCounts->isNotEmpty() ? $uptCounts->avg('count') : 0;
+
+        // Hitung status
+        $statusCounts = $pengirimanData->groupBy('status')
+            ->map(function ($group) {
+                return $group->count();
+            })
+            ->toArray();
+
+        return response()->json([
+            'labels' => $labels,
+            'data' => $data,
+            'summaryData' => [
+                'total' => $totalPengiriman,
+                'topUpt' => $topUpt,
+                'average' => round($averagePengiriman, 1),
+                'selesai' => $statusCounts['selesai'] ?? 0,
+                'proses' => $statusCounts['proses'] ?? 0,
+                'pending' => $statusCounts['pending'] ?? 0,
+                'terjadwal' => $statusCounts['terjadwal'] ?? 0,
             ],
         ]);
     }

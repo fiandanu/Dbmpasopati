@@ -33,6 +33,9 @@
                                     <option value="total-monthly">📈 Total Kartu Per Bulan</option>
                                     <option value="vtren-kendala">🔧 Jenis Kendala Vtren</option>
                                     <option value="reguler-kendala">⚙️ Jenis Kendala Reguler</option>
+                                    <option value="kunjungan-ponpes">🏢 Kunjungan Ponpes</option>
+                                    <option value="pengiriman-ponpes">📦 Pengiriman Alat Ponpes</option>
+                                    <!-- TAMBAHKAN INI -->
                                 </select>
                             </div>
                             <div class="col-md-3">
@@ -86,11 +89,16 @@
                 <div id="total-monthly-chart-section" style="display: none;">
                     <div class="card" style="border: none; border-radius: 15px; box-shadow: 0 2px 15px rgba(0,0,0,0.08);">
                         <div class="card-header"
-                            style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; border-radius: 15px 15px 0 0; padding: 1.25rem;">
+                            style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; border-radius: 15px 15px 0 0; padding: 1.25rem; position: relative;">
                             <h5 class="mb-0" style="font-weight: 600;">
                                 <i class="fas fa-chart-line mr-2"></i><span id="total-monthly-title">Grafik Total Kartu
                                     Terpakai</span>
                             </h5>
+                            <!-- TAMBAHKAN INI -->
+                            <button class="btn btn-light" onclick="exportToPdf()"
+                                style="position: absolute; top: 1.25rem; right: 1.25rem; border-radius: 20px; padding: 0.6rem 1.5rem; font-weight: 500;">
+                                <i class="fas fa-file-pdf mr-2"></i>Export PDF
+                            </button>
                         </div>
                         <div class="card-body" style="padding: 2rem;">
                             <canvas id="totalMonthlyChart" style="height: 400px;"></canvas>
@@ -102,11 +110,16 @@
                 <div id="vtren-kendala-chart-section" style="display: none;">
                     <div class="card" style="border: none; border-radius: 15px; box-shadow: 0 2px 15px rgba(0,0,0,0.08);">
                         <div class="card-header"
-                            style="background: linear-gradient(135deg, #0575E6 0%, #021B79 100%); color: white; border-radius: 15px 15px 0 0; padding: 1.25rem;">
+                            style="background: linear-gradient(135deg, #0575E6 0%, #021B79 100%); color: white; border-radius: 15px 15px 0 0; padding: 1.25rem; position: relative;">
                             <h5 class="mb-0" style="font-weight: 600;">
                                 <i class="fas fa-tools mr-2"></i><span id="vtren-kendala-title">Grafik Jenis Kendala
                                     Vtren</span>
                             </h5>
+                            <!-- TAMBAHKAN INI -->
+                            <button class="btn btn-light" onclick="exportToPdf()"
+                                style="position: absolute; top: 1.25rem; right: 1.25rem; border-radius: 20px; padding: 0.6rem 1.5rem; font-weight: 500;">
+                                <i class="fas fa-file-pdf mr-2"></i>Export PDF
+                            </button>
                         </div>
                         <div class="card-body" style="padding: 2rem;">
                             <canvas id="vtrenKendalaChart" style="height: 400px;"></canvas>
@@ -116,13 +129,19 @@
 
                 <!-- Chart Section - Reguler Kendala -->
                 <div id="reguler-kendala-chart-section" style="display: none;">
-                    <div class="card" style="border: none; border-radius: 15px; box-shadow: 0 2px 15px rgba(0,0,0,0.08);">
+                    <div class="card"
+                        style="border: none; border-radius: 15px; box-shadow: 0 2px 15px rgba(0,0,0,0.08);">
                         <div class="card-header"
-                            style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border-radius: 15px 15px 0 0; padding: 1.25rem;">
+                            style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border-radius: 15px 15px 0 0; padding: 1.25rem; position: relative;">
                             <h5 class="mb-0" style="font-weight: 600;">
                                 <i class="fas fa-wrench mr-2"></i><span id="reguler-kendala-title">Grafik Jenis Kendala
                                     Reguler</span>
                             </h5>
+                            <!-- TAMBAHKAN INI -->
+                            <button class="btn btn-light" onclick="exportToPdf()"
+                                style="position: absolute; top: 1.25rem; right: 1.25rem; border-radius: 20px; padding: 0.6rem 1.5rem; font-weight: 500;">
+                                <i class="fas fa-file-pdf mr-2"></i>Export PDF
+                            </button>
                         </div>
                         <div class="card-body" style="padding: 2rem;">
                             <canvas id="regulerKendalaChart" style="height: 400px;"></canvas>
@@ -130,143 +149,319 @@
                     </div>
                 </div>
 
-                <!-- Modern Summary Cards -->
-                <div class="row mt-4" id="summary-cards">
-                    <div class="col-md-2 mb-3">
-                        <div class="card text-center"
-                            style="border: 1px solid #e5e7eb; border-radius: 8px; transition: box-shadow 0.3s;">
-                            <div class="card-body py-3">
-                                <i class="fas fa-id-card mb-2" style="color: #6b7280; font-size: 1.8rem;"></i>
-                                <h6 class="text-muted mb-2" style="font-size: 0.8rem; font-weight: 500;">Kartu Baru</h6>
-                                <h3 id="total-kartu-baru"
-                                    style="color: #111827; font-weight: 700; margin: 0; font-size: 1.5rem;">-</h3>
-                            </div>
+                <!-- Chart Section - Kunjungan Ponpes -->
+                <div id="kunjungan-ponpes-chart-section" style="display: none;">
+                    <div class="card"
+                        style="border: none; border-radius: 15px; box-shadow: 0 2px 15px rgba(0,0,0,0.08);">
+                        <div class="card-header"
+                            style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; border-radius: 15px 15px 0 0; padding: 1.25rem; position: relative;">
+                            <h5 class="mb-0" style="font-weight: 600;">
+                                <i class="fas fa-building mr-2"></i><span id="kunjungan-ponpes-title">Grafik Top 10 Ponpes
+                                    Paling Sering Dikunjungi</span>
+                            </h5>
+                            <!-- TAMBAHKAN INI -->
+                            <button class="btn btn-light" onclick="exportToPdf()"
+                                style="position: absolute; top: 1.25rem; right: 1.25rem; border-radius: 20px; padding: 0.6rem 1.5rem; font-weight: 500;">
+                                <i class="fas fa-file-pdf mr-2"></i>Export PDF
+                            </button>
+                        </div>
+                        <div class="card-body" style="padding: 2rem;">
+                            <canvas id="kunjunganPonpesChart" style="height: 400px;"></canvas>
                         </div>
                     </div>
-                    <div class="col-md-2 mb-3">
-                        <div class="card text-center"
-                            style="border: 1px solid #e5e7eb; border-radius: 8px; transition: box-shadow 0.3s;">
-                            <div class="card-body py-3">
-                                <i class="fas fa-recycle mb-2" style="color: #6b7280; font-size: 1.8rem;"></i>
-                                <h6 class="text-muted mb-2" style="font-size: 0.8rem; font-weight: 500;">Kartu Bekas</h6>
-                                <h3 id="total-kartu-bekas"
-                                    style="color: #111827; font-weight: 700; margin: 0; font-size: 1.5rem;">-</h3>
-                            </div>
+                </div>
+
+                <!-- Chart Section - Pengiriman Ponpes -->
+                <div id="pengiriman-ponpes-chart-section" style="display: none;">
+                    <div class="card"
+                        style="border: none; border-radius: 15px; box-shadow: 0 2px 15px rgba(0,0,0,0.08);">
+                        <div class="card-header"
+                            style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 15px 15px 0 0; padding: 1.25rem; position: relative;">
+                            <h5 class="mb-0" style="font-weight: 600;">
+                                <i class="fas fa-truck mr-2"></i><span id="pengiriman-ponpes-title">Grafik Top 10 Ponpes
+                                    Pengiriman Alat Terbanyak</span>
+                            </h5>
+                            <!-- TAMBAHKAN INI -->
+                            <button class="btn btn-light" onclick="exportToPdf()"
+                                style="position: absolute; top: 1.25rem; right: 1.25rem; border-radius: 20px; padding: 0.6rem 1.5rem; font-weight: 500;">
+                                <i class="fas fa-file-pdf mr-2"></i>Export PDF
+                            </button>
+                        </div>
+                        <div class="card-body" style="padding: 2rem;">
+                            <canvas id="pengirimanPonpesChart" style="height: 400px;"></canvas>
                         </div>
                     </div>
-                    <div class="col-md-2 mb-3">
-                        <div class="card text-center"
-                            style="border: 1px solid #e5e7eb; border-radius: 8px; transition: box-shadow 0.3s;">
-                            <div class="card-body py-3">
-                                <i class="fas fa-sim-card mb-2" style="color: #6b7280; font-size: 1.8rem;"></i>
-                                <h6 class="text-muted mb-2" style="font-size: 0.8rem; font-weight: 500;">Kartu GOIP</h6>
-                                <h3 id="total-kartu-goip"
-                                    style="color: #111827; font-weight: 700; margin: 0; font-size: 1.5rem;">-</h3>
-                            </div>
+                </div>
+
+                <!-- Modern Summary Cards - Row 1 -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-3" id="summary-cards">
+
+                    <div class="card-total">
+                        <div class="w-full">
+                            <h1 class="title-medium-18">Kartu Baru</h1>
+                            <span class="display-medium-48" id="total-kartu-baru">-</span>
+                        </div>
+                        <div class="icon-card-total">
+                            <span class="material-symbols-outlined">id_card</span>
                         </div>
                     </div>
-                    <div class="col-md-2 mb-3">
-                        <div class="card text-center"
-                            style="border: 1px solid #e5e7eb; border-radius: 8px; transition: box-shadow 0.3s;">
-                            <div class="card-body py-3">
-                                <i class="fas fa-exclamation-triangle mb-2"
-                                    style="color: #6b7280; font-size: 1.8rem;"></i>
-                                <h6 class="text-muted mb-2" style="font-size: 0.8rem; font-weight: 500;">Belum Register
-                                </h6>
-                                <h3 id="total-kartu-belum-register"
-                                    style="color: #111827; font-weight: 700; margin: 0; font-size: 1.5rem;">-</h3>
-                            </div>
+
+                    <div class="card-total">
+                        <div class="w-full">
+                            <h1 class="title-medium-18">Kartu Bekas</h1>
+                            <span class="display-medium-48" id="total-kartu-bekas">-</span>
+                        </div>
+                        <div class="icon-card-total">
+                            <span class="material-symbols-outlined">recycling</span>
                         </div>
                     </div>
-                    <div class="col-md-2 mb-3">
-                        <div class="card text-center"
-                            style="border: 1px solid #e5e7eb; border-radius: 8px; transition: box-shadow 0.3s;">
-                            <div class="card-body py-3">
-                                <i class="fab fa-whatsapp mb-2" style="color: #6b7280; font-size: 1.8rem;"></i>
-                                <h6 class="text-muted mb-2" style="font-size: 0.8rem; font-weight: 500;">WA Terpakai</h6>
-                                <h3 id="total-wa-terpakai"
-                                    style="color: #111827; font-weight: 700; margin: 0; font-size: 1.5rem;">-</h3>
-                            </div>
+
+                    <div class="card-total">
+                        <div class="w-full">
+                            <h1 class="title-medium-18">Kartu GOIP</h1>
+                            <span class="display-medium-48" id="total-kartu-goip">-</span>
+                        </div>
+                        <div class="icon-card-total">
+                            <span class="material-symbols-outlined">sim_card</span>
                         </div>
                     </div>
-                    <div class="col-md-2 mb-3">
-                        <div class="card text-center"
-                            style="border: 1px solid #e5e7eb; border-radius: 8px; transition: box-shadow 0.3s;">
-                            <div class="card-body py-3">
-                                <i class="fas fa-layer-group mb-2" style="color: #6b7280; font-size: 1.8rem;"></i>
-                                <h6 class="text-muted mb-2" style="font-size: 0.8rem; font-weight: 500;">Total Keseluruhan
-                                </h6>
-                                <h3 id="total-keseluruhan"
-                                    style="color: #111827; font-weight: 700; margin: 0; font-size: 1.5rem;">-</h3>
-                            </div>
+
+                </div>
+
+                <!-- Modern Summary Cards - Row 2 -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-3" id="summary-cards-row2">
+
+                    <div class="card-total">
+                        <div class="w-full">
+                            <h1 class="title-medium-18">Belum Register</h1>
+                            <span class="display-medium-48" id="total-kartu-belum-register">-</span>
+                        </div>
+                        <div class="icon-card-total">
+                            <span class="material-symbols-outlined">warning</span>
                         </div>
                     </div>
+
+                    <div class="card-total">
+                        <div class="w-full">
+                            <h1 class="title-medium-18">WA Terpakai</h1>
+                            <span class="display-medium-48" id="total-wa-terpakai">-</span>
+                        </div>
+                        <div class="icon-card-total">
+                            <span class="material-symbols-outlined">mail</span>
+                        </div>
+                    </div>
+
+                    <div class="card-total">
+                        <div class="w-full">
+                            <h1 class="title-medium-18">Total Keseluruhan</h1>
+                            <span class="display-medium-48" id="total-keseluruhan">-</span>
+                        </div>
+                        <div class="icon-card-total">
+                            <span class="material-symbols-outlined">stack</span>
+                        </div>
+                    </div>
+
                 </div>
 
                 <!-- Summary Cards - Kendala -->
-                <div class="row mt-4" id="kendala-summary-cards" style="display: none;">
-                    <div class="col-md-2 offset-md-1 mb-3">
-                        <div class="card text-center"
-                            style="border: 1px solid #e5e7eb; border-radius: 8px; transition: box-shadow 0.3s;">
-                            <div class="card-body py-3">
-                                <i class="fas fa-check-circle mb-2" style="color: #6b7280; font-size: 1.8rem;"></i>
-                                <h6 class="text-muted mb-2" style="font-size: 0.8rem; font-weight: 500;">Status Selesai
-                                </h6>
-                                <h3 id="kendala-selesai"
-                                    style="color: #111827; font-weight: 700; margin: 0; font-size: 1.5rem;">-</h3>
-                            </div>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-12 mb-3" id="kendala-summary-cards"
+                    style="display: none;">
+
+                    <div class="card-total">
+                        <div class="w-full">
+                            <h1 class="title-medium-18">Status Selesai</h1>
+                            <span class="display-medium-48" id="kendala-selesai">-</span>
+                        </div>
+                        <div class="icon-card-total">
+                            <span class="material-symbols-outlined">check_circle</span>
                         </div>
                     </div>
-                    <div class="col-md-2 mb-3">
-                        <div class="card text-center"
-                            style="border: 1px solid #e5e7eb; border-radius: 8px; transition: box-shadow 0.3s;">
-                            <div class="card-body py-3">
-                                <i class="fas fa-spinner mb-2" style="color: #6b7280; font-size: 1.8rem;"></i>
-                                <h6 class="text-muted mb-2" style="font-size: 0.8rem; font-weight: 500;">Status Proses
-                                </h6>
-                                <h3 id="kendala-proses"
-                                    style="color: #111827; font-weight: 700; margin: 0; font-size: 1.5rem;">-</h3>
-                            </div>
+
+                    <div class="card-total">
+                        <div class="w-full">
+                            <h1 class="title-medium-18">Status Proses</h1>
+                            <span class="display-medium-48" id="kendala-proses">-</span>
+                        </div>
+                        <div class="icon-card-total">
+                            <span class="material-symbols-outlined">autorenew</span>
                         </div>
                     </div>
-                    <div class="col-md-2 mb-3">
-                        <div class="card text-center"
-                            style="border: 1px solid #e5e7eb; border-radius: 8px; transition: box-shadow 0.3s;">
-                            <div class="card-body py-3">
-                                <i class="fas fa-pause-circle mb-2" style="color: #6b7280; font-size: 1.8rem;"></i>
-                                <h6 class="text-muted mb-2" style="font-size: 0.8rem; font-weight: 500;">Status Pending
-                                </h6>
-                                <h3 id="kendala-pending"
-                                    style="color: #111827; font-weight: 700; margin: 0; font-size: 1.5rem;">-</h3>
-                            </div>
+
+                    <div class="card-total">
+                        <div class="w-full">
+                            <h1 class="title-medium-18">Status Pending</h1>
+                            <span class="display-medium-48" id="kendala-pending">-</span>
+                        </div>
+                        <div class="icon-card-total">
+                            <span class="material-symbols-outlined">pause_circle</span>
                         </div>
                     </div>
-                    <div class="col-md-2 mb-3">
-                        <div class="card text-center"
-                            style="border: 1px solid #e5e7eb; border-radius: 8px; transition: box-shadow 0.3s;">
-                            <div class="card-body py-3">
-                                <i class="fas fa-clock mb-2" style="color: #6b7280; font-size: 1.8rem;"></i>
-                                <h6 class="text-muted mb-2" style="font-size: 0.8rem; font-weight: 500;">Status Terjadwal
-                                </h6>
-                                <h3 id="kendala-terjadwal"
-                                    style="color: #111827; font-weight: 700; margin: 0; font-size: 1.5rem;">-</h3>
-                            </div>
+
+                    <div class="card-total">
+                        <div class="w-full">
+                            <h1 class="title-medium-18">Status Terjadwal</h1>
+                            <span class="display-medium-48" id="kendala-terjadwal">-</span>
+                        </div>
+                        <div class="icon-card-total">
+                            <span class="material-symbols-outlined">schedule</span>
                         </div>
                     </div>
-                    <div class="col-md-2 mb-3">
-                        <div class="card text-center"
-                            style="border: 1px solid #e5e7eb; border-radius: 8px; transition: box-shadow 0.3s;">
-                            <div class="card-body py-3">
-                                <i class="fas fa-list mb-2" style="color: #6b7280; font-size: 1.8rem;"></i>
-                                <h6 class="text-muted mb-2" style="font-size: 0.8rem; font-weight: 500;">Total Kendala
-                                </h6>
-                                <h3 id="kendala-total"
-                                    style="color: #111827; font-weight: 700; margin: 0; font-size: 1.5rem;">-</h3>
-                            </div>
+
+                    <div class="card-total">
+                        <div class="w-full">
+                            <h1 class="title-medium-18">Total Kendala</h1>
+                            <span class="display-medium-48" id="kendala-total">-</span>
+                        </div>
+                        <div class="icon-card-total">
+                            <span class="material-symbols-outlined">list</span>
                         </div>
                     </div>
+
                 </div>
 
+                <!-- Summary Cards - Kunjungan Ponpes (Row 1) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-3" id="kunjungan-summary-cards"
+                    style="display: none;">
+
+                    <div class="card-total">
+                        <div class="w-full">
+                            <h1 class="title-medium-18">Total Kunjungan</h1>
+                            <span class="display-medium-48" id="kunjungan-total">-</span>
+                        </div>
+                        <div class="icon-card-total">
+                            <span class="material-symbols-outlined">business</span>
+                        </div>
+                    </div>
+
+                    <div class="card-total">
+                        <div class="w-full">
+                            <h1 class="title-medium-18">Kunjungan Ponpes Terbanyak</h1>
+                            <span class="display-medium-48" id="kunjungan-top-ponpes" style="font-size: 1.2rem;">-</span>
+                        </div>
+                        <div class="icon-card-total">
+                            <span class="material-symbols-outlined">emoji_events</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Summary Cards - Kunjungan Ponpes (Row 2 - Status) -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-3" id="kunjungan-status-cards"
+                    style="display: none;">
+
+                    <div class="card-total">
+                        <div class="w-full">
+                            <h1 class="title-medium-18">Status Selesai</h1>
+                            <span class="display-medium-48" id="kunjungan-selesai">-</span>
+                        </div>
+                        <div class="icon-card-total">
+                            <span class="material-symbols-outlined">check_circle</span>
+                        </div>
+                    </div>
+
+                    <div class="card-total">
+                        <div class="w-full">
+                            <h1 class="title-medium-18">Status Proses</h1>
+                            <span class="display-medium-48" id="kunjungan-proses">-</span>
+                        </div>
+                        <div class="icon-card-total">
+                            <span class="material-symbols-outlined">autorenew</span>
+                        </div>
+                    </div>
+
+                    <div class="card-total">
+                        <div class="w-full">
+                            <h1 class="title-medium-18">Status Pending</h1>
+                            <span class="display-medium-48" id="kunjungan-pending">-</span>
+                        </div>
+                        <div class="icon-card-total">
+                            <span class="material-symbols-outlined">pause_circle</span>
+                        </div>
+                    </div>
+
+                    <div class="card-total">
+                        <div class="w-full">
+                            <h1 class="title-medium-18">Status Terjadwal</h1>
+                            <span class="display-medium-48" id="kunjungan-terjadwal">-</span>
+                        </div>
+                        <div class="icon-card-total">
+                            <span class="material-symbols-outlined">schedule</span>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- Summary Cards - Pengiriman Ponpes (Row 1) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-3" id="pengiriman-summary-cards"
+                    style="display: none;">
+
+                    <div class="card-total">
+                        <div class="w-full">
+                            <h1 class="title-medium-18">Total Pengiriman</h1>
+                            <span class="display-medium-48" id="pengiriman-total">-</span>
+                        </div>
+                        <div class="icon-card-total">
+                            <span class="material-symbols-outlined">local_shipping</span>
+                        </div>
+                    </div>
+
+                    <div class="card-total">
+                        <div class="w-full">
+                            <h1 class="title-medium-18">Pengiriman Ponpes Terbanyak</h1>
+                            <span class="display-medium-48" id="pengiriman-top-ponpes"
+                                style="font-size: 1.2rem;">-</span>
+                        </div>
+                        <div class="icon-card-total">
+                            <span class="material-symbols-outlined">emoji_events</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Summary Cards - Pengiriman Ponpes (Row 2 - Status) -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-3" id="pengiriman-status-cards"
+                    style="display: none;">
+
+                    <div class="card-total">
+                        <div class="w-full">
+                            <h1 class="title-medium-18">Status Selesai</h1>
+                            <span class="display-medium-48" id="pengiriman-selesai">-</span>
+                        </div>
+                        <div class="icon-card-total">
+                            <span class="material-symbols-outlined">check_circle</span>
+                        </div>
+                    </div>
+
+                    <div class="card-total">
+                        <div class="w-full">
+                            <h1 class="title-medium-18">Status Proses</h1>
+                            <span class="display-medium-48" id="pengiriman-proses">-</span>
+                        </div>
+                        <div class="icon-card-total">
+                            <span class="material-symbols-outlined">autorenew</span>
+                        </div>
+                    </div>
+
+                    <div class="card-total">
+                        <div class="w-full">
+                            <h1 class="title-medium-18">Status Pending</h1>
+                            <span class="display-medium-48" id="pengiriman-pending">-</span>
+                        </div>
+                        <div class="icon-card-total">
+                            <span class="material-symbols-outlined">pause_circle</span>
+                        </div>
+                    </div>
+
+                    <div class="card-total">
+                        <div class="w-full">
+                            <h1 class="title-medium-18">Status Terjadwal</h1>
+                            <span class="display-medium-48" id="pengiriman-terjadwal">-</span>
+                        </div>
+                        <div class="icon-card-total">
+                            <span class="material-symbols-outlined">schedule</span>
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </section>
     </div>
@@ -299,6 +494,8 @@
         let totalMonthlyChart = null;
         let vtrenKendalaChart = null;
         let regulerKendalaChart = null;
+        let kunjunganPonpesChart = null;
+        let pengirimanPonpesChart = null;
 
         const timeRangeOptions = {
             'all-cards': [{
@@ -351,6 +548,49 @@
                 }
             ],
             'reguler-kendala': [{
+                    value: '7-days',
+                    label: '7 Hari Terakhir',
+                    days: 7
+                },
+                {
+                    value: '30-days',
+                    label: '30 Hari Terakhir',
+                    days: 30
+                },
+                {
+                    value: '6-months',
+                    label: '6 Bulan Terakhir',
+                    months: 6
+                },
+                {
+                    value: '12-months',
+                    label: '12 Bulan Terakhir',
+                    months: 12
+                }
+            ],
+            'kunjungan-ponpes': [{
+                    value: '7-days',
+                    label: '7 Hari Terakhir',
+                    days: 7
+                },
+                {
+                    value: '30-days',
+                    label: '30 Hari Terakhir',
+                    days: 30
+                },
+                {
+                    value: '6-months',
+                    label: '6 Bulan Terakhir',
+                    months: 6
+                },
+                {
+                    value: '12-months',
+                    label: '12 Bulan Terakhir',
+                    months: 12
+                }
+            ],
+            'pengiriman-ponpes': [ // TAMBAHKAN INI
+                {
                     value: '7-days',
                     label: '7 Hari Terakhir',
                     days: 7
@@ -486,6 +726,12 @@
             } else if (chartType === 'reguler-kendala') {
                 document.getElementById('reguler-kendala-title').textContent =
                     `Grafik Jenis Kendala Reguler - ${selectedText}`;
+            } else if (chartType === 'kunjungan-ponpes') {
+                document.getElementById('kunjungan-ponpes-title').textContent =
+                    `Grafik Top 10 Ponpes Paling Sering Dikunjungi - ${selectedText}`;
+            } else if (chartType === 'pengiriman-ponpes') { // TAMBAHKAN INI
+                document.getElementById('pengiriman-ponpes-title').textContent =
+                    `Grafik Top 10 Ponpes Pengiriman Alat Terbanyak - ${selectedText}`;
             }
         }
 
@@ -805,6 +1051,204 @@
             });
         }
 
+        function renderKunjunganPonpesChart(data) {
+            const ctx = document.getElementById('kunjunganPonpesChart').getContext('2d');
+            if (kunjunganPonpesChart) kunjunganPonpesChart.destroy();
+
+            kunjunganPonpesChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Jumlah Kunjungan',
+                        data: data.data,
+                        backgroundColor: 'rgba(250, 112, 154, 0.1)',
+                        borderColor: 'rgba(250, 112, 154, 1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20,
+                                font: {
+                                    size: 13,
+                                    weight: '500'
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.85)',
+                            padding: 15,
+                            titleFont: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            bodyFont: {
+                                size: 13
+                            },
+                            borderColor: '#fa709a',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Kunjungan: ' + context.parsed.y + ' kali';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0,
+                                font: {
+                                    size: 12
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Tambahkan function update summary cards kunjungan
+        function updateKunjunganSummaryCards(data) {
+            if (data.summaryData) {
+                const summary = data.summaryData;
+                document.getElementById('kunjungan-total').textContent = summary.total.toLocaleString();
+                document.getElementById('kunjungan-top-ponpes').textContent = summary.topPonpes || '-';
+                document.getElementById('kunjungan-selesai').textContent = summary.selesai.toLocaleString();
+                document.getElementById('kunjungan-proses').textContent = summary.proses.toLocaleString();
+                document.getElementById('kunjungan-pending').textContent = summary.pending.toLocaleString();
+                document.getElementById('kunjungan-terjadwal').textContent = summary.terjadwal.toLocaleString();
+            }
+        }
+
+        function renderPengirimanPonpesChart(data) {
+            const ctx = document.getElementById('pengirimanPonpesChart').getContext('2d');
+            if (pengirimanPonpesChart) pengirimanPonpesChart.destroy();
+
+            pengirimanPonpesChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Jumlah Pengiriman',
+                        data: data.data,
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        borderColor: 'rgba(102, 126, 234, 1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20,
+                                font: {
+                                    size: 13,
+                                    weight: '500'
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.85)',
+                            padding: 15,
+                            titleFont: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            bodyFont: {
+                                size: 13
+                            },
+                            borderColor: '#667eea',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Pengiriman: ' + context.parsed.y + ' kali';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0,
+                                font: {
+                                    size: 12
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Tambahkan function update summary cards pengiriman
+        function updatePengirimanSummaryCards(data) {
+            if (data.summaryData) {
+                const summary = data.summaryData;
+                document.getElementById('pengiriman-total').textContent = summary.total.toLocaleString();
+                document.getElementById('pengiriman-top-ponpes').textContent = summary.topPonpes || '-';
+                document.getElementById('pengiriman-selesai').textContent = summary.selesai.toLocaleString();
+                document.getElementById('pengiriman-proses').textContent = summary.proses.toLocaleString();
+                document.getElementById('pengiriman-pending').textContent = summary.pending.toLocaleString();
+                document.getElementById('pengiriman-terjadwal').textContent = summary.terjadwal.toLocaleString();
+            }
+        }
+
         function updateSummaryCards(data) {
             let totalKartuBaru = 0,
                 totalKartuBekas = 0,
@@ -868,6 +1312,11 @@
 
             window.isLoadingChart = true;
 
+            const showKendalaCards = chartType === 'vtren-kendala' || chartType === 'reguler-kendala';
+            const showKunjunganCards = chartType === 'kunjungan-ponpes';
+            const showPengirimanCards = chartType === 'pengiriman-ponpes'; // TAMBAHKAN INI
+
+            // Hide/Show chart sections
             document.getElementById('all-cards-chart-section').style.display = chartType === 'all-cards' ? 'block' : 'none';
             document.getElementById('total-monthly-chart-section').style.display = chartType === 'total-monthly' ? 'block' :
                 'none';
@@ -875,10 +1324,21 @@
                 'none';
             document.getElementById('reguler-kendala-chart-section').style.display = chartType === 'reguler-kendala' ?
                 'block' : 'none';
+            document.getElementById('kunjungan-ponpes-chart-section').style.display = chartType === 'kunjungan-ponpes' ?
+                'block' : 'none';
+            document.getElementById('pengiriman-ponpes-chart-section').style.display = chartType === 'pengiriman-ponpes' ?
+                'block' : 'none'; // TAMBAHKAN INI
 
-            const showKendalaCards = chartType === 'vtren-kendala' || chartType === 'reguler-kendala';
-            document.getElementById('summary-cards').style.display = showKendalaCards ? 'none' : 'flex';
-            document.getElementById('kendala-summary-cards').style.display = showKendalaCards ? 'flex' : 'none';
+            // Update summary cards visibility
+            document.getElementById('summary-cards').style.display = showKendalaCards || showKunjunganCards ||
+                showPengirimanCards ? 'none' : 'grid';
+            document.getElementById('summary-cards-row2').style.display = showKendalaCards || showKunjunganCards ||
+                showPengirimanCards ? 'none' : 'grid';
+            document.getElementById('kendala-summary-cards').style.display = showKendalaCards ? 'grid' : 'none';
+            document.getElementById('kunjungan-summary-cards').style.display = showKunjunganCards ? 'grid' : 'none';
+            document.getElementById('kunjungan-status-cards').style.display = showKunjunganCards ? 'grid' : 'none';
+            document.getElementById('pengiriman-summary-cards').style.display = showPengirimanCards ? 'grid' : 'none';
+            document.getElementById('pengiriman-status-cards').style.display = showPengirimanCards ? 'grid' : 'none';
 
             updateChartTitle(chartType);
 
@@ -889,6 +1349,12 @@
             } else if (chartType === 'reguler-kendala') {
                 url =
                     `{{ route('GrafikPonpes.regullerData') }}?type=${dateRange.type}&start_date=${dateRange.startDate}&end_date=${dateRange.endDate}`;
+            } else if (chartType === 'kunjungan-ponpes') {
+                url =
+                    `{{ route('GrafikPonpes.kunjunganData') }}?type=${dateRange.type}&start_date=${dateRange.startDate}&end_date=${dateRange.endDate}`;
+            } else if (chartType === 'pengiriman-ponpes') { // TAMBAHKAN INI
+                url =
+                    `{{ route('GrafikPonpes.pengirimanData') }}?type=${dateRange.type}&start_date=${dateRange.startDate}&end_date=${dateRange.endDate}`;
             } else {
                 url =
                     `{{ route('GrafikPonpes.data') }}?type=${dateRange.type}&start_date=${dateRange.startDate}&end_date=${dateRange.endDate}`;
@@ -912,6 +1378,12 @@
                     } else if (chartType === 'reguler-kendala') {
                         renderRegulerKendalaChart(data);
                         updateKendalaSummaryCards(data);
+                    } else if (chartType === 'kunjungan-ponpes') {
+                        renderKunjunganPonpesChart(data);
+                        updateKunjunganSummaryCards(data);
+                    } else if (chartType === 'pengiriman-ponpes') { // TAMBAHKAN INI
+                        renderPengirimanPonpesChart(data);
+                        updatePengirimanSummaryCards(data);
                     }
                 })
                 .catch(error => {
@@ -937,6 +1409,13 @@
             else if (chartType === 'total-monthly') activeChart = totalMonthlyChart;
             else if (chartType === 'vtren-kendala') activeChart = vtrenKendalaChart;
             else if (chartType === 'reguler-kendala') activeChart = regulerKendalaChart;
+            else if (chartType === 'kunjungan-ponpes') activeChart = kunjunganPonpesChart;
+            else if (chartType === 'pengiriman-ponpes') activeChart = pengirimanPonpesChart;
+
+            if (!activeChart) {
+                alert('Grafik belum dimuat');
+                return;
+            }
 
             const chartImage = activeChart.toBase64Image();
 
