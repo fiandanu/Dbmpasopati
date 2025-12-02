@@ -8,7 +8,6 @@ Route::prefix('nama-wilayah')
     ->name('namawilayah.')
     ->middleware(['auth', 'role:super_admin,teknisi,marketing'])
     ->group(function () {
-        Route::get('/data-nama-wilayah', [NamaWilayahController::class, 'index'])->name('DataNamaWilayah');
         Route::post('/store', [NamaWilayahController::class, 'NamaWilayahPageStore'])->name('NamaWilayahPageStore');
         Route::put('/update/{id}', [NamaWilayahController::class, 'NamaWilayahPageUpdate'])->name('NamaWilayahPageUpdate');
         Route::delete('/destroy/{id}', [NamaWilayahController::class, 'NamaWilayahPageDestroy'])->name('NamaWilayahPageDestroy');

@@ -13,13 +13,6 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class NamaWilayahController extends Controller
 {
-    public function index()
-    {
-        $datakanwil = Kanwil::all();
-        $datanamawilayah = NamaWilayah::all();
-
-        return view('user.indexKanwilNamaWilayah', compact('datakanwil', 'datanamawilayah'));
-    }
 
     public function NamaWilayahPageStore(Request $request)
     {
@@ -83,7 +76,7 @@ class NamaWilayahController extends Controller
         $query = NamaWilayah::query();
         $data = $query->orderBy('nama_wilayah', 'asc')->get();
 
-        $filename = 'list_namawilayah_'.Carbon::now()->translatedFormat('d_M_Y').'.csv';
+        $filename = 'list_namawilayah_' . Carbon::now()->translatedFormat('d_M_Y') . '.csv';
 
         $headers = [
             'Content-type' => 'text/csv',
@@ -124,7 +117,7 @@ class NamaWilayahController extends Controller
 
         $pdf = Pdf::loadView('export.public.user.namawilayah', $pdfData)
             ->setPaper('a4', 'landscape');
-        $filename = 'list_namawilayah_'.Carbon::now()->translatedFormat('d_M_Y').'.pdf';
+        $filename = 'list_namawilayah_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
 
         return $pdf->download($filename);
     }

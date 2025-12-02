@@ -13,12 +13,54 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class KanwilController extends Controller
 {
-    public function index()
-    {
-        $datakanwil = Kanwil::all();
-        $datanamawilayah = NamaWilayah::all();
 
-        return view('user.indexKanwilNamaWilayah', compact('datakanwil', 'datanamawilayah'));
+    public function index(Request $request)
+    {
+        $perPage = $request->get('per_page', 10);
+
+        if (! in_array($perPage, [10, 15, 20, 'all'])) {
+            $perPage = 10;
+        }
+
+        // PAGINATION UNTUK KANWIL
+        if ($perPage === 'all') {
+            $dataKanwil = Kanwil::orderBy('created_at', 'desc')->get();
+            $dataKanwil = new \Illuminate\Pagination\LengthAwarePaginator(
+                $dataKanwil,
+                $dataKanwil->count(),
+                $dataKanwil->count(),
+                1,
+                [
+                    'path' => $request->url(),
+                    'query' => $request->query(),
+                    'pageName' => 'kendala_page',
+                ]
+            );
+        } else {
+            $dataKanwil = Kanwil::orderBy('created_at', 'desc')
+                ->paginate($perPage, ['*'], 'kendala_page');
+        }
+
+        // PAGINATION UNTUK NAMA WILAYAH
+        if ($perPage === 'all') {
+            $dataNamaWilayah = NamaWilayah::orderBy('created_at', 'desc')->get();
+            $dataNamaWilayah = new \Illuminate\Pagination\LengthAwarePaginator(
+                $dataNamaWilayah,
+                $dataNamaWilayah->count(),
+                $dataNamaWilayah->count(),
+                1,
+                [
+                    'path' => $request->url(),
+                    'query' => $request->query(),
+                    'pageName' => 'pic_page',
+                ]
+            );
+        } else {
+            $dataNamaWilayah = NamaWilayah::orderBy('created_at', 'desc')
+                ->paginate($perPage, ['*'], 'pic_page');
+        }
+
+        return view('user.indexKanwilNamaWilayah', compact('dataKanwil', 'dataNamaWilayah', 'perPage'));
     }
 
     public function KanwilPageStore(Request $request)
@@ -83,7 +125,7 @@ class KanwilController extends Controller
         $query = Kanwil::query();
         $data = $query->orderBy('kanwil', 'asc')->get();
 
-        $filename = 'list_kanwil_'.Carbon::now()->translatedFormat('d_M_Y').'.csv';
+        $filename = 'list_kanwil_' . Carbon::now()->translatedFormat('d_M_Y') . '.csv';
 
         $headers = [
             'Content-type' => 'text/csv',
@@ -124,7 +166,7 @@ class KanwilController extends Controller
 
         $pdf = Pdf::loadView('export.public.user.kanwil', $pdfData)
             ->setPaper('a4', 'landscape');
-        $filename = 'list_kanwil_'.Carbon::now()->translatedFormat('d_M_Y').'.pdf';
+        $filename = 'list_kanwil_' . Carbon::now()->translatedFormat('d_M_Y') . '.pdf';
 
         return $pdf->download($filename);
     }

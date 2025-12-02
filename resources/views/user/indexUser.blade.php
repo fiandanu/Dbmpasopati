@@ -10,7 +10,7 @@
                         <div class="d-flex justify-center align-items-center gap-12">
                             <button class="btn-pushmenu" data-widget="pushmenu" role="button">
                                 <i class="fas fa-bars"></i></button>
-                            <h1 class="headline-large-32 mb-0">List Data UPT</h1>
+                            <h1 class="headline-large-32 mb-0">Data UPT</h1>
                         </div>
 
                         <div class="d-flex align-items-center gap-2 flex-wrap">
@@ -22,26 +22,23 @@
                                 </div>
                             </div>
 
-                            <div class="d-flex justify-content-center align-items-center gap-12">
-                                <div class="btn-page">
-                                    <input type="date" id="search-tanggal-dari" name="search_tanggal_dari"
-                                        title="Tanggal Dari">
-                                </div>
-                                <div class="btn-page">
-                                    <input type="date" id="search-tanggal-sampai" name="search_tanggal_sampai"
-                                        title="Tanggal Sampai">
-                                </div>
+                            <div class="btn-page" title="Tanggal Dari">
+                                <input type="date" id="search-tanggal-dari" name="search_tanggal_dari">
+                            </div>
+                            <div class="btn-page" title="Tanggal Sampai">
+                                <input type="date" id="search-tanggal-sampai" name="search_tanggal_sampai"
+                                    title="Tanggal Sampai">
                             </div>
 
                             {{-- EXPORT BUTTON --}}
                             <div class="d-flex gap-2" id="export-buttons">
                                 <button onclick="downloadCsv()"
                                     class="btn-page d-flex justify-content-center align-items-center" title="Download CSV">
-                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export CSV
+                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon>Export CSV
                                 </button>
                                 <button onclick="downloadPdf()"
                                     class="btn-page d-flex justify-content-center align-items-center" title="Download PDF">
-                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon> Export PDF
+                                    <ion-icon name="download-outline" class="w-6 h-6"></ion-icon>Export PDF
                                 </button>
                             </div>
 

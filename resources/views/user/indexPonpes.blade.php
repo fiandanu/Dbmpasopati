@@ -11,7 +11,7 @@
                             <button class="btn-pushmenu" data-widget="pushmenu" role="button">
                                 <i class="fas fa-bars"></i>
                             </button>
-                            <h1 class="headline-large-32 mb-0">List Data Ponpes</h1>
+                            <h1 class="headline-large-32 mb-0">Data Ponpes</h1>
                         </div>
 
                         <div class="d-flex align-items-center gap-2 flex-wrap">
@@ -24,15 +24,13 @@
                             </div>
 
                             {{-- TANGGAL BUTTON --}}
-                            <div class="d-flex justify-content-center align-items-center gap-12">
-                                <div class="btn-page">
-                                    <input type="date" id="search-tanggal-dari" name="search_tanggal_dari"
-                                        title="Tanggal Dari">
-                                </div>
-                                <div class="btn-page">
-                                    <input type="date" id="search-tanggal-sampai" name="search_tanggal_sampai"
-                                        title="Tanggal Sampai">
-                                </div>
+                            <div class="btn-page">
+                                <input type="date" id="search-tanggal-dari" name="search_tanggal_dari"
+                                    title="Tanggal Dari">
+                            </div>
+                            <div class="btn-page">
+                                <input type="date" id="search-tanggal-sampai" name="search_tanggal_sampai"
+                                    title="Tanggal Sampai">
                             </div>
 
                             {{-- BUTTON EXPORT DATA --}}

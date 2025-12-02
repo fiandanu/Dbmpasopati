@@ -12,10 +12,34 @@ class UserRoleController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = UserRole::orderBy('created_at', 'desc')->get();
-        return view('user.indexUserRole', compact('users'));
+        $perPage = $request->get('per_page', 10);
+
+        if (! in_array($perPage, [10, 15, 20, 'all'])) {
+            $perPage = 10;
+        }
+
+        // PAGINATION UNTUK USER ROLE
+        if ($perPage === 'all') {
+            $dataUserRole = UserRole::orderBy('created_at', 'desc')->get();
+            $dataUserRole = new \Illuminate\Pagination\LengthAwarePaginator(
+                $dataUserRole,
+                $dataUserRole->count(),
+                $dataUserRole->count(),
+                1,
+                [
+                    'path' => $request->url(),
+                    'query' => $request->query(),
+                    'pageName' => 'userRole_page',
+                ]
+            );
+        } else {
+            $dataUserRole = UserRole::orderBy('created_at', 'desc')
+                ->paginate($perPage, ['*'], 'userRole_page');
+        }
+
+        return view('user.indexUserRole', compact('dataUserRole'));
     }
 
     /**

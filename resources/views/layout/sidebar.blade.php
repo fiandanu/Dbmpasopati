@@ -17,17 +17,17 @@
             <div class="sidebar flex flex-col h-screen overflow-hidden">
                 <!-- Sidebar user panel -->
                 <div
-                    class="d-flex justify-content-center mt-2 py-2 user-panel d-flex align-items-center flex-shrink-0 mb-3">
+                    class="d-flex justify-content-center mt-2 py-2 user-panel d-flex align-items-center flex-shrink-0 ">
                     <div class="flex justify-center">
                         <img src="{{ asset('img/logo_Iwartelsus.webp') }}" alt="Logo Pasopati" class="logo-responsive">
                     </div>
-                    <div class="d-flex justify-content-center">
+                    <div class="d-flex justify-content-center">`
                     </div>
                 </div>
 
                 <!-- Sidebar Menu -->
                 <nav
-                    class="flex-1 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent hover:scrollbar-thumb-gray-500">
+                    class="flex-1 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent hover:scrollbar-thumb-gray-500 mb-8">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                         data-accordion="false">
                         <!-- Data Base -->
@@ -186,31 +186,31 @@
                                 <li class="nav-item">
                                     <a href="{{ route('User.UserPage') }}"
                                         class="nav-link {{ Route::is('User.UserPage') ? 'active' : '' }}">
-                                        <p>Data UPT</p>
+                                        <p>UPT</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="{{ route('UserPonpes.ponpes.index') }}"
                                         class="nav-link {{ Route::is('UserPonpes.ponpes.index') ? 'active' : '' }}">
-                                        <p>Data Ponpes</p>
+                                        <p>Ponpes</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="{{ route('provider.DataProvider') }}"
                                         class="nav-link {{ Route::is('provider.DataProvider') ? 'active' : '' }}">
-                                        <p>Data Provider/Vpn</p>
+                                        <p>Provider/Vpn</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="{{ route('kendalapic.index') }}"
                                         class="nav-link {{ Route::is('kendalapic.index') ? 'active' : '' }}">
-                                        <p>Data Kendala/PIC</p>
+                                        <p>Kendala/PIC</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="{{ route('kanwil.DataKanwil') }}"
                                         class="nav-link {{ Route::is('kanwil.DataKanwil') || Route::is('namawilayah.DataNamaWilayah') ? 'active' : '' }}">
-                                        <p>Data Kanwil/Nama Wilayah</p>
+                                        <p>Kanwil/Nama Wilayah</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
@@ -224,32 +224,34 @@
                             </ul>
                         </li>
                     </ul>
-                    {{-- PROFILE BUTTON - Fixed Bottom --}}
-                    <div class="logout-wrapper">
-                        <div class="profile-card">
-                            <div class="profile-avatar">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <div class="profile-info">
-                                <h3>{{ Auth::user()->username }}</h3>
-                                <p class="text-kategori">{{ Auth::user()->nama ?? 'Guest' }}</p>
-                            </div>
-                            <form method="POST" action="{{ route('logout') }}" class="profile-action">
-                                @csrf
-                                <button type="submit" class="icon-logout">
-                                    <span class="material-symbols-outlined">
-                                        logout
-                                    </span>
-                                </button>
-                            </form>
-                        </div>
-                    </div>
                 </nav>
 
                 <!-- /.sidebar-menu -->
             </div>
             <!-- /.sidebar -->
+
+            {{-- PROFILE BUTTON - Fixed Bottom --}}
+            <div class="logout-wrapper">
+                <div class="profile-card">
+                    <div class="profile-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="profile-info">
+                        <h3>{{ Auth::user()->username }}</h3>
+                        <p class="text-kategori">{{ Auth::user()->nama ?? 'Guest' }}</p>
+                    </div>
+                    <form method="POST" action="{{ route('logout') }}" class="profile-action">
+                        @csrf
+                        <button type="submit" class="icon-logout">
+                            <span class="material-symbols-outlined">
+                                logout
+                            </span>
+                        </button>
+                    </form>
+                </div>
+            </div>
         </aside>
+
 
         <!-- /.content-wrapper -->
         @yield('content')

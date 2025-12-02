@@ -95,7 +95,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($datakanwil as $k)
+                                        @foreach ($dataKanwil as $k)
                                             <tr>
                                                 <td>{{ $k->kanwil }}</td>
                                                 <td class="text-center">
@@ -181,6 +181,57 @@
                                 </table>
                             </div>
                         </div>
+
+                        <!-- PAGINATION KANWIL -->
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="btn-datakolom">
+                                    <form method="GET" class="d-flex align-items-center">
+                                        <div class="d-flex align-items-center">
+                                            <select name="per_page" class="form-control form-control-sm pr-2"
+                                                style="width: auto;" onchange="this.form.submit()">
+                                                <option value="10"
+                                                    {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10</option>
+                                                <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>
+                                                    15</option>
+                                                <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>
+                                                    20</option>
+                                                <option value="all"
+                                                    {{ request('per_page') == 'all' ? 'selected' : '' }}>Semua</option>
+                                            </select>
+                                            <span>Rows</span>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <!-- Pagination Navigation -->
+                            @if (request('per_page') != 'all' && $dataKanwil->lastPage() > 1)
+                                <div class="pagination-controls d-flex align-items-center gap-12">
+                                    @if ($dataKanwil->onFirstPage())
+                                        <button class="btn-page" disabled>&laquo; Previous</button>
+                                    @else
+                                        <button class="btn-datakolom w-auto p-3">
+                                            <a href="{{ $dataKanwil->appends(request()->query())->previousPageUrl() }}">&laquo;
+                                                Previous</a>
+                                        </button>
+                                    @endif
+
+                                    <span id="page-info">Page {{ $dataKanwil->currentPage() }} of
+                                        {{ $dataKanwil->lastPage() }}</span>
+
+                                    @if ($dataKanwil->hasMorePages())
+                                        <button class="btn-datakolom w-auto p-3">
+                                            <a href="{{ $dataKanwil->appends(request()->query())->nextPageUrl() }}">Next
+                                                &raquo;</a>
+                                        </button>
+                                    @else
+                                        <button class="btn-page" disabled>Next &raquo;</button>
+                                    @endif
+                                </div>
+                            @endif
+                        </div>
+
                     </div>
                     <!-- Tabel Nama Wilayah -->
                     <div class="col-md-6">
@@ -209,7 +260,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($datanamawilayah as $n)
+                                        @foreach ($dataNamaWilayah as $n)
                                             <tr>
                                                 <td>{{ $n->nama_wilayah }}</td>
                                                 <td class="text-center">
@@ -300,6 +351,60 @@
                                 </table>
                             </div>
                         </div>
+
+
+                        <!-- PAGINATION KANWIL -->
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="btn-datakolom">
+                                    <form method="GET" class="d-flex align-items-center">
+                                        <div class="d-flex align-items-center">
+                                            <select name="per_page" class="form-control form-control-sm pr-2"
+                                                style="width: auto;" onchange="this.form.submit()">
+                                                <option value="10"
+                                                    {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10</option>
+                                                <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>
+                                                    15</option>
+                                                <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>
+                                                    20</option>
+                                                <option value="all"
+                                                    {{ request('per_page') == 'all' ? 'selected' : '' }}>Semua</option>
+                                            </select>
+                                            <span>Rows</span>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <!-- Pagination Navigation -->
+                            @if (request('per_page') != 'all' && $dataNamaWilayah->lastPage() > 1)
+                                <div class="pagination-controls d-flex align-items-center gap-12">
+                                    @if ($dataNamaWilayah->onFirstPage())
+                                        <button class="btn-page" disabled>&laquo; Previous</button>
+                                    @else
+                                        <button class="btn-datakolom w-auto p-3">
+                                            <a
+                                                href="{{ $dataNamaWilayah->appends(request()->query())->previousPageUrl() }}">&laquo;
+                                                Previous</a>
+                                        </button>
+                                    @endif
+
+                                    <span id="page-info">Page {{ $dataNamaWilayah->currentPage() }} of
+                                        {{ $dataNamaWilayah->lastPage() }}</span>
+
+                                    @if ($dataNamaWilayah->hasMorePages())
+                                        <button class="btn-datakolom w-auto p-3">
+                                            <a href="{{ $dataNamaWilayah->appends(request()->query())->nextPageUrl() }}">Next
+                                                &raquo;</a>
+                                        </button>
+                                    @else
+                                        <button class="btn-page" disabled>Next &raquo;</button>
+                                    @endif
+                                </div>
+                            @endif
+                        </div>
+
+
                     </div>
                 </div>
 
