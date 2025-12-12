@@ -60,7 +60,6 @@ Kode yang perlu dirapihin lagi di bagian
 
 Kode yang perlu di cek ulang di Mclient UPT
 
-
 CASE SENSITIF NAMA WILAYAH
 
 data@data:/var/www/Dbmpasopati/app/Models/user$ cd namaWilayah
@@ -110,14 +109,33 @@ mclient tutorial UserFactory.php
 
 DATA YANG NGAMBIL DARI SERVER ITU UPT DAN PONPES YAITU DARI NAMA UPT DAN KANWIL DAN NAMA WILAYAH
 
+
+=============================================================
+💻 TUTORIAL SERVER
+=============================================================
+
+- INSTALL NGINX ✅
+- INSTALL PHP 8.3.6 ✅
+- INSTALL MYSQL SERVER 🔄
+- INSTALL COMPOSER ✅
+- 
+
+
+
+
 =============================================================
 📝 CATATAN REVISI
 =============================================================
 
+Membenarkan case sensitif pada "App\Models\user\NamaWilayah\NamaWilayah"
 
-- HALAMAN DATA MANAJEMEN TAMBAHIN SEARCH BY TANGGAL
-- DI TUTORIAL UPT DAN PONPES COUNTNYA DIUBAT MENGIKUTI DATA YANG ADA
 
+
+BUAT SERVER
+
+- Tambahkan security pada saat masuk mysql pada ubuntu server ✅
+- backup data dummy mysql dengan command mysqldump ✅
+- install composer di benarkan lagi ✅
 
 - KHUSUS ROLE USER ✅
   Super Admin,Teknisi, Marketing
@@ -169,28 +187,20 @@ yang bisa membuat user dan role itu hanya super admin
 -- 11/27/2025
 
 menambahkan Jumlah UPT Dan Ponpes di halaman Data Manajemen  
-Dan Validasi juga benerin kalau memilih nama UPT yang sama 
+Dan Validasi juga benerin kalau memilih nama UPT yang sama
 
 Di halaman Komplain UPT ditambahkan grafik kunjugan upt dan pengiriman alat upt
 berdasarkan
 
- - munculkan Upt kunjungan dan pengiriman alat yang sering di kunjungi saja minimal 10 upt 
- - bisa dicari berdasarkan tanggal
- - di catatan kartu vpas 
-
-
-
-
-
-
-
-
-
+- munculkan Upt kunjungan dan pengiriman alat yang sering di kunjungi saja minimal 10 upt
+- bisa dicari berdasarkan tanggal
+- di catatan kartu vpas
 
 -- Check Ulang
 11/14/2025
 
 -- Komplain Vpas Dibuat jumlah presentase dari jenis kendala dibuat perbulan, intinya diambil dari jenis kendala ✅
+
 - di catatan kartu vpas nama Upt masih hilang di Pdfnya pas download ✅
 - terpakai disebelah whatsaap terpakai, pic dibuat ke paling kanan aja ✅
 - tanggal disebelum nama Upt ✅
