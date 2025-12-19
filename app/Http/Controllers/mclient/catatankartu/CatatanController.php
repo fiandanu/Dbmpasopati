@@ -391,8 +391,8 @@ class CatatanController extends Controller
             'Spam VPAS Kartu GOIP',
             'Kartu Belum Teregister',
             'WhatsApp Telah Terpakai',
-            'Card Supporting',
             'Jumlah Kartu Terpakai Per Hari',
+            'Card Supporting',
             'PIC',
             'Dibuat Pada',
         ]];
