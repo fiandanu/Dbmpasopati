@@ -109,7 +109,6 @@ mclient tutorial UserFactory.php
 
 DATA YANG NGAMBIL DARI SERVER ITU UPT DAN PONPES YAITU DARI NAMA UPT DAN KANWIL DAN NAMA WILAYAH
 
-
 =============================================================
 💻 TUTORIAL SERVER
 =============================================================
@@ -118,10 +117,7 @@ DATA YANG NGAMBIL DARI SERVER ITU UPT DAN PONPES YAITU DARI NAMA UPT DAN KANWIL 
 - INSTALL PHP 8.3.6 ✅
 - INSTALL MYSQL SERVER 🔄
 - INSTALL COMPOSER ✅
-- 
-
-
-
+-
 
 =============================================================
 📝 CATATAN REVISI
@@ -129,9 +125,7 @@ DATA YANG NGAMBIL DARI SERVER ITU UPT DAN PONPES YAITU DARI NAMA UPT DAN KANWIL 
 
 
 
-
-
-
+- jumlah max di kolom keterangan ditambahkan berapa maxnya biar keliatan ✅
 
 BUAT SERVER
 
@@ -187,12 +181,8 @@ yang bisa membuat user dan role itu hanya super admin
 =============================================================
 
 -- 12/19/2025
+
 - Membenarkan Salah Penempatan Judul pada CSV ✅
-
-
-
-
-
 
 -- 11/27/2025
 

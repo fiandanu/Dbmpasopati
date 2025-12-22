@@ -298,31 +298,20 @@
                                                         {{ $d->formatted_jenis_layanan }}
                                                     </span>
                                                 </td>
+
                                                 <td>
-                                                    @if ($d->keterangan && strlen($d->keterangan) > 20)
-                                                        <div id="short-text-{{ $d->id }}">
-                                                            <div>{{ Str::limit($d->keterangan, 20) }}</div>
-                                                            <a href="javascript:void(0)"
-                                                                onclick="toggleDetail({{ $d->id }})"
-                                                                class="text-primary">
-                                                                <small>Show</small>
-                                                            </a>
-                                                        </div>
-                                                        <div id="full-text-{{ $d->id }}" style="display: none;">
-                                                            <div
-                                                                style="white-space: pre-wrap; word-wrap: break-word; max-width: 300px;">
-                                                                {{ $d->keterangan }}
-                                                            </div>
-                                                            <a href="javascript:void(0)"
-                                                                onclick="toggleDetail({{ $d->id }})"
-                                                                class="text-primary">
-                                                                <small>Hide</small>
-                                                            </a>
-                                                        </div>
+                                                    @if ($d->keterangan && strlen($d->keterangan) > 30)
+                                                        <div>{{ Str::limit($d->keterangan, 30) }}</div>
+                                                        <a href="#" data-bs-toggle="modal"
+                                                            data-bs-target="#keteranganModal{{ $d->id }}"
+                                                            class="text-primary text-decoration-none">
+                                                            <small></i>show</small>
+                                                        </a>
                                                     @else
                                                         {{ $d->keterangan ?? '-' }}
                                                     @endif
                                                 </td>
+
                                                 <td class="text-center">
                                                     {{ $d->tanggal_pengiriman ? \Carbon\Carbon::parse($d->tanggal_pengiriman)->translatedFormat('d M Y') : '-' }}
                                                 </td>
@@ -374,6 +363,32 @@
                                                             </button>
                                                         </a>
                                                     @endif
+
+
+                                                    {{-- Keterangan Detail Modal --}}
+                                                    <div class="modal fade" id="keteranganModal{{ $d->id }}"
+                                                        tabindex="-1" aria-hidden="true">
+                                                        <div class="modal-dialog modal-lg">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <label class="modal-title">Detail Keterangan</label>
+                                                                    <button type="button" class="btn-close"
+                                                                        data-bs-dismiss="modal" aria-label="Close">
+                                                                        <span class="material-symbols-outlined"
+                                                                            aria-hidden="true">
+                                                                            close
+                                                                        </span>
+                                                                    </button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <div class="mb-3">
+                                                                        <textarea class="form-control" id="keterangan_view{{ $d->id }}" rows="15" readonly
+                                                                            style="white-space: pre-wrap; background-color: #f8f9fa; resize: none;">{{ $d->keterangan ?? '-' }}</textarea>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
 
                                                 </td>
                                             </tr>
@@ -433,7 +448,6 @@
 
                                         <div class="modal-body">
                                             <!-- Jenis Layanan & UPT -->
-                                            <!-- Jenis Layanan & UPT -->
                                             <div class="mb-4">
                                                 <div class="mb-3 border-bottom pb-2 d-flex justify-content-center">
                                                     <label class="fw-bold">Informasi UPT</label>
@@ -481,9 +495,9 @@
                                                 </div>
 
                                                 <div class="mb-3">
-                                                    <label for="keterangan">Keterangan</label>
-                                                    <textarea class="form-control" id="keterangan" name="keterangan" rows="3"
-                                                        placeholder="Masukkan keterangan pengiriman (opsional)"></textarea>
+                                                    <label for="keterangan{{ $d->id }}">Keterangan</label>
+                                                    <textarea class="form-control" id="keterangan{{ $d->id }}" name="keterangan" rows="10"
+                                                        placeholder="Masukkan keterangan Pengiriman (opsional)">{{ $d->keterangan ?? '' }}</textarea>
                                                 </div>
                                             </div>
 
@@ -619,8 +633,8 @@
 
                                                     <div class="mb-3">
                                                         <label for="keterangan{{ $d->id }}">Keterangan</label>
-                                                        <textarea class="form-control" id="keterangan{{ $d->id }}" name="keterangan" rows="3"
-                                                            placeholder="Masukkan keterangan pengiriman (opsional)">{{ $d->keterangan ?? '' }}</textarea>
+                                                        <textarea class="form-control" id="keterangan{{ $d->id }}" name="keterangan" rows="10"
+                                                            placeholder="Masukkan keterangan Pengiriman (opsional)">{{ $d->keterangan ?? '' }}</textarea>
                                                     </div>
                                                 </div>
 

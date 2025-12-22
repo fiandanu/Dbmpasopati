@@ -335,8 +335,8 @@
                                                     <option value="">Semua</option>
                                                     <option value="belum ditentukan">Belum ditentukan</option>
                                                     <option value="pending">Pending</option>
-                                                    <option value="proses">Proses</option>
                                                     <option value="terjadwal">Terjadwal</option>
+                                                    <option value="proses">Proses</option>
                                                     <option value="selesai">Selesai</option>
                                                 </select>
                                             </div>

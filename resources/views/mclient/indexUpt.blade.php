@@ -357,8 +357,8 @@
                                                     <option value="">Semua</option>
                                                     <option value="belum ditentukan">Belum ditentukan</option>
                                                     <option value="pending">Pending</option>
-                                                    <option value="proses">Proses</option>
                                                     <option value="terjadwal">Terjadwal</option>
+                                                    <option value="proses">Proses</option>
                                                     <option value="selesai">Selesai</option>
                                                 </select>
                                             </div>
@@ -463,15 +463,14 @@
                                 @endif
 
                                 <div class="d-flex align-items-center">
-                                    <select name="per_page" class="form-control form-control-sm pr-2"
-                                        style="width: auto;" onchange="this.form.submit()">
+                                    <select name="per_page"
+                                        style="width: auto; appearance: none; -webkit-appearance: none; -moz-appearance: none; padding-right: 0.5rem; background-image: none;"
+                                        onchange="this.form.submit()">
                                         <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10
                                         </option>
                                         <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>15
                                         </option>
                                         <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20
-                                        </option>
-                                        <option value="all" {{ request('per_page') == 'all' ? 'selected' : '' }}>Semua
                                         </option>
                                     </select>
                                     <span>Rows</span>

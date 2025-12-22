@@ -162,7 +162,29 @@ class DashboardPonpesController extends Controller
         $allData = $this->applyMonitoringFilters($allData, $request);
 
         // Sort by created_at desc
-        $allData = $allData->sortByDesc('created_at')->values();
+        $allData = $allData->sort(function ($a, $b) {
+            // Define status priority
+            $statusPriority = [
+                'belum ditentukan' => 1,
+                'pending' => 2,
+                'terjadwal' => 3,
+                'proses' => 4,
+                'selesai' => 5,
+            ];
+
+            $statusA = strtolower($a['status'] ?? 'belum ditentukan');
+            $statusB = strtolower($b['status'] ?? 'belum ditentukan');
+
+            $priorityA = $statusPriority[$statusA] ?? 6;
+            $priorityB = $statusPriority[$statusB] ?? 6;
+
+            // If same priority, sort by created_at desc
+            if ($priorityA == $priorityB) {
+                return $b['created_at'] <=> $a['created_at'];
+            }
+
+            return $priorityA <=> $priorityB;
+        })->values();
 
         // Calculate statistics
         $totalKomplain = $allData->count();
@@ -214,30 +236,20 @@ class DashboardPonpesController extends Controller
         // Pagination
         $perPage = $request->get('per_page', 10);
 
-        if (!in_array($perPage, [10, 15, 20, 'all'])) {
+        if (!in_array($perPage, [10, 15, 20])) {
             $perPage = 10;
         }
 
-        if ($perPage == 'all') {
-            $data = new \Illuminate\Pagination\LengthAwarePaginator(
-                $allData,
-                $allData->count(),
-                99999,
-                1,
-                ['path' => $request->url(), 'query' => $request->query()]
-            );
-        } else {
-            $currentPage = \Illuminate\Pagination\Paginator::resolveCurrentPage();
-            $currentItems = $allData->slice(($currentPage - 1) * $perPage, $perPage)->values();
+        $currentPage = \Illuminate\Pagination\Paginator::resolveCurrentPage();
+        $currentItems = $allData->slice(($currentPage - 1) * $perPage, $perPage)->values();
 
-            $data = new \Illuminate\Pagination\LengthAwarePaginator(
-                $currentItems,
-                $allData->count(),
-                $perPage,
-                $currentPage,
-                ['path' => $request->url(), 'query' => $request->query()]
-            );
-        }
+        $data = new \Illuminate\Pagination\LengthAwarePaginator(
+            $currentItems,
+            $allData->count(),
+            $perPage,
+            $currentPage,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
 
         return view('mclient.indexPonpes', compact(
             'data',
