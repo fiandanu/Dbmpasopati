@@ -75,10 +75,10 @@
         @endif
 
         @if ($errors->any())
-            <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm mx-4" role="alert">
+            <div class="alert alert-warning alert-dismissible fade show border-0 shadow-sm mx-4" role="alert">
                 <div class="d-flex">
                     <div class="flex-shrink-0">
-                        <i class="fas fa-exclamation-circle text-danger"></i>
+                        <i class="fas fa-exclamation-triangle text-warning"></i>
                     </div>
                     <div class="flex-grow-1 ml-3">
                         <div class="alert-heading h5 mb-2">Periksa kembali Data yang dimasukkan</div>
@@ -88,14 +88,14 @@
                             @endforeach
                         </div>
                     </div>
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
             </div>
         @endif
 
-        @if (session('error'))
+        {{-- @if (session('error'))
             <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm mx-4" role="alert">
                 <div class="d-flex">
                     <div class="flex-shrink-0">
@@ -110,7 +110,7 @@
                     </button>
                 </div>
             </div>
-        @endif
+        @endif --}}
 
         <!-- Main content -->
         <section class="content">
@@ -357,8 +357,8 @@
 
                                                     {{-- DELETE MODAL --}}
                                                     @if (Auth::check() && Auth::user()->isSuperAdmin())
-                                                        <a data-toggle="modal"
-                                                            data-target="#modal-default{{ $d->id }}">
+                                                        <a data-bs-toggle="modal"
+                                                            data-bs-target="#modal-default{{ $d->id }}">
                                                             <button>
                                                                 <ion-icon name="trash-outline"></ion-icon>
                                                             </button>
@@ -408,7 +408,7 @@
                                                         </div>
                                                         <div class="modal-footer flex-row-reverse justify-content-between">
                                                             <button type="button" class="btn-cancel-modal"
-                                                                data-dismiss="modal">Tutup</button>
+                                                                data-bs-dismiss="modal">Tutup</button>
                                                             <form
                                                                 action="{{ route('mclientkunjunganupt.MclientKunjunganDestroy', $d->id) }}"
                                                                 method="POST">

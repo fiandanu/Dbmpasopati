@@ -123,42 +123,33 @@ DATA YANG NGAMBIL DARI SERVER ITU UPT DAN PONPES YAITU DARI NAMA UPT DAN KANWIL 
 📝 CATATAN REVISI
 =============================================================
 
+- UPT dan Ponpes Diubah posisi 1 dari nama kanwil dan nama upt itu diubah ke posisi ke 2
+- membenarkan jumlah DB UPT dan Ponpes
+- sst  dari UPT dan Ponpes itu dibuat totalnya berapa 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+- pada bagian DB Upt dan ponpes di halaman pks itu benarkan pada bagian pdf dan csvnya 
+- Huruf pada Bagian Ponpes Di Mclient ada yang besar dan kecil di bagian tanggal ✅
+- pada mclient kunjungan csvnya di benarkan lagi 
+
+
 
 
 - jumlah max di kolom keterangan ditambahkan berapa maxnya biar keliatan ✅
 
-BUAT SERVER
-
-- Tambahkan security pada saat masuk mysql pada ubuntu server ✅
-- backup data dummy mysql dengan command mysqldump ✅
-- install composer di benarkan lagi ✅
-
-- KHUSUS ROLE USER ✅
-  Super Admin,Teknisi, Marketing
-
-kolom di role
-
-- username
-- nama
-- password
-- keterangan
-- status kalo aktif role bisa login, dan sebaliknya
-- level akses / rolenya
-- history login
-- tanggal pembuatan
-
-- Rule Role Marketing
-- Marketing hanya bisa melihat dan edit
-  -(tidak bisa menghapus data)
-- di halaman data manajemen di hide untuk role ini
-- hanya bisa tambah edit di Halaman Db pks dan spp saja
-
-- Rule Teknisi
-- (tidak bisa menghapus data)
-- bisa membuat data di semua halaman Edit Dan tambah
-
-catatan
-yang bisa membuat user dan role itu hanya super admin
 
 - dibuat kolom untuk di halaman home usernya itu
   terakhir login dan tanggal pembuatan user

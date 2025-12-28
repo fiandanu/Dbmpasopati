@@ -143,7 +143,7 @@
                             </div>
 
                             <div class="gap-12 w-fit text-center">
-                                <h3>selesai</h3>
+                                <h3>Selesai</h3>
                                 <div class="d-flex justify-content-center align-items-center gap-12">
                                     <div class="flex-column btn-searchbar column-search">
                                         <label for="search-tanggal-selesai-dari"

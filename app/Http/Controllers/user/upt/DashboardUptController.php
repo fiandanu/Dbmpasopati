@@ -117,6 +117,7 @@ class DashboardUptController extends Controller
     // EXPORT DATA CARD TOP
     public function exportCardsPdf(Request $request)
     {
+        // Base query dengan filter tanggal
         $baseQuery = Upt::query();
 
         if ($request->filled('search_tanggal_dari')) {
@@ -126,31 +127,40 @@ class DashboardUptController extends Controller
             $baseQuery->whereDate('tanggal', '<=', $request->search_tanggal_sampai);
         }
 
+        // Clone query untuk menghindari konflik
+        $allData = (clone $baseQuery)->get();
+
+        // Filter VpasReg - prioritas Reguler (sama seperti method index)
+        $filteredData = $this->filterUniqueVpasRegPrioritasReguler($allData);
+
+        // Hitung statistik dari data yang sudah difilter
         $pksStats = $this->getPksStatistics();
         $sppStats = $this->getSppStatistics();
         $VpasWartelStats = $this->getVpasWartelStatistics();
         $RegulerWartelStats = $this->getRegulerWartelStatistics();
 
-        $totalUpt = $baseQuery->count();
+        // Total UPT dari filtered data
+        $totalUpt = $filteredData->count();
 
-        $totalExtensionVpas = Upt::where('tipe', 'vpas')
-            ->with('dataOpsional')
-            ->get()
-            ->sum(function ($upt) {
-                return $upt->dataOpsional->jumlah_extension ?? 0;
-            });
+        // Total Vpas dan Reguler dari filtered data
+        $totalVpasCount = $filteredData->where('tipe', 'vpas')->count();
+        $totalRegulerCount = $filteredData->where('tipe', 'reguler')->count();
 
-        $totalExtensionReguler = Upt::where('tipe', 'reguler')
-            ->with('dataOpsional')
-            ->get()
-            ->sum(function ($upt) {
-                return $upt->dataOpsional->jumlah_extension ?? 0;
-            });
+        // Extension dari filtered data
+        $totalExtensionVpas = $filteredData->where('tipe', 'vpas')->sum(function ($upt) {
+            return $upt->dataOpsional->jumlah_extension ?? 0;
+        });
+
+        $totalExtensionReguler = $filteredData->where('tipe', 'reguler')->sum(function ($upt) {
+            return $upt->dataOpsional->jumlah_extension ?? 0;
+        });
 
         $pdfData = [
             'title' => 'Statistik Database UPT',
             'pksStats' => $pksStats,
             'sppStats' => $sppStats,
+            'totalVpasCount' => $totalVpasCount,        // TAMBAHAN
+            'totalRegulerCount' => $totalRegulerCount,  // TAMBAHAN
             'VpasWartelStats' => $VpasWartelStats,
             'RegulerWartelStats' => $RegulerWartelStats,
             'totalUpt' => $totalUpt,

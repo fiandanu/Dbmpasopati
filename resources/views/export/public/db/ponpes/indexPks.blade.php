@@ -188,8 +188,10 @@
                             </span>
                         </td>
                         <td>{{ \Carbon\Carbon::parse($d['tanggal'])->format('d M Y') }}</td>
-                        <td>{{ $d->uploadFolderPks->tanggal_kontrak->format('d M Y') ?? '-' }}</td>
-                        <td>{{ $d->uploadFolderPks->tanggal_jatuh_tempo->format('d M Y') ?? '-' }}</td>
+                        <td>{{ $d->uploadFolderPks && $d->uploadFolderPks->tanggal_kontrak ? $d->uploadFolderPks->tanggal_kontrak->format('d M Y') : '-' }}
+                        </td>
+                        <td>{{ $d->uploadFolderPks && $d->uploadFolderPks->tanggal_jatuh_tempo ? $d->uploadFolderPks->tanggal_jatuh_tempo->format('d M Y') : '-' }}
+                        </td>
                         <td>
                             <span class="badge {{ $badgeClass }}">{{ $status }}</span>
                         </td>

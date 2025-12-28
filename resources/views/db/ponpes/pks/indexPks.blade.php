@@ -59,7 +59,7 @@
                         <div class="alert-heading h5 mb-2">Berhasil!</div>
                         <div class="small">{{ session('success') }}</div>
                     </div>
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -77,7 +77,7 @@
                         <div class="alert-heading h5 mb-2">Sebagian Data Tersimpan</div>
                         <div class="small">{{ session('partial_success') }}</div>
                     </div>
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -99,7 +99,7 @@
                             @endforeach
                         </div>
                     </div>
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -117,7 +117,7 @@
                         <div class="alert-heading h5 mb-2">Error!</div>
                         <div class="small">{{ session('error') }}</div>
                     </div>
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -242,7 +242,7 @@
                                                 </a>
 
                                                 <!-- Upload PDF Button -->
-                                                <button data-toggle="modal" data-target="#uploadModal{{ $d->id }}"
+                                                <button data-bs-toggle="modal" data-bs-target="#uploadModal{{ $d->id }}"
                                                     title="Upload PDF">
                                                     <ion-icon name="folder-outline"></ion-icon>
                                                 </button>
@@ -446,7 +446,7 @@
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn-cancel-modal"
-                                                            data-dismiss="modal">Tutup</button>
+                                                            data-bs-dismiss="modal">Tutup</button>
                                                         <button type="submit" class="btn-purple">Upload
                                                             PDF</button>
                                                     </div>
