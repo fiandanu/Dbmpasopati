@@ -148,7 +148,7 @@
                             <div class="card-total">
                                 <div class="w-full">
                                     <h1 class="title-medium-18">Total Data UPT</h1>
-                                    <span class="display-medium-48">{{ number_format($data->total()) }}</span>
+                                    <span class="display-medium-48">{{ number_format($totalUpt) }}</span>
                                 </div>
                                 <div class="icon-card-total">
                                     <span class="material-symbols-outlined">account_balance</span>
