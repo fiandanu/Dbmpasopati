@@ -149,7 +149,7 @@
                             <div class="card-total">
                                 <div class="w-full">
                                     <h1 class="title-medium-18">Total Data PONPES</h1>
-                                    <span class="display-medium-48">{{ number_format($data->total()) }}</span>
+                                    <span class="display-medium-48">{{ number_format($totalPonpes) }}</span>
                                 </div>
                                 <div class="icon-card-total">
                                     <span class="material-symbols-outlined">
