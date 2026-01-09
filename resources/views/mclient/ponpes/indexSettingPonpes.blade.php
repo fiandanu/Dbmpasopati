@@ -500,8 +500,8 @@
                                                 </div>
 
                                                 <div class="mb-3">
-                                                    <label for="keterangan{{ $d->id }}">Keterangan</label>
-                                                    <textarea class="form-control" id="keterangan{{ $d->id }}" name="keterangan" rows="10"
+                                                    <label for="keterangan_add">Keterangan</label>
+                                                    <textarea class="form-control" id="keterangan_add" name="keterangan" rows="10"
                                                         placeholder="Masukkan keterangan Setting (opsional)">{{ $d->keterangan ?? '' }}</textarea>
                                                 </div>
                                             </div>

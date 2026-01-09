@@ -1184,7 +1184,6 @@
         });
     </script>
 
-
     {{-- Search and Filter JavaScript --}}
     <script>
         $(document).ready(function() {
