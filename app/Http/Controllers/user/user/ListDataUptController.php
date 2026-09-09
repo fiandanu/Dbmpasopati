@@ -167,7 +167,48 @@ class ListDataUptController extends Controller
         ];
     }
 
-    public function UserPage(Request $request)
+    private function groupVpasRegData($allData)
+    {
+        $grouped = collect();
+        $processed = [];
+
+        foreach ($allData as $item) {
+            $baseNama = $this->removeVpasRegSuffix($item->namaupt);
+
+            if (in_array($baseNama, $processed)) {
+                continue;
+            }
+
+            // Cari semua data dengan nama base yang sama
+            $relatedItems = $allData->filter(function ($d) use ($baseNama) {
+                return $this->removeVpasRegSuffix($d->namaupt) === $baseNama;
+            });
+
+            if ($relatedItems->count() === 2) {
+                // Ada 2 tipe (reguler + vpas), gabungkan menjadi satu baris
+                $mergedItem = $relatedItems->first();
+
+                // Set jenis_layanan sebagai vpasreg
+                $mergedItem->jenis_layanan = 'vpasreg';
+                $mergedItem->combined_ids = $relatedItems->pluck('id')->toArray();
+                $mergedItem->is_combined = true;
+
+                $grouped->push($mergedItem);
+            } else {
+                // Hanya 1 tipe
+                $item->jenis_layanan = $item->tipe;
+                $item->combined_ids = [$item->id];
+                $item->is_combined = false;
+                $grouped->push($item);
+            }
+
+            $processed[] = $baseNama;
+        }
+
+        return $grouped;
+    }
+
+    public function index(Request $request)
     {
         // Get UPT data with reguler and vpas types, include relationships
         $query = Upt::with(['dataOpsional', 'uploadFolder'])
@@ -232,48 +273,7 @@ class ListDataUptController extends Controller
         return view('user.indexUser', compact('data', 'providers', 'vpns', 'datakanwil', 'jenisLayananOptions', 'totalDataUpt'));
     }
 
-    private function groupVpasRegData($allData)
-    {
-        $grouped = collect();
-        $processed = [];
-
-        foreach ($allData as $item) {
-            $baseNama = $this->removeVpasRegSuffix($item->namaupt);
-
-            if (in_array($baseNama, $processed)) {
-                continue;
-            }
-
-            // Cari semua data dengan nama base yang sama
-            $relatedItems = $allData->filter(function ($d) use ($baseNama) {
-                return $this->removeVpasRegSuffix($d->namaupt) === $baseNama;
-            });
-
-            if ($relatedItems->count() === 2) {
-                // Ada 2 tipe (reguler + vpas), gabungkan menjadi satu baris
-                $mergedItem = $relatedItems->first();
-
-                // Set jenis_layanan sebagai vpasreg
-                $mergedItem->jenis_layanan = 'vpasreg';
-                $mergedItem->combined_ids = $relatedItems->pluck('id')->toArray();
-                $mergedItem->is_combined = true;
-
-                $grouped->push($mergedItem);
-            } else {
-                // Hanya 1 tipe
-                $item->jenis_layanan = $item->tipe;
-                $item->combined_ids = [$item->id];
-                $item->is_combined = false;
-                $grouped->push($item);
-            }
-
-            $processed[] = $baseNama;
-        }
-
-        return $grouped;
-    }
-
-    public function UserPageStore(Request $request)
+    public function store(Request $request)
     {
         // Validasi input
         $validator = Validator::make(
@@ -343,7 +343,7 @@ class ListDataUptController extends Controller
         if (count($createdRecords) > 0) {
             $message = 'Data UPT berhasil ditambahkan untuk tipe: ' . implode(', ', $createdRecords);
 
-            return redirect()->route('User.UserPage')->with('success', $message);
+            return redirect()->route('management.upt.index')->with('success', $message);
         } else {
             return redirect()->back()
                 ->withInput()
@@ -351,27 +351,7 @@ class ListDataUptController extends Controller
         }
     }
 
-    public function UserPageDestroy($id)
-    {
-        $dataupt = Upt::find($id);
-
-        if (! $dataupt) {
-            return redirect()->route('User.UserPage')->with('error', 'Data tidak ditemukan!');
-        }
-
-        // Ambil nama UPT tanpa suffix (VpasReg) untuk pengecekan
-        $namaUptBase = $this->removeVpasRegSuffix($dataupt->namaupt);
-
-        // Hapus data yang dipilih
-        $dataupt->delete();
-
-        // Update nama UPT yang tersisa berdasarkan jumlah data
-        $this->updateUptNamesBySuffix($namaUptBase);
-
-        return redirect()->route('User.UserPage')->with('success', 'Data berhasil dihapus!');
-    }
-
-    public function UserPageUpdate(Request $request, $id)
+    public function update(Request $request, $id)
     {
         $validator = Validator::make(
             $request->all(),
@@ -414,7 +394,27 @@ class ListDataUptController extends Controller
         $dataupt->save();
 
         // FIXED: Corrected route name
-        return redirect()->route('User.UserPage')->with('success', 'Data UPT berhasil diupdate!');
+        return redirect()->route('management.upt.index')->with('success', 'Data UPT berhasil diupdate!');
+    }
+
+    public function destroy($id)
+    {
+        $dataupt = Upt::find($id);
+
+        if (! $dataupt) {
+            return redirect()->route('management.upt.index')->with('error', 'Data tidak ditemukan!');
+        }
+
+        // Ambil nama UPT tanpa suffix (VpasReg) untuk pengecekan
+        $namaUptBase = $this->removeVpasRegSuffix($dataupt->namaupt);
+
+        // Hapus data yang dipilih
+        $dataupt->delete();
+
+        // Update nama UPT yang tersisa berdasarkan jumlah data
+        $this->updateUptNamesBySuffix($namaUptBase);
+
+        return redirect()->route('management.upt.index')->with('success', 'Data berhasil dihapus!');
     }
 
     public function exportListCsv(Request $request): StreamedResponse

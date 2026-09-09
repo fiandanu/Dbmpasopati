@@ -173,9 +173,9 @@
                             </ul>
                         </li>
 
-                        <!-- User -->
+                        <!-- Data Manajemen -->
                         <li
-                            class="nav-item {{ Route::is('UserRole.user-role.index') || Route::is('User.UserPage') || Route::is('UserPonpes.ponpes.index') || Route::is('provider.DataProvider') || Route::is('kendalapic.index') || Route::is('kanwil.DataKanwil') ? 'menu-open' : '' }}">
+                            class="nav-item {{ Route::is('UserRole.user-role.index') || Route::is('management.upt.index') || Route::is('UserPonpes.ponpes.index') || Route::is('provider.DataProvider') || Route::is('kendalapic.index') || Route::is('kanwil.DataKanwil') ? 'menu-open' : '' }}">
                             <a href="#" class="nav-link">
                                 <span class="material-symbols-outlined">
                                     person
@@ -184,8 +184,8 @@
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="{{ route('User.UserPage') }}"
-                                        class="nav-link {{ Route::is('User.UserPage') ? 'active' : '' }}">
+                                    <a href="{{ route('management.upt.index') }}"
+                                        class="nav-link {{ Route::is('management.upt.index') ? 'active' : '' }}">
                                         <p>UPT</p>
                                     </a>
                                 </li>
@@ -217,7 +217,7 @@
                                     @if (Auth::check() && Auth::user()->isSuperAdmin())
                                         <a href="{{ route('UserRole.user-role.index') }}"
                                             class="nav-link {{ Route::is('UserRole.user-role.index') || Route::is('namawilayah.DataNamaWilayah') ? 'active' : '' }}">
-                                            <p>Kelola User</p>
+                                            <p>Kelola user</p>
                                         </a>
                                     @endif
                                 </li>

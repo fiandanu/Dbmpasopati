@@ -296,7 +296,7 @@
                                     <div class="modal-footer flex-row-reverse justify-content-between">
                                         <button type="button" class="btn-cancel-modal"
                                             data-dismiss="modal">Tutup</button>
-                                        <form action="{{ route('User.UserPageDestroy', $d->id) }}" method="POST">
+                                        <form action="{{ route('management.upt.destroy', $d->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn-delete">Hapus</button>
@@ -309,10 +309,10 @@
                         </div>
                     @endforeach
 
-                    {{-- User Create Modal --}}
+                    {{-- management Create Modal --}}
                     <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel"
                         aria-hidden="true">
-                        <form id="addForm" action="{{ route('User.UserPageStore') }}" method="POST">
+                        <form id="addForm" action="{{ route('management.upt.store') }}" method="POST">
                             @csrf
                             <div class="modal-dialog">
                                 <div class="modal-content">
@@ -397,12 +397,11 @@
                         </form>
                     </div>
 
-                    {{-- User Edit Modal --}}
+                    {{-- management Edit Modal --}}
                     @foreach ($data as $d)
                         <div class="modal fade" id="editModal{{ $d->id }}" tabindex="-1"
                             aria-labelledby="editModalLabel" aria-hidden="true">
-                            <form id="editForm" action="{{ route('User.UserPageUpdate', ['id' => $d->id]) }}"
-                                method="POST">
+                            <form id="editForm" action="{{ route('management.upt.update', $d->id) }}" method="POST">
                                 @csrf
                                 @method('PUT')
                                 <div class="modal-dialog">
@@ -694,7 +693,7 @@
                 let filters = getFilters();
                 let form = document.createElement('form');
                 form.method = 'GET';
-                form.action = '{{ route('User.export.list.csv') }}';
+                form.action = '{{ route('management.export.list.csv') }}';
                 form.target = '_blank';
 
                 Object.keys(filters).forEach(key => {
@@ -716,7 +715,7 @@
                 let filters = getFilters();
                 let form = document.createElement('form');
                 form.method = 'GET';
-                form.action = '{{ route('User.export.list.pdf') }}';
+                form.action = '{{ route('management.export.list.pdf') }}';
                 form.target = '_blank';
 
                 Object.keys(filters).forEach(key => {
